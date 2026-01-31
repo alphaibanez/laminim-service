@@ -4,7 +4,6 @@ namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktMenu;
 use Lkt\Menus\Enums\MenuEntryType;
-use Lkt\Users\Instances\LktUser;
 use Lkt\WebItems\WebItem;
 
 class LktMenu extends GeneratedLktMenu

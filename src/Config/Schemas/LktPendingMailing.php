@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Mailing\Config\Schemas;
+namespace Lkt\Config\Schemas;
 
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;

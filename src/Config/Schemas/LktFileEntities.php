@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\FileBrowser\Config\Schemas;
+namespace Lkt\Config\Schemas;
 
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;

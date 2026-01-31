@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Users\Config\Schemas;
+namespace Lkt\Config\Schemas;
 
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;

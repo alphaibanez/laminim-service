@@ -24,6 +24,7 @@ function addLocalePath(string $lang, string $path): void
 requireFiles([
     // Load Factory Schemas
     __DIR__.'/Config/Schemas/*.php',
+    __DIR__.'/WebPages/functions/*.php',
 ]);
 
 if (php_sapi_name() == 'cli') {

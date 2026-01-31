@@ -8,7 +8,10 @@
     "ext-curl": "*",
     "ext-imap": "*",
     "ext-intl": "*",
+    "ext-openssl": "*",
     "lkt/tools": "^2.0",
+    "cocur/slugify": "^4.2",
+    "nesbot/carbon": "^2.62",
     "robmorgan/phinx": "^0.13.4",
     "symfony/console": "^6.2",
     "poliander/cron": "^3.0"

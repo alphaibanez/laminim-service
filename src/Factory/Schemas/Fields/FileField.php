@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Enums\TimeInSeconds;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
 use Lkt\Factory\Schemas\Traits\FieldWithMultipleOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
@@ -90,25 +91,25 @@ class FileField extends AbstractField
 
     final public function setHttpCacheDurationInSecondsToOneDay(): static
     {
-        $this->httpCacheDurationInSeconds = 86400;
+        $this->httpCacheDurationInSeconds = TimeInSeconds::OneDay->value;
         return $this;
     }
 
     final public function setHttpCacheDurationInSecondsToOneWeek(): static
     {
-        $this->httpCacheDurationInSeconds = 604800;
+        $this->httpCacheDurationInSeconds = TimeInSeconds::OneWeek->value;
         return $this;
     }
 
     final public function setHttpCacheDurationInSecondsToOneMonth(): static
     {
-        $this->httpCacheDurationInSeconds = 2419200;
+        $this->httpCacheDurationInSeconds = TimeInSeconds::OneMonth->value;
         return $this;
     }
 
     final public function setHttpCacheDurationInSecondsToOneYear(): static
     {
-        $this->httpCacheDurationInSeconds = 31536000;
+        $this->httpCacheDurationInSeconds = TimeInSeconds::OneYear->value;
         return $this;
     }
 

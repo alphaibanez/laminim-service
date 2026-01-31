@@ -2,6 +2,7 @@
 
 namespace Lkt\Http;
 
+use Lkt\Enums\TimeInSeconds;
 use Lkt\Http\Traits\ContentTypeTrait;
 
 class Response
@@ -53,25 +54,25 @@ class Response
 
     public function setCacheControlMaxAgeHeaderToOneDay(): static
     {
-        $this->headerCacheControlMaxAge = 86400;
+        $this->headerCacheControlMaxAge = TimeInSeconds::OneDay->value;
         return $this;
     }
 
     public function setCacheControlMaxAgeHeaderToOneWeek(): static
     {
-        $this->headerCacheControlMaxAge = 604800;
+        $this->headerCacheControlMaxAge = TimeInSeconds::OneWeek->value;
         return $this;
     }
 
     public function setCacheControlMaxAgeHeaderToOneMonth(): static
     {
-        $this->headerCacheControlMaxAge = 2419200;
+        $this->headerCacheControlMaxAge = TimeInSeconds::OneMonth->value;
         return $this;
     }
 
     public function setCacheControlMaxAgeHeaderToOneYear(): static
     {
-        $this->headerCacheControlMaxAge = 31536000;
+        $this->headerCacheControlMaxAge = TimeInSeconds::OneYear->value;
         return $this;
     }
 
@@ -83,25 +84,25 @@ class Response
 
     public function setExpiresHeaderToOneDay(): static
     {
-        $this->headerExpires = 86400;
+        $this->headerExpires = TimeInSeconds::OneDay->value;
         return $this;
     }
 
     public function setExpiresHeaderToOneWeek(): static
     {
-        $this->headerExpires = 604800;
+        $this->headerExpires = TimeInSeconds::OneWeek->value;
         return $this;
     }
 
     public function setExpiresHeaderToOneMonth(): static
     {
-        $this->headerExpires = 2419200;
+        $this->headerExpires = TimeInSeconds::OneMonth->value;
         return $this;
     }
 
     public function setExpiresHeaderToOneYear(): static
     {
-        $this->headerExpires = 31536000;
+        $this->headerExpires = TimeInSeconds::OneYear->value;
         return $this;
     }
 

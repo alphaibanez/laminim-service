@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\SystemConnections;
 
-use chillerlan\Filereader\Drivers\DiskDriver;
+use Lkt\FileReader\Drivers\DiskDriver;
 
 final class FileSystemConnection
 {

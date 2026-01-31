@@ -4,7 +4,7 @@ namespace Lkt\Factory\Instantiator\Validations;
 
 
 use Carbon\Carbon;
-use chillerlan\Filereader\File;
+use Lkt\FileReader\File;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;

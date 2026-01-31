@@ -3,8 +3,8 @@
 namespace Lkt\Factory\Instantiator\Validations;
 
 use Carbon\Carbon;
-use chillerlan\Filereader\Directory;
-use chillerlan\Filereader\File;
+use Lkt\FileReader\Directory;
+use Lkt\FileReader\File;
 use Lkt\Factory\Instantiator\SystemConnections\FileSystemConnection;
 use Lkt\Factory\Schemas\Fields\FileField;
 

@@ -259,6 +259,47 @@ class SetupTranslationsCommand extends Command
             'en' => 'User Roles',
         ], $parentId);
 
+
+
+        $parent = LktTranslation::createIfMissing('menuEntryTypes', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'URL local',
+            'en' => 'Local URL',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'URL completa',
+            'en' => 'Full URL',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Listado de Páginas Web',
+            'en' => 'Web Pages List',
+        ], $parentId);
+        LktTranslation::createIfMissing('6', TranslationType::Text, [
+            'es' => 'Listado de Elementos Web',
+            'en' => 'Web Items List',
+        ], $parentId);
+
+
+        $parent = LktTranslation::createIfMissing('accessLevel', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Cualquiera',
+            'en' => 'Any user',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Solo usuarios registrados',
+            'en' => 'Only logged users',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Solo usuarios anónimos',
+            'en' => 'Only anonymous users',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Solo administradores',
+            'en' => 'Only admin users',
+        ], $parentId);
+
         return 1;
     }
 }

@@ -300,6 +300,41 @@ class SetupTranslationsCommand extends Command
             'en' => 'Only admin users',
         ], $parentId);
 
+
+        $parent = LktTranslation::createIfMissing('webItems', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('user', TranslationType::Text, [
+            'es' => 'Usuarios',
+            'en' => 'Users',
+        ], $parentId);
+        LktTranslation::createIfMissing('user-role', TranslationType::Text, [
+            'es' => 'Roles de usuarios',
+            'en' => 'User Roles',
+        ], $parentId);
+        LktTranslation::createIfMissing('menu', TranslationType::Text, [
+            'es' => 'Menus',
+            'en' => 'Menus',
+        ], $parentId);
+        LktTranslation::createIfMissing('menu-entry', TranslationType::Text, [
+            'es' => 'Entradas de Menus',
+            'en' => 'Menu Entries',
+        ], $parentId);
+        LktTranslation::createIfMissing('i18n', TranslationType::Text, [
+            'es' => 'Traducciones',
+            'en' => 'Translations',
+        ], $parentId);
+        LktTranslation::createIfMissing('many-i18n', TranslationType::Text, [
+            'es' => 'Diccionario',
+            'en' => 'Dictionary',
+        ], $parentId);
+
+        $parent = LktTranslation::createIfMissing('webPages', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('page', TranslationType::Text, [
+            'es' => 'Página',
+            'en' => 'Page',
+        ], $parentId);
+
         return 1;
     }
 }

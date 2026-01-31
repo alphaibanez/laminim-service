@@ -2,7 +2,7 @@
 
 namespace Lkt\FileReader\Drivers;
 
-use Lkt\FileReader\FilereaderException;
+use Lkt\FileReader\FileReaderException;
 
 
 class DiskDriver implements FSDriverInterface{
@@ -46,12 +46,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param string $path the file path
 	 *
 	 * @return string the file's contents
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function fileContents(string $path):string{
 
 		if(!$this->isFile($path)){
-			throw new FilereaderException('File not found: '.$path);
+			throw new FileReaderException('File not found: '.$path);
 		}
 
 		return file_get_contents($path);
@@ -64,12 +64,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param string $path the file path
 	 *
 	 * @return mixed the file's executed contents
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function getRequire(string $path){
 
 		if(!$this->isFile($path)){
-			throw new FilereaderException('File not found: '.$path);
+			throw new FileReaderException('File not found: '.$path);
 		}
 
 		return require $path;
@@ -81,12 +81,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param string $path
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function makeDir(string $path):bool{
 
 		if($this->isDir($path)){
-			throw new FilereaderException('Directory already exists: '.$path);
+			throw new FileReaderException('Directory already exists: '.$path);
 		}
 
 		return mkdir($path);
@@ -98,12 +98,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param string $path
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function deleteDir(string $path):bool{
 
 		if(!$this->isDir($path)){
-			throw new FilereaderException('Directory not found: '.$path);
+			throw new FileReaderException('Directory not found: '.$path);
 		}
 
 		return rmdir($path);
@@ -115,12 +115,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param string $path
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function deleteFile(string $path):bool{
 
 		if(!$this->isFile($path)){
-			throw new FilereaderException('File not found: '.$path);
+			throw new FileReaderException('File not found: '.$path);
 		}
 
 		return unlink($path);
@@ -134,12 +134,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param bool   $overwrite
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function rename(string $oldname, string $newname, bool $overwrite = true):bool{
 
 		if(!$overwrite && ($this->fileExists($newname) || $this->isDir($newname))){
-			throw new FilereaderException('Destination already exists.');
+			throw new FileReaderException('Destination already exists.');
 		}
 
 		return rename($oldname, $newname);
@@ -153,12 +153,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param bool   $overwrite
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function copyFile(string $source, string $destination, bool $overwrite = true):bool{
 
 		if(!$overwrite && $this->fileExists($destination)){
-			throw new FilereaderException('Destination file already exists.');
+			throw new FileReaderException('Destination file already exists.');
 		}
 
 		return copy($source, $destination);
@@ -170,12 +170,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param bool   $overwrite
 	 *
 	 * @return int|bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function write(string $path, string $data, bool $overwrite = true){
 
 		if(!$overwrite && $this->fileExists($path)){
-			throw new FilereaderException('Destination file already exists.');
+			throw new FileReaderException('Destination file already exists.');
 		}
 
 		return file_put_contents($path, $data);
@@ -194,12 +194,12 @@ class DiskDriver implements FSDriverInterface{
 	 * @param string $path
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function isWritable(string $path):bool{
 
 		if(!$this->isDir($path)){
-			throw new FilereaderException('Directory not found: '.$path);
+			throw new FileReaderException('Directory not found: '.$path);
 		}
 
 		return is_writable($path);

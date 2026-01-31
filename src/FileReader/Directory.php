@@ -33,12 +33,12 @@ class Directory extends FSAbstract{
 	 * Reads a directory and returns the contents as an array of \stdClass
 	 *
 	 * @return array
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function read():array{
 
 		if(!$this->filereader->isDir($this->path)){
-			throw new FilereaderException('Directory not found: '.$this->path);
+			throw new FileReaderException('Directory not found: '.$this->path);
 		}
 
 		$dir = scandir($this->path);
@@ -93,12 +93,12 @@ class Directory extends FSAbstract{
 	 * @param bool   $overwrite
 	 *
 	 * @return \Lkt\FileReader\Directory
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function rename(string $newname, bool $overwrite = true):Directory{
 
 		if(!$this->filereader->rename($this->path, $newname, $overwrite)){
-			throw new FilereaderException('cannot rename '.$this->path.' to '.$newname); // @codeCoverageIgnore
+			throw new FileReaderException('cannot rename '.$this->path.' to '.$newname); // @codeCoverageIgnore
 		}
 
 		return $this->change($newname);

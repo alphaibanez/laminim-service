@@ -37,7 +37,7 @@ interface FSDriverInterface{
 	 * @param string $path the file path
 	 *
 	 * @return string the file's contents
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function fileContents(string $path):string;
 
@@ -48,7 +48,7 @@ interface FSDriverInterface{
 	 * @param string $path the file path
 	 *
 	 * @return mixed the file's executed contents
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function getRequire(string $path);
 
@@ -107,7 +107,7 @@ interface FSDriverInterface{
 	 * @param bool   $overwrite
 	 *
 	 * @return int|bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function write(string $path, string $data, bool $overwrite = true);
 
@@ -122,7 +122,7 @@ interface FSDriverInterface{
 	 * @param string $path
 	 *
 	 * @return bool
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function isWritable(string $path):bool;
 }

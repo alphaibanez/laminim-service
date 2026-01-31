@@ -1,5 +1,5 @@
 <?php
-/
+
 namespace Lkt\FileReader;
 
 interface FSInterface{

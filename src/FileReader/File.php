@@ -71,16 +71,16 @@ class File extends FSAbstract{
 	 * @param bool   $overwrite
 	 *
 	 * @return \Lkt\FileReader\File
-	 * @throws \Lkt\FileReader\FilereaderException
+	 * @throws \Lkt\FileReader\FileReaderException
 	 */
 	public function rename(string $newname, bool $overwrite = true):File{
 
 		if(!$this->filereader->rename($this->path, $newname, $overwrite)){
-			throw new FilereaderException('cannot rename '.$this->path.' to '.$newname); // @codeCoverageIgnore
+			throw new FileReaderException('cannot rename '.$this->path.' to '.$newname); // @codeCoverageIgnore
 		}
 
 		if(!$this->filereader->isFile($newname)){
-			throw new FilereaderException('file not found: '.$newname); // @codeCoverageIgnore
+			throw new FileReaderException('file not found: '.$newname); // @codeCoverageIgnore
 		}
 
 		$this->path = $newname;

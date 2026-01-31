@@ -1,0 +1,38 @@
+<?php
+/**
+ * @var string $className
+ * @var string $component
+ * @var string $namespace
+ * @var string $extends
+ * @var string $implements
+ * @var string $traits
+ * @var string $methods
+ * @var string $returnSelf
+ * @var string $queryCaller
+ */
+?>
+
+namespace <?php echo $namespace?>;
+
+use Lkt\QueryBuilding\Query;
+use Lkt\QueryBuilding\DateIntervals\AbstractInterval;
+use Lkt\Factory\Instantiator\Instantiator;
+use Lkt\Factory\Schemas\Schema;
+
+class <?php echo $className; ?> extends Query {
+
+const COMPONENT = '<?php echo $component; ?>';
+
+/** @return <?php echo $queryCaller;?> */
+public static function getCaller()
+{
+    $schema = Schema::get(static::COMPONENT);
+
+    /** @var <?php echo $queryCaller;?> $r */
+    $r = static::table($schema->getTable());
+    Instantiator::prepareQueryCaller(static::COMPONENT, $r);
+    return $r;
+}
+
+<?php echo $methods?>
+}

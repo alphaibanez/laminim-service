@@ -1,0 +1,40 @@
+<?php
+/**
+ * @var string $className
+ * @var string $component
+ * @var string $namespace
+ * @var string $extends
+ * @var string $implements
+ * @var string $traits
+ * @var string $methods
+ * @var string $returnSelf
+ * @var string $queryCaller
+ */
+?>
+
+namespace <?php echo $namespace?>;
+
+use Lkt\QueryBuilding\OrderBy;
+
+class <?php echo $className; ?> extends OrderBy {
+
+const COMPONENT = '<?php echo $component; ?>';
+
+/** @return <?php echo $queryCaller;?> */
+public static function ASC(string $field): static
+{
+    /** @var <?php echo $queryCaller;?> $r */
+    $r = parent::ASC($field);
+    return $r;
+}
+
+/** @return <?php echo $queryCaller;?> */
+public static function DESC(string $field): static
+{
+    /** @var <?php echo $queryCaller;?> $r */
+    $r = parent::DESC($field);
+    return $r;
+}
+
+<?php echo $methods?>
+}

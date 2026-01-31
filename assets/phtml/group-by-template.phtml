@@ -1,0 +1,32 @@
+<?php
+/**
+ * @var string $className
+ * @var string $component
+ * @var string $namespace
+ * @var string $extends
+ * @var string $implements
+ * @var string $traits
+ * @var string $methods
+ * @var string $returnSelf
+ * @var string $queryCaller
+ */
+?>
+
+namespace <?php echo $namespace?>;
+
+use Lkt\QueryBuilding\GroupBy;
+
+class <?php echo $className; ?> extends GroupBy {
+
+const COMPONENT = '<?php echo $component; ?>';
+
+/** @return <?php echo $queryCaller;?> */
+public static function define(string $field): static
+{
+    /** @var <?php echo $queryCaller;?> $r */
+    $r = parent::define($field);
+    return $r;
+}
+
+<?php echo $methods?>
+}

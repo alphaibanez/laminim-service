@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var string $column
+ * @var string $fieldMethod
+ * @var string $returnSelf
+ * @var bool $canBeNull
+ */
+?>
+<?php foreach (['and', 'or'] as $constraint): ?>
+public function <?php echo $constraint?><?php echo $fieldMethod;?>Equal(float $value) {
+    return $this-><?php echo $constraint?>DecimalEqual('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>Not(float $value) {
+    return $this-><?php echo $constraint?>DecimalNot('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>GreaterThan(float $value) {
+    return $this-><?php echo $constraint?>DecimalGreaterThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>GreaterOrEqualThan(float $value) {
+    return $this-><?php echo $constraint?>DecimalGreaterOrEqualThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>LowerThan(float $value) {
+    return $this-><?php echo $constraint?>DecimalLowerThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>LowerOrEqualThan(float $value) {
+    return $this-><?php echo $constraint?>DecimalLowerOrEqualThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>Between(float $from, float $to) {
+    return $this-><?php echo $constraint?>DecimalBetween('<?php echo $column;?>', $from, $to);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>In(array $values) {
+    return $this-><?php echo $constraint?>DecimalIn('<?php echo $column;?>', $values);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>NotIn(array $values) {
+    return $this-><?php echo $constraint?>DecimalNotIn('<?php echo $column;?>', $values);
+}
+<?php if($canBeNull): ?>
+public function <?php echo $constraint?><?php echo $fieldMethod;?>IsNull() {
+    return $this-><?php echo $constraint?>IsNull('<?php echo $column;?>');
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>IsNotNull() {
+    return $this-><?php echo $constraint?>IsNotNull('<?php echo $column;?>');
+}
+<?php endif; ?>
+<?php endforeach; ?>

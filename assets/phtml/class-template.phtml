@@ -1,0 +1,81 @@
+<?php
+/**
+ * @var string $className
+ * @var string $component
+ * @var string $namespace
+ * @var string $extends
+ * @var string $implements
+ * @var string $traits
+ * @var string $methods
+ * @var string $returnSelf
+ * @var string $queryCaller
+ * @var bool $hasTable
+ */
+?>
+
+namespace <?php echo $namespace?>;
+
+<?php if($hasTable) : ?>
+use Lkt\QueryBuilding\Where;
+use Lkt\QueryBuilding\Query;
+use Lkt\Factory\Instantiator\Instantiator;
+<?php endif; ?>
+
+class <?php echo $className; ?> extends <?php echo $extends?> <?php echo $implements?> {
+    <?php echo $traits?>
+
+    const COMPONENT = '<?php echo $component; ?>';
+
+    <?php echo $methods?>
+    <?php if($hasTable) : ?>
+    /**
+    * @return <?php echo $returnSelf;?>[]
+    */
+    public static function getMany(Query $builder = null): array
+    {
+        /** @var <?php echo $returnSelf;?>[] */
+        $r = parent::getMany($builder);
+        return $r;
+    }
+
+    /**
+    * @return <?php echo $returnSelf;?>|null
+    */
+    public static function getOne(Query $builder = null)
+    {
+        /** @var <?php echo $returnSelf;?> */
+        $r = parent::getOne($builder);
+        return $r;
+    }
+
+    /** @return <?php echo $queryCaller;?> */
+    public static function getQueryCaller()
+    {
+        /**
+        * @var <?php echo $queryCaller;?> $builder
+        */
+        list($builder) = Instantiator::getCustomQueryCaller(static::COMPONENT);
+        return $builder;
+    }
+
+    /** @return <?php echo $queryCaller;?> */
+    public static function getFilteredQueryCaller(array $data, array $processRules = null, array $filterRules = null)
+    {
+        /**
+        * @var <?php echo $queryCaller;?> $caller
+        */
+        list($builder) = Instantiator::getCustomQueryCaller(static::COMPONENT, $data, $processRules, $filterRules);
+        return $builder;
+    }
+
+    /**
+    * @return <?php echo $returnSelf;?>[]
+    */
+    public static function getPage(int $page, Query $builder = null, int $itemsPerPage = 0): array
+    {
+        /** @var <?php echo $returnSelf;?>[] */
+        $r = parent::getPage($page, $builder, $itemsPerPage);
+        return $r;
+    }
+    <?php endif; ?>
+}

@@ -1,0 +1,89 @@
+<?php
+/**
+ * @var string $column
+ * @var string $fieldMethod
+ * @var string $returnSelf
+ * @var bool $canBeNull
+ * @var array $comparatorsIn
+ */
+?>
+<?php foreach (['and', 'or'] as $constraint): ?>
+public function <?php echo $constraint?><?php echo $fieldMethod;?>Equal(int $value) {
+    return $this-><?php echo $constraint?>IntegerEqual('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>Not(int $value) {
+    return $this-><?php echo $constraint?>IntegerNot('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>GreaterThan(int $value) {
+    return $this-><?php echo $constraint?>IntegerGreaterThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>GreaterOrEqualThan(int $value) {
+    return $this-><?php echo $constraint?>IntegerGreaterOrEqualThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>LowerThan(int $value) {
+    return $this-><?php echo $constraint?>IntegerLowerThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>LowerOrEqualThan(int $value) {
+    return $this-><?php echo $constraint?>IntegerLowerOrEqualThan('<?php echo $column;?>', $value);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>Between(int $from, int $to) {
+    return $this-><?php echo $constraint?>IntegerBetween('<?php echo $column;?>', $from, $to);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>In(array $values) {
+    return $this-><?php echo $constraint?>IntegerIn('<?php echo $column;?>', $values);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>NotIn(array $values) {
+    return $this-><?php echo $constraint?>IntegerNotIn('<?php echo $column;?>', $values);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>EqualToField(string $component, string $field ) {
+    return $this-><?php echo $constraint?>FieldEqualToField('<?php echo $column;?>', $component, $field);
+}
+<?php if($canBeNull): ?>
+public function <?php echo $constraint?><?php echo $fieldMethod;?>IsNull() {
+    return $this-><?php echo $constraint?>IsNull('<?php echo $column;?>');
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>IsNotNull() {
+    return $this-><?php echo $constraint?>IsNotNull('<?php echo $column;?>');
+}
+<?php endif; ?>
+<?php /**
+public function <?php echo $constraint?><?php echo $fieldMethod;?>In(array $values) {
+    return $this-><?php echo $constraint?>IntegerIn('<?php echo $column;?>', $values);
+}
+public function <?php echo $constraint?><?php echo $fieldMethod;?>NotIn(array $values) {
+    return $this-><?php echo $constraint?>IntegerNotIn('<?php echo $column;?>', $values);
+}
+ * */?>
+<?php endforeach; ?>
+
+<?php foreach ($comparatorsIn as $comparatorName => $options): ?>
+    <?php
+    $c = count($options);
+    if ($c === 0) {
+        continue;
+    }
+
+    $singleMode = false;
+    if ($c === 1) {
+        $singleMode = true;
+        $optionsText = implode(",", $options);
+
+    } else {
+        $optionsText = "[" .implode(",", $options) . "]";
+    }
+    ?>
+    public function <?php echo $constraint?><?php echo $fieldMethod;?>Is<?php echo ucfirst($comparatorName);?>() {
+    <?php if ($singleMode): ?>
+        return $this-><?php echo $constraint?>IntegerEqual('<?php echo $column;?>', <?php echo $optionsText; ?>);
+    <?php else: ?>
+        return $this-><?php echo $constraint?>IntegerIn('<?php echo $column;?>', <?php echo $optionsText; ?>);
+    <?php endif; ?>
+    }
+    public function <?php echo $constraint?><?php echo $fieldMethod;?>IsNot<?php echo ucfirst($comparatorName);?>() {
+    <?php if ($singleMode): ?>
+        return $this-><?php echo $constraint?>IntegerNot('<?php echo $column;?>', <?php echo $optionsText; ?>);
+    <?php else: ?>
+        return $this-><?php echo $constraint?>IntegerNotIn('<?php echo $column;?>', <?php echo $optionsText; ?>);
+    <?php endif; ?>
+    }
+<?php endforeach; ?>

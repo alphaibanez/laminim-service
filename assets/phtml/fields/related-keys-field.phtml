@@ -1,0 +1,23 @@
+<?php
+/**
+ * @var string $fieldName
+ * @var string $fieldMethod
+ * @var string $returnSelf
+ * @var string $component
+ * @var string $relatedReturnClass
+ * @var string $relatedClassName
+ * @var string $relatedQueryCaller
+ */
+?>
+/** <?php echo $relatedReturnClass; ?>
+*/
+public function get<?php echo $fieldMethod;?>(): array {
+    return $this->_getRelatedKeysVal('<?php echo $component; ?>', '<?php echo $fieldName;?>');
+}
+public function has<?php echo $fieldMethod;?>() :bool {
+    return $this->_hasRelatedKeysVal('<?php echo $component; ?>', '<?php echo $fieldName;?>');
+}
+/** @return <?php echo $relatedQueryCaller; ?> */
+public function get<?php echo $fieldMethod;?>QueryCaller(): <?php echo $relatedQueryCaller; ?> {
+    return $this->_getRelatedKeysQueryCaller('<?php echo $component; ?>', '<?php echo $fieldName;?>');
+}

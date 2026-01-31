@@ -1,0 +1,99 @@
+<?php
+
+namespace Lkt\CodeMaker;
+
+use Lkt\CodeMaker\Helpers\FieldsQueryCallerHelper;
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
+use Lkt\Factory\Schemas\Schema;
+use Lkt\Templates\Template;
+use function Lkt\Tools\Strings\removeDuplicatedWhiteSpaces;
+
+class QueryCallerMaker
+{
+    public static function generate(): void
+    {
+        $stack = Schema::getStack();
+        echo "Generating query caller...\n";
+        echo "\n";
+        echo "\n";
+
+        foreach ($stack as $schema) {
+
+            if ($schema->isLib()) continue;
+
+            if ($schema->getTable() === '_') continue;
+
+            $instanceSettings = $schema->getInstanceSettings();
+            $filePath = $instanceSettings?->getGeneratedClassFullPath();
+            if (str_contains(realpath($filePath), '/vendor')) continue;
+
+            $component = $schema->getComponent();
+            echo "Generating query caller for: {$component}...\n";
+
+            $className = $instanceSettings?->getQueryCallerClassName();
+            if ($className === '') {
+                $className = $instanceSettings?->getAppClass();
+                if ($className === '') {
+                    echo "Component without Query Builder: {$component}...\n";
+                    continue;
+                }
+                $className = explode('\\', $className);
+                $className = $className[count($className) - 1];
+                $className .= 'QueryBuilder';
+            }
+            $returnSelf = '\\' . $className;
+
+            $extends = $instanceSettings?->hasLegalExtendClass()
+                ? $instanceSettings?->getClassToBeExtended()
+                : AbstractInstance::class;
+
+            $extends = '\\'. $extends;
+
+            $implements = $instanceSettings?->getImplementedInterfacesAsString();
+            if ($implements !== ''){
+                $implements = "implements {$implements};";
+            }
+
+            $traits = $instanceSettings?->getUsedTraitsAsString();
+            if ($traits !== ''){
+                $traits = "use {$traits};";
+            }
+
+            $namespace = $instanceSettings?->getNamespaceForGeneratedClass();
+
+            $relatedQueryCaller = $schema->getInstanceSettings()?->getQueryCallerFQDN();
+
+            $templateData['relatedQueryCaller'] = '\Lkt\QueryBuilding\Query';
+
+            if (!$relatedQueryCaller) {
+                $relatedQueryCaller = 'Lkt\QueryBuilding\Query';
+            }
+            $relatedQueryCaller = '\\' . $relatedQueryCaller;
+
+            $methods = FieldsQueryCallerHelper::makeFieldsCode($schema);
+            $code = Template::file(__DIR__ . '/../../assets/phtml/query-caller-template.phtml')->setData([
+                'component' => $component,
+                'className' => $className,
+                'traits' => $traits,
+                'namespace' => $namespace,
+                'methods' => $methods,
+                'returnSelf' => $returnSelf,
+                'queryCaller' => $relatedQueryCaller,
+            ])->parse();
+            $code = str_replace("\n", ' ', $code);
+            $code = removeDuplicatedWhiteSpaces($code);
+            $code = '<?php ' .$code;
+
+            $filePath = $instanceSettings?->getQueryCallerFullPath();
+            $status = $filePath ? file_put_contents($filePath, $code) : false;
+            if ($status === false) {
+                echo "Could't store {$filePath}\n";
+                echo "Maybe an invalid path or not enough permissions\n";
+            } else {
+                echo "Successful storage at {$filePath}\n";
+            }
+
+            echo "\n";
+        }
+    }
+}

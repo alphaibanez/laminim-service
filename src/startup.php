@@ -2,6 +2,7 @@
 
 namespace Lkt\Commander;
 
+use Lkt\Console\Commands\GenerateCommand;
 use Lkt\Console\Commands\MakeCrontabCommand;
 use Lkt\Console\Commands\RunCrontabCommand;
 use Lkt\Console\Commands\ShowCrontabCommand;
@@ -29,6 +30,7 @@ if (php_sapi_name() == 'cli') {
 }
 
 if (php_sapi_name() == 'cli') {
+    Commander::register(new GenerateCommand());
     Commander::register(new MakeCrontabCommand());
     Commander::register(new RunCrontabCommand());
     Commander::register(new ShowCrontabCommand());

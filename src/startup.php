@@ -3,8 +3,10 @@
 namespace Lkt\Commander;
 
 use Lkt\Console\Commands\GenerateCommand;
+use Lkt\Console\Commands\MailDeliveryCommand;
 use Lkt\Console\Commands\MakeCrontabCommand;
 use Lkt\Console\Commands\RunCrontabCommand;
+use Lkt\Console\Commands\SetupTranslationsCommand;
 use Lkt\Console\Commands\ShowCrontabCommand;
 use Lkt\Phinx\PhinxConfigurator;
 use Lkt\Translations\Translations;
@@ -25,6 +27,7 @@ requireFiles([
     // Load Factory Schemas
     __DIR__.'/Config/Schemas/*.php',
     __DIR__.'/WebPages/functions/*.php',
+    __DIR__.'/Mailing/functions.php',
 ]);
 
 if (php_sapi_name() == 'cli') {
@@ -33,7 +36,9 @@ if (php_sapi_name() == 'cli') {
 
 if (php_sapi_name() == 'cli') {
     Commander::register(new GenerateCommand());
+    Commander::register(new MailDeliveryCommand());
     Commander::register(new MakeCrontabCommand());
     Commander::register(new RunCrontabCommand());
+    Commander::register(new SetupTranslationsCommand());
     Commander::register(new ShowCrontabCommand());
 }

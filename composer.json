@@ -10,6 +10,7 @@
     "ext-intl": "*",
     "ext-openssl": "*",
     "lkt/tools": "^2.0",
+    "nikic/fast-route": "^1.3",
     "cocur/slugify": "^4.2",
     "nesbot/carbon": "^2.62",
     "robmorgan/phinx": "^0.13.4",

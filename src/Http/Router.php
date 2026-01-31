@@ -9,7 +9,7 @@ use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Networking\Networking;
 use Lkt\Http\Routes\AbstractRoute;
 use Lkt\Http\Routes\GetRoute;
-use Lkt\Users\Instances\LktUser;
+use Lkt\Instances\LktUser;
 use Lkt\Users\Interfaces\SessionUserInterface;
 use function FastRoute\simpleDispatcher;
 

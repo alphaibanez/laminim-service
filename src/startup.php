@@ -8,6 +8,7 @@ use Lkt\Console\Commands\RunCrontabCommand;
 use Lkt\Console\Commands\ShowCrontabCommand;
 use Lkt\Phinx\PhinxConfigurator;
 use Lkt\Translations\Translations;
+use function Lkt\Tools\Requiring\requireFiles;
 
 
 function __(string $key = '', string $lang = null)
@@ -20,10 +21,10 @@ function addLocalePath(string $lang, string $path): void
     Translations::addLocalePath($lang, $path);
 }
 
-/**
- * Load Schemas
- */
-require_once __DIR__ . '/Config/Schemas/LktTranslationsSchema.php';
+requireFiles([
+    // Load Factory Schemas
+    __DIR__.'/Config/Schemas/*.php',
+]);
 
 if (php_sapi_name() == 'cli') {
     PhinxConfigurator::addMigrationPath(__DIR__ . '/../database/migrations');

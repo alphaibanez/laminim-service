@@ -2,9 +2,9 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
-use FileUpload\File;
-use FileUpload\FileSystem\Simple;
-use FileUpload\FileUpload;
+use Lkt\FileUpload\File;
+use Lkt\FileUpload\FileSystem\Simple;
+use Lkt\FileUpload\FileUpload;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\FileField;

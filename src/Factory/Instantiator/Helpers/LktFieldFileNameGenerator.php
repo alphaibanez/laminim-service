@@ -2,9 +2,9 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
-use FileUpload\FileNameGenerator\FileNameGenerator;
-use FileUpload\FileNameGenerator\Slug;
-use FileUpload\FileUpload;
+use Lkt\FileUpload\FileNameGenerator\FileNameGenerator;
+use Lkt\FileUpload\FileNameGenerator\Slug;
+use Lkt\FileUpload\FileUpload;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;

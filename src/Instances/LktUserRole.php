@@ -2,11 +2,11 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Controllers\LktPermissionController;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktUserRole;
-use Lkt\Users\Config\Controllers\LktPermissionController;
 use Lkt\Users\Enums\RoleCapability;
 
 class LktUserRole extends GeneratedLktUserRole

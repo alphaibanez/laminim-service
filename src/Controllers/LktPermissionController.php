@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Users\Config\Controllers;
+namespace Lkt\Controllers;
 
 use Lkt\Users\Enums\RoleCapability;
 

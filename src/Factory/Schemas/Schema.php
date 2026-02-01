@@ -45,6 +45,9 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\Factory\Schemas\Values\TableValue;
 use Lkt\QueryBuilding\Query;
+use Lkt\WebItems\Enums\WebItemAction;
+use Lkt\WebItems\Enums\WebItemActionHook;
+use Lkt\WebItems\WebItemActionHookHandler;
 use function Lkt\Tools\Arrays\getArrayFirstPosition;
 
 final class Schema
@@ -86,6 +89,11 @@ final class Schema
     protected bool $registeredAsLib = false;
 
     protected string $ownershipField = '';
+
+    /**
+     * @var WebItemActionHookHandler[]
+     */
+    protected array $webItemActionHookHandlers = [];
 
     public function setOwnershipField(string $fieldName): static
     {
@@ -1153,5 +1161,23 @@ final class Schema
     public function getSlugPattern(): string
     {
         return $this->slugPattern;
+    }
+
+    public function addWebItemActionHookHandler(WebItemActionHookHandler $handler): static
+    {
+        $this->webItemActionHookHandlers[] = $handler;
+        return $this;
+    }
+
+    /**
+     * @param WebItemAction $action
+     * @param WebItemActionHook $hook
+     * @return WebItemActionHookHandler[]
+     */
+    public function getWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook): array
+    {
+        return array_filter($this->webItemActionHookHandlers, function (WebItemActionHookHandler $handler) use ($action, $hook) {
+            return $handler->action === $action && $handler->hook === $hook;
+        });
     }
 }

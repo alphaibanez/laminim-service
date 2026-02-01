@@ -8,6 +8,7 @@ use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Enums\HttpEvent;
 use Lkt\Users\Enums\RoleCapability;
 use Lkt\WebItems\Enums\WebItemAction;
+use Lkt\WebItems\Enums\WebItemActionHook;
 
 class BasicHttpHandler
 {
@@ -213,6 +214,14 @@ class BasicHttpHandler
                 $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getId());
             }
         }
+
+        $hooks = $schema->getWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder);
+        foreach ($hooks as $hook) {
+            call_user_func_array($hook->queryBuilderHandlerCallable, [
+                'query' => $builder,
+            ]);
+        }
+
         $rawResults = $helperInstance::getPage($request->page, $builder);
         $results = [];
         foreach ($rawResults as $rawResult) {
@@ -286,6 +295,14 @@ class BasicHttpHandler
                 $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getId());
             }
         }
+
+        $hooks = $schema->getWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder);
+        foreach ($hooks as $hook) {
+            call_user_func_array($hook->queryBuilderHandlerCallable, [
+                'query' => $builder,
+            ]);
+        }
+
         $rawResults = $helperInstance::getMany($builder);
         $results = [];
         foreach ($rawResults as $rawResult) {

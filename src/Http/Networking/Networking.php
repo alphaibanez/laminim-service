@@ -6,16 +6,16 @@ final class Networking
 {
     protected static ?Networking $instance = null;
 
-    protected string $remoteAddress = '';
+    readonly public string $remoteAddress;
     readonly public string $httpOrigin;
     readonly public int $httpOriginPort;
     readonly public string $httpProtocol;
-    protected string $httpProtocolVersion = '';
+    readonly public string $httpProtocolVersion;
     readonly public string $httpHost;
     readonly public string $requestUri;
-    protected string $requestMethod = '';
-    protected string $cleanedRequestUri = '';
-    protected string $serverName = '';
+    readonly public string $requestMethod;
+    readonly public string $cleanedRequestUri;
+    readonly public string $serverName;
     protected string $publicUrl = '';
 
     private function __construct()
@@ -54,16 +54,21 @@ final class Networking
             $uri = explode('?', $this->requestUri);
             $this->cleanedRequestUri = $uri[0];
 
-            $this->serverName = $_SERVER['SERVER_NAME'];
+            $this->serverName = trim($_SERVER['SERVER_NAME']);
 
             $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
 
         } else {
+            $this->remoteAddress = '';
             $this->httpOrigin = '';
             $this->httpOriginPort = 0;
             $this->httpHost = '';
             $this->requestUri = '';
             $this->httpProtocol = '';
+            $this->httpProtocolVersion = '';
+            $this->requestMethod = '';
+            $this->cleanedRequestUri = '';
+            $this->serverName = '';
         }
     }
 
@@ -73,41 +78,65 @@ final class Networking
         return self::$instance;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getRemoteAddress(): string
     {
         return self::getInstance()->remoteAddress;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getHttpProtocol(): string
     {
         return self::getInstance()->httpProtocol;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getHttpProtocolVersion(): string
     {
         return self::getInstance()->httpProtocolVersion;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getHttpHost(): string
     {
         return self::getInstance()->httpHost;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getServerName(): string
     {
         return self::getInstance()->serverName;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getRequestUri(): string
     {
         return self::getInstance()->cleanedRequestUri;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getFullRequestUri(): string
     {
         return self::getInstance()->requestUri;
     }
 
+    /**
+     * @deprecated
+     */
     public static function getRequestMethod(): string
     {
         return self::getInstance()->requestMethod;

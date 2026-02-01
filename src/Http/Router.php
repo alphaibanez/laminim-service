@@ -225,7 +225,7 @@ class Router
 
     public static function getRequestVars(): array
     {
-        $requestMethod = Networking::getRequestMethod();
+        $requestMethod = Networking::getInstance()->requestMethod;
         $params = [];
 
         // Merge variables
@@ -362,5 +362,22 @@ class Router
     public static function getCurrentRoute()
     {
         return static::$currentRoute;
+    }
+
+    public static function basicAuth(array $validPasswords, string $realm = 'My Realm'): void
+    {
+        $validUsers = array_keys($validPasswords);
+
+        $user = $_SERVER['PHP_AUTH_USER'];
+        $pass = $_SERVER['PHP_AUTH_PW'];
+
+        $validated = (in_array($user, $validUsers)) && ($pass == $validPasswords[$user]);
+
+        if (!$validated) {
+            $networking = Networking::getInstance();
+            header('WWW-Authenticate: Basic realm="' . $realm . '"');
+            header("{$networking->httpProtocolVersion} 401 Unauthorized");
+            die ("Not authorized");
+        }
     }
 }

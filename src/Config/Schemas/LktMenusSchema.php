@@ -49,7 +49,7 @@ Schema::add(
             ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktMenu::COMPONENT, 'menu', 'menu_id'))
             ->setPivotRightIdField(PivotRightIdField::defineRelation(LktMenuEntry::COMPONENT, 'entry', 'entry_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
-            ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Menus\Generated', __DIR__ . '/../../Generated')
+            ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
             ->setRelatedAccessPolicies([
                 'r-app-menu' => 'r-app-menu'
             ])

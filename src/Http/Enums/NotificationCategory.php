@@ -8,4 +8,5 @@ enum NotificationCategory: string
     case Message = 'message';
     case Redirect = 'redirect';
     case Reload = 'reload';
+    case SyncAppResource = 'sync-app-resource';
 }

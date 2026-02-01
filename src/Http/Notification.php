@@ -23,6 +23,8 @@ class Notification
 
     readonly public string $to;
     readonly public bool $replace;
+    readonly public bool $syncAppSetup;
+    readonly public bool $syncAppI18n;
 
     public string $icon = '';
 
@@ -36,6 +38,8 @@ class Notification
         $this->icon = isset($payload['icon']) ? clearInput($payload['icon']) : '';
         $this->to = isset($payload['to']) ? clearInput($payload['to']) : '';
         $this->replace = isset($payload['replace']) && (bool)$payload['replace'];
+        $this->syncAppSetup = isset($payload['syncAppSetup']) && (bool)$payload['syncAppSetup'];
+        $this->syncAppI18n = isset($payload['syncAppI18n']) && (bool)$payload['syncAppI18n'];
     }
 
     public static function sendToast(array $payload): static
@@ -88,6 +92,16 @@ class Notification
         return $instance;
     }
 
+    public static function sendSyncAppResource(bool $setup, bool $i18n = false): static
+    {
+        $instance = new static( NotificationCategory::SyncAppResource, [
+            'syncAppSetup' => $setup,
+            'syncAppI18n' => $i18n,
+        ]);
+        Router::addPendingNotification($instance);
+        return $instance;
+    }
+
     public function toArray(): array
     {
         $payload = [];
@@ -103,6 +117,11 @@ class Notification
             case NotificationCategory::Redirect:
                 if ($this->to !== '') $payload['to'] = $this->to;
                 $payload['replace'] = $this->replace;
+                break;
+
+            case NotificationCategory::SyncAppResource:
+                $payload['setup'] = $this->syncAppSetup;
+                $payload['i18n'] = $this->syncAppI18n;
                 break;
         }
 

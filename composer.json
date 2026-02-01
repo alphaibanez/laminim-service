@@ -14,7 +14,8 @@
     "nesbot/carbon": "^2.62",
     "robmorgan/phinx": "^0.13.4",
     "symfony/console": "^6.2",
-    "poliander/cron": "^3.0"
+    "poliander/cron": "^3.0",
+    "donatj/phpuseragentparser": "^1.11"
   },
   "require-dev": {
     "aws/aws-sdk-php": "^3.285",

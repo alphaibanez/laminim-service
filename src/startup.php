@@ -1,7 +1,8 @@
 <?php
 
-namespace Lkt\Commander;
+namespace Lkt;
 
+use Lkt\Commander\Commander;
 use Lkt\Console\Commands\GenerateCommand;
 use Lkt\Console\Commands\MailDeliveryCommand;
 use Lkt\Console\Commands\MakeCrontabCommand;

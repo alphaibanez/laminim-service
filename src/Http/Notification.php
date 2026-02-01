@@ -17,21 +17,25 @@ class Notification
     public static string $defaultFailClass = '';
     public static string $defaultWarningClass = '';
 
-    public string $text = '';
-    public string $details = '';
-    public string $class = '';
+    readonly public string $text;
+    readonly public string $details;
+    readonly public string $class;
+
+    readonly public string $to;
+    readonly public bool $replace;
 
     public string $icon = '';
-//    public string $positionX = '';
 
-    public function __construct(NotificationCategory $category, array $payload)
+    protected function __construct(NotificationCategory $category, array $payload)
     {
         $this->category = $category;
-        if ($payload['text']) $this->text = clearInput($payload['text']);
-        if ($payload['class']) $this->class = clearInput($payload['class']);
-        if ($payload['details']) $this->details = clearInput($payload['details']);
-        if ($payload['icon']) $this->icon = clearInput($payload['icon']);
-//        if ($payload['positionX']) $this->details = clearInput($payload['positionX']);
+
+        $this->text = isset($payload['text']) ? clearInput($payload['text']) : '';
+        $this->class = isset($payload['class']) ? clearInput($payload['class']) : '';
+        $this->details = isset($payload['details']) ? clearInput($payload['details']) : '';
+        $this->icon = isset($payload['icon']) ? clearInput($payload['icon']) : '';
+        $this->to = isset($payload['to']) ? clearInput($payload['to']) : '';
+        $this->replace = isset($payload['replace']) && (bool)$payload['replace'];
     }
 
     public static function sendToast(array $payload): static
@@ -74,13 +78,34 @@ class Notification
         return $instance;
     }
 
+    public static function sendRedirect(string $to, bool $replace = false): static
+    {
+        $instance = new static( NotificationCategory::Redirect, [
+            'to' => $to,
+            'replace' => $replace,
+        ]);
+        Router::addPendingNotification($instance);
+        return $instance;
+    }
+
     public function toArray(): array
     {
         $payload = [];
-        if ($this->text !== '') $payload['text'] = $this->text;
-        if ($this->details !== '') $payload['details'] = $this->details;
-        if ($this->class !== '') $payload['class'] = $this->class;
-        if ($this->icon !== '') $payload['icon'] = $this->icon;
+
+        switch ($this->category) {
+            case NotificationCategory::Toast:
+                if ($this->text !== '') $payload['text'] = $this->text;
+                if ($this->details !== '') $payload['details'] = $this->details;
+                if ($this->class !== '') $payload['class'] = $this->class;
+                if ($this->icon !== '') $payload['icon'] = $this->icon;
+                break;
+
+            case NotificationCategory::Redirect:
+                if ($this->to !== '') $payload['to'] = $this->to;
+                $payload['replace'] = $this->replace;
+                break;
+        }
+
         return [
             'category' => $this->category->value,
             'payload' => $payload,

@@ -4,6 +4,7 @@ namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktMenu;
 use Lkt\Menus\Enums\MenuEntryType;
+use Lkt\WebItems\Enums\WebItemAdminMenuRegister;
 use Lkt\WebItems\WebItem;
 
 class LktMenu extends GeneratedLktMenu
@@ -55,6 +56,7 @@ class LktMenu extends GeneratedLktMenu
 
         if ($this->includeAvailableAdminRoutes() && ($user->isAdministrator() || $user->hasAdminAccess())) {
             foreach (WebItem::getAll() as $webItem) {
+                if ($webItem->includeInAdminMenu === WebItemAdminMenuRegister::Never) continue;
                 if (in_array($webItem->publicComponentName, $nativeIncludedAdminWebItems)) continue;
                 if (!$user->hasAdminPermission($webItem->component, 'ls')) continue;
 

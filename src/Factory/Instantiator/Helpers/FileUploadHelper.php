@@ -28,10 +28,10 @@ class FileUploadHelper
         }
 
         // Simple validation (max file size and allowed mime types)
-        $validator = new \FileUpload\Validator\Simple($field->getMaxFileSize(), $field->getSupportedFormats());
+        $validator = new \Lkt\FileUpload\Validator\Simple($field->getMaxFileSize(), $field->getSupportedFormats());
 
         // Simple path resolver, where uploads will be put
-        $pathResolver = new \FileUpload\PathResolver\Simple($storePath);
+        $pathResolver = new \Lkt\FileUpload\PathResolver\Simple($storePath);
 
         // The machine's filesystem
         $filesystem = new Simple();

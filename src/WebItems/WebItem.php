@@ -3,6 +3,7 @@
 namespace Lkt\WebItems;
 
 use Lkt\WebItems\Enums\WebItemAction;
+use Lkt\WebItems\Enums\WebItemAdminMenuRegister;
 
 class WebItem
 {
@@ -21,6 +22,7 @@ class WebItem
     public function __construct(
         readonly public string $component,
         readonly public string|null $publicComponentName = null,
+        readonly public WebItemAdminMenuRegister $includeInAdminMenu = WebItemAdminMenuRegister::Never,
     )
     {}
 
@@ -70,9 +72,9 @@ class WebItem
         return $this->enabledAdminActions;
     }
 
-    public static function define(string $component, string|null $publicComponentName = null): static
+    public static function define(string $component, string|null $publicComponentName = null, WebItemAdminMenuRegister $includeInAdminMenu): static
     {
-        return new static($component, $publicComponentName);
+        return new static($component, $publicComponentName, $includeInAdminMenu);
     }
 
     public static function register(self $webItem): void
@@ -80,9 +82,9 @@ class WebItem
         static::$WEB_ITEMS[$webItem->component] = $webItem;
     }
 
-    public static function defineAndRegister(string $component, string|null $publicComponentName = null): static
+    public static function defineAndRegister(string $component, string|null $publicComponentName = null, WebItemAdminMenuRegister $includeInAdminMenu): static
     {
-        $ins = static::define($component, $publicComponentName);
+        $ins = static::define($component, $publicComponentName, $includeInAdminMenu);
         static::register($ins);
         return $ins;
     }
@@ -103,6 +105,9 @@ class WebItem
         return null;
     }
 
+    /**
+     * @return WebItem[]
+     */
     public static function getAll(): array
     {
         return static::$WEB_ITEMS;

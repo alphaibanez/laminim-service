@@ -65,7 +65,7 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword('');
 
-        if ($user) $r->setUserId($user->getId());
+        if ($user) $r->setUserId($user->getId())->setUserStatus($user->getStatus());
 
         return $r->save();
     }
@@ -88,7 +88,7 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword('');
 
-        if ($user) $r->setUserId($user->getId());
+        if ($user) $r->setUserId($user->getId())->setUserStatus($user->getStatus());
 
         return $r->save();
     }
@@ -111,7 +111,7 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword('');
 
-        if ($user) $r->setUserId($user->getId());
+        if ($user) $r->setUserId($user->getId())->setUserStatus($user->getStatus());
 
         return $r->save();
     }

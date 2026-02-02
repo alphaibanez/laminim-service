@@ -47,7 +47,7 @@ class Request
             return;
         }
 
-        if ($this->accessLevel === AccessLevel::OnlyAdminUsers && count($this->loggedUser?->getAdminRolesData()) === 0) {
+        if ($this->accessLevel === AccessLevel::OnlyAdminUsers && !$this->loggedUser?->hasAdminAccess()) {
             $this->hasValidAccess = false;
             return;
         }

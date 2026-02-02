@@ -161,6 +161,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public function hasAdminPermission(string $component, string $permission, AbstractInstance|null $instance = null): bool
     {
+        if ($this->isAdministrator()) return true;
         if (!$this->hasAdminAccess()) return false;
         foreach ($this->getAdminRolesData() as $role) {
             if ($role->hasPermission($component, $permission, $instance, true)) return true;

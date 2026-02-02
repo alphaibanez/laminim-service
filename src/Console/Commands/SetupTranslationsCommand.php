@@ -350,10 +350,6 @@ class SetupTranslationsCommand extends Command
             'es' => 'Programada',
             'en' => 'Scheduled',
         ], $parentId);
-        LktTranslation::createIfMissing('4', TranslationType::Text, [
-            'es' => 'Confidencial',
-            'en' => 'Confidential',
-        ], $parentId);
 
 
         $parent = LktTranslation::createIfMissing('webElement', TranslationType::Many, []);
@@ -587,6 +583,121 @@ class SetupTranslationsCommand extends Command
         LktTranslation::createIfMissing('parallax', TranslationType::Text, [
             'es' => 'Fondo paralelo',
             'en' => 'Parallax background',
+        ], $parentId);
+
+        $parent = LktTranslation::createIfMissing('months', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Enero',
+            'en' => 'January',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Febrero',
+            'en' => 'February',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Marzo',
+            'en' => 'March',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Abril',
+            'en' => 'April',
+        ], $parentId);
+        LktTranslation::createIfMissing('5', TranslationType::Text, [
+            'es' => 'Mayo',
+            'en' => 'May',
+        ], $parentId);
+        LktTranslation::createIfMissing('6', TranslationType::Text, [
+            'es' => 'Junio',
+            'en' => 'June',
+        ], $parentId);
+        LktTranslation::createIfMissing('7', TranslationType::Text, [
+            'es' => 'Julio',
+            'en' => 'July',
+        ], $parentId);
+        LktTranslation::createIfMissing('8', TranslationType::Text, [
+            'es' => 'Agosto',
+            'en' => 'August',
+        ], $parentId);
+        LktTranslation::createIfMissing('9', TranslationType::Text, [
+            'es' => 'Septiembre',
+            'en' => 'September',
+        ], $parentId);
+        LktTranslation::createIfMissing('10', TranslationType::Text, [
+            'es' => 'Octubre',
+            'en' => 'October',
+        ], $parentId);
+        LktTranslation::createIfMissing('11', TranslationType::Text, [
+            'es' => 'Noviembre',
+            'en' => 'November',
+        ], $parentId);
+        LktTranslation::createIfMissing('12', TranslationType::Text, [
+            'es' => 'Diciembre',
+            'en' => 'December',
+        ], $parentId);
+
+
+        $parent = LktTranslation::createIfMissing('dayOfWeek', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Lunes',
+            'en' => 'Monday',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Martes',
+            'en' => 'Tuesday',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Miércoles',
+            'en' => 'Wednesday',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Jueves',
+            'en' => 'Thursday',
+        ], $parentId);
+        LktTranslation::createIfMissing('5', TranslationType::Text, [
+            'es' => 'Viernes',
+            'en' => 'Friday',
+        ], $parentId);
+        LktTranslation::createIfMissing('6', TranslationType::Text, [
+            'es' => 'Sábado',
+            'en' => 'Saturday',
+        ], $parentId);
+        LktTranslation::createIfMissing('7', TranslationType::Text, [
+            'es' => 'Domingo',
+            'en' => 'Sunday',
+        ], $parentId);
+
+
+        $parent = LktTranslation::createIfMissing('dayOfWeekAbbr', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Lu',
+            'en' => 'Mo',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Ma',
+            'en' => 'Tu',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Mi',
+            'en' => 'We',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Ju',
+            'en' => 'Th',
+        ], $parentId);
+        LktTranslation::createIfMissing('5', TranslationType::Text, [
+            'es' => 'Vi',
+            'en' => 'Fr',
+        ], $parentId);
+        LktTranslation::createIfMissing('6', TranslationType::Text, [
+            'es' => 'Sa',
+            'en' => 'Sa',
+        ], $parentId);
+        LktTranslation::createIfMissing('7', TranslationType::Text, [
+            'es' => 'Do',
+            'en' => 'Su',
         ], $parentId);
 
         return 1;

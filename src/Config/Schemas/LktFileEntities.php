@@ -7,7 +7,7 @@ use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IdField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
+use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -45,7 +45,7 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
         )
-        ->addField(StringChoiceField::choice(FileEntityType::Types, 'type'))
+        ->addField(IntegerChoiceField::enumChoice(FileEntityType::class, 'type'))
         ->addField(
             FileField::define('src')
                 ->setStorePath([LktFileEntity::class, 'getSchemaStorePath'])

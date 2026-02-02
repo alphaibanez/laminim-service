@@ -37,7 +37,7 @@ class LKtFileEntities20250414175300 extends AbstractMigration
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
             ->addColumn('created_by', 'integer', ['default' => 0])
 
-            ->addColumn('type', 'string', ['limit' => 10])
+            ->addColumn('type', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0])
             ->addColumn('src', 'string', ['limit' => 250])
             ->addColumn('name', 'json')
 

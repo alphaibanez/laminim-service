@@ -2,19 +2,11 @@
 
 namespace Lkt\FileBrowser\Enums;
 
-class FileEntityType
+enum FileEntityType: int
 {
-    const StorageUnit = 'unit';
-    const Directory = 'dir';
-    const Image = 'img';
-    const Video = 'vid';
-    const File = 'file';
-
-    const Types = [
-        self::StorageUnit,
-        self::Directory,
-        self::Image,
-        self::Video,
-        self::File,
-    ];
+    case StorageUnit = 0;
+    case Directory = 1;
+    case Image = 2;
+    case Video = 3;
+    case File = 4;
 }

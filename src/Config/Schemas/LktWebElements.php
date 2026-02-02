@@ -12,44 +12,45 @@ use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktWebElement;
 
-return Schema::table('lkt_web_elements', LktWebElement::COMPONENT)
-    ->setInstanceSettings(
-        InstanceSettings::define(LktWebElement::class)
-            ->setNamespaceForGeneratedClass('Lkt\Generated')
-            ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-    )
-    ->setItemsPerPage(20)
-    ->setCountableField('id')
-    ->setRelatedAccessPolicy([
-        'id' => 'value',
-        'component' => 'label',
-        'id',
-        'component',
-        'type',
-        'props',
-        'config',
-        'layout',
-        'children',
-        'subElements',
-    ])
-    ->addField(IdField::define('id'))
-    ->addField(
-        DateTimeField::define('createdAt', 'created_at')
-            ->setDefaultReadFormat('Y-m-d')
-            ->setCurrentTimeStampAsDefaultValue()
-    )
-    ->addField(
-        DateTimeField::define('updatedAt', 'updated_at')
-            ->setDefaultReadFormat('Y-m-d')
-            ->setCurrentTimeStampAsDefaultValue()
-    )
-    ->addField(IntegerField::define('type'))
-    ->addField(StringField::define('component'))
-    ->addField(AssocJSONField::define('props'))
-    ->addField(AssocJSONField::define('config'))
-    ->addField(AssocJSONField::define('layout'))
-    ->addField(AssocJSONField::define('subElements', 'sub_elements'))
-    ->addField(
-        ForeignKeysField::defineRelation(LktWebElement::COMPONENT, 'children')
-    )
-    ;
+Schema::add(
+    Schema::table('lkt_web_elements', LktWebElement::COMPONENT)
+        ->setInstanceSettings(
+            InstanceSettings::define(LktWebElement::class)
+                ->setNamespaceForGeneratedClass('Lkt\Generated')
+                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
+        )
+        ->setItemsPerPage(20)
+        ->setCountableField('id')
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+            'component' => 'label',
+            'id',
+            'component',
+            'type',
+            'props',
+            'config',
+            'layout',
+            'children',
+            'subElements',
+        ])
+        ->addField(IdField::define('id'))
+        ->addField(
+            DateTimeField::define('createdAt', 'created_at')
+                ->setDefaultReadFormat('Y-m-d')
+                ->setCurrentTimeStampAsDefaultValue()
+        )
+        ->addField(
+            DateTimeField::define('updatedAt', 'updated_at')
+                ->setDefaultReadFormat('Y-m-d')
+                ->setCurrentTimeStampAsDefaultValue()
+        )
+        ->addField(IntegerField::define('type'))
+        ->addField(StringField::define('component'))
+        ->addField(AssocJSONField::define('props'))
+        ->addField(AssocJSONField::define('config'))
+        ->addField(AssocJSONField::define('layout'))
+        ->addField(AssocJSONField::define('subElements', 'sub_elements'))
+        ->addField(
+            ForeignKeysField::defineRelation(LktWebElement::COMPONENT, 'children')
+        )
+);

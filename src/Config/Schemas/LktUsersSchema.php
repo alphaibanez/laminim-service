@@ -38,17 +38,17 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
         )
-        ->addField(IntegerChoiceField::enumChoice(UserStatus::class,'status')->setDefaultValue(UserStatus::Active->value))
+        ->addField(IntegerChoiceField::enumChoice(UserStatus::class, 'status')->setDefaultValue(UserStatus::Active->value))
         ->addField(StringField::define('firstName', 'firstname'))
         ->addField(StringField::define('lastName', 'lastname'))
         ->addField(ConcatField::concat('fullName', ['firstName', 'lastName'], ' '))
         ->addField(ConcatField::concat('name', ['firstName', 'lastName'], ' '))
         ->addField(EmailField::define('email'))
         ->addField(StringField::define('password'))
-        ->addField(StringField::define('preferredLanguage', 'preferred_language')->setDefaultValue(function (){
+        ->addField(StringField::define('preferredLanguage', 'preferred_language')->setDefaultValue(function () {
             return trim(Locale::getLangCode());
         }))
-        ->addField(IntegerChoiceField::enumChoice(ThemeMode::class,'preferredThemeMode', 'preferred_theme_mode'))
+        ->addField(IntegerChoiceField::enumChoice(ThemeMode::class, 'preferredThemeMode', 'preferred_theme_mode'))
         ->addField(StringField::define('credentialIdentifier', 'credential_id'))
         ->addField(ForeignKeysField::defineRelation(LktUserRole::COMPONENT, 'appRoles', 'app_roles'))
         ->addField(ForeignKeysField::defineRelation(LktUserRole::COMPONENT, 'adminRoles', 'admin_roles'))

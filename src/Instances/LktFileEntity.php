@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use Lkt\Factory\Schemas\Schema;
+use Lkt\FileBrowser\Enums\FileEntityType;
 use Lkt\Generated\GeneratedLktFileEntity;
 use Lkt\Http\Response;
 use Lkt\MIME;
@@ -22,7 +23,7 @@ class LktFileEntity extends GeneratedLktFileEntity
 
     public function doCreate(array $data): static
     {
-        LktFileEntity::feedInstance($this, $data, 'create');
+        LktFileEntity::feedInstance($this, $data);
         $this->save();
 
         if ($data['parent']) {
@@ -35,7 +36,7 @@ class LktFileEntity extends GeneratedLktFileEntity
 
     public function doUpdate(array $data): static
     {
-        LktFileEntity::feedInstance($this, $data, 'update');
+        LktFileEntity::feedInstance($this, $data);
         return $this->save();
     }
 
@@ -68,7 +69,7 @@ class LktFileEntity extends GeneratedLktFileEntity
     public static function getSchemaPublicPath(LktFileEntity|null $instance = null): string
     {
         if ($instance instanceof LktFileEntity) {
-            if ($instance->typeIsUnit() || $instance->typeIsDir()) return '';
+            if ($instance->getType() === FileEntityType::StorageUnit->value || $instance->getType() === FileEntityType::Directory->value) return '';
         }
 
         if (is_callable(static::$schemaPublicPath)) {

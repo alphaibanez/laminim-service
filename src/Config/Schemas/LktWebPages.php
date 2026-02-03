@@ -4,6 +4,7 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
+use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
@@ -11,6 +12,7 @@ use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Instances\LktUser;
 use Lkt\Instances\LktWebElement;
 use Lkt\Instances\LktWebPage;
 use Lkt\WebPages\Enums\WebPageStatus;
@@ -52,6 +54,7 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
         )
+        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(IntegerChoiceField::enumChoice(WebPageStatus::class, 'status'))
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(StringField::define('summary')->setIsI18nJson())

@@ -30,6 +30,7 @@ Schema::add(
             'type',
             'config',
             'src',
+            'embedCode',
             'name',
             'nameData',
             'children',
@@ -51,6 +52,7 @@ Schema::add(
                 ->setStorePath([LktFileEntity::class, 'getSchemaStorePath'])
                 ->setPublicPath([LktFileEntity::class, 'getSchemaPublicPath'])
         )
+        ->addField(StringField::define('embedCode', 'embed_code'))
         ->addField(AssocJSONField::define('config'))
         ->addField(
             ForeignKeysField::defineRelation(LktFileEntity::COMPONENT, 'children')

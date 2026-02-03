@@ -9,4 +9,5 @@ enum FileEntityType: int
     case Image = 2;
     case Video = 3;
     case File = 4;
+    case IframeVideo = 5;
 }

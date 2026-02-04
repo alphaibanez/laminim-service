@@ -30,7 +30,7 @@ GetRoute::register('/api/r-{id:\d+}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])
-    ->setGrantedPermsAttempt(['up' => 'update', 'rm' => 'drop'])
+    ->setGrantedPermsAttempt(['up' => ['update', 'switch-edit-mode'], 'rm' => 'drop'])
     ->setTargetAccessPolicy('admin')
 ;
 

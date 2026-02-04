@@ -64,4 +64,14 @@ Schema::add(
             'to',
             'name' => 'text',
         ])
+        ->addAccessPolicy('admin', [
+            'id',
+            'nameData',
+            'includeAvailableAdminRoutes',
+            'url',
+            'type',
+            'component',
+            'accessLevel',
+            'itemId',
+        ])
 );

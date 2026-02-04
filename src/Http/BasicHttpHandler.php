@@ -63,10 +63,16 @@ class BasicHttpHandler
 
         $perm = array_unique($perm);
 
-        return Response::ok([
+        $r = [
             'item' => $request->targetInstance->autoRead(),
             'perm' => $perm,
-        ]);
+        ];
+
+        if ($request->targetWebItem) {
+            $r['component'] = $request->targetWebItem->publicComponentName;
+        }
+
+        return Response::ok($r);
     }
 
     public static function mk(Request $request): Response
@@ -170,6 +176,12 @@ class BasicHttpHandler
 
     public static function pg(Request $request): Response
     {
+        if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
+            $capability = $request->loggedUser->getAdminCapability($request->targetComponent, 'ls');
+        } else {
+            $capability = $request->loggedUser?->getAppCapability($request->targetComponent, 'ls');
+        }
+
         $accessPolicy = $request->targetAccessPolicy;
         if ($request->targetWebItem) {
             if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
@@ -184,9 +196,14 @@ class BasicHttpHandler
                 }
             }
             else {
-                if (!in_array(WebItemAction::Page, $request->targetWebItem->getEnabledAppActions())) {
+                $enabledActions = $request->loggedUser ? $request->targetWebItem->getEnabledAppActions() :  $request->targetWebItem->getEnabledPublicActions();
+                if (!in_array(WebItemAction::Page, $enabledActions)) {
                     if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::NotEnoughPerms, $request->httpEventHandlers, []);
                     return Response::badRequest();
+                }
+
+                if (!$request->loggedUser && !$capability) {
+                    $capability = RoleCapability::Disabled;
                 }
 
                 if (!$accessPolicy) {
@@ -202,18 +219,14 @@ class BasicHttpHandler
         $helperInstance = $schema->getItemInstance();
         $builder = $helperInstance::getQueryCaller();
 
-        if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
-            $capability = $request->loggedUser->getAdminCapability($request->targetComponent, 'ls');
-        } else {
-            $capability = $request->loggedUser->getAppCapability($request->targetComponent, 'ls');
-        }
-
         if ($capability && $capability === RoleCapability::Owned) {
             $ownershipField = $schema->getOwnershipField();
             if ($ownershipField) {
                 $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getId());
             }
         }
+
+        //@todo: check if is anonymous, get access level field from schema and filter not allowed results from query
 
         $hooks = $schema->getWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder);
         foreach ($hooks as $hook) {

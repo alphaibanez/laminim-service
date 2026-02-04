@@ -2,12 +2,37 @@
 namespace Lkt;
 
 use Lkt\FileBrowser\Http\FileBrowserHttp;
+use Lkt\Http\BasicHttpHandler;
 use Lkt\Http\Routes\DeleteRoute;
 use Lkt\Http\Routes\GetRoute;
 use Lkt\Http\Routes\PostRoute;
 use Lkt\Http\Routes\PutRoute;
 use Lkt\WebPages\Http\LktWebElementHttp;
 use Lkt\WebPages\Http\LktWebPageHttp;
+
+/**
+ * Setup admin web items routes
+ */
+GetRoute::register('/api/ls/{component}', BasicHttpHandler::List)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setRequiredPermissions(['ls'])
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+;
+
+GetRoute::register('/api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setPageValueParamsExtractionKey('page')
+    ->setRequiredPermissions(['ls'])
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+;
+
+GetRoute::register('/api/r-{id:\d+}/{component}', BasicHttpHandler::Read)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('id')
+    ->setRequiredPermissions(['r'])
+    ->setGrantedPermsAttempt(['up' => 'update', 'rm' => 'drop'])
+    ->setTargetAccessPolicy('admin')
+;
 
 /**
  * Web Elements Routes

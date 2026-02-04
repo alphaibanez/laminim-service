@@ -56,4 +56,10 @@ Schema::add(
         )
         ->addAccessPolicy('write', ['nameData', 'includeAvailableAdminRoutes'])
         ->addAccessPolicy('r-app-menu', ['navigableEntries' => 'entries'])
+        ->addAccessPolicy('admin', [
+            'id',
+            'nameData',
+            'includeAvailableAdminRoutes',
+            'entries',
+        ])
 );

@@ -10,6 +10,9 @@ class WebItem
     protected static array $WEB_ITEMS = [];
 
     /** @var WebItemAction[] */
+    protected array $enabledPublicActions = [];
+
+    /** @var WebItemAction[] */
     protected array $enabledAppActions = [];
 
     /** @var WebItemAction[] */
@@ -49,6 +52,13 @@ class WebItem
     }
 
     /** @param WebItemAction[] $actions */
+    public function setEnabledPublicActions(array $actions): static
+    {
+        $this->enabledPublicActions = $actions;
+        return $this;
+    }
+
+    /** @param WebItemAction[] $actions */
     public function setEnabledAppActions(array $actions): static
     {
         $this->enabledAppActions = $actions;
@@ -60,6 +70,11 @@ class WebItem
     {
         $this->enabledAdminActions = $actions;
         return $this;
+    }
+
+    public function getEnabledPublicActions(): array
+    {
+        return $this->enabledPublicActions;
     }
 
     public function getEnabledAppActions(): array

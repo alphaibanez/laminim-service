@@ -54,7 +54,7 @@ class LktMenu extends GeneratedLktMenu
             $r[] = $entry->setAccessPolicy('r-app-menu')->autoRead();
         }
 
-        if ($this->includeAvailableAdminRoutes() && ($user->isAdministrator() || $user->hasAdminAccess())) {
+        if ($this->includeAvailableAdminRoutes() && is_object($user) && ($user->isAdministrator() || $user->hasAdminAccess())) {
             foreach (WebItem::getAll() as $webItem) {
                 if ($webItem->includeInAdminMenu === WebItemAdminMenuRegister::Never) continue;
                 if (in_array($webItem->publicComponentName, $nativeIncludedAdminWebItems)) continue;

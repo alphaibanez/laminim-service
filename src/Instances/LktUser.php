@@ -5,6 +5,7 @@ namespace Lkt\Instances;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Generated\GeneratedLktUser;
 use Lkt\Generated\LktUserQueryBuilder;
+use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Router;
 use Lkt\Locale\Locale;
@@ -192,9 +193,28 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         return null;
     }
 
-    public function attemptToGrantPermissions(AccessLevel $accessLevel, string $component, array $permissions, AbstractInstance|null $instance = null): array
+    public function attemptToGrantPermissions(AccessLevel $accessLevel, string $component, GrantedPermsAttempt $grantedPermsAttempt, AbstractInstance|null $instance = null): array
     {
         $r = [];
+
+        switch ($grantedPermsAttempt->type) {
+            case 'simple':
+                $permissions = $grantedPermsAttempt->publicPerms;
+                break;
+
+            case 'per-access-level':
+                if ($accessLevel === AccessLevel::OnlyAdminUsers) {
+                    $permissions = $grantedPermsAttempt->adminPerms;
+
+                } else if ($accessLevel === AccessLevel::OnlyLoggedUsers) {
+                    $permissions = $grantedPermsAttempt->loggedPerms;
+
+                } else {
+                    $permissions = $grantedPermsAttempt->publicPerms;
+                }
+                break;
+
+        }
 
         // Test perms which must be tested before granted
         foreach ($permissions as $i => $grantedPerm) {

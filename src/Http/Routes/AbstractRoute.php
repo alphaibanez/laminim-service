@@ -2,6 +2,8 @@
 
 namespace Lkt\Http\Routes;
 
+use Lkt\Http\DTO\GrantedPermsAttempt;
+use Lkt\Http\DTO\TargetAccessPolicy;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Enums\RouteMethod;
 use Lkt\Http\Enums\SiteMapChangeFrequency;
@@ -21,13 +23,14 @@ abstract class AbstractRoute
 
     protected string $targetComponent = '';
     protected bool $targetIsLoggedUser = false;
-    protected string $targetAccessPolicy = '';
+    protected TargetAccessPolicy $targetAccessPolicy;
     protected string $extractIdColumnValueFromParamsKey = '';
     protected string $extractPageFromParamsKey = '';
     protected string $extractWebItemFromParamsKey = '';
+    protected string $extractPayloadFromParamsKey = '';
     protected bool $anonymousTarget = false;
 
-    protected array $attemptToGrantPerms = [];
+    protected GrantedPermsAttempt $attemptToGrantPerms;
 
     protected $loggedUserChecker = null;
 
@@ -41,6 +44,8 @@ abstract class AbstractRoute
     {
         $this->route = $route;
         $this->handler = $handler;
+        $this->attemptToGrantPerms = GrantedPermsAttempt::simple([]);
+        $this->targetAccessPolicy = TargetAccessPolicy::simple('');
     }
 
     public function addHttpEventHandler(HttpEventHandler $eventHandler): static
@@ -101,14 +106,16 @@ abstract class AbstractRoute
         return $this;
     }
 
-    public function setTargetAccessPolicy(string $accessPolicy): static
+    public function setTargetAccessPolicy(string|TargetAccessPolicy $accessPolicy): static
     {
+        if (is_string($accessPolicy)) $accessPolicy = TargetAccessPolicy::simple($accessPolicy);
         $this->targetAccessPolicy = $accessPolicy;
         return $this;
     }
 
-    public function setGrantedPermsAttempt(array $perms): static
+    public function setGrantedPermsAttempt(array|GrantedPermsAttempt $perms): static
     {
+        if (is_array($perms)) $perms = GrantedPermsAttempt::simple($perms);
         $this->attemptToGrantPerms = $perms;
         return $this;
     }
@@ -140,12 +147,12 @@ abstract class AbstractRoute
         return $this->targetComponent;
     }
 
-    public function getTargetAccessPolicy(): string
+    public function getTargetAccessPolicy(): TargetAccessPolicy
     {
         return $this->targetAccessPolicy;
     }
 
-    public function getGrantedPermsAttempt(): array
+    public function getGrantedPermsAttempt(): GrantedPermsAttempt
     {
         return $this->attemptToGrantPerms;
     }
@@ -177,6 +184,17 @@ abstract class AbstractRoute
     {
         $this->extractWebItemFromParamsKey = $column;
         return $this;
+    }
+
+    public function setPayloadValueParamsExtractionKey(string $column): static
+    {
+        $this->extractPayloadFromParamsKey = $column;
+        return $this;
+    }
+
+    public function getPayloadValueParamsExtractionKey(): string
+    {
+        return $this->extractPayloadFromParamsKey;
     }
 
     public function getIdColumnValueParamsExtractionKey(): string

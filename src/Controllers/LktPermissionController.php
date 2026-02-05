@@ -7,6 +7,7 @@ use Lkt\Users\Enums\RoleCapability;
 class LktPermissionController
 {
     protected static $permissionsManagement = [];
+    protected static $ensuredPublicPermissions = [];
     protected static $ensuredAppPermissions = [];
     protected static $ensuredAdminPermissions = [];
 
@@ -39,6 +40,17 @@ class LktPermissionController
         }
     }
 
+    public static function ensurePublicPermission(string $component, string|array $permission, RoleCapability $capability = RoleCapability::Owned): void
+    {
+        if (!is_array($permission)) $permission = [$permission];
+        if (!is_array(static::$ensuredPublicPermissions[$component])) static::$ensuredPublicPermissions[$component] = [];
+        foreach ($permission as $perm) {
+            if (!array_key_exists($perm, static::$ensuredPublicPermissions[$component])) {
+                static::$ensuredPublicPermissions[$component][$perm] = $capability;
+            }
+        }
+    }
+
     public static function ensureAdminPermission(string $component, string $permission, RoleCapability $capability = RoleCapability::Owned): void
     {
         if (!is_array(static::$ensuredAdminPermissions[$component])) static::$ensuredAdminPermissions[$component] = [];
@@ -64,5 +76,12 @@ class LktPermissionController
         if (!isset(static::$ensuredAdminPermissions[$component])) return null;
         if (!isset(static::$ensuredAdminPermissions[$component][$permission])) return null;
         return static::$ensuredAdminPermissions[$component][$permission];
+    }
+
+    public static function getEnsuredPublicPermission(string $component, string $permission): null|RoleCapability
+    {
+        if (!isset(static::$ensuredPublicPermissions[$component])) return null;
+        if (!isset(static::$ensuredPublicPermissions[$component][$permission])) return null;
+        return static::$ensuredPublicPermissions[$component][$permission];
     }
 }

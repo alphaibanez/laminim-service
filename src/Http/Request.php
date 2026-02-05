@@ -4,17 +4,22 @@ namespace Lkt\Http;
 
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Http\DTO\GrantedPermsAttempt;
+use Lkt\Http\DTO\TargetAccessPolicy;
 use Lkt\Http\Enums\AccessLevel;
+use Lkt\Http\Enums\HttpEvent;
 use Lkt\Http\Routes\AbstractRoute;
 use Lkt\Users\Interfaces\SessionUserInterface;
+use Lkt\WebItems\Enums\WebItemAction;
 use \Lkt\WebItems\WebItem;
+use function Lkt\Tools\Arrays\digArray;
 
 class Request
 {
     readonly public AccessLevel $accessLevel;
     readonly public string $targetComponent;
-    readonly public string $targetAccessPolicy;
-    readonly public array $attemptToGrantPerms;
+    readonly public TargetAccessPolicy $targetAccessPolicy;
+    readonly public GrantedPermsAttempt $attemptToGrantPerms;
     readonly public string $extractedTargetInstanceIdFromParamsKey;
     readonly public WebItem|null $targetWebItem;
     readonly public AbstractInstance|null $targetInstance;
@@ -25,6 +30,7 @@ class Request
 
     readonly public bool $hasValidAccess;
     readonly public int $page;
+    readonly public array $payload;
 
 
     public function __construct(
@@ -58,6 +64,11 @@ class Request
         $extractPageKey = $route->getPageValueParamsExtractionKey();
         if ($extractPageKey) $this->page = (int)$this->params[$extractPageKey];
 
+        $payload = digArray($this->params, $route->getPayloadValueParamsExtractionKey());
+        if (!$payload) $payload = [];
+        if (!is_array($payload)) $payload = [$payload];
+        $this->payload = $payload;
+
         // Access Level: Component
         $extractWebItemKey = $route->getWebItemValueParamsExtractionKey();
         if ($extractWebItemKey) {
@@ -83,7 +94,8 @@ class Request
 
             if ($this->targetComponent && $extractIdKey) {
                 $schema = Schema::get($this->targetComponent);
-                $instance = $schema->getItemInstance((int)$this->params[$extractIdKey]);
+                $idValue = (int)digArray($this->params, $extractIdKey);
+                $instance = $schema->getItemInstance($idValue);
 
                 $this->extractedTargetInstanceIdFromParamsKey = $extractIdKey;
                 $targetInstance = $instance;
@@ -127,6 +139,54 @@ class Request
         }
 
         $this->hasValidAccess = true;
+    }
+
+    public function getTargetAccessPolicy(WebItemAction $webItemAction): string|Response
+    {
+        $accessPolicy = '';
+
+        switch ($this->targetAccessPolicy->type) {
+            case 'simple':
+                $accessPolicy = $this->targetAccessPolicy->public;
+                break;
+
+            case 'per-access-level':
+                if ($this->accessLevel === AccessLevel::OnlyAdminUsers) {
+                    $accessPolicy = $this->targetAccessPolicy->admin;
+                } else if ($this->accessLevel === AccessLevel::OnlyLoggedUsers) {
+                    $accessPolicy = $this->targetAccessPolicy->logged;
+                } else {
+                    $accessPolicy = $this->targetAccessPolicy->public;
+                }
+                break;
+        }
+
+        if ($this->targetWebItem) {
+            if ($this->accessLevel === AccessLevel::OnlyAdminUsers) {
+                if (!in_array($webItemAction, $this->targetWebItem->getEnabledAdminActions())) {
+                    if ($this->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::NotEnoughPerms, $this->httpEventHandlers, []);
+                    return Response::badRequest();
+                }
+
+                if (!$accessPolicy) {
+                    $defaultAccessPolicy = $this->targetWebItem->getAdminActionAccessPolicy($webItemAction);
+                    if ($defaultAccessPolicy) $accessPolicy = $defaultAccessPolicy;
+                }
+            }
+            else {
+                if (!in_array($webItemAction, $this->targetWebItem->getEnabledAppActions())) {
+                    if ($this->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::NotEnoughPerms, $this->httpEventHandlers, []);
+                    return Response::badRequest();
+                }
+
+                if (!$accessPolicy) {
+                    $defaultAccessPolicy = $this->targetWebItem->getAppActionAccessPolicy($webItemAction);
+                    if ($defaultAccessPolicy) $accessPolicy = $defaultAccessPolicy;
+                }
+            }
+        }
+
+        return $accessPolicy;
     }
 
     public static function getCurrent(): static|null

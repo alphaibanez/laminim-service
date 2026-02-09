@@ -1018,6 +1018,16 @@ abstract class AbstractInstance
                 elseif (is_numeric($value)) {
                     $setter = '_setIntegerVal';
                     $methodCallData = ['fieldName' => $field->getName(), 'value' => (int)$value];
+                } elseif (is_array($value)) {
+                    $relatedSchema = Schema::get($field->getComponent());
+                    $relatedIdFields = $relatedSchema->getIdentifiers();
+                    if (count($relatedIdFields) === 1) {
+                        $relatedId = (int)$value[$relatedIdFields[0]->getName()];
+                        if ($relatedId > 0) {
+                            $setter = '_setIntegerVal';
+                            $methodCallData = ['fieldName' => $field->getName(), 'value' => $relatedId];
+                        }
+                    }
                 } else {
                     continue;
                 }

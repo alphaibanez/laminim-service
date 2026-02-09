@@ -85,4 +85,5 @@ DeleteRoute::register('/web/page/{id:\d+}', [LktWebPageHttp::class, 'drop']);
 GetRoute::register('/file-browser', [FileBrowserHttp::class, 'fileBrowser']);
 PostRoute::register('/file-browser/entity', [FileBrowserHttp::class, 'createFileEntity']);
 PutRoute::register('/file-browser/entity/{id}', [FileBrowserHttp::class, 'updateFileEntity']);
+GetRoute::register('/file-browser/entity/{id}', [FileBrowserHttp::class, 'readFileEntity']);
 GetRoute::register('/file-browser/entity/file/{id}', [FileBrowserHttp::class, 'openFile']);

@@ -3,6 +3,7 @@
 namespace Lkt\Http;
 
 use Lkt\Http\Enums\NotificationCategory;
+use Lkt\Http\Enums\ToastPosition;
 use function Lkt\Tools\Parse\clearInput;
 
 class Notification
@@ -19,6 +20,7 @@ class Notification
 
     readonly public string $text;
     readonly public string $details;
+    readonly public ToastPosition|null $toastPosition;
     readonly public string $class;
 
     readonly public string $to;
@@ -40,6 +42,13 @@ class Notification
         $this->replace = isset($payload['replace']) && (bool)$payload['replace'];
         $this->syncAppSetup = isset($payload['syncAppSetup']) && (bool)$payload['syncAppSetup'];
         $this->syncAppI18n = isset($payload['syncAppI18n']) && (bool)$payload['syncAppI18n'];
+
+        if ($payload['position'] instanceof ToastPosition) {
+            $toastPosition = $payload['position'];
+        } else {
+            $toastPosition = ToastPosition::tryFrom((int)$payload['position']) ?? ToastPosition::BottomCenter;
+        }
+        $this->toastPosition = $toastPosition;
     }
 
     public static function sendToast(array $payload): static
@@ -112,6 +121,7 @@ class Notification
                 if ($this->details !== '') $payload['details'] = $this->details;
                 if ($this->class !== '') $payload['class'] = $this->class;
                 if ($this->icon !== '') $payload['icon'] = $this->icon;
+                if ($this->toastPosition) $payload['position'] = $this->toastPosition->value;
                 break;
 
             case NotificationCategory::Redirect:

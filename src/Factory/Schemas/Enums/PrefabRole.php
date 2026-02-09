@@ -8,4 +8,5 @@ enum PrefabRole: int
     case AccessLevel = 1;
     case VisibilityStatus = 2;
     case RelatedFileEntities = 3;
+    case RelatedFileEntity = 4;
 }

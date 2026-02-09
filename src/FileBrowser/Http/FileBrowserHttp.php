@@ -34,6 +34,15 @@ class FileBrowserHttp
         return Response::ok();
     }
 
+    public static function readFileEntity(array $params): Response
+    {
+        $entity = LktFileEntity::getInstance((int)$params['id']);
+
+        return Response::ok([
+            'item' => $entity->autoRead(),
+        ]);
+    }
+
     public static function updateFileEntity(array $params): Response
     {
         $entity = LktFileEntity::getInstance((int)$params['id']);

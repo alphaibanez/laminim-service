@@ -58,7 +58,7 @@ class LktMenu extends GeneratedLktMenu
             foreach (WebItem::getAll() as $webItem) {
                 if ($webItem->includeInAdminMenu === WebItemAdminMenuRegister::Never) continue;
                 if (in_array($webItem->publicComponentName, $nativeIncludedAdminWebItems)) continue;
-                if (!$user->hasAdminPermission($webItem->component, 'ls')) continue;
+                if (!$user->isAdministrator() && !$user->hasAdminPermission($webItem->component, 'ls')) continue;
 
                 $anonymousEntry = LktMenuEntry::getInstance()
                     ->setType(MenuEntryType::WebItems->value)

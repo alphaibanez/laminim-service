@@ -35,7 +35,7 @@ class LktMenusEntriesPivot20260107070709 extends AbstractMigration
         $exists = $this->hasTable('lkt_menus__entries');
         if ($exists) return;
 
-        $table = $this->table('lkt_menus__entries', ['collation' => 'utf8mb4_unicode_ci'])
+        $table = $this->table('lkt_menus__entries', ['id' => false, 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('menu_id', 'integer', ['default' => 0])
             ->addColumn('entry_id', 'integer', ['default' => 0])
             ->addColumn('position', 'integer', ['default' => 0])

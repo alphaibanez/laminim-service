@@ -5,14 +5,18 @@ namespace Lkt\Config\Schemas;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
+use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\PivotPositionField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileBrowser\Enums\FileEntityType;
 use Lkt\Instances\LktFileEntity;
+use Lkt\Instances\LktFileEntityChildrenPivot;
 
 Schema::add(
     Schema::table('lkt_file_entities', LktFileEntity::COMPONENT)
@@ -55,7 +59,10 @@ Schema::add(
         ->addField(StringField::define('embedCode', 'embed_code'))
         ->addField(AssocJSONField::define('config'))
         ->addField(
-            ForeignKeysField::defineRelation(LktFileEntity::COMPONENT, 'children')
+            ForeignKeyField::defineRelation(LktFileEntity::COMPONENT, 'parent', 'parent_id')
+        )
+        ->addField(
+            RelatedField::defineRelation(LktFileEntity::COMPONENT, 'children', 'parent_id')
         )
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())

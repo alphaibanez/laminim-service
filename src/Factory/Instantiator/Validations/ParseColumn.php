@@ -77,7 +77,7 @@ class ParseColumn
      * @param $value
      * @return int[]
      */
-    public static function integerArrayDatum($value): array
+    public static function integerArrayDatum($value, int|null $minValue = null): array
     {
         if (is_null($value)) return [];
         if (is_string($value)) {
@@ -87,6 +87,11 @@ class ParseColumn
         $r = [];
         foreach ($value as $item) {
             $r[] = (int)$item;
+        }
+        if ($minValue) {
+            $r = array_filter($r, function ($item) use ($minValue) {
+                return $item >= $minValue;
+            });
         }
         return $r;
     }

@@ -43,7 +43,7 @@ class LKtFileEntities20250414175300 extends AbstractMigration
             ->addColumn('embed_code', 'text', ['null' => true, 'default' => null])
 
             ->addColumn('config', 'text', ['null' => true, 'default' => null])
-            ->addColumn('children', 'text', ['null' => true, 'default' => null])
+            ->addColumn('parent_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0])
         ;
 
         $table->create();

@@ -6,7 +6,7 @@ class FieldInSubQueryConstraint extends AbstractConstraint
 {
     public function __toString(): string
     {
-        $v = addslashes(stripslashes($this->value));
+        $v = $this->value;
         return "{$this->column} IN ({$v})";
     }
 }

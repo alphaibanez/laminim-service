@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktMenuEntry;
+use Lkt\Translations\Translations;
 
 class LktMenuEntry extends GeneratedLktMenuEntry
 {
@@ -28,7 +29,9 @@ class LktMenuEntry extends GeneratedLktMenuEntry
         if ($this->accessPolicy?->name === 'r-app-menu') {
 
             if ($this->typeIsWebItems() && $this->isAnonymous() && !$this->getName()) {
-                $data['text'] = $this->getComponent();
+                $component = $this->getComponent();
+                $text = Translations::get("webItems.{$component}");
+                $data['text'] = $text ?? $this->getComponent();
             }
 
             return [

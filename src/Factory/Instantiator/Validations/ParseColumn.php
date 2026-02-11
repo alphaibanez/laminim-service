@@ -152,10 +152,24 @@ class ParseColumn
      * @param $value
      * @return array|null
      */
+    public static function i18nStringDatumToInstance($value)
+    {
+        if (is_string($value)){
+            $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+            $value = ParseColumn::HTMLDatumToInstance($value);
+            return $value;
+        }
+        return '';
+    }
+
+    /**
+     * @param $value
+     * @return array|null
+     */
     public static function JSONDatumToInstance($value)
     {
         if (is_string($value)){
-            $value = htmlspecialchars_decode($value);
+            $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
             $value = ParseColumn::HTMLDatumToInstance($value);
             return json_decode($value, true);
         }

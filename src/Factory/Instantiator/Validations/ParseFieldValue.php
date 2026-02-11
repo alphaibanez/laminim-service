@@ -4,12 +4,10 @@ namespace Lkt\Factory\Instantiator\Validations;
 
 
 use Carbon\Carbon;
-use Lkt\FileReader\File;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -19,6 +17,8 @@ use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
+use Lkt\Factory\Schemas\Fields\ValueListField;
+use Lkt\FileReader\File;
 
 class ParseFieldValue
 {
@@ -33,11 +33,18 @@ class ParseFieldValue
 
         if ($field instanceof ValueListField) return ParseColumn::HTMLDatumToInstance($value);
 
-        if ($field instanceof StringField
-            || $field instanceof EmailField
-            || $field instanceof ColorField
+        if ($field instanceof StringField) {
+            if ($field->isI18nJson()) {
+                return ParseColumn::i18nStringDatumToInstance($value);
+            }
+            return ParseColumn::stringDatum($value);
+        }
+
+        if ($field instanceof ColorField
             || $field instanceof EncryptField
-            || $field instanceof ForeignKeysField) return ParseColumn::stringDatum($value);
+            || $field instanceof ForeignKeysField) {
+            return ParseColumn::stringDatum($value);
+        }
 
         if ($field instanceof BooleanField) return ParseColumn::booleanDatum($value);
 

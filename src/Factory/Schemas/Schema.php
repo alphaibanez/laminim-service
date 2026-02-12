@@ -1174,10 +1174,32 @@ final class Schema
      * @param WebItemActionHook $hook
      * @return WebItemActionHookHandler[]
      */
-    public function getWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook): array
+    protected function getWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook): array
     {
         return array_filter($this->webItemActionHookHandlers, function (WebItemActionHookHandler $handler) use ($action, $hook) {
             return $handler->action === $action && $handler->hook === $hook;
         });
+    }
+
+    public function runWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook, array $handlerArgs): static
+    {
+        $hooks = $this->getWebItemActionHookHandlers($action, $hook);
+        foreach ($hooks as $hook) {
+
+            $args = $handlerArgs;
+
+            $reflectionMethod = new \ReflectionMethod($hook->handler[0], $hook->handler[1]);
+
+            $params = $reflectionMethod->getParameters();
+
+            $paramsKeys = array_map(function (\ReflectionParameter $param){ return $param->getName();}, $params);
+
+            foreach (array_keys($args) as $key) {
+                if (!in_array($key, $paramsKeys)) unset($args[$key]);
+            }
+
+            call_user_func_array($hook->handler, $args);
+        }
+        return $this;
     }
 }

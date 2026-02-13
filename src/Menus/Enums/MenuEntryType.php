@@ -14,4 +14,5 @@ enum MenuEntryType: int
     case RouterRoute = 7;
     case Header = 8;
     case Parent = 9;
+    case AppRoute = 10;
 }

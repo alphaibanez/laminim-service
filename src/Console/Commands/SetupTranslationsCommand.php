@@ -279,6 +279,14 @@ class SetupTranslationsCommand extends Command
             'es' => 'Listado de Elementos Web',
             'en' => 'Web Items List',
         ], $parentId);
+        LktTranslation::createIfMissing('8', TranslationType::Text, [
+            'es' => 'Encabezado',
+            'en' => 'Heading',
+        ], $parentId);
+        LktTranslation::createIfMissing('10', TranslationType::Text, [
+            'es' => 'Ruta de la app',
+            'en' => 'App route',
+        ], $parentId);
 
 
         $parent = LktTranslation::createIfMissing('accessLevel', TranslationType::Many, []);

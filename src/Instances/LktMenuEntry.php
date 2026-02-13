@@ -21,12 +21,31 @@ class LktMenuEntry extends GeneratedLktMenuEntry
         if ($this->typeIsWebPages()) {
             return "/admin/web-pages/{$this->getComponent()}";
         }
+
+        if ($this->typeIsAppRoute()) {
+            return "route:{$this->getRoute()}";
+        }
         return '';
+    }
+
+    public function getReadMenuType(): string
+    {
+        if ($this->typeIsHeader()) return 'header';
+        return 'entry';
     }
 
     public function postProcessRead(array $data): array
     {
         if ($this->accessPolicy?->name === 'r-app-menu') {
+
+            if ($this->typeIsHeader()) {
+                return [
+                    'type' => $this->getReadMenuType(),
+                    'header' => [
+                        'text' => $data['text']
+                    ],
+                ];
+            }
 
             if ($this->typeIsWebItems() && $this->isAnonymous() && !$this->getName()) {
                 $component = $this->getComponent();
@@ -35,7 +54,7 @@ class LktMenuEntry extends GeneratedLktMenuEntry
             }
 
             return [
-                'type' => 'entry',
+                'type' => $this->getReadMenuType(),
                 'anchor' => $data,
             ];
         }

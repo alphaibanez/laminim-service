@@ -49,8 +49,9 @@ Schema::add(
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(IntegerChoiceField::enumChoice(MenuEntryType::class, 'type'))
         ->addField(IntegerChoiceField::enumChoice(AccessLevel::class, 'accessLevel', 'access_level'))
-        ->addField(StringField::define('component'))
-        ->addField(StringField::define('url'))
+        ->addField(StringField::define('component')->setDefaultValue(''))
+        ->addField(StringField::define('url')->setDefaultValue(''))
+        ->addField(StringField::define('route')->setDefaultValue(''))
         ->addField(IntegerField::define('itemId', 'item_id'))
         ->addField(MethodGetterField::define('getReadMenuTo', 'to'))
         ->addField(PivotField::definePivot(LktMenu::COMPONENT, 'lkt_menus__entries', 'menus', 'entry_id')
@@ -69,6 +70,7 @@ Schema::add(
             'nameData',
             'includeAvailableAdminRoutes',
             'url',
+            'route',
             'type',
             'component',
             'accessLevel',

@@ -45,6 +45,7 @@ class LktMenusEntries20260107070708 extends AbstractMigration
             ->addColumn('type', 'smallinteger', ['default' => 1])
             ->addColumn('component', 'string', ['limit' => 255, 'default' => ''])
             ->addColumn('url', 'string', ['limit' => 255, 'default' => ''])
+            ->addColumn('route', 'string', ['limit' => 255, 'default' => ''])
             ->addColumn('item_id', 'integer', ['default' => 0])
             ->addColumn('access_level', 'smallinteger', ['default' => 0])
             ->addColumn('required_roles', 'text', ['null' => true, 'default' => null])

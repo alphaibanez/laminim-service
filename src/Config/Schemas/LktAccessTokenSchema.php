@@ -23,7 +23,7 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IdField::define('id'))
+        ->setComplexPrimaryKey(['user', 'purpose'])
         ->addField(
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')

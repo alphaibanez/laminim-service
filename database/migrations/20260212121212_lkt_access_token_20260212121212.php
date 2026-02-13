@@ -35,7 +35,7 @@ class LktAccessToken20260212121212 extends AbstractMigration
         $exists = $this->hasTable('lkt_access_token');
         if ($exists) return;
 
-        $table = $this->table('lkt_access_token', ['collation' => 'utf8mb4_unicode_ci'])
+        $table = $this->table('lkt_access_token', ['id' => false, 'primary_key' => ['user_id', 'purpose'], 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('expires_at', 'datetime', ['null' => true, 'default' => null])
 

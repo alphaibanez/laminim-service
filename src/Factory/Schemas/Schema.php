@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
@@ -1201,5 +1202,23 @@ final class Schema
             call_user_func_array($hook->handler, $args);
         }
         return $this;
+    }
+
+    public function getInstanceCode(array $instanceData, string|int|array|null $instanceId = null): string
+    {
+        if (is_array($instanceId)) $instanceId = implode('-', $instanceId);
+
+        if (!$instanceId) {
+            $relatedIdentifiers = $this->getIdentifiers();
+
+            $instanceCode = [];
+            foreach ($relatedIdentifiers as $identifier) {
+                $instanceCode[] = $instanceData[$identifier->getName()];
+            }
+
+            $instanceId = implode('-', $instanceCode);
+        }
+
+        return "{$this->getComponent()}_{$instanceId}";
     }
 }

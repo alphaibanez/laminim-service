@@ -189,7 +189,10 @@ abstract class AbstractInstance
 
         $codeId = is_array($id) ? implode('-', $id) : $id;
 
-        $code = Instantiator::getInstanceCode($component, $codeId);
+        $schema = Schema::get($component);
+        $code = $schema->getInstanceCode([], $codeId);
+
+//        $code = Instantiator::getInstanceCode($component, $codeId);
 
         if (InstanceCache::inCache($code)) {
             $cached = InstanceCache::load($code);
@@ -243,11 +246,21 @@ abstract class AbstractInstance
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
-    public function getIdColumnValue()
+    public function getIdColumnValue(): mixed
     {
         $schema = Schema::get(static::COMPONENT);
-        $idColumn = $schema->getIdString();
-        return $this->DATA[$idColumn];
+        $identifiers = $schema->getIdentifiers();
+        if (count($identifiers) === 1) {
+            return $this->DATA[$schema->getIdString()];
+        }
+
+        $r = [];
+        foreach ($identifiers as $identifier) {
+            $k = $identifier->getName();
+            $r[$k] = $this->DATA[$k];
+        }
+
+        return $r;
     }
 
     /**
@@ -645,9 +658,9 @@ abstract class AbstractInstance
         }
 
         if ($reload) {
-            $cacheCode = Instantiator::getInstanceCode(static::COMPONENT, $id);
+            $cacheCode = $schema->getInstanceCode($this->DATA);
             InstanceCache::clearCode($cacheCode);
-            return Instantiator::make(static::COMPONENT, $id);
+            return Instantiator::make(static::COMPONENT, $this->getIdColumnValue(), $this->DATA);
         }
 
         return $this;
@@ -684,7 +697,7 @@ abstract class AbstractInstance
         }
 
         $connection->query($connection->getDeleteQuery($caller));
-        $cacheCode = Instantiator::getInstanceCode(static::COMPONENT, $id);
+        $cacheCode = $schema->getInstanceCode($this->DATA);
         InstanceCache::clearCode($cacheCode);
         $query = $connection->getSelectQuery($caller);
         QueryCache::set($connector, $query, []);

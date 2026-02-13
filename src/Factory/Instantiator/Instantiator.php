@@ -22,10 +22,10 @@ class Instantiator
      * @param $id
      * @return string
      */
-    public static function getInstanceCode(string $component, $id): string
-    {
-        return "{$component}_{$id}";
-    }
+//    public static function getInstanceCode(string $component, $id): string
+//    {
+//        return "{$component}_{$id}";
+//    }
 
 
     /**
@@ -38,7 +38,9 @@ class Instantiator
      */
     public static function make(string $component, $id, array $data = []): ?AbstractInstance
     {
-        $code = static::getInstanceCode($component, $id);
+        $schema = Schema::get($component);
+        $code = $schema->getInstanceCode($data, $id);
+//        $code = static::getInstanceCode($component, $id);
 
         if (InstanceCache::inCache($code)) {
             return InstanceCache::load($code);
@@ -72,18 +74,23 @@ class Instantiator
         if (count($results) > 0) {
 
             $relatedIdentifiers = $schema->getIdentifiers();
-            $identifier = $relatedIdentifiers[0];
+//            $identifier = $relatedIdentifiers[0];
 
             foreach ($results as $item) {
-                $itemId = $item[$identifier->getName()];
-
+                $code = $schema->getInstanceCode($item);
+//                $instanceCode = [];
+//                foreach ($relatedIdentifiers as $identifier) {
+//                    $instanceCode[] = $item[$identifier->getName()];
+//                }
+//
+//                $itemId = implode('-', $instanceCode);
 
                 $converter = new RawResultsToInstanceConverter($component, $item);
                 $itemData = $converter->parse();
 
                 $r = new $appClass($component, $itemData);
                 $r->setData($itemData);
-                $code = Instantiator::getInstanceCode($component, $itemId);
+//                $code = Instantiator::getInstanceCode($component, $itemId);
                 InstanceCache::store($code, $r);
                 $response[] = $r;
             }

@@ -250,4 +250,9 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
         return $r;
     }
+
+    public function generateChangePasswordAccessToken(\DateTime $expiresAt): LktAccessToken
+    {
+        return LktAccessToken::createChangePasswordAccessToken($this, $expiresAt);
+    }
 }

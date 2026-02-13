@@ -6,7 +6,6 @@ use Lkt\Connectors\RestCountriesConnector;
 use Lkt\Instances\LktCountry;
 use Lkt\Locale\Enums\LangCode;
 use Lkt\Locale\Locale;
-use Lkt\Translations\Translations;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,10 +21,8 @@ class SyncRestCountriesCommand extends Command
         $this
             ->setDescription('Synchronize with Rest Countries API')
             ->setHelp('Synchronize with Rest Countries API')
-
             ->addArgument('text', InputArgument::REQUIRED, 'Determines which text should be imported as country name: official|common')
-            ->addArgument('connector', InputArgument::OPTIONAL, 'Specify which connector shall be used. If zero (0), uses an anonymous connector in order to fetch public API', 0)
-        ;
+            ->addArgument('connector', InputArgument::OPTIONAL, 'Specify which connector shall be used. If zero (0), uses an anonymous connector in order to fetch public API', 0);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)

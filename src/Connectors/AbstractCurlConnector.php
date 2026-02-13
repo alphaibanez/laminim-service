@@ -2,7 +2,7 @@
 
 namespace Lkt\Connectors;
 
-abstract class AbstractCrudConnector
+abstract class AbstractCurlConnector
 {
     protected string $name;
     protected string $host = '';
@@ -16,9 +16,14 @@ abstract class AbstractCrudConnector
     protected bool $ignoreCache = false;
     protected bool $forceRefresh = false;
     
-    public function __construct(string $name)
+    protected function __construct(string $name)
     {
         $this->name = $name;
+    }
+
+    public static function defineAnonymous(): static
+    {
+        return new static('anonymous');
     }
 
     public static function define(string $name): static

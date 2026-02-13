@@ -10,6 +10,8 @@ class Locale
     protected static LangCode|string $langCode = LangCode::English;
     protected static CountryLangCode|string $countryLangCode = CountryLangCode::EnglishFromGreatBritain;
 
+    protected static $availableLangCodes = [];
+
     /**
      * @param string $langCode
      * @return void
@@ -56,5 +58,29 @@ class Locale
             if ($locale) return $locale;
         }
         return null;
+    }
+
+    public static function setAvailableLangCodes(array $langCodes)
+    {
+        static::$availableLangCodes = [];
+        foreach ($langCodes as $langCode) {
+            if (is_string($langCode)) {
+                $attempt = LangCode::tryFrom($langCode);
+                if ($attempt) {
+                    static::$availableLangCodes[] = $attempt;
+                    return;
+                }
+            } elseif ($langCode instanceof LangCode) {
+                static::$availableLangCodes[] = $langCode;
+            }
+        }
+    }
+
+    /**
+     * @return LangCode[]
+     */
+    public static function getAvailableLangCodes(): array
+    {
+        return static::$availableLangCodes;
     }
 }

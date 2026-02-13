@@ -8,6 +8,9 @@ enum LangCode: string
     case English = 'en';
     case French = 'fr';
     case Japanese = 'jp';
+    case Italian = 'it';
     case Portuguese = 'pt';
     case Spanish = 'es';
+    case Turkish = 'tr';
+    case Russian = 'ru';
 }

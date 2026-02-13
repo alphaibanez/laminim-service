@@ -2,10 +2,11 @@
 
 namespace Lkt\Connectors;
 
-class CurlConnector extends AbstractCrudConnector
+class CurlConnector extends AbstractCurlConnector
 {
     /** @var CurlConnector[] */
     protected static array $connectors = [];
+    protected const userAgent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
 
     public static function define(string $name): static
     {
@@ -29,7 +30,6 @@ class CurlConnector extends AbstractCrudConnector
     {
         return static::$connectors;
     }
-    private const userAgent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
 
     public function query(string $url = '', array $args = [], string $method = 'GET')
     {

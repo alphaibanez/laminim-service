@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LktMenusEntriesPivot20260107070709 extends AbstractMigration
+class LktMenusEntriesChildrenPivot20260107070710 extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,12 +32,12 @@ class LktMenusEntriesPivot20260107070709 extends AbstractMigration
      */
     public function change()
     {
-        $exists = $this->hasTable('lkt_menus__entries');
+        $exists = $this->hasTable('lkt_menus_entries__children');
         if ($exists) return;
 
-        $table = $this->table('lkt_menus__entries', ['id' => false, 'primary_key' => ['menu_id', 'entry_id'], 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('menu_id', 'integer', ['default' => 0])
-            ->addColumn('entry_id', 'integer', ['default' => 0])
+        $table = $this->table('lkt_menus_entries__children', ['id' => false, 'primary_key' => ['parent_id', 'child_id'], 'collation' => 'utf8mb4_unicode_ci'])
+            ->addColumn('parent_id', 'integer', ['default' => 0])
+            ->addColumn('child_id', 'integer', ['default' => 0])
             ->addColumn('position', 'integer', ['default' => 0])
         ;
 

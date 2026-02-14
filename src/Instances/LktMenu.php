@@ -25,6 +25,7 @@ class LktMenu extends GeneratedLktMenu
                 case MenuEntryType::FullUrl->value:
                 case MenuEntryType::AppRoute->value:
                 case MenuEntryType::Header->value:
+                case MenuEntryType::Parent->value:
                     if ($entry->accessLevelIsOnlyAdminUsers()) {
                         if ($user->hasAdminAccess()) $filtered[] = $entry;
                     }

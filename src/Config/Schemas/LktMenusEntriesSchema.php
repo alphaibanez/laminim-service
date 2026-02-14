@@ -60,10 +60,20 @@ Schema::add(
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
+        ->addField(PivotField::definePivot(LktMenuEntry::COMPONENT, 'lkt_menus_entries__children', 'children', 'parent_id')
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktMenuEntry::COMPONENT, 'child', 'child_id'))
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktMenuEntry::COMPONENT, 'parent', 'parent_id'))
+            ->setPivotPositionField(PivotPositionField::define('position'))
+            ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+            ->setRelatedAccessPolicies([
+                'r-app-menu' => 'r-app-menu'
+            ])
+        )
         ->addAccessPolicy('write', ['nameData', 'includeAvailableAdminRoutes', 'type', 'url', 'component', 'itemId', 'accessLevel'])
         ->addAccessPolicy('r-app-menu', [
             'to',
             'name' => 'text',
+            'children',
         ])
         ->addAccessPolicy('admin', [
             'id',
@@ -75,5 +85,6 @@ Schema::add(
             'component',
             'accessLevel',
             'itemId',
+            'children',
         ])
 );

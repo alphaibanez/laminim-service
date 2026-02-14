@@ -283,6 +283,10 @@ class SetupTranslationsCommand extends Command
             'es' => 'Encabezado',
             'en' => 'Heading',
         ], $parentId);
+        LktTranslation::createIfMissing('9', TranslationType::Text, [
+            'es' => 'Submenú',
+            'en' => 'Submenu',
+        ], $parentId);
         LktTranslation::createIfMissing('10', TranslationType::Text, [
             'es' => 'Ruta de la app',
             'en' => 'App route',

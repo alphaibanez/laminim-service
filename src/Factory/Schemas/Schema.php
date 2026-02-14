@@ -384,6 +384,16 @@ final class Schema
         return $this->pivot === true;
     }
 
+    public function isSameTablePivot(): bool
+    {
+        if (!$this->isPivot()) return false;
+
+        $leftPivot = $this->getPivotLeftIdField();
+        $rightPivot = $this->getPivotRightIdField();
+
+        return $leftPivot && $rightPivot && $leftPivot->getComponent() === $rightPivot->getComponent();
+    }
+
     /**
      * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField|ConstantValueField>
      */

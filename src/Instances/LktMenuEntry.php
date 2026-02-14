@@ -47,6 +47,16 @@ class LktMenuEntry extends GeneratedLktMenuEntry
                 ];
             }
 
+            if ($this->typeIsParent()) {
+                return [
+                    'type' => $this->getReadMenuType(),
+                    'anchor' => [
+                        'text' => $data['text'],
+                    ],
+                    'children' => $data['children'],
+                ];
+            }
+
             if ($this->typeIsWebItems() && $this->isAnonymous() && !$this->getName()) {
                 $component = $this->getComponent();
                 $text = Translations::get("webItems.{$component}");

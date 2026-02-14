@@ -3,10 +3,7 @@
 namespace Lkt\Console\Commands;
 
 use Lkt\Connectors\OpenExchangeRatesConnector;
-use Lkt\Connectors\RestCountriesConnector;
-use Lkt\Instances\LktCountry;
 use Lkt\Instances\LktCurrency;
-use Lkt\Locale\Enums\LangCode;
 use Lkt\Locale\Locale;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

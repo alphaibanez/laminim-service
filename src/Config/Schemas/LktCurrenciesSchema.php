@@ -5,6 +5,7 @@ namespace Lkt\Config\Schemas;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
+use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -13,7 +14,7 @@ use Lkt\Instances\LktCountry;
 use Lkt\Instances\LktCurrency;
 
 Schema::add(
-    Schema::table('lkt_countries', LktCurrency::COMPONENT)
+    Schema::table('lkt_currencies', LktCurrency::COMPONENT)
         ->setInstanceSettings(
             InstanceSettings::define(LktCurrency::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
@@ -37,6 +38,8 @@ Schema::add(
         ->addField(StringField::define('isoCodeNumeric3', 'iso_code_numeric3'))
 
         ->addField(BooleanField::define('syncExcluded', 'sync_excluded'))
+
+        ->addField(FloatField::define('factorToDefault', 'factor_to_Default'))
 
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())

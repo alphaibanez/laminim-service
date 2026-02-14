@@ -46,6 +46,8 @@ class LktCurrencies20260213131314 extends AbstractMigration
 
             ->addColumn('is_active', 'boolean', ['default' => 0])
             ->addColumn('sync_excluded', 'boolean', ['default' => 0])
+
+            ->addColumn('factor_to_default', 'decimal', ['precision' => 20, 'scale' => 5, 'default' => 0])
         ;
 
         $table->addIndex(['iso_code_alpha3']);

@@ -3,6 +3,7 @@
 namespace Lkt\Locale;
 
 use Lkt\Locale\Enums\CountryLangCode;
+use Lkt\Locale\Enums\CurrencyCode;
 use Lkt\Locale\Enums\LangCode;
 
 class Locale
@@ -11,6 +12,8 @@ class Locale
     protected static CountryLangCode|string $countryLangCode = CountryLangCode::EnglishFromGreatBritain;
 
     protected static $availableLangCodes = [];
+    protected static $availableCurrencyCodes = [];
+    public static CurrencyCode|string $baseCurrency = CurrencyCode::Euro;
 
     /**
      * @param string $langCode
@@ -60,18 +63,18 @@ class Locale
         return null;
     }
 
-    public static function setAvailableLangCodes(array $langCodes)
+    public static function setAvailableLangCodes(array $codes)
     {
         static::$availableLangCodes = [];
-        foreach ($langCodes as $langCode) {
-            if (is_string($langCode)) {
-                $attempt = LangCode::tryFrom($langCode);
+        foreach ($codes as $code) {
+            if (is_string($code)) {
+                $attempt = LangCode::tryFrom($code);
                 if ($attempt) {
                     static::$availableLangCodes[] = $attempt;
                     return;
                 }
-            } elseif ($langCode instanceof LangCode) {
-                static::$availableLangCodes[] = $langCode;
+            } elseif ($code instanceof LangCode) {
+                static::$availableLangCodes[] = $code;
             }
         }
     }
@@ -82,5 +85,29 @@ class Locale
     public static function getAvailableLangCodes(): array
     {
         return static::$availableLangCodes;
+    }
+
+    public static function setAvailableCurrencyCodes(array $codes)
+    {
+        static::$availableCurrencyCodes = [];
+        foreach ($codes as $code) {
+            if (is_string($code)) {
+                $attempt = CurrencyCode::tryFrom($code);
+                if ($attempt) {
+                    static::$availableCurrencyCodes[] = $attempt;
+                    return;
+                }
+            } elseif ($code instanceof CurrencyCode) {
+                static::$availableCurrencyCodes[] = $code;
+            }
+        }
+    }
+
+    /**
+     * @return CurrencyCode[]
+     */
+    public static function getAvailableCurrencyCodes(): array
+    {
+        return static::$availableCurrencyCodes;
     }
 }

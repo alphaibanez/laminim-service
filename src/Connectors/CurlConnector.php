@@ -2,6 +2,8 @@
 
 namespace Lkt\Connectors;
 
+use Lkt\Connectors\Curl\CurlResponse;
+
 class CurlConnector extends AbstractCurlConnector
 {
     /** @var CurlConnector[] */
@@ -31,7 +33,7 @@ class CurlConnector extends AbstractCurlConnector
         return static::$connectors;
     }
 
-    public function query(string $url = '', array $args = [], string $method = 'GET')
+    public function query(string $url = '', array $args = [], string $method = 'GET'): CurlResponse
     {
         $ch = curl_init();
 
@@ -71,10 +73,11 @@ class CurlConnector extends AbstractCurlConnector
         }
 
         $result = curl_exec($ch);
+        $info = curl_getinfo($ch);
 
         //close connection
         curl_close($ch);
 
-        return $result;
+        return new CurlResponse($result, $info);
     }
 }

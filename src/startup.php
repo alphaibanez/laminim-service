@@ -9,6 +9,7 @@ use Lkt\Console\Commands\MakeCrontabCommand;
 use Lkt\Console\Commands\RunCrontabCommand;
 use Lkt\Console\Commands\SetupTranslationsCommand;
 use Lkt\Console\Commands\ShowCrontabCommand;
+use Lkt\Console\Commands\SyncOpenExchangeRatesCommand;
 use Lkt\Console\Commands\SyncRestCountriesCommand;
 use Lkt\Phinx\PhinxConfigurator;
 use Lkt\Translations\Translations;
@@ -59,4 +60,5 @@ if (php_sapi_name() == 'cli') {
     Commander::register(new SetupTranslationsCommand());
     Commander::register(new ShowCrontabCommand());
     Commander::register(new SyncRestCountriesCommand());
+    Commander::register(new SyncOpenExchangeRatesCommand());
 }

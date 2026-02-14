@@ -48,7 +48,8 @@ class SyncRestCountriesCommand extends Command
         $fields = ['cca2', 'ccn3', 'name', 'translations'];
         $fieldsStr = implode(',', $fields);
 
-        $results = \json_decode($connector->query("/v3.1/all?fields={$fieldsStr}"));
+        $response = $connector->query("/v3.1/all?fields={$fieldsStr}");
+        $results = \json_decode($response->result);
         foreach ($results as $result) {
             $isoCodeCCA2 = trim($result->cca2);
             $isoCodeCCN3 = trim($result->ccn3);

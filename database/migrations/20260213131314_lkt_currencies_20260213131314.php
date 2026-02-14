@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LktCountries20260213131313 extends AbstractMigration
+class LktCurrencies20260213131314 extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,23 +32,23 @@ class LktCountries20260213131313 extends AbstractMigration
      */
     public function change()
     {
-        $exists = $this->hasTable('lkt_countries');
+        $exists = $this->hasTable('lkt_currencies');
         if ($exists) return;
 
-        $table = $this->table('lkt_countries', ['collation' => 'utf8mb4_unicode_ci'])
+        $table = $this->table('lkt_currencies', ['collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
 
             ->addColumn('name', 'json', ['null' => true, 'default' => null])
 
-            ->addColumn('iso_code_alpha2', 'char', ['limit' => 2])
+            ->addColumn('iso_code_alpha3', 'char', ['limit' => 3])
             ->addColumn('iso_code_numeric3', 'char', ['limit' => 3])
 
             ->addColumn('is_active', 'boolean', ['default' => 0])
             ->addColumn('sync_excluded', 'boolean', ['default' => 0])
         ;
 
-        $table->addIndex(['iso_code_alpha2']);
+        $table->addIndex(['iso_code_alpha3']);
 
         $table->create();
     }

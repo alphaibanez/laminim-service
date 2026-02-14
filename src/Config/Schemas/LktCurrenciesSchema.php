@@ -10,11 +10,12 @@ use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCountry;
+use Lkt\Instances\LktCurrency;
 
 Schema::add(
-    Schema::table('lkt_countries', LktCountry::COMPONENT)
+    Schema::table('lkt_countries', LktCurrency::COMPONENT)
         ->setInstanceSettings(
-            InstanceSettings::define(LktCountry::class)
+            InstanceSettings::define(LktCurrency::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )
@@ -32,7 +33,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
         )
 
-        ->addField(StringField::define('isoCodeAlpha2', 'iso_code_alpha2'))
+        ->addField(StringField::define('isoCodeAlpha3', 'iso_code_alpha3'))
         ->addField(StringField::define('isoCodeNumeric3', 'iso_code_numeric3'))
 
         ->addField(BooleanField::define('syncExcluded', 'sync_excluded'))

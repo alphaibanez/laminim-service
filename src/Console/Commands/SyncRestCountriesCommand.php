@@ -67,8 +67,11 @@ class SyncRestCountriesCommand extends Command
                     LangCode::Japanese => 'jpn',
                     LangCode::Italian => 'ita',
                     LangCode::Russian => 'rus',
-                    default => ''
+                    LangCode::English => '',
+                    default => null
                 };
+
+                if ($restLang === null) continue;
 
                 $name = $restLang ? $result->translations->{$restLang}->{$text} : $result->name->{$text};
                 $nameData[$language->value] = $name;

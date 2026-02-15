@@ -3,7 +3,7 @@
 namespace Lkt\Phinx;
 
 use Lkt\Connectors\DatabaseConnections;
-use Lkt\Connectors\MySQLConnector;
+use Lkt\Connectors\MariaDBConnector;
 
 class PhinxConfigurator
 {
@@ -68,7 +68,7 @@ class PhinxConfigurator
                 'charset' => $connector->getCharset(),
             ];
 
-            if ($connector instanceof MySQLConnector) {
+            if ($connector instanceof MariaDBConnector) {
                 $cfg['adapter'] = 'mysql';
             }
 

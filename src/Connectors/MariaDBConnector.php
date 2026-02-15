@@ -25,14 +25,14 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
 
-class MySQLConnector extends DatabaseConnector
+class MariaDBConnector extends DatabaseConnector
 {
     protected int $port = 3306;
     protected string $charset = 'utf8mb4';
     protected string $rememberTotal = '';
 
 
-    /** @var MySQLConnector[] */
+    /** @var MariaDBConnector[] */
     protected static array $connectors = [];
 
     public static function define(string $name): static

@@ -2,7 +2,7 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Factory\Schemas\Schema;
+use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Generated\GeneratedLktWebElement;
 use Lkt\WebPages\Enums\WebElementType;
 use function Lkt\WebPages\functions\addWebElement;
@@ -10,21 +10,6 @@ use function Lkt\WebPages\functions\addWebElement;
 class LktWebElement extends GeneratedLktWebElement
 {
     const COMPONENT = 'lkt-web-element';
-
-    public function read()
-    {
-        $fields = Schema::get(static::COMPONENT)->getAllFields();
-        $r = $this->readFields($fields);
-        $this->ensureRead($r);
-        return $r;
-    }
-
-//    public function readAsRelated(): array
-//    {
-//        $r = parent::readAsRelated();
-//        $this->ensureRead($r);
-//        return $r;
-//    }
 
     public function addWebElement(LktWebElement $element, int $before = 0, int $after = 0): static
     {
@@ -67,19 +52,23 @@ class LktWebElement extends GeneratedLktWebElement
                 ];
             }
         }
+
+        if (is_numeric($webElement['props']['entity'])) {
+            $webElement['props']['entity'] = LktFileEntity::getInstance($webElement['props']['entity'])->autoRead();
+        }
+
+        if (is_numeric($webElement['props']['art'])) {
+            $webElement['props']['art'] = LktFileEntity::getInstance($webElement['props']['art'])->autoRead();
+        }
+
+        if (is_numeric($webElement['props']['media'])) {
+            $webElement['props']['media'] = LktFileEntity::getInstance($webElement['props']['media'])->autoRead();
+        }
     }
 
-    private function prepareData(array $data)
+    protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array
     {
         $type = $this->isAnonymous() ? $data['type'] : $this->getType();
-        if ($type === WebElementType::LktTextBanner) {
-            if (!$data['props']['art'] || !is_array($data['props']['art'])|| count($data['props']['art']) === 0) {
-                $data['props']['art'] = ['src' => ''];
-            }
-            if (!$data['props']['media'] || !is_array($data['props']['media'])|| count($data['props']['media']) === 0) {
-                $data['props']['media'] = ['src' => ''];
-            }
-        }
 
         if (count($data['subElements']) > 0) {
             foreach ($data['subElements'] as &$subElement) {
@@ -95,6 +84,18 @@ class LktWebElement extends GeneratedLktWebElement
                     unset($subElement['component']);
                 }
             }
+        }
+
+        if ($data['props']['entity']) {
+            $data['props']['entity'] = (int)$data['props']['entity']['id'];
+        }
+
+        if ($data['props']['art']) {
+            $data['props']['art'] = (int)$data['props']['art']['id'];
+        }
+
+        if ($data['props']['media']) {
+            $data['props']['media'] = (int)$data['props']['media']['id'];
         }
 
         return $data;

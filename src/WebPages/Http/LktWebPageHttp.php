@@ -33,7 +33,7 @@ class LktWebPageHttp
 
 
         $response = [];
-        foreach ($results as $result) $response[] = $result->read();
+        foreach ($results as $result) $response[] = $result->autoRead();
 
         return Response::ok([
             'results' => $response,
@@ -46,7 +46,7 @@ class LktWebPageHttp
         $instance->autoCreate($params);
 
         return Response::ok([
-            'item' => $instance->read(),
+            'item' => $instance->autoRead(),
             'id' => $instance->getId(),
         ]);
     }
@@ -57,7 +57,7 @@ class LktWebPageHttp
         if ($instance->isAnonymous()) return Response::notFound();
 
         return Response::ok([
-            'item' => $instance->read(),
+            'item' => $instance->autoRead(),
             'perms' => ['update', 'drop', 'switch-edit-mode']
         ]);
     }
@@ -74,7 +74,7 @@ class LktWebPageHttp
         if (!$instance || $instance->isAnonymous()) return Response::notFound();
 
         return Response::ok([
-            'item' => $instance->read(),
+            'item' => $instance->autoRead(),
         ]);
     }
 
@@ -84,7 +84,7 @@ class LktWebPageHttp
         if ($instance->isAnonymous()) return Response::notFound();
 
         return Response::ok([
-            'results' => $instance->read()['webElements'],
+            'results' => $instance->autoRead()['webElements'],
             'perms' => ['update']
         ]);
     }

@@ -419,8 +419,8 @@ class SetupTranslationsCommand extends Command
             'en' => 'Icons',
         ], $parentId);
         LktTranslation::createOrUpdate('14', TranslationType::Text, [
-            'es' => 'Imágen',
-            'en' => 'Image',
+            'es' => 'Multimedia',
+            'en' => 'Multimedia',
         ], $parentId);
 
 

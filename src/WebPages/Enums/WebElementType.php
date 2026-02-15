@@ -17,5 +17,5 @@ enum WebElementType: int
     case LktHeader = 11;
     case LktIcon = 12;
     case LktIcons = 13;
-    case LktImage = 14;
+    case LktFileEntity = 14;
 }

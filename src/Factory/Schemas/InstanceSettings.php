@@ -104,6 +104,21 @@ final class InstanceSettings
     }
 
     /**
+     * @param string $appClass
+     * @param string $generatedNamespace
+     * @param string $generatedStoreDir
+     * @return InstanceSettings
+     * @throws InvalidSchemaAppClassException
+     * @throws InvalidSchemaNamespaceForGeneratedClassException
+     */
+    public static function simple(string $appClass, string $generatedNamespace, string $generatedStoreDir): InstanceSettings
+    {
+        return (new InstanceSettings($appClass))
+            ->setNamespaceForGeneratedClass($generatedNamespace)
+            ->setWhereStoreGeneratedClass($generatedStoreDir);
+    }
+
+    /**
      * @param string $namespace
      * @return $this
      * @throws InvalidSchemaNamespaceForGeneratedClassException

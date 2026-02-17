@@ -50,6 +50,13 @@ class BasicHttpHandler
             $r['component'] = $request->targetWebItem->publicComponentName;
         }
 
+        $schema = Schema::get($request->targetComponent);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+            'data' => &$r,
+            'request' => $request,
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
         return Response::ok($r);
     }
 
@@ -77,7 +84,14 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        return Response::ok(['id' => $request->targetInstance->getId()]);
+        $responseData = ['id' => $request->targetInstance->getId()];
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+            'data' => &$responseData,
+            'request' => $request,
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
+        return Response::created($responseData);
     }
 
     public static function up(Request $request): Response
@@ -103,7 +117,14 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        return Response::ok(['id' => $request->targetInstance->getId()]);
+        $responseData = ['id' => $request->targetInstance->getId()];
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+            'data' => &$responseData,
+            'request' => $request,
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
+        return Response::ok($responseData);
     }
 
     public static function rm(Request $request): Response
@@ -191,11 +212,14 @@ class BasicHttpHandler
 
         $perm = array_unique($perm);
 
-        return Response::ok([
-            'results' => $results,
-            'maxPage' => $helperInstance::getAmountOfPages($builder),
-            'perm' => $perm
+        $responseData = ['results' => $results,'perm' => $perm, 'maxPage' => $helperInstance::getAmountOfPages($builder)];
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+            'data' => &$responseData,
+            'request' => $request,
         ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
+        return Response::ok($responseData);
     }
 
     public static function ls(Request $request): Response
@@ -253,9 +277,13 @@ class BasicHttpHandler
 
         $perm = array_unique($perm);
 
-        return Response::ok([
-            'results' => $results,
-            'perm' => $perm
+        $responseData = ['results' => $results,'perm' => $perm];
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::TweakResponseData, [
+            'data' => &$responseData,
+            'request' => $request,
         ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
+        return Response::ok($responseData);
     }
 }

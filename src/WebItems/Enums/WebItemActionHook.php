@@ -8,4 +8,5 @@ enum WebItemActionHook: int
     case Success = 2;
     case Fail = 3;
     case BeforeAction = 4;
+    case TweakResponseData = 5;
 }

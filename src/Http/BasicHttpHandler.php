@@ -72,7 +72,10 @@ class BasicHttpHandler
         if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessCreate, $request->httpEventHandlers, []);
 
         $schema = Schema::get($request->targetComponent);
-        $schema->runWebItemActionHookHandlers(WebItemAction::Create, WebItemActionHook::Success, ['request' => $request]);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Create, WebItemActionHook::Success, [
+            'request' => $request
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
 
         return Response::ok(['id' => $request->targetInstance->getId()]);
     }
@@ -95,7 +98,10 @@ class BasicHttpHandler
         if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessUpdate, $request->httpEventHandlers, []);
 
         $schema = Schema::get($request->targetComponent);
-        $schema->runWebItemActionHookHandlers(WebItemAction::Update, WebItemActionHook::Success, ['request' => $request]);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Update, WebItemActionHook::Success, [
+            'request' => $request
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
 
         return Response::ok(['id' => $request->targetInstance->getId()]);
     }
@@ -122,7 +128,10 @@ class BasicHttpHandler
         if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessDrop, $request->httpEventHandlers, []);
 
         $schema = Schema::get($request->targetComponent);
-        $schema->runWebItemActionHookHandlers(WebItemAction::Drop, WebItemActionHook::Success, ['request' => $request]);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Drop, WebItemActionHook::Success, [
+            'request' => $request
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
         return Response::ok();
     }
 
@@ -155,10 +164,11 @@ class BasicHttpHandler
         }
 
         //@todo: check if is anonymous, get access level field from schema and filter not allowed results from query
-        $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,
             'request' => $request,
         ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $rawResults = $helperInstance::getPage($request->page, $builder);
         $results = [];
@@ -216,10 +226,11 @@ class BasicHttpHandler
             }
         }
 
-        $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, [
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,
             'request' => $request,
         ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $rawResults = $helperInstance::getMany($builder);
         $results = [];

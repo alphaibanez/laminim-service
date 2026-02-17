@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Schemas;
 
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
@@ -45,6 +44,7 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\Factory\Schemas\Values\TableValue;
+use Lkt\Http\Response;
 use Lkt\QueryBuilding\Query;
 use Lkt\WebItems\Enums\WebItemAction;
 use Lkt\WebItems\Enums\WebItemActionHook;
@@ -1192,7 +1192,7 @@ final class Schema
         });
     }
 
-    public function runWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook, array $handlerArgs): static
+    public function runWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook, array $handlerArgs): Response|null
     {
         $hooks = $this->getWebItemActionHookHandlers($action, $hook);
         foreach ($hooks as $hook) {
@@ -1209,9 +1209,21 @@ final class Schema
                 if (!in_array($key, $paramsKeys)) unset($args[$key]);
             }
 
-            call_user_func_array($hook->handler, $args);
+            $hookResponse = call_user_func_array($hook->handler, $args);
+
+            if ($hookResponse) {
+
+                if ($hookResponse instanceof Response) {
+                    return $hookResponse;
+                }
+
+//                if (is_numeric($hookResponse)) $hookResponse = HttpStatus::tryFrom($hookResponse);
+//                if ($hookResponse instanceof HttpStatus) {
+//                    return new Response($hookResponse->value);
+//                }
+            }
         }
-        return $this;
+        return null;
     }
 
     public function getInstanceCode(array $instanceData, string|int|array|null $instanceId = null): string

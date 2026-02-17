@@ -25,9 +25,19 @@ class WebItemActionHookHandler
         return new static(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, $queryBuilderHandler);
     }
 
+    public static function beforeCreate(callable $handler): static
+    {
+        return new static(WebItemAction::Create, WebItemActionHook::BeforeAction, $handler);
+    }
+
     public static function onCreateSuccess(callable $handler): static
     {
         return new static(WebItemAction::Create, WebItemActionHook::Success, $handler);
+    }
+
+    public static function beforeUpdate(callable $handler): static
+    {
+        return new static(WebItemAction::Update, WebItemActionHook::BeforeAction, $handler);
     }
 
     public static function onUpdateSuccess(callable $handler): static

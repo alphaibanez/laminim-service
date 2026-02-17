@@ -21,3 +21,6 @@ public function has<?php echo $fieldMethod;?>() :bool {
 public function get<?php echo $fieldMethod;?>QueryCaller(): <?php echo $relatedQueryCaller; ?> {
     return $this->_getRelatedKeysQueryCaller('<?php echo $component; ?>', '<?php echo $fieldName;?>');
 }
+public function get<?php echo $fieldMethod;?>Ids() :array {
+    return $this->_getRelatedKeysIds('<?php echo $fieldName;?>');
+}

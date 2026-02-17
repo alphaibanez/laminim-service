@@ -6,6 +6,7 @@ use Lkt\Factory\Schemas\Traits\FieldWithAvailableOptionsFilterOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithCompositionOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithDynamicComponentOptionTrait;
+use Lkt\Factory\Schemas\Traits\FieldWithOnReadIncludeOptionsTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithSoftTypedOptionTrait;
@@ -20,7 +21,8 @@ class ForeignKeyField extends IntegerField
         FieldWithSoftTypedOptionTrait,
         FieldWithCompositionOptionTrait,
         FieldWithRelatedAccessPolicyOptionTrait,
-        FieldWithPrefabRoleTrait;
+        FieldWithPrefabRoleTrait,
+        FieldWithOnReadIncludeOptionsTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {
@@ -30,18 +32,5 @@ class ForeignKeyField extends IntegerField
     public function keyIsId(string $key): bool
     {
         return $key === $this->getName() . 'Id';
-    }
-
-    protected bool $onReadIncludeOptions = false;
-
-    public function setOnReadIncludeOptions(bool $value = true): static
-    {
-        $this->onReadIncludeOptions = $value;
-        return $this;
-    }
-
-    public function hasOnReadIncludeOptions(): bool
-    {
-        return $this->onReadIncludeOptions;
     }
 }

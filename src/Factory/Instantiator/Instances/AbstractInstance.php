@@ -56,6 +56,7 @@ use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
 use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
+use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
@@ -1213,6 +1214,29 @@ abstract class AbstractInstance
                 if ($field->hasOnReadIncludeOptions()) {
                     $r[$responseKey . 'Opts'] = [$item];
                 }
+
+            } elseif ($field instanceof RelatedKeysField) {
+                $getter = $field->getGetterForData();
+                $getterIds = $field->getGetterForPrimitiveValue();
+                $items = $this->{$getter}();
+                if (!is_array($items)) $items = [];
+                $t = [];
+
+                $relatedAccessPolicy = null;
+                if (isset($this->accessPolicy)) {
+                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+                }
+
+                if (!$relatedAccessPolicy && $field->getComponent() && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
+                    $relatedAccessPolicy = 'lkt-related';
+                }
+
+                foreach ($items as $item) {
+                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                    $t[] = $item->readAsRelated();
+                }
+                $r[$responseKey] = $t;
+                $r[$responseKey . 'Ids'] = $this->{$getterIds}();
 
             } elseif ($field instanceof MethodGetterField) {
                 $getter = $field->getName();

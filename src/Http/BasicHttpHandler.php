@@ -155,7 +155,10 @@ class BasicHttpHandler
         }
 
         //@todo: check if is anonymous, get access level field from schema and filter not allowed results from query
-        $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, ['query' => $builder]);
+        $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
+            'query' => $builder,
+            'request' => $request,
+        ]);
 
         $rawResults = $helperInstance::getPage($request->page, $builder);
         $results = [];
@@ -213,7 +216,10 @@ class BasicHttpHandler
             }
         }
 
-        $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, ['query' => $builder]);
+        $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, [
+            'query' => $builder,
+            'request' => $request,
+        ]);
 
         $rawResults = $helperInstance::getMany($builder);
         $results = [];

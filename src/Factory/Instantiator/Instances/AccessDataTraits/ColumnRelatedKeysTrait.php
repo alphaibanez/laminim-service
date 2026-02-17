@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
@@ -45,6 +46,19 @@ trait ColumnRelatedKeysTrait
 
         $this->RELATED_DATA[$column] = $results;
         return $this->RELATED_DATA[$column];
+    }
+
+    protected function _getRelatedKeysIds(string $fieldName): array
+    {
+        $schema = Schema::get(static::COMPONENT);
+
+        /** @var RelatedKeysField $field */
+        $field = $schema->getField($fieldName);
+
+        $items = $this->_getRelatedKeysVal($fieldName, $field->getColumn());
+        return array_map(function (AbstractInstance $item) {
+            return $item->getIdColumnValue();
+        }, $items);
     }
 
     /**

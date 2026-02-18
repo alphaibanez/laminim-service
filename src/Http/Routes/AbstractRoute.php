@@ -273,31 +273,74 @@ abstract class AbstractRoute
         return $this->siteMap;
     }
 
-    public static function register(string $route, callable $handler): static
+    public static function register(string|array $route, callable $handler): static|array
     {
+        if (is_array($route)) {
+            $response = [];
+            foreach ($route as $item) {
+                $r = new static($item, $handler);
+                Router::addRoute($r);
+                $response[] = $r;
+            }
+            return $response;
+        }
+
         $r = new static($route, $handler);
         Router::addRoute($r);
         return $r;
     }
 
-    public static function onlyLoggedUsers(string $route, callable $handler): static
+    public static function onlyLoggedUsers(string|array $route, callable $handler): static|array
     {
+        if (is_array($route)) {
+            $response = [];
+            foreach ($route as $item) {
+                $r = new static($item, $handler);
+                $r->setOnlyLoggedUsers();
+                Router::addRoute($r);
+                $response[] = $r;
+            }
+            return $response;
+        }
+
         $r = new static($route, $handler);
         $r->setOnlyLoggedUsers();
         Router::addRoute($r);
         return $r;
     }
 
-    public static function onlyNotLoggedUsers(string $route, callable $handler): static
+    public static function onlyNotLoggedUsers(string|array $route, callable $handler): static|array
     {
+        if (is_array($route)) {
+            $response = [];
+            foreach ($route as $item) {
+                $r = new static($item, $handler);
+                $r->setOnlyNotLoggedUsers();
+                Router::addRoute($r);
+                $response[] = $r;
+            }
+            return $response;
+        }
+
         $r = new static($route, $handler);
         $r->setOnlyNotLoggedUsers();
         Router::addRoute($r);
         return $r;
     }
 
-    public static function admin(string $route, callable $handler): static
+    public static function admin(string|array $route, callable $handler): static|array
     {
+        if (is_array($route)) {
+            $response = [];
+            foreach ($route as $item) {
+                $r = new static($item, $handler);
+                $r->setAdminRoute();
+                Router::addRoute($r);
+                $response[] = $r;
+            }
+            return $response;
+        }
+
         $r = new static($route, $handler);
         $r->setAdminRoute();
         Router::addRoute($r);

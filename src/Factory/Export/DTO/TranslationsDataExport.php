@@ -15,7 +15,6 @@ class TranslationsDataExport extends AbstractDataExport
 
     /**
      * @param array[] $items
-     * @param string $accessPolicy
      */
     protected function __construct(array $items)
     {

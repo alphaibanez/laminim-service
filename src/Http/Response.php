@@ -4,13 +4,14 @@ namespace Lkt\Http;
 
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Http\Traits\ContentTypeTrait;
+use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 
 class Response
 {
     use ContentTypeTrait;
 
     protected int $code = 1;
-    protected array|string $responseData = [];
+    protected array|string|BaseWriter $responseData = [];
 
     protected int $headerCacheControlMaxAge = -1;
     protected int $headerExpires = -1;
@@ -20,7 +21,7 @@ class Response
 
     protected bool $sendCacheFlag = false;
 
-    public function __construct(int $code = 1, array|string $responseData = [])
+    public function __construct(int $code = 1, array|string|BaseWriter $responseData = [])
     {
         $this->code = $code;
         $this->responseData = $responseData;
@@ -41,7 +42,7 @@ class Response
         return $this;
     }
 
-    public function getResponseData(): array|string
+    public function getResponseData(): array|string|BaseWriter
     {
         return $this->responseData;
     }
@@ -390,7 +391,7 @@ class Response
         return false;
     }
 
-    public static function status(int $code = 200, array|string $responseData = []): static
+    public static function status(int $code = 200, array|string|BaseWriter $responseData = []): static
     {
         return new static($code, $responseData);
     }
@@ -400,7 +401,7 @@ class Response
         return static::status(-1, $responseData);
     }
 
-    public static function ok(array|string $responseData = []): static
+    public static function ok(array|string|BaseWriter $responseData = []): static
     {
         return static::status(200, $responseData);
     }

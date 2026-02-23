@@ -201,13 +201,13 @@ class Translations
 
     public static function export(): array
     {
-        $languages = static::getAvailableLanguages();
+        $languages = Locale::getAvailableLangCodes();
 
         $r = [];
 
         foreach ($languages as $language) {
-            $translations = static::getLangTranslations($language);
-            $r[$language] = arrayValuesRecursiveWithKeys($translations);
+            $translations = static::getCombinedLangStack($language->value);
+            $r[$language->value] = arrayValuesRecursiveWithKeys($translations);
         }
 
         return $r;
@@ -229,7 +229,7 @@ class Translations
         $r = [];
 
         foreach ($languages as $language) {
-            $translations = static::getLangTranslations($language);
+            $translations = static::getCombinedLangStack($language);
             $r[$language] = arrayValuesRecursiveWithKeys($translations);
         }
 
@@ -360,6 +360,46 @@ class Translations
         return new FeedWithReferenceDataResponse($updatedTranslations, $skippedTranslations);
     }
 
+    protected static function processTranslationResult(LktTranslation $result, &$r, string $lang)
+    {
+        $property = trim($result->getProperty());
+        $isMany = $result->typeIsMany();
+        if (str_contains($property, '.')) {
+            $properties = explode('.', $property);
+
+            $l = count($properties) - 1;
+            $i = 0;
+            $temp = &$r;
+            while ($i <= $l) {
+                if ($i === $l) {
+                    if ($isMany) {
+                        $items = $result->getChildren();
+                        $temp[$properties[$i]] = [];
+                        foreach ($items as $item) static::processTranslationResult($item, $temp[$properties[$i]], $lang);
+                    } else {
+                        $temp[$properties[$i]] = $result->getValueData()[$lang];
+                    }
+                    break;
+                } else {
+                    if (!isset($temp[$properties[$i]])) {
+                        $temp[$properties[$i]] = [];
+                    }
+                    $temp = &$temp[$properties[$i]];
+                    ++$i;
+                }
+            }
+
+        } else {
+            if ($isMany) {
+                $items = $result->getChildren();
+                $r[$property] = [];
+                foreach ($items as $item) static::processTranslationResult($item, $r[$property], $lang);
+            } else {
+                $r[$property] = $result->getValueData()[$lang];
+            }
+        }
+    }
+
     public static function getCombinedLangStack(string|null $lang = null)
     {
         $lang = static::determineLang($lang);
@@ -368,50 +408,7 @@ class Translations
         $results = LktTranslation::getMany(LktTranslation::getQueryCaller()->andParentEqual(0));
         $r = [];
 
-        function processResult(LktTranslation $result, &$r)
-        {
-            $property = trim($result->getProperty());
-            $isMany = $result->typeIsMany();
-            if (str_contains($property, '.')) {
-                $properties = explode('.', $property);
-
-                $l = count($properties) - 1;
-                $i = 0;
-                $temp = &$r;
-                while ($i <= $l) {
-                    if ($i === $l) {
-                        if ($isMany) {
-                            $items = $result->getChildren();
-                            $temp[$properties[$i]] = [];
-                            foreach ($items as $item) processResult($item, $temp[$properties[$i]]);
-                        } else {
-                            $temp[$properties[$i]] = $result->getValue();
-                        }
-                        break;
-                    } else {
-                        if (!isset($temp[$properties[$i]])) {
-                            $temp[$properties[$i]] = [];
-                        }
-                        $temp = &$temp[$properties[$i]];
-                        ++$i;
-                    }
-                }
-
-            } else {
-                if ($isMany) {
-                    $items = $result->getChildren();
-                    $r[$property] = [];
-                    foreach ($items as $item) processResult($item, $r[$property]);
-                } else {
-                    $r[$property] = $result->getValue();
-                }
-            }
-        }
-
-        foreach ($results as $result) {
-            processResult($result, $r);
-        }
-
+        foreach ($results as $result) static::processTranslationResult($result, $r, $lang);
 
         $codedTranslations = Translations::getLangTranslations();
 

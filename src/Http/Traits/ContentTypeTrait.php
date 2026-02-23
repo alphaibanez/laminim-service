@@ -3,6 +3,7 @@
 namespace Lkt\Http\Traits;
 
 use Lkt\MIME;
+use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 
 trait ContentTypeTrait
 {
@@ -94,7 +95,14 @@ trait ContentTypeTrait
 
     public function sendContent(): static
     {
-        if ($this->isJSONContentType()) {
+        if ($this->responseData instanceof BaseWriter) {
+            ob_start();
+            $this->responseData->save('php://output');
+            $content = \ob_get_contents();
+            ob_end_clean();
+            echo $content;
+        }
+        elseif ($this->isJSONContentType()) {
             $data = $this->getResponseData();
             if (is_array($data) && count($data) > 0){
                 echo json_encode($data, $this->jsonEncodingFlag);

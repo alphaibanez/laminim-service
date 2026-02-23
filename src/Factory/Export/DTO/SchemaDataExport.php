@@ -4,7 +4,7 @@ namespace Lkt\Factory\Export\DTO;
 
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 
-class SchemaDataExport
+class SchemaDataExport extends AbstractDataExport
 {
     readonly public array $header;
     readonly public array $rows;

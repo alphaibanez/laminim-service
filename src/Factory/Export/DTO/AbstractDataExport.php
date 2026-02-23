@@ -4,7 +4,6 @@ namespace Lkt\Factory\Export\DTO;
 
 use PhpOffice\PhpSpreadsheet\Document\Properties;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 abstract class AbstractDataExport

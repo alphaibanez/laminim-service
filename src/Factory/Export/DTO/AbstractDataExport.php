@@ -48,8 +48,9 @@ abstract class AbstractDataExport
         return $spreadsheet;
     }
 
-    public function getCsvWriter(Properties|null $properties = null): Csv
+    public function getCsvWriter(Properties|null $properties = null, Spreadsheet|null $spreadsheet = null): Csv
     {
-        return new Csv($this->getSpreadsheet($properties));
+        if (!$spreadsheet) $spreadsheet = $this->getSpreadsheet($properties);
+        return new Csv($spreadsheet);
     }
 }

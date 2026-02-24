@@ -7,6 +7,7 @@ use Lkt\Http\Routes\DeleteRoute;
 use Lkt\Http\Routes\GetRoute;
 use Lkt\Http\Routes\PostRoute;
 use Lkt\Http\Routes\PutRoute;
+use Lkt\Translations\Http\LktTranslationsHttp;
 use Lkt\WebPages\Http\LktWebElementHttp;
 use Lkt\WebPages\Http\LktWebPageHttp;
 
@@ -56,6 +57,22 @@ DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
     ->setRequiredPermissions(['rm'])
     ->setTargetAccessPolicy('admin')
 ;
+
+/**
+ * Public translations routes
+ */
+GetRoute::register('/i18n', [LktTranslationsHttp::class, 'i18n']);
+
+/**
+ * Translations admin routes
+ */
+GetRoute::admin('/translations', [LktTranslationsHttp::class, 'index']);
+GetRoute::admin('/translations/export', [LktTranslationsHttp::class, 'export']);
+GetRoute::admin('/translations/export/missing', [LktTranslationsHttp::class, 'exportMissing']);
+PostRoute::admin('/translation', [LktTranslationsHttp::class, 'create']);
+GetRoute::admin('/translation/{id}', [LktTranslationsHttp::class, 'read']);
+PutRoute::admin('/translation/{id}', [LktTranslationsHttp::class, 'update']);
+DeleteRoute::admin('/translation/{id}', [LktTranslationsHttp::class, 'drop']);
 
 /**
  * Web Elements Routes

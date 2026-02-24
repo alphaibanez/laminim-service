@@ -215,7 +215,7 @@ class Translations
 
     public static function getMissedTranslations(array $langFilter = []): array
     {
-        $languages = static::getAvailableLanguages();
+        $languages = Locale::getAvailableLangCodes();
 
         if (count($langFilter) > 1) {
             $languagesReplacement = [];
@@ -229,26 +229,34 @@ class Translations
         $r = [];
 
         foreach ($languages as $language) {
-            $translations = static::getCombinedLangStack($language);
-            $r[$language] = arrayValuesRecursiveWithKeys($translations);
+            $translations = static::getCombinedLangStack($language->value);
+            $r[$language->value] = arrayValuesRecursiveWithKeys($translations);
         }
 
 
         $response = [];
         foreach ($languages as $language) {
-            foreach ($r[$language] as $key => $value) {
-                $keyExists = true;
+            foreach ($r[$language->value] as $key => $value) {
+
                 foreach ($languages as $lang) {
-                    if ($lang !== $language) {
-                        $keyExists = isset($r[$lang][$key]);
+                    if ($lang->value !== $language->value) {
+                        $keyExists = isset($r[$lang->value][$key]);
+
+                        if (!$keyExists) {
+                            if (!isset($response[$language->value][$key])) $response[$language->value][$key] = $value;
+                            $response[$lang->value][$key] = isset($r[$lang->value][$key]) ? trim($r[$lang->value][$key]) : '';
+
+                        } else {
+                            $duplicated = $value === $r[$lang->value][$key];
+                            if ($duplicated) {
+                                if (!isset($response[$language->value][$key])) $response[$language->value][$key] = $value;
+                                $response[$lang->value][$key] = $value;
+                            }
+                        }
                     }
                 }
 
-                if (!$keyExists) {
-                    foreach ($languages as $lang) {
-                        $response[$lang][$key] = isset($r[$lang][$key]) ? trim($r[$lang][$key]) : '';
-                    }
-                }
+
             }
         }
 

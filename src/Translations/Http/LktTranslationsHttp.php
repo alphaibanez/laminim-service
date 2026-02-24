@@ -2,8 +2,10 @@
 
 namespace Lkt\Translations\Http;
 
+use Lkt\Factory\Export\DTO\TranslationsDataExport;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
+use Lkt\Http\Request;
 use Lkt\Http\Response;
 use Lkt\Instances\LktTranslation;
 use Lkt\Translations\Translations;
@@ -60,6 +62,30 @@ class LktTranslationsHttp
     public static function i18n(array $params): Response
     {
         return Response::ok(Translations::getCombinedLangStack())->setJSONEncodingFlag(JSON_FORCE_OBJECT);
+    }
+
+    public static function export(Request $request): Response
+    {
+        $dto = TranslationsDataExport::all();
+
+        $spreadsheet = $dto->getSpreadsheet();
+
+        $writer = $dto->getCsvWriter(null, $spreadsheet);
+
+        return Response::ok($writer)
+            ->setContentDispositionAttachment("{$spreadsheet->getProperties()->getTitle()}.csv");
+    }
+
+    public static function exportMissing(Request $request): Response
+    {
+        $dto = TranslationsDataExport::missing();
+
+        $spreadsheet = $dto->getSpreadsheet();
+
+        $writer = $dto->getCsvWriter(null, $spreadsheet);
+
+        return Response::ok($writer)
+            ->setContentDispositionAttachment("{$spreadsheet->getProperties()->getTitle()}.csv");
     }
 
 

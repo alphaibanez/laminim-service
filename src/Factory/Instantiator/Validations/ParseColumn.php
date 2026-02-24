@@ -166,6 +166,22 @@ class ParseColumn
      * @param $value
      * @return array|null
      */
+    public static function i18nJSONDatumToInstance($value)
+    {
+        if (is_string($value)){
+            $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+            $value = ParseColumn::HTMLDatumToInstance($value);
+            return json_decode($value, true);
+        }
+        if (is_object($value)) return json_decode(json_encode($value), true);
+        if (!is_array($value)) return null;
+        return $value;
+    }
+
+    /**
+     * @param $value
+     * @return array|null
+     */
     public static function JSONDatumToInstance($value)
     {
         if (is_string($value)){

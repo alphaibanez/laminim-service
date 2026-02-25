@@ -33,15 +33,18 @@ class LktUsersRoles20251207154851 extends AbstractMigration
     {
         $items = $this->fetchAll("SELECT id, name FROM lkt_users_roles");
 
-        $lang = \Lkt\Locale\Locale::getLangCode();
+        $languages = \Lkt\Locale\Locale::getAvailableLangCodes();
 
         $processed = [];
 
         foreach ($items as $item) {
             $name = $item['name'];
-            $name = [$lang => $name];
+            $aux = [];
+            foreach ($languages as $langCode) {
+                $aux[$langCode->value] = $name;
+            }
 
-            $name = json_encode($name, JSON_UNESCAPED_UNICODE);
+            $name = json_encode($aux, JSON_UNESCAPED_UNICODE);
 
             $processed[$item['id']] = $name;
         }

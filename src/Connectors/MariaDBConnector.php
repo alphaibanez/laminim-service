@@ -441,11 +441,11 @@ class MariaDBConnector extends DatabaseConnector
                         if (!$field->isI18nJson()) {
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);
                             $v = $this->escapeDatabaseCharacters($v);
-                            $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+//                            $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
                         } else {
                             foreach ($value as $k => &$v) {
                                 $v = $this->escapeDatabaseCharacters($v);
-                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+//                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
                             }
 
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);

@@ -128,7 +128,7 @@ abstract class DatabaseConnector
 
     public function escapeDatabaseCharacters(string $str): string
     {
-        $str = str_replace('\\', ':LKT_SLASH:', $str);
+//        $str = str_replace('\\', ':LKT_SLASH:', $str);
 //        $str = str_replace('?', ':LKT_QUESTION_MARK:', $str);
 //        return trim(str_replace("'", ':LKT_SINGLE_QUOTE:', $str));
         return trim($str);

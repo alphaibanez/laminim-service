@@ -51,6 +51,7 @@ use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
@@ -1480,8 +1481,20 @@ abstract class AbstractInstance
         foreach ($data as $fieldName => $value) {
             $field = $schema->getField($fieldName);
             if ($field->getName() === $includeDuplicatedTextInField->getName()) {
-                $suffix = Translations::get('adminHelper.duplicatedText');
-                $payload[$fieldName] = "{$value} {$suffix}";
+                if ($includeDuplicatedTextInField instanceof JSONField) {
+
+                    $temp = [];
+                    foreach (Locale::getAvailableLangCodes() as $langCode) {
+                        $suffix = Translations::get('adminHelper.duplicatedText', $langCode->value);
+                        $temp[$langCode->value] = "{$value[$langCode->value]} {$suffix}";
+                    }
+
+                    $payload[$fieldName] = $temp;
+
+                } else {
+                    $suffix = Translations::get('adminHelper.duplicatedText');
+                    $payload[$fieldName] = "{$value} {$suffix}";
+                }
 
             } else {
                 $payload[$fieldName] = $value;

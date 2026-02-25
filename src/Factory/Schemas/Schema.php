@@ -115,7 +115,7 @@ final class Schema
         return $this;
     }
 
-    public function getIncludeDuplicatedTextInField(): StringField|null
+    public function getIncludeDuplicatedTextInField(): StringField|JSONField|null
     {
         if (!$this->includeDuplicatedTextInField) return null;
         return $this->getField($this->includeDuplicatedTextInField);

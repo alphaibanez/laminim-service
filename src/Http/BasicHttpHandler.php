@@ -3,6 +3,7 @@
 namespace Lkt\Http;
 
 use Lkt\Controllers\LktPermissionController;
+use Lkt\Enums\Permission;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Enums\AccessLevel;
@@ -203,12 +204,12 @@ class BasicHttpHandler
 
         if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
             if (!$request->loggedUser) return Response::forbidden();
-            $capability = $request->loggedUser->getAdminCapability($request->targetComponent, 'ls');
+            $capability = $request->loggedUser->getAdminCapability($request->targetComponent, Permission::List->value);
 
         } else {
             $capability = $request->loggedUser
-                ? $request->loggedUser?->getAppCapability($request->targetComponent, 'ls')
-                : LktPermissionController::getEnsuredPublicPermission($request->targetComponent, 'ls');
+                ? $request->loggedUser?->getAppCapability($request->targetComponent, Permission::List->value)
+                : LktPermissionController::getEnsuredPublicPermission($request->targetComponent, Permission::List->value);
         }
 
         $schema = Schema::get($request->targetComponent);
@@ -273,12 +274,12 @@ class BasicHttpHandler
 
         if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
             if (!$request->loggedUser) return Response::forbidden();
-            $capability = $request->loggedUser->getAdminCapability($request->targetComponent, 'ls');
+            $capability = $request->loggedUser->getAdminCapability($request->targetComponent, Permission::List->value);
 
         } else {
             $capability = $request->loggedUser
-                ? $request->loggedUser?->getAppCapability($request->targetComponent, 'ls')
-                : LktPermissionController::getEnsuredPublicPermission($request->targetComponent, 'ls');
+                ? $request->loggedUser?->getAppCapability($request->targetComponent, Permission::List->value)
+                : LktPermissionController::getEnsuredPublicPermission($request->targetComponent, Permission::List->value);
         }
 
         if ($capability && $capability === RoleCapability::Owned) {

@@ -720,6 +720,66 @@ class SetupTranslationsCommand extends Command
             'en' => 'Su',
         ], $parentId);
 
+
+        $parent = LktTranslation::createIfMissing('buttons', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('saveChanges', TranslationType::Text, [
+            'es' => 'Guardar cambios',
+            'en' => 'Save changes',
+        ], $parentId);
+        LktTranslation::createIfMissing('save', TranslationType::Text, [
+            'es' => 'Guardar',
+            'en' => 'Save',
+        ], $parentId);
+        LktTranslation::createIfMissing('drop', TranslationType::Text, [
+            'es' => 'Eliminar',
+            'en' => 'Delete',
+        ], $parentId);
+        LktTranslation::createIfMissing('back', TranslationType::Text, [
+            'es' => 'Atrás',
+            'en' => 'Back',
+        ], $parentId);
+        LktTranslation::createIfMissing('cancel', TranslationType::Text, [
+            'es' => 'Cancelar',
+            'en' => 'Cancel',
+        ], $parentId);
+        LktTranslation::createIfMissing('duplicate', TranslationType::Text, [
+            'es' => 'Duplicar',
+            'en' => 'Duplicate',
+        ], $parentId);
+        LktTranslation::createIfMissing('confirm', TranslationType::Text, [
+            'es' => 'Confirmar',
+            'en' => 'Confirm',
+        ], $parentId);
+        LktTranslation::createIfMissing('accept', TranslationType::Text, [
+            'es' => 'Aceptar',
+            'en' => 'Accept',
+        ], $parentId);
+        LktTranslation::createIfMissing('details', TranslationType::Text, [
+            'es' => 'Detalles',
+            'en' => 'Details',
+        ], $parentId);
+        LktTranslation::createIfMissing('editModeOn', TranslationType::Text, [
+            'es' => 'Detener edición',
+            'en' => 'Disable edition',
+        ], $parentId);
+        LktTranslation::createIfMissing('editModeOff', TranslationType::Text, [
+            'es' => 'Editar',
+            'en' => 'Enable edition',
+        ], $parentId);
+        LktTranslation::createIfMissing('actions', TranslationType::Text, [
+            'es' => 'Acciones',
+            'en' => 'Actions',
+        ], $parentId);
+        LktTranslation::createIfMissing('addElement', TranslationType::Text, [
+            'es' => 'Añadir otro',
+            'en' => 'Add element',
+        ], $parentId);
+        LktTranslation::createIfMissing('check', TranslationType::Text, [
+            'es' => 'Comprobar',
+            'en' => 'Check',
+        ], $parentId);
+
         return 1;
     }
 }

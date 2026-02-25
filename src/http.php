@@ -1,4 +1,5 @@
 <?php
+
 namespace Lkt;
 
 use Lkt\FileBrowser\Http\FileBrowserHttp;
@@ -17,54 +18,47 @@ use Lkt\WebPages\Http\LktWebPageHttp;
 GetRoute::admin('/admin-api/ls/{component}', BasicHttpHandler::List)
     ->setWebItemValueParamsExtractionKey('component')
     ->setRequiredPermissions(['ls'])
-    ->setGrantedPermsAttempt(['mk' => 'create'])
-;
+    ->setGrantedPermsAttempt(['mk' => 'create']);
 
 GetRoute::admin('/admin-api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
-    ->setGrantedPermsAttempt(['mk' => 'create'])
-;
+    ->setGrantedPermsAttempt(['mk' => 'create']);
 
 GetRoute::admin('/admin-api/r-{id:\d+}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])
-    ->setGrantedPermsAttempt(['up' => ['update', 'switch-edit-mode'], 'rm' => 'drop'])
-    ->setTargetAccessPolicy('admin')
-;
+    ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
+    ->setTargetAccessPolicy('admin');
 
 PostRoute::admin('/admin-api/mk/{component}', BasicHttpHandler::Create)
     ->setWebItemValueParamsExtractionKey('component')
     ->setAnonymousTarget()
     ->setRequiredPermissions(['mk'])
     ->setPayloadValueParamsExtractionKey('payload')
-    ->setTargetAccessPolicy('admin')
-;
+    ->setTargetAccessPolicy('admin');
 
 PutRoute::admin('/admin-api/up/{component}', BasicHttpHandler::Update)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['up'])
     ->setPayloadValueParamsExtractionKey('payload')
-    ->setTargetAccessPolicy('admin')
-;
+    ->setTargetAccessPolicy('admin');
 
 PostRoute::admin('/admin-api/dup/{component}', BasicHttpHandler::Duplicate)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['mk'])
     ->setPayloadValueParamsExtractionKey('payload')
-    ->setTargetAccessPolicy('duplicate')
-;
+    ->setTargetAccessPolicy('duplicate');
 
 DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['rm'])
-    ->setTargetAccessPolicy('admin')
-;
+    ->setTargetAccessPolicy('admin');
 
 /**
  * Public translations routes

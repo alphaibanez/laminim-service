@@ -23,6 +23,7 @@ Schema::add(
         ])
         ->setItemsPerPage(20)
         ->setCountableField('id')
+        ->setIncludeDuplicatedTextInField('name')
         ->addField(IdField::define('id'))
         ->addField(
             DateTimeField::define('createdAt', 'created_at')
@@ -36,4 +37,6 @@ Schema::add(
         )
         ->addField(StringField::define('name'))
         ->addField(AssocJSONField::define('permissions'))
+        ->addAccessPolicy('admin', ['id', 'name', 'permissions'])
+        ->addAccessPolicy('duplicate', ['name', 'permissions'])
 );

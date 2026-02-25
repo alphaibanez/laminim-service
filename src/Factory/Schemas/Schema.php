@@ -90,6 +90,7 @@ final class Schema
     protected bool $registeredAsLib = false;
 
     protected string $ownershipField = '';
+    protected string $includeDuplicatedTextInField = '';
 
     /**
      * @var WebItemActionHookHandler[]
@@ -106,6 +107,18 @@ final class Schema
     {
         if (!$this->ownershipField) return null;
         return $this->getField($this->ownershipField);
+    }
+
+    public function setIncludeDuplicatedTextInField(string $fieldName): static
+    {
+        $this->includeDuplicatedTextInField = $fieldName;
+        return $this;
+    }
+
+    public function getIncludeDuplicatedTextInField(): StringField|null
+    {
+        if (!$this->includeDuplicatedTextInField) return null;
+        return $this->getField($this->includeDuplicatedTextInField);
     }
 
     /**

@@ -1468,4 +1468,32 @@ abstract class AbstractInstance
         }
         return $this->{$method}();
     }
+
+    public function duplicate(): static
+    {
+        $clone = static::getInstance();
+        $data = $this->autoRead();
+        $payload = [];
+        $schema = Schema::get(static::COMPONENT);
+        $includeDuplicatedTextInField = $schema->getIncludeDuplicatedTextInField();
+
+        foreach ($data as $fieldName => $value) {
+            $field = $schema->getField($fieldName);
+            if ($field->getName() === $includeDuplicatedTextInField->getName()) {
+                $suffix = Translations::get('adminHelper.duplicatedText');
+                $payload[$fieldName] = "{$value} {$suffix}";
+
+            } else {
+                $payload[$fieldName] = $value;
+            }
+        }
+
+        static::feedInstance($clone, $payload);
+        return $clone;
+    }
+
+    public function saveDuplicate(): static
+    {
+        return $this->duplicate()->save();
+    }
 }

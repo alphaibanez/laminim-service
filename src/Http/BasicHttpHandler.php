@@ -18,6 +18,7 @@ class BasicHttpHandler
     public const Create = [self::class, 'mk'];
     public const Read = [self::class, 'r'];
     public const Update = [self::class, 'up'];
+    public const Duplicate = [self::class, 'dup'];
     public const Drop = [self::class, 'rm'];
 
     public static function r(Request $request): Response
@@ -51,7 +52,7 @@ class BasicHttpHandler
         }
 
         $schema = Schema::get($request->targetComponent);
-        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Read, WebItemActionHook::TweakResponseData, [
             'data' => &$r,
             'request' => $request,
         ]);
@@ -85,7 +86,7 @@ class BasicHttpHandler
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $responseData = ['id' => $request->targetInstance->getId()];
-        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Create, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
         ]);
@@ -118,7 +119,44 @@ class BasicHttpHandler
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $responseData = ['id' => $request->targetInstance->getId()];
-        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Update, WebItemActionHook::TweakResponseData, [
+            'data' => &$responseData,
+            'request' => $request,
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
+        return Response::ok($responseData);
+    }
+
+    public static function dup(Request $request): Response
+    {
+        $accessPolicy = $request->getTargetAccessPolicy(WebItemAction::Duplicate);
+        if ($accessPolicy instanceof Response) return $accessPolicy;
+
+        if ($accessPolicy) {
+            $request->targetInstance->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+        }
+
+        $duplicated = $request->targetInstance->saveDuplicate();
+
+        if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessUpdate, $request->httpEventHandlers, []);
+
+        $schema = Schema::get($request->targetComponent);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Duplicate, WebItemActionHook::Success, [
+            'request' => $request
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
+
+        if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
+            Notification::sendRedirect("/admin/web-items/{$request->targetWebItem->publicComponentName}/{$duplicated->getId()}", true);
+            if (count(Notification::$defaultSuccessDuplicateNotificationPayload) > 0) {
+                Notification::sendSuccessToast(Notification::$defaultSuccessDuplicateNotificationPayload);
+            }
+        }
+
+        $responseData = ['id' => $duplicated->getId()];
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Duplicate, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
         ]);

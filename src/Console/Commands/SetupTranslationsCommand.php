@@ -26,6 +26,14 @@ class SetupTranslationsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $parent = LktTranslation::createIfMissing('adminHelper', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('duplicatedText', TranslationType::Text, [
+            'es' => '(Copia)',
+            'en' => '(Copy)',
+        ], $parentId);
+
+
         $parent = LktTranslation::createIfMissing('translationType', TranslationType::Many, []);
         $parentId = $parent->getId();
         LktTranslation::createIfMissing('text', TranslationType::Text, [

@@ -9,5 +9,6 @@ enum WebItemAction: string
     case Create = 'mk';
     case Read = 'r';
     case Update = 'up';
+    case Duplicate = 'dup';
     case Drop = 'rm';
 }

@@ -18,6 +18,8 @@ class Notification
     public static string $defaultFailClass = '';
     public static string $defaultWarningClass = '';
 
+    public static array $defaultSuccessDuplicateNotificationPayload = [];
+
     readonly public string $text;
     readonly public string $details;
     readonly public ToastPosition|null $toastPosition;

@@ -38,6 +38,7 @@ use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Instantiator\ValueObjects\MonthlyAccuratePages;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
+use Lkt\Factory\Schemas\Enums\RelatedFieldClonePolicy;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
@@ -1497,7 +1498,27 @@ abstract class AbstractInstance
                 }
 
             } else {
-                $payload[$fieldName] = $value;
+
+                $addToPayload = true;
+                $addToPayloadValue = $value;
+
+                if ($field instanceof ForeignKeyField) {
+                    $clonePolicy = $field->getRelatedFieldClonePolicy();
+                    switch ($clonePolicy) {
+                        case RelatedFieldClonePolicy::KeepReferences:
+                            $addToPayload = true;
+                            break;
+
+                        case RelatedFieldClonePolicy::Ignore:
+                            $addToPayload = false;
+                            break;
+                    }
+
+                }
+
+                if ($addToPayload) {
+                    $payload[$fieldName] = $addToPayloadValue;
+                }
             }
         }
 

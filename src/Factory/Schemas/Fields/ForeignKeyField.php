@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Schemas\Traits\FieldRelatedClonePolicyOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithAvailableOptionsFilterOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithCompositionOptionTrait;
@@ -22,7 +23,8 @@ class ForeignKeyField extends IntegerField
         FieldWithCompositionOptionTrait,
         FieldWithRelatedAccessPolicyOptionTrait,
         FieldWithPrefabRoleTrait,
-        FieldWithOnReadIncludeOptionsTrait;
+        FieldWithOnReadIncludeOptionsTrait,
+        FieldRelatedClonePolicyOptionTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {

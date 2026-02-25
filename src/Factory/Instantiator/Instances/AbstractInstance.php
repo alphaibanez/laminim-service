@@ -1488,6 +1488,8 @@ abstract class AbstractInstance
             }
         }
 
+        $payload = $clone->prepareCrudData($payload, CrudOperation::Create);
+
         static::feedInstance($clone, $payload);
         return $clone;
     }

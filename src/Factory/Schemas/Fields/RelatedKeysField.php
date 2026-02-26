@@ -22,4 +22,17 @@ class RelatedKeysField extends AbstractField
     {
         return (new static($name, $column))->setComponent($component);
     }
+
+    protected string $appendForeignKeysName = '';
+
+    public function setAppendForeignKeysName(string $name): static
+    {
+        $this->appendForeignKeysName = $name;
+        return $this;
+    }
+
+    public function getAppendForeignKeysName(): string
+    {
+        return $this->appendForeignKeysName;
+    }
 }

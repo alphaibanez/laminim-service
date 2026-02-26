@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
@@ -623,12 +624,20 @@ final class Schema
             }
         }
 
+        // Catch foreign keys ids
         $l = strlen($field);
         $endsWithIds = substr($field, $l - 3, 3) === 'Ids';
         if ($endsWithIds) {
             $keyWithoutIds = substr($field, 0, $l - 3);
             if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof ForeignKeysField) {
                 return $haystack[$keyWithoutIds];
+            }
+        }
+
+        // Catch related keys append key
+        foreach ($haystack as $fieldObj) {
+            if ($fieldObj instanceof RelatedKeysField && $field === $fieldObj->getAppendForeignKeysName()) {
+                return $haystack[$fieldObj->getName()];
             }
         }
 
@@ -664,6 +673,13 @@ final class Schema
             $keyWithoutIds = substr($fieldName, 0, $l - 3);
             if (isset($this->fields[$keyWithoutIds]) && $this->fields[$keyWithoutIds] instanceof ForeignKeysField) {
                 return $this->fields[$keyWithoutIds] !== null;
+            }
+        }
+
+        // Catch related keys append key
+        foreach ($this->fields as $fieldObj) {
+            if ($fieldObj instanceof RelatedKeysField && $fieldName === $fieldObj->getAppendForeignKeysName()) {
+                return is_object($this->fields[$fieldObj->getName()]);
             }
         }
 

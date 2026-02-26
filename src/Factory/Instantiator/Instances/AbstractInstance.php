@@ -654,9 +654,15 @@ abstract class AbstractInstance
             }
         }
 
+        if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
+            foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
+                $this->_saveAppendToParentForeignKeys($field, $relatedId);
+            }
+        }
+
         $this->_saveCompositionValues($isUpdate);
 
-        if ($this->accessPolicy && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {
+        if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {
             unset($this->accessPolicy);
         }
 
@@ -975,6 +981,7 @@ abstract class AbstractInstance
                     }
                     if (!$isPivotDatumFeed) continue;
                 } else {
+
                     $field = $accessPolicy->getSchemaField($schema, $param);
                     if (!$field) $field = $accessPolicy->getSchemaCompositionField($schema, $param);
                 }
@@ -1060,6 +1067,12 @@ abstract class AbstractInstance
                 } else {
                     $setter = '_setForeignListWithData';
                     $methodCallData = ['fieldName' => $field->getName(), 'data' => $value];
+                }
+
+            } elseif ($field instanceof RelatedKeysField) {
+                if (is_numeric($value)) {
+                    $setter = '_appendToParentForeignKeys';
+                    $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
                 }
 
             } elseif ($field instanceof PivotField) {

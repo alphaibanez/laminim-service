@@ -15,6 +15,8 @@ use Lkt\QueryBuilding\Where;
 
 trait ColumnRelatedKeysTrait
 {
+    protected array $PENDING_PARENT_FOREIGN_KEYS = [];
+
     /**
      * @param $type
      * @param $column
@@ -161,6 +163,33 @@ trait ColumnRelatedKeysTrait
         }
 
         $this->UPDATED_RELATED_DATA[$column] = $r;
+        return $this;
+    }
+
+    protected function _appendToParentForeignKeys(string $field, int $parentValue): static
+    {
+        $this->PENDING_PARENT_FOREIGN_KEYS[$field] = $parentValue;
+        return $this;
+    }
+
+    protected function _saveAppendToParentForeignKeys(string $fieldName, int $parentValue): static
+    {
+        $schema = Schema::get(static::COMPONENT);
+        $field = $schema->getField($fieldName);
+
+        if ($field instanceof RelatedKeysField) {
+            $relatedSchema = Schema::get($field->getComponent());
+            $relatedSchemaField = $relatedSchema->getField($field->getColumn());
+
+            $setter = $relatedSchemaField->getSetter();
+            $getter = $relatedSchemaField->getGetterForPrimitiveValue();
+
+            $instance = $relatedSchema->getItemInstance($parentValue);
+            $instance->{$setter}([
+                ...$instance->{$getter}(),
+                $this->getIdColumnValue(),
+            ])->save();
+        }
         return $this;
     }
 }

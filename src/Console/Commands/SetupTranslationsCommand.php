@@ -779,6 +779,10 @@ class SetupTranslationsCommand extends Command
             'es' => 'Comprobar',
             'en' => 'Check',
         ], $parentId);
+        LktTranslation::createIfMissing('unlinkElement', TranslationType::Text, [
+            'es' => 'Desvincular',
+            'en' => 'Unlink',
+        ], $parentId);
 
         return 1;
     }

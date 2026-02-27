@@ -185,10 +185,12 @@ trait ColumnRelatedKeysTrait
             $getter = $relatedSchemaField->getGetterForPrimitiveValue();
 
             $instance = $relatedSchema->getItemInstance($parentValue);
-            $instance->{$setter}([
-                ...$instance->{$getter}(),
-                $this->getIdColumnValue(),
-            ])->save();
+            if (!$instance->isAnonymous()) {
+                $instance->{$setter}([
+                    ...$instance->{$getter}(),
+                    $this->getIdColumnValue(),
+                ])->save();
+            }
         }
         return $this;
     }

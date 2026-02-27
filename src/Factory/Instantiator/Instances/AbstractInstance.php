@@ -1070,9 +1070,11 @@ abstract class AbstractInstance
                 }
 
             } elseif ($field instanceof RelatedKeysField) {
-                if (is_numeric($value)) {
+                if (is_numeric($value) && $value > 0) {
                     $setter = '_appendToParentForeignKeys';
                     $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
+                } else {
+                    continue;
                 }
 
             } elseif ($field instanceof PivotField) {

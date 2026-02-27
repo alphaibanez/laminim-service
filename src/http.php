@@ -26,6 +26,12 @@ GetRoute::admin('/admin-api/page-{page:\d+}/{component}', BasicHttpHandler::Page
     ->setRequiredPermissions(['ls'])
     ->setGrantedPermsAttempt(['mk' => 'create']);
 
+GetRoute::admin('/admin-api/opts-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setPageValueParamsExtractionKey('page')
+    ->setRequiredPermissions(['ls'])
+    ->setTargetAccessPolicy('lkt-related');;
+
 GetRoute::admin('/admin-api/r-{id:\d+}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')

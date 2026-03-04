@@ -223,6 +223,8 @@ class BasicHttpHandler
             }
         }
 
+        $schema->filterBuilder($builder, $request->params);
+
         //@todo: check if is anonymous, get access level field from schema and filter not allowed results from query
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,
@@ -288,6 +290,8 @@ class BasicHttpHandler
                 $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getId());
             }
         }
+
+        $schema->filterBuilder($builder, $request->params);
 
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,

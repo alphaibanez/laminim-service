@@ -51,6 +51,7 @@ use Lkt\WebItems\Enums\WebItemAction;
 use Lkt\WebItems\Enums\WebItemActionHook;
 use Lkt\WebItems\WebItemActionHookHandler;
 use function Lkt\Tools\Arrays\getArrayFirstPosition;
+use function Lkt\Tools\Parse\clearInput;
 
 final class Schema
 {
@@ -1271,5 +1272,28 @@ final class Schema
         }
 
         return "{$this->getComponent()}_{$instanceId}";
+    }
+
+
+
+    public function filterBuilder(Query &$builder, array $data): void
+    {
+        foreach ($data as $fieldName => $value) {
+            $field = $this->getField($fieldName);
+            if (!$field) continue;
+
+            if ($field instanceof StringField) {
+                $v = clearInput($value);
+                if ($v) $builder->andStringLike($field->getColumn(), $v);
+
+            } else if ($field instanceof IntegerChoiceField || $field instanceof IntegerField) {
+                if (is_array($value)) {
+                    if (count($value) > 0) $builder->andIntegerIn($field->getColumn(), $value);
+
+                } else {
+                    $builder->andIntegerEqual($field->getColumn(), (int)$value);
+                }
+            }
+        }
     }
 }

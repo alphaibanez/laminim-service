@@ -13,6 +13,8 @@ use Lkt\Console\Commands\SyncOpenExchangeRatesCommand;
 use Lkt\Console\Commands\SyncRestCountriesCommand;
 use Lkt\Phinx\PhinxConfigurator;
 use Lkt\Translations\Translations;
+use Phinx\Console\Command\Migrate;
+use Phinx\Console\Command\SeedRun;
 use function Lkt\Tools\Requiring\requireFiles;
 
 require_once __DIR__ . '/Tools/Requiring/requireFiles.php';
@@ -52,7 +54,13 @@ function addLocalePath(string $lang, string $path): void
 
 if (php_sapi_name() == 'cli') {
     PhinxConfigurator::addMigrationPath(__DIR__ . '/../database/migrations');
+    PhinxConfigurator::addSeedPath(__DIR__ . '/../database/seeds');
 
+    // Database migration and seeding
+    Commander::register(new Migrate());
+    Commander::register(new SeedRun());
+
+    // Own commands
     Commander::register(new GenerateCommand());
     Commander::register(new MailDeliveryCommand());
     Commander::register(new MakeCrontabCommand());

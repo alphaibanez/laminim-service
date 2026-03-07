@@ -86,6 +86,10 @@ class Locale
     {
         return static::$availableLangCodes;
     }
+    public static function getAvailableLangCodesValues(): array
+    {
+        return array_map(function (LangCode $code) { return $code->value; }, static::$availableLangCodes);
+    }
 
     public static function setAvailableCurrencyCodes(array $codes)
     {

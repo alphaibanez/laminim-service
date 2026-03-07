@@ -23,6 +23,7 @@ use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
+use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
 
 class MariaDBConnector extends DatabaseConnector
@@ -228,7 +229,7 @@ class MariaDBConnector extends DatabaseConnector
 
     public function getQuery(Query $builder, string $type, string $countableField = null): string
     {
-        $whereString = $builder->getQueryWhere();
+        $whereString = $builder->getQueryWhere($this);
 
         switch ($type) {
             case 'select':
@@ -478,5 +479,25 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         return $parsed;
+    }
+
+    public function prepareWhereConstraint(AbstractConstraint $whereConstraint): AbstractConstraint
+    {
+        $col = $whereConstraint->getColumn();
+        if (strpos($col, '__loc:') === 0) {
+            $col = substr($col, 6);
+            $lang = substr($col, 0, 2);
+            $col = substr($col, 3);
+
+            $table = $whereConstraint->getTable();
+            if ($table) {
+                $col = "{$table}.{$col}";
+                $whereConstraint->setTable('');
+            }
+
+            $col = "JSON_UNQUOTE(JSON_EXTRACT({$col}, \"$.{$lang}\"))";
+            $whereConstraint->setColumn($col);
+        }
+        return $whereConstraint;
     }
 }

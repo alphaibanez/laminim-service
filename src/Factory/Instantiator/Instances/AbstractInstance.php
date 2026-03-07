@@ -1087,7 +1087,16 @@ abstract class AbstractInstance
                 }
 
             } else if ($field instanceof StringField || $field instanceof HTMLField) {
-                $methodCallData = [$field->getName() => clearInput($value)];
+                if ($field->isI18nJson() && is_array($value)) {
+                    $translationField = $schema->getField("{$field->getName()}Data");
+                    if ($translationField) {
+                        $setter = '_setJsonVal';
+                        $methodCallData = ['fieldName' => $translationField->getName(), 'value' => $value];
+                    }
+
+                } else {
+                    $methodCallData = [$field->getName() => clearInput($value)];
+                }
 
             } elseif ($field instanceof IntegerField && !$field instanceof IdField && !$field->isMultiple()) {
                 $methodCallData = [$field->getName() => (int)$value];
@@ -1546,5 +1555,29 @@ abstract class AbstractInstance
     public function saveDuplicate(): static
     {
         return $this->duplicate()->save();
+    }
+
+    public static function getUniqueFilteredQueryBuilder(): Query
+    {
+        $schema = Schema::get(static::COMPONENT);
+
+        $query = static::getQueryCaller();
+        $langCodes = Locale::getAvailableLangCodesValues();
+
+        foreach ($schema->getUniqueFields() as $field) {
+            if ($field instanceof StringField) {
+                if ($field->isI18nJson()) {
+                    foreach ($langCodes as $langCode) {
+                        if (isset($data[$field->getName()][$langCode])) {
+                            $query->andStringEqual($field->getLocaleColumn($langCode), $data[$field->getName()][$langCode]);
+                        }
+                    }
+                } else {
+                    $query->andStringEqual($field->getColumn(), $data[$field->getName()]);
+                }
+            }
+        }
+
+        return $query;
     }
 }

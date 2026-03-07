@@ -111,6 +111,18 @@ final class Schema
         return $this->getField($this->ownershipField);
     }
 
+    /**
+     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|EmailField|EncryptField|FileField|FloatField|ForeignKeyField|ForeignKeysField|HTMLField|IdField|ImageField|IntegerChoiceField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|UnixTimeStampField|UrlField|ValueListField|null
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
+    public function getUniqueFields(): array
+    {
+        return array_filter($this->getAllFields(), function (AbstractField $field) {
+            return method_exists($field, 'isUnique') && $field->isUnique();
+        });
+    }
+
     public function setIncludeDuplicatedTextInField(string $fieldName): static
     {
         $this->includeDuplicatedTextInField = $fieldName;

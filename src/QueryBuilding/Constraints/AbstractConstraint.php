@@ -40,4 +40,20 @@ abstract class AbstractConstraint
         if ($table !== '') return "{$table}.";
         return '';
     }
+
+    public function getColumn(): string
+    {
+        return $this->column;
+    }
+
+    public function setColumn(string $column): static
+    {
+        $this->column = $column;
+        return $this;
+    }
+
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

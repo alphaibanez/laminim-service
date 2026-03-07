@@ -57,6 +57,11 @@ abstract class AbstractField
         return $this->column->getValue();
     }
 
+    final public function getLocaleColumn(string $locale): string
+    {
+        return "__loc:{$locale}:{$this->column->getValue()}";
+    }
+
     /**
      * @throws InvalidFieldNameException
      */

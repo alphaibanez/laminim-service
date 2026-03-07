@@ -2,6 +2,7 @@
 
 namespace Lkt\QueryBuilding\Traits;
 
+use Lkt\Connectors\DatabaseConnector;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
@@ -89,11 +90,11 @@ trait WhereConstraints
     protected array $constraints = [];
 
 
-    public function getQueryWhere(): string
+    public function getQueryWhere(DatabaseConnector $databaseConnector = null): string
     {
         $where = [];
 
-        $whereConstraints = $this->whereConstraintsToString();
+        $whereConstraints = $this->whereConstraintsToString($databaseConnector);
         if ($whereConstraints !== '') {
             $where[] = $whereConstraints;
         }
@@ -110,14 +111,18 @@ trait WhereConstraints
         return $whereString;
     }
 
-    protected function getConstraintString(AbstractConstraint|Where|callable|string|int $constraint): string
+    protected function getConstraintString(AbstractConstraint|Where|callable|string|int $constraint, DatabaseConnector $databaseConnector = null): string
     {
         if ($constraint instanceof AbstractConstraint) {
             if (method_exists($this, 'getTable')) $constraint->setTable($this->getTable(), $this->getTableAlias());
+            if ($databaseConnector) {
+                $constraint = $databaseConnector->prepareWhereConstraint($constraint);
+            }
+
             return (string)$constraint;
         }
 
-        if ($constraint instanceof Where) return $constraint->whereConstraintsToString();
+        if ($constraint instanceof Where) return $constraint->whereConstraintsToString($databaseConnector);
         if (is_callable($constraint)) return call_user_func_array($constraint, []);
         if (is_string($constraint)) return $constraint;
         if (is_numeric($constraint)) return (string)$constraint;
@@ -125,19 +130,19 @@ trait WhereConstraints
         return '';
     }
 
-    public function whereConstraintsToString(): string
+    public function whereConstraintsToString(DatabaseConnector $databaseConnector = null): string
     {
         $r = [];
 
         foreach ($this->and as $constraint) {
-            $toAdd = $this->getConstraintString($constraint);
+            $toAdd = $this->getConstraintString($constraint, $databaseConnector);
             if ($toAdd !== '') $r[] = $toAdd;
         }
 
 
         if (method_exists($this, 'hasJoinedBuilders') && $this->hasJoinedBuilders()) {
             foreach ($this->getJoinedBuilders() as $key => $joinedBuilder) {
-                $joinedWhereAux = trim($joinedBuilder->whereConstraintsToString());
+                $joinedWhereAux = trim($joinedBuilder->whereConstraintsToString($databaseConnector));
                 if ($joinedWhereAux) {
                     $r[] = $joinedWhereAux;
                 }
@@ -146,7 +151,7 @@ trait WhereConstraints
 
         $or = [];
         foreach ($this->or as $constraint) {
-            $toAdd = $this->getConstraintString($constraint);
+            $toAdd = $this->getConstraintString($constraint, $databaseConnector);
             if ($toAdd !== '') $or[] = $toAdd;
         }
 

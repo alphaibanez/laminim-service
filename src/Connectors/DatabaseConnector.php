@@ -3,6 +3,7 @@
 namespace Lkt\Connectors;
 
 use Lkt\Factory\Schemas\Schema;
+use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
 
 abstract class DatabaseConnector
@@ -170,5 +171,10 @@ abstract class DatabaseConnector
     final public function getDeleteQuery(Query $builder): string
     {
         return $this->getQuery($builder,'delete');
+    }
+
+    public function prepareWhereConstraint(AbstractConstraint $whereConstraint): AbstractConstraint
+    {
+        return $whereConstraint;
     }
 }

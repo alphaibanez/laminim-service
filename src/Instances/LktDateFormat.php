@@ -2,11 +2,11 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Generated\GeneratedLktFileFormat;
+use Lkt\Generated\GeneratedLktDateFormat;
 
-class LktFileFormat extends GeneratedLktFileFormat
+class LktDateFormat extends GeneratedLktDateFormat
 {
-    const COMPONENT = 'lkt-file-format';
+    const COMPONENT = 'lkt-date-format';
 
     public static function createOrUpdate(array $data): static
     {

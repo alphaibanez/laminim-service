@@ -1557,7 +1557,7 @@ abstract class AbstractInstance
         return $this->duplicate()->save();
     }
 
-    public static function getUniqueFilteredQueryBuilder(): Query
+    public static function getUniqueFilteredQueryBuilder(array $data): Query
     {
         $schema = Schema::get(static::COMPONENT);
 

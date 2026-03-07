@@ -1,9 +1,9 @@
 <?php
 
 use Phinx\Seed\AbstractSeed;
-use Lkt\Instances\LktImportType;
+use Lkt\Instances\LktFileFormat;
 
-class ImportTypesSeeder extends AbstractSeed
+class FileFormatsSeeder extends AbstractSeed
 {
     /**
      * Run Method.
@@ -15,7 +15,7 @@ class ImportTypesSeeder extends AbstractSeed
      */
     public function run() : void
     {
-        LktImportType::createIfMissing([
+        LktFileFormat::createIfMissing([
             'name' => [
                 'es' => 'CSV', 'en' => 'CSV',
             ],
@@ -25,7 +25,7 @@ class ImportTypesSeeder extends AbstractSeed
             ]
         ]);
 
-        LktImportType::createIfMissing([
+        LktFileFormat::createIfMissing([
             'name' => [
                 'es' => 'ODS', 'en' => 'ODS',
             ],
@@ -35,7 +35,7 @@ class ImportTypesSeeder extends AbstractSeed
             ]
         ]);
 
-        LktImportType::createIfMissing([
+        LktFileFormat::createIfMissing([
             'name' => [
                 'es' => 'XLS', 'en' => 'XLS',
             ],
@@ -45,7 +45,7 @@ class ImportTypesSeeder extends AbstractSeed
             ]
         ]);
 
-        LktImportType::createIfMissing([
+        LktFileFormat::createIfMissing([
             'name' => [
                 'es' => 'XLSX', 'en' => 'XLSX',
             ],

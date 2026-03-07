@@ -9,13 +9,13 @@ use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktImportType;
+use Lkt\Instances\LktFileFormat;
 
 
 Schema::add(
-    Schema::table('lkt_import_types', LktImportType::COMPONENT)
+    Schema::table('lkt_file_formats', LktFileFormat::COMPONENT)
         ->setInstanceSettings(
-            InstanceSettings::define(LktImportType::class)
+            InstanceSettings::define(LktFileFormat::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )

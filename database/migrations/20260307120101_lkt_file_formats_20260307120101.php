@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LktImportTypes20260307120101 extends AbstractMigration
+class LktFileFormats20260307120101 extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,10 +32,10 @@ class LktImportTypes20260307120101 extends AbstractMigration
      */
     public function change()
     {
-        $exists = $this->hasTable('lkt_import_types');
+        $exists = $this->hasTable('lkt_file_formats');
         if ($exists) return;
 
-        $table = $this->table('lkt_import_types', ['collation' => 'utf8mb4_unicode_ci'])
+        $table = $this->table('lkt_file_formats', ['collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
 

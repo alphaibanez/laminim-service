@@ -4,12 +4,12 @@ namespace Lkt\Instances;
 
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Generated\GeneratedLktImportType;
+use Lkt\Generated\GeneratedLktFileFormat;
 use Lkt\Locale\Locale;
 
-class LktImportType extends GeneratedLktImportType
+class LktFileFormat extends GeneratedLktFileFormat
 {
-    const COMPONENT = 'lkt-import-type';
+    const COMPONENT = 'lkt-file-format';
 
     public static function createOrUpdate(array $data): static
     {

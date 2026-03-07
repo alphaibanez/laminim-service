@@ -2,10 +2,7 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Factory\Schemas\Fields\StringField;
-use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktFileFormat;
-use Lkt\Locale\Locale;
 
 class LktFileFormat extends GeneratedLktFileFormat
 {

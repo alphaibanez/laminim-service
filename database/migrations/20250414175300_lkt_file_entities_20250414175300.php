@@ -39,7 +39,7 @@ class LKtFileEntities20250414175300 extends AbstractMigration
 
             ->addColumn('type', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0])
             ->addColumn('src', 'string', ['limit' => 250])
-            ->addColumn('name', 'json')
+            ->addColumn('name', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('embed_code', 'text', ['null' => true, 'default' => null])
             ->addColumn('space_limit', 'decimal', ['precision' => 20, 'scale' => 3, 'default' => 0])
             ->addColumn('space_limit_unit', 'char', ['limit' => 2, 'default' => 'B'])

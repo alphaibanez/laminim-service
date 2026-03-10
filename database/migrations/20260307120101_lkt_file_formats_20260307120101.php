@@ -39,8 +39,8 @@ class LktFileFormats20260307120101 extends AbstractMigration
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
 
-            ->addColumn('name', 'json', ['null' => true, 'default' => null])
-            ->addColumn('description', 'json', ['null' => true, 'default' => null])
+            ->addColumn('name', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
+            ->addColumn('description', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
 
             ->addColumn('is_active', 'boolean', ['default' => 1])
         ;

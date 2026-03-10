@@ -1,5 +1,6 @@
 <?php
 
+use Phinx\Db\Adapter\MysqlAdapter;
 use Phinx\Migration\AbstractMigration;
 
 class LktUsersRoles20251207154851 extends AbstractMigration
@@ -51,7 +52,7 @@ class LktUsersRoles20251207154851 extends AbstractMigration
 
         $table = $this->table('lkt_users_roles');
 
-        $table->addColumn('name_aux', 'json', ['null' => true, 'default' => null, 'after' => 'name']);
+        $table->addColumn('name_aux', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci']);
         $table->update();
 
         foreach ($processed as $id => $name) {

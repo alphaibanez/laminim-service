@@ -39,7 +39,7 @@ class LktCountries20260213131313 extends AbstractMigration
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
 
-            ->addColumn('name', 'json', ['null' => true, 'default' => null])
+            ->addColumn('name', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
 
             ->addColumn('iso_code_alpha2', 'char', ['limit' => 2])
             ->addColumn('iso_code_numeric3', 'char', ['limit' => 3])

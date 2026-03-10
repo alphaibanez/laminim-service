@@ -40,7 +40,7 @@ class LktMenus20260107070707 extends AbstractMigration
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
             ->addColumn('created_by', 'integer', ['default' => 0])
 
-            ->addColumn('name', 'json', ['null' => true, 'default' => null])
+            ->addColumn('name', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('status', 'smallinteger', ['default' => 1])
             ->addColumn('include_available_admin_routes', 'boolean', ['default' => 0])
             ->addColumn('required_roles', 'text', ['null' => true, 'default' => null])

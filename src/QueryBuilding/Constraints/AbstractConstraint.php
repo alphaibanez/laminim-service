@@ -33,6 +33,7 @@ abstract class AbstractConstraint
 
     protected function getTablePrepend(): string
     {
+        if (strpos($this->column, 'JSON_') === 0) return '';
         $alias = trim($this->tableAlias);
         if ($alias !== '') return "{$alias}.";
 

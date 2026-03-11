@@ -46,6 +46,7 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\Factory\Schemas\Values\TableValue;
 use Lkt\Http\Response;
+use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
 use Lkt\WebItems\Enums\WebItemAction;
 use Lkt\WebItems\Enums\WebItemActionHook;
@@ -1290,13 +1291,22 @@ final class Schema
 
     public function filterBuilder(Query &$builder, array $data): void
     {
+        $langCode = Locale::getLangCode();
+
         foreach ($data as $fieldName => $value) {
             $field = $this->getField($fieldName);
             if (!$field) continue;
 
             if ($field instanceof StringField) {
                 $v = clearInput($value);
-                if ($v) $builder->andStringLike($field->getColumn(), $v);
+                if ($v) {
+                    if ($field->isI18nJson()) {
+                        $builder->andStringLike($field->getLocaleColumn($langCode), $value);
+
+                    } else {
+                        $builder->andStringLike($field->getColumn(), $v);
+                    }
+                }
 
             } else if ($field instanceof IntegerChoiceField || $field instanceof IntegerField) {
                 if (is_array($value)) {
@@ -1304,6 +1314,14 @@ final class Schema
 
                 } else {
                     $builder->andIntegerEqual($field->getColumn(), (int)$value);
+                }
+
+            } else if ($field instanceof JSONField) {
+                if ($field->isI18nJson()) {
+                    if (is_string($value)) {
+                        $langCode = Locale::getLangCode();
+                        $builder->andStringEqual($field->getLocaleColumn($langCode), $value);
+                    }
                 }
             }
         }

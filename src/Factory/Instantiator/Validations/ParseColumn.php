@@ -7,6 +7,7 @@ use Lkt\FileReader\Directory;
 use Lkt\FileReader\File;
 use Lkt\Factory\Instantiator\SystemConnections\FileSystemConnection;
 use Lkt\Factory\Schemas\Fields\FileField;
+use Lkt\Locale\Locale;
 
 class ParseColumn
 {
@@ -171,7 +172,14 @@ class ParseColumn
         if (is_string($value)){
             $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
             $value = ParseColumn::HTMLDatumToInstance($value);
-            return json_decode($value, true);
+            $value = json_decode($value, true);
+
+            $availableLanguages = Locale::getAvailableLangCodesValues();
+            foreach ($availableLanguages as $language) {
+                if (!isset($value[$language])) $value[$language] = '';
+            }
+
+            return $value;
         }
         if (is_object($value)) return json_decode(json_encode($value), true);
         if (!is_array($value)) return null;

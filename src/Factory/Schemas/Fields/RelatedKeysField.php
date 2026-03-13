@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Schemas\Traits\FieldWithAppendForeignKeysNameOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
@@ -16,23 +17,11 @@ class RelatedKeysField extends AbstractField
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,
         FieldWithSoftTypedOptionTrait,
-        FieldWithRelatedAccessPolicyOptionTrait;
+        FieldWithRelatedAccessPolicyOptionTrait,
+        FieldWithAppendForeignKeysNameOptionTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {
         return (new static($name, $column))->setComponent($component);
-    }
-
-    protected string $appendForeignKeysName = '';
-
-    public function setAppendForeignKeysName(string $name): static
-    {
-        $this->appendForeignKeysName = $name;
-        return $this;
-    }
-
-    public function getAppendForeignKeysName(): string
-    {
-        return $this->appendForeignKeysName;
     }
 }

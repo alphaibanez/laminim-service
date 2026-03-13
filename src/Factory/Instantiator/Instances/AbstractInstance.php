@@ -12,6 +12,7 @@ use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
+use Lkt\Factory\Instantiator\Helpers\RecursiveReadController;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnBooleanTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnColorTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnCompositionTrait;
@@ -1126,6 +1127,14 @@ abstract class AbstractInstance
      */
     public function readFields(array $fields = [], array $internalMethodsArguments = []): array
     {
+        $recursiveReadController = RecursiveReadController::getInstance();
+
+        $accessPolicyName = isset($this->accessPolicy) ? $this->accessPolicy->name : '';
+
+        if (!$recursiveReadController->log(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue())) {
+            return [];
+        }
+
         $schema = Schema::get(static::COMPONENT);
         $r = [];
         foreach ($fields as $key => $field) {
@@ -1356,6 +1365,8 @@ abstract class AbstractInstance
             }
         }
 
+        RecursiveReadController::endStack(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue());
+
         if (method_exists($this, 'postProcessRead')) return $this->postProcessRead($r);
         return $r;
     }
@@ -1387,7 +1398,7 @@ abstract class AbstractInstance
 
         $r = $this->patchReadData($this->readFields($fieldsStack, $internalMethodsArguments));
 
-        if ($this->accessPolicy && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextRead)) {
+        if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextRead)) {
             unset($this->accessPolicy);
         }
 

@@ -80,6 +80,7 @@ class Request
             $this->targetComponent = $route->getTargetComponent();
             $this->targetWebItem = null;
         }
+
         $this->targetAccessPolicy = $route->getTargetAccessPolicy();
         $this->attemptToGrantPerms = $route->getGrantedPermsAttempt();
 

@@ -4,6 +4,7 @@ namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktMenuEntry;
 use Lkt\Translations\Translations;
+use Lkt\WebItems\WebItem;
 
 class LktMenuEntry extends GeneratedLktMenuEntry
 {
@@ -57,9 +58,13 @@ class LktMenuEntry extends GeneratedLktMenuEntry
                 ];
             }
 
-            if ($this->typeIsWebItems() && $this->isAnonymous() && !$this->getName()) {
+            if ($this->typeIsWebItems() && ($this->isAnonymous() || !$this->getName())) {
                 $component = $this->getComponent();
                 $text = Translations::get("webItems.{$component}");
+                if (!$text) {
+                    $webItem = WebItem::detectWebItem($component);
+                    $text = Translations::get("webItems.{$webItem->publicComponentName}");
+                }
                 $data['text'] = $text ?? $this->getComponent();
             }
 

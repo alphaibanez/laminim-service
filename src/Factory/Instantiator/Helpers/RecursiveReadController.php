@@ -13,9 +13,11 @@ class RecursiveReadController
         string|array|null $identifier,
     )
     {
-        $key = static::getLogKey($component, $accessPolicy, $identifier);
-        if (in_array($key, $this->stack)) return false;
-        $this->stack[] = $key;
+        if ($identifier) {
+            $key = static::getLogKey($component, $accessPolicy, $identifier);
+            if (in_array($key, $this->stack)) return false;
+            $this->stack[] = $key;
+        }
         return true;
     }
 

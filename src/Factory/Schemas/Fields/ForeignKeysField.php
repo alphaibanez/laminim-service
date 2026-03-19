@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Schemas\Traits\FieldRelatedClonePolicyOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithAllowAnonymousOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithDynamicComponentOptionTrait;
@@ -24,7 +25,8 @@ class ForeignKeysField extends AbstractField
         FieldWithNullOptionTrait,
         FieldWithRelatedComponentFeedsTrait,
         FieldWithRelatedAccessPolicyOptionTrait,
-        FieldWithPrefabRoleTrait;
+        FieldWithPrefabRoleTrait,
+        FieldRelatedClonePolicyOptionTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {

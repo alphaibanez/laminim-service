@@ -166,7 +166,7 @@ trait ColumnRelatedKeysTrait
         return $this;
     }
 
-    protected function _appendToParentForeignKeys(string $field, int $parentValue): static
+    protected function _appendToParentForeignKeys(string $field, int|array $parentValue): static
     {
         $this->PENDING_PARENT_FOREIGN_KEYS[$field] = $parentValue;
         return $this;

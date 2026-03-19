@@ -431,6 +431,16 @@ final class Schema
     }
 
     /**
+     * @return array<RelatedKeysField>
+     */
+    public function getFieldsWithAppendForeignKeysName(): array
+    {
+        return array_filter($this->fields, function (AbstractField $field) {
+            return $field instanceof RelatedKeysField && $field->getAppendForeignKeysName() !== '';
+        });
+    }
+
+    /**
      * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField|ConstantValueField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
@@ -644,6 +654,9 @@ final class Schema
         if ($endsWithIds) {
             $keyWithoutIds = substr($field, 0, $l - 3);
             if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof ForeignKeysField) {
+                return $haystack[$keyWithoutIds];
+            }
+            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof RelatedKeysField) {
                 return $haystack[$keyWithoutIds];
             }
         }

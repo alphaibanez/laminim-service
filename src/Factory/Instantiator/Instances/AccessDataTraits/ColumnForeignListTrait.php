@@ -175,7 +175,7 @@ trait ColumnForeignListTrait
         foreach ($current as $val) if (!in_array($val, $value)) $r[] = $val;
 
         $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-            $fieldName => $r,
+            $fieldName => implode(';', $r),
         ], false);
 
         foreach ($converter->parse() as $key => $value) {

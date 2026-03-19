@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Schemas\Traits\FieldRelatedClonePolicyOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithAppendForeignKeysNameOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
@@ -18,7 +19,8 @@ class RelatedKeysField extends AbstractField
         FieldWithOrderOptionTrait,
         FieldWithSoftTypedOptionTrait,
         FieldWithRelatedAccessPolicyOptionTrait,
-        FieldWithAppendForeignKeysNameOptionTrait;
+        FieldWithAppendForeignKeysNameOptionTrait,
+        FieldRelatedClonePolicyOptionTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {

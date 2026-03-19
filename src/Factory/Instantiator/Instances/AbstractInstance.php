@@ -45,6 +45,7 @@ use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -298,7 +299,7 @@ abstract class AbstractInstance
         $connection = $dbIntegration->databaseConnector;
         $schema = $dbIntegration->schema;
 
-        if ($this->accessPolicy) {
+        if (isset($this->accessPolicy) && $this->accessPolicy) {
             $accessPolicyExcludedFields = $schema->getAccessPolicyExcludedFields($this->accessPolicy->name);
 
             foreach ($accessPolicyExcludedFields as $accessPolicyExcludedField) {
@@ -657,7 +658,13 @@ abstract class AbstractInstance
 
         if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
             foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
-                $this->_saveAppendToParentForeignKeys($field, $relatedId);
+                if (is_array($relatedId)) {
+                    foreach ($relatedId as $value) {
+                        $this->_saveAppendToParentForeignKeys($field, $value);
+                    }
+                } else {
+                    $this->_saveAppendToParentForeignKeys($field, $relatedId);
+                }
             }
         }
 
@@ -707,6 +714,18 @@ abstract class AbstractInstance
         }
 
         $connection->query($connection->getDeleteQuery($caller));
+
+        foreach ($schema->getFieldsWithAppendForeignKeysName() as $relatedField) {
+            $getter = $relatedField->getGetterForData();
+            /** @var AbstractInstance[] $relatedElements */
+            $relatedElements = $this->{$getter}();
+            $relatedSchema = Schema::get($relatedField->getComponent());
+            $relatedElementsField = $relatedSchema->getField($relatedField->getColumn());
+            foreach ($relatedElements as $element) {
+                $element->_removeForeignListIds($relatedElementsField->getName(), [$id])->save();
+            }
+        }
+
         $cacheCode = $schema->getInstanceCode($this->DATA);
         InstanceCache::clearCode($cacheCode);
         $query = $connection->getSelectQuery($caller);
@@ -1071,7 +1090,7 @@ abstract class AbstractInstance
                 }
 
             } elseif ($field instanceof RelatedKeysField) {
-                if (is_numeric($value) && $value > 0) {
+                if ((is_numeric($value) && $value > 0) || is_array($value)) {
                     $setter = '_appendToParentForeignKeys';
                     $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
                 } else {
@@ -1271,7 +1290,9 @@ abstract class AbstractInstance
                     $t[] = $item->readAsRelated();
                 }
                 $r[$responseKey] = $t;
-                $r[$responseKey . 'Ids'] = $this->{$getterIds}();
+                if ($key !== $field->getAppendForeignKeysName()) {
+                    $r[$responseKey . 'Ids'] = $this->{$getterIds}();
+                }
 
             } elseif ($field instanceof MethodGetterField) {
                 $getter = $field->getName();
@@ -1508,7 +1529,7 @@ abstract class AbstractInstance
 
     public function duplicate(): static
     {
-        $clone = static::getInstance();
+        $clone = static::getInstance()->setAccessPolicy('duplicate');
         $data = $this->autoRead();
         $payload = [];
         $schema = Schema::get(static::COMPONENT);
@@ -1516,7 +1537,7 @@ abstract class AbstractInstance
 
         foreach ($data as $fieldName => $value) {
             $field = $schema->getField($fieldName);
-            if ($field->getName() === $includeDuplicatedTextInField->getName()) {
+            if ($field->getName() === $includeDuplicatedTextInField?->getName()) {
                 if ($includeDuplicatedTextInField instanceof JSONField) {
 
                     $temp = [];
@@ -1549,6 +1570,39 @@ abstract class AbstractInstance
                             break;
                     }
 
+                } elseif ($field instanceof ForeignKeysField) {
+                    $clonePolicy = $field->getRelatedFieldClonePolicy();
+                    switch ($clonePolicy) {
+                        case RelatedFieldClonePolicy::KeepReferences:
+                            $addToPayload = true;
+                            break;
+
+                        case RelatedFieldClonePolicy::Ignore:
+                            $addToPayload = false;
+                            break;
+                    }
+
+                } elseif ($field instanceof RelatedKeysField) {
+                    $clonePolicy = $field->getRelatedFieldClonePolicy();
+                    switch ($clonePolicy) {
+                        case RelatedFieldClonePolicy::KeepReferences:
+
+                            $appendForeignKeysName = $field->getAppendForeignKeysName();
+                            $appendForeignKeysVal = [];
+                            if ($appendForeignKeysName) {
+                                foreach ($data[$fieldName] as $datum) {
+                                    $appendForeignKeysVal[] = $datum['id'];
+                                }
+                            }
+
+                            $payload[$fieldName] = $appendForeignKeysVal;
+                            $addToPayload = false;
+                            break;
+
+                        case RelatedFieldClonePolicy::Ignore:
+                            $addToPayload = false;
+                            break;
+                    }
                 }
 
                 if ($addToPayload) {

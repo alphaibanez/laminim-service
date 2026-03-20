@@ -71,6 +71,7 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
 use Lkt\QueryBuilding\SelectBuilder;
+use Lkt\QueryBuilding\Where;
 use Lkt\Translations\Translations;
 use function Lkt\Tools\Arrays\compareArrays;
 use function Lkt\Tools\Pagination\getTotalPages;
@@ -660,7 +661,7 @@ abstract class AbstractInstance
             foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
                 if (is_array($relatedId)) {
                     foreach ($relatedId as $value) {
-                        $this->_saveAppendToParentForeignKeys($field, $value);
+                        if ($value !== null) $this->_saveAppendToParentForeignKeys($field, $value);
                     }
                 } else {
                     $this->_saveAppendToParentForeignKeys($field, $relatedId);
@@ -977,7 +978,7 @@ abstract class AbstractInstance
 
         $accessPolicy = null;
 
-        if ($instance->accessPolicy) {
+        if (isset($instance->accessPolicy) && $instance->accessPolicy) {
             $accessPolicy = $schema->getAccessPolicy($instance->accessPolicy->name);
         }
         /** @var PivotField[] $pivotFields */
@@ -1090,7 +1091,7 @@ abstract class AbstractInstance
                 }
 
             } elseif ($field instanceof RelatedKeysField) {
-                if ((is_numeric($value) && $value > 0) || is_array($value)) {
+                if ($param === $field->getAppendForeignKeysName() && ((is_numeric($value) && $value > 0) || is_array($value))) {
                     $setter = '_appendToParentForeignKeys';
                     $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
                 } else {
@@ -1287,7 +1288,12 @@ abstract class AbstractInstance
 
                 foreach ($items as $item) {
                     if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                    $t[] = $item->readAsRelated();
+
+                    if ($key === $field->getAppendForeignKeysName()) {
+                        $t[] = $item->getIdColumnValue();
+                    } else {
+                        $t[] = $item->readAsRelated();
+                    }
                 }
                 $r[$responseKey] = $t;
                 if ($key !== $field->getAppendForeignKeysName()) {
@@ -1591,7 +1597,12 @@ abstract class AbstractInstance
                             $appendForeignKeysVal = [];
                             if ($appendForeignKeysName) {
                                 foreach ($data[$fieldName] as $datum) {
-                                    $appendForeignKeysVal[] = $datum['id'];
+                                    if (is_numeric($datum)) {
+                                        $appendForeignKeysVal[] = $datum;
+
+                                    } else {
+                                        $appendForeignKeysVal[] = $datum['id'];
+                                    }
                                 }
                             }
 
@@ -1644,5 +1655,10 @@ abstract class AbstractInstance
         }
 
         return $query;
+    }
+
+    public static function getWhereBuilder(): Where
+    {
+        return Instantiator::getCustomWhere(static::COMPONENT);
     }
 }

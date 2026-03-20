@@ -20,17 +20,6 @@ class Instantiator
     /**
      * @param string $component
      * @param $id
-     * @return string
-     */
-//    public static function getInstanceCode(string $component, $id): string
-//    {
-//        return "{$component}_{$id}";
-//    }
-
-
-    /**
-     * @param string $component
-     * @param $id
      * @param array $data
      * @return AbstractInstance|null
      * @throws InvalidSchemaAppClassException
@@ -40,7 +29,6 @@ class Instantiator
     {
         $schema = Schema::get($component);
         $code = $schema->getInstanceCode($data, $id);
-//        $code = static::getInstanceCode($component, $id);
 
         if (InstanceCache::inCache($code)) {
             return InstanceCache::load($code);
@@ -72,25 +60,14 @@ class Instantiator
         $appClass = $schema->getInstanceSettings()->getAppClass();
 
         if (count($results) > 0) {
-
-            $relatedIdentifiers = $schema->getIdentifiers();
-//            $identifier = $relatedIdentifiers[0];
-
             foreach ($results as $item) {
                 $code = $schema->getInstanceCode($item);
-//                $instanceCode = [];
-//                foreach ($relatedIdentifiers as $identifier) {
-//                    $instanceCode[] = $item[$identifier->getName()];
-//                }
-//
-//                $itemId = implode('-', $instanceCode);
 
                 $converter = new RawResultsToInstanceConverter($component, $item);
                 $itemData = $converter->parse();
 
                 $r = new $appClass($component, $itemData);
                 $r->setData($itemData);
-//                $code = Instantiator::getInstanceCode($component, $itemId);
                 InstanceCache::store($code, $r);
                 $response[] = $r;
             }

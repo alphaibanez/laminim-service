@@ -11,7 +11,6 @@ use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
-use Lkt\QueryBuilding\Where;
 
 trait ColumnRelatedKeysTrait
 {
@@ -39,7 +38,7 @@ trait ColumnRelatedKeysTrait
         $schema = Schema::get(static::COMPONENT);
         /** @var RelatedKeysField $field */
         $field = $schema->getField($column);
-        $caller = $this->_getRelatedKeysQueryCaller($type, $column, $forceRefresh);
+        $caller = $this->_getRelatedKeysQueryBuilder($type, $column, $forceRefresh);
 
         $data = $caller->select();
         $relatedSchema = Schema::get($field->getComponent());
@@ -73,35 +72,32 @@ trait ColumnRelatedKeysTrait
      */
     protected function _getRelatedKeysQueryBuilder($type = '', $column = '', $forceRefresh = false)
     {
-        if (!$type) {
-            return null;
-        }
+        if (!$type) return null;
 
         $schema = Schema::get(static::COMPONENT);
-        $idColumn = $schema->getIdentifiers()[0]->getColumn();
 
         /** @var RelatedKeysField $field */
         $field = $schema->getField($column);
         $column = $field->getColumn();
-        $where = $field->getWhere();
-
-        $constraints = [];
-        $constraints[] = "{$column} LIKE '%;{$this->DATA[$idColumn]};%'";
-        $constraints[] = "{$column} LIKE '{$this->DATA[$idColumn]};%'";
-        $constraints[] = "{$column} LIKE '%;{$this->DATA[$idColumn]}'";
-        $constraints[] = "{$column} LIKE '{$this->DATA[$idColumn]}'";
-
-        $where[] = implode(' OR ', $constraints);
-        $whereString = '';
-
-        if (count($where) > 0) {
-            $whereString = '(' . implode(') AND (', $where) . ')';
-        }
-
-        $order = $field->getOrder();
+        $fieldWhere = $field->getWhere();
+        $idColumnValue = $this->getIdColumnValue();
 
         $relatedSchema = Schema::get($field->getComponent());
         $builder = Query::table($relatedSchema->getTable());
+
+        if ($fieldWhere) $builder->andRaw($fieldWhere);
+
+        $anonymous = Instantiator::make($field->getComponent(), 0);
+        $where = $anonymous::getWhereBuilder()
+            ->orStringLike($column, ";{$idColumnValue};")
+            ->orStringLike($column, "{$idColumnValue}")
+            ->orStringEndsLike($column, "{$idColumnValue};")
+            ->orStringBeginsLike($column, ";{$idColumnValue}");
+
+        $builder->andWhere($where);
+
+        $order = $field->getOrder();
+
         $connector = $schema->getDatabaseConnector();
         if ($connector === '') {
             $connector = DatabaseConnections::$defaultConnector;
@@ -109,9 +105,9 @@ trait ColumnRelatedKeysTrait
         $connection = DatabaseConnections::get($connector);
         $builder->setColumns($connection->extractSchemaColumns($relatedSchema));
 
-        $builder->where(Where::raw($whereString));
         $builder->orderBy(implode(',', $order));
         $builder->setForceRefresh($forceRefresh);
+
         return $builder;
     }
 
@@ -172,7 +168,7 @@ trait ColumnRelatedKeysTrait
         return $this;
     }
 
-    protected function _saveAppendToParentForeignKeys(string $fieldName, int $parentValue): static
+    protected function _saveAppendToParentForeignKeys(string $fieldName, int|array $parentValue): static
     {
         $schema = Schema::get(static::COMPONENT);
         $field = $schema->getField($fieldName);
@@ -184,12 +180,15 @@ trait ColumnRelatedKeysTrait
             $setter = $relatedSchemaField->getSetter();
             $getter = $relatedSchemaField->getGetterForPrimitiveValue();
 
-            $instance = $relatedSchema->getItemInstance($parentValue);
-            if (!$instance->isAnonymous()) {
-                $instance->{$setter}([
-                    ...$instance->{$getter}(),
-                    $this->getIdColumnValue(),
-                ])->save();
+            if (!is_array($parentValue)) $parentValue = [$parentValue];
+            foreach ($parentValue as $value) {
+                $instance = $relatedSchema->getItemInstance($value);
+                if (!$instance->isAnonymous()) {
+                    $instance->{$setter}([
+                        ...$instance->{$getter}(),
+                        $this->getIdColumnValue(),
+                    ])->save();
+                }
             }
         }
         return $this;

@@ -184,10 +184,13 @@ trait ColumnRelatedKeysTrait
             foreach ($parentValue as $value) {
                 $instance = $relatedSchema->getItemInstance($value);
                 if (!$instance->isAnonymous()) {
-                    $instance->{$setter}([
-                        ...$instance->{$getter}(),
-                        $this->getIdColumnValue(),
-                    ])->save();
+                    $currentIds = $instance->{$getter}();
+                    if (!in_array($this->getIdColumnValue(), $currentIds)) {
+                        $instance->{$setter}([
+                            ...$currentIds,
+                            $this->getIdColumnValue(),
+                        ])->save();
+                    }
                 }
             }
         }

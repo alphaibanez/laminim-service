@@ -175,7 +175,12 @@ class Router
 
                 static::$request = $request;
 
-                if (!$request->hasValidAccess) return Response::forbidden();
+                if (!$request->hasValidAccess) {
+                    if ($request->hasValidAccessStatus) {
+                        return new Response($request->hasValidAccessStatus->value);
+                    }
+                    return Response::forbidden();
+                }
 
                 $loggedCheckResponse = static::ensureValidAccessChecker($loggedUserChecker, $request, $accessCheckers);
                 if ($loggedCheckResponse instanceof Response) return $loggedCheckResponse;

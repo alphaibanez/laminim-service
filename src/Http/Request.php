@@ -8,6 +8,7 @@ use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\DTO\TargetAccessPolicy;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Enums\HttpEvent;
+use Lkt\Http\Enums\HttpStatus;
 use Lkt\Http\Routes\AbstractRoute;
 use Lkt\Users\Interfaces\SessionUserInterface;
 use Lkt\WebItems\Enums\WebItemAction;
@@ -29,6 +30,7 @@ class Request
     readonly public array $httpEventHandlers;
 
     readonly public bool $hasValidAccess;
+    readonly public HttpStatus|null $hasValidAccessStatus;
     readonly public int $page;
     readonly public array $payload;
 
@@ -50,6 +52,7 @@ class Request
 
         if ($ensureLoggedUser && !$this->loggedUser && ($this->accessLevel === AccessLevel::OnlyLoggedUsers || $this->accessLevel === AccessLevel::OnlyAdminUsers)) {
             $this->hasValidAccess = false;
+            $this->hasValidAccessStatus = HttpStatus::Unauthorized;
             return;
         }
 
@@ -57,6 +60,7 @@ class Request
             $this->hasValidAccess = false;
             return;
         }
+        $this->hasValidAccessStatus = null;
 
         $this->httpEventHandlers = $route->getHttpEventHandlers();
 

@@ -52,7 +52,6 @@ Schema::add(
         ->addField(StringField::define('credentialIdentifier', 'credential_id'))
         ->addField(ForeignKeysField::defineRelation(LktUserRole::COMPONENT, 'appRoles', 'app_roles'))
         ->addField(ForeignKeysField::defineRelation(LktUserRole::COMPONENT, 'adminRoles', 'admin_roles'))
-        ->addField(StringField::define('sessionToken', 'session_token'))
         ->addField(BooleanField::define('isAdministrator', 'is_administrator'))
         ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
         ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))

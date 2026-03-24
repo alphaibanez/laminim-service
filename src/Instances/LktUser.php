@@ -2,6 +2,7 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Generated\GeneratedLktUser;
 use Lkt\Generated\LktUserQueryBuilder;
@@ -34,7 +35,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     {
         $_SESSION['user'] = 0;
         session_destroy();
-        return $this;
+        return $this->revokeIdentifierAccessToken();
     }
 
     public function setupSignedUserLocale(): static
@@ -112,18 +113,27 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         }
 
         if ($token) {
-            $builder = static::getQueryBuilder();
-            if ($builder instanceof LktUserQueryBuilder) {
-                $builder->andSessionTokenEqual($token);
-            } else {
-                $builder->andStringEqual('session_token', $token);
-            }
-            $user = static::getOne($builder);
-
-            if ($user instanceof static && $user->getId() > 0) {
-                $id = $user->getId();
+            $accessToken = LktAccessToken::fromToken($token, AccessTokenPurpose::Identifier);
+            if ($accessToken) {
+                return $accessToken->getUserId();
             }
         }
+
+        //@todo: remove user field: session_token
+
+//        if ($token) {
+//            $builder = static::getQueryBuilder();
+//            if ($builder instanceof LktUserQueryBuilder) {
+//                $builder->andSessionTokenEqual($token);
+//            } else {
+//                $builder->andStringEqual('session_token', $token);
+//            }
+//            $user = static::getOne($builder);
+//
+//            if ($user instanceof static && $user->getId() > 0) {
+//                $id = $user->getId();
+//            }
+//        }
 
         return $id;
     }
@@ -254,5 +264,17 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     public function generateChangePasswordAccessToken(\DateTime $expiresAt): LktAccessToken
     {
         return LktAccessToken::createChangePasswordAccessToken($this, $expiresAt);
+    }
+
+    public function generateIdentifierAccessToken(\DateTime $expiresAt): LktAccessToken
+    {
+        return LktAccessToken::createIdentifierAccessToken($this, $expiresAt);
+    }
+
+    public function revokeIdentifierAccessToken(): static
+    {
+        $accessToken = LktAccessToken::fromUser($this, AccessTokenPurpose::Identifier);
+        if ($accessToken) $accessToken->delete();
+        return $this;
     }
 }

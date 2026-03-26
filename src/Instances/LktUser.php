@@ -105,35 +105,12 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     public static function getSignedInUserId(): int
     {
         $id = (int)$_SESSION['user'];
-        $token = null;
 
-        $bearerToken = Router::getBearerToken();
-        if ($bearerToken) {
-            $token = $bearerToken;
-        }
-
+        $token = Router::getBearerToken();
         if ($token) {
             $accessToken = LktAccessToken::fromToken($token, AccessTokenPurpose::Identifier);
-            if ($accessToken) {
-                return $accessToken->getUserId();
-            }
+            if ($accessToken) return $accessToken->getUserId();
         }
-
-        //@todo: remove user field: session_token
-
-//        if ($token) {
-//            $builder = static::getQueryBuilder();
-//            if ($builder instanceof LktUserQueryBuilder) {
-//                $builder->andSessionTokenEqual($token);
-//            } else {
-//                $builder->andStringEqual('session_token', $token);
-//            }
-//            $user = static::getOne($builder);
-//
-//            if ($user instanceof static && $user->getId() > 0) {
-//                $id = $user->getId();
-//            }
-//        }
 
         return $id;
     }

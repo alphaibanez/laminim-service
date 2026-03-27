@@ -2,7 +2,8 @@
 
 namespace Lkt\Http\Enums;
 
-class Charset
+enum Charset: string
 {
-    const UTF8 = 'utf-8';
+    case NotDefined = '';
+    case UTF8 = 'utf-8';
 }

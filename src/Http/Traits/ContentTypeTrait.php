@@ -80,7 +80,7 @@ trait ContentTypeTrait
     public function sendContentTypeHeader(): bool
     {
         $contentType = $this->contentType;
-        $charset = $this->charset;
+        $charset = $this->charset->value;
 
         $aux = [$contentType];
         if ($charset !== '') {

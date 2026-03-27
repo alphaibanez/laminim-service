@@ -326,7 +326,8 @@ trait ColumnFileTrait
         $field = $schema->getField($fieldName);
 
         $name = $this->_getFileName($fieldName, $index);
-        return file_get_contents($field->getStorePath().'/'.$name);
+
+        return pathinfo($name, PATHINFO_EXTENSION);
     }
 
     /**

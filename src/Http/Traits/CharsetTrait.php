@@ -6,7 +6,7 @@ use Lkt\Http\Enums\Charset;
 
 trait CharsetTrait
 {
-    protected string $charset = Charset::UTF8;
+    protected Charset $charset = Charset::UTF8;
 
     public function setCharsetUTF8(): static
     {
@@ -14,7 +14,13 @@ trait CharsetTrait
         return $this;
     }
 
-    public function setCharset(string $charset): static
+    public function setCharsetNotDefined(): static
+    {
+        $this->charset = Charset::NotDefined;
+        return $this;
+    }
+
+    public function setCharset(Charset $charset): static
     {
         $this->charset = $charset;
         return $this;

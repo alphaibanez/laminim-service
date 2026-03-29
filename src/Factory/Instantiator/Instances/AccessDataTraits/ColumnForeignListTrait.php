@@ -58,7 +58,7 @@ trait ColumnForeignListTrait
         $field = $schema->getField($fieldName);
 
 
-        $items = $this->_getForeignListIds($fieldName);
+        $ids = $this->_getForeignListIds($fieldName);
 
         $r = [];
 
@@ -77,17 +77,28 @@ trait ColumnForeignListTrait
 
         if ($type === '') return [];
 
-        foreach ($items as $item) {
-            if (is_numeric($item)) {
-                $t = Instantiator::make($type, $item);
-                if ($t instanceof AbstractInstance && !$t->isAnonymous()) {
-                    $r[] = $t;
+        $relatedSchema = Schema::get($type);
+        $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+
+        foreach ($ids as $id) {
+            if (is_numeric($id)) {
+                if ($relatedClass) {
+                    $instance = call_user_func_array([$relatedClass, 'getInstance'], ['id' => $id]);
+                    if ($instance instanceof AbstractInstance && !$instance->isAnonymous()) {
+                        $r[] = $instance;
+                    }
+
+                } else {
+                    $t = Instantiator::make($type, $id);
+                    if ($t instanceof AbstractInstance && !$t->isAnonymous()) {
+                        $r[] = $t;
+                    }
                 }
 
             } else {
                 $t = Instantiator::make($type, null);
                 $t->setData([
-                    $idColumn => $item,
+                    $idColumn => $id,
                 ]);
                 $r[] = $t;
             }
@@ -144,11 +155,20 @@ trait ColumnForeignListTrait
 
     protected function _setForeignListWithData(string $fieldName, array $data = []): static
     {
+        $schema = Schema::get(static::COMPONENT);
+        $accessPolicy = 'lkt-related';
+        $field = $schema->getField($fieldName);
+        if ($this->accessPolicy) {
+            $auxAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+            if ($auxAccessPolicy) $accessPolicy = $auxAccessPolicy;
+        }
+
         $dataProcessor = new UpdatedRelatedDataProcessor(
-            Schema::get(static::COMPONENT),
+            $schema,
             $fieldName,
             $data,
-            $this
+            $this,
+            $accessPolicy
         );
         $dataProcessor->processRelatedField();
 
@@ -157,6 +177,10 @@ trait ColumnForeignListTrait
         }
         if (count($dataProcessor->updatedData) > 0) {
             $this->UPDATED_RELATED_DATA[$fieldName] = $dataProcessor->updatedData;
+        }
+
+        if (count($dataProcessor->relatedIds) > 0) {
+            $this->_setForeignListVal($fieldName, $dataProcessor->relatedIds);
         }
         return $this;
     }

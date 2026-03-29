@@ -245,11 +245,20 @@ trait ColumnRelatedTrait
      */
     protected function _setRelatedValWithData($type = '', $column = '', $data = [])
     {
+        $schema = Schema::get(static::COMPONENT);
+        $accessPolicy = 'lkt-related';
+        $field = $schema->getField($column);
+        if ($this->accessPolicy) {
+            $auxAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+            if ($auxAccessPolicy) $accessPolicy = $auxAccessPolicy;
+        }
+
         $dataProcessor = new UpdatedRelatedDataProcessor(
-            Schema::get(static::COMPONENT),
+            $schema,
             $column,
             $data,
-            $this
+            $this,
+            $accessPolicy
         );
         $dataProcessor->processRelatedField();
 

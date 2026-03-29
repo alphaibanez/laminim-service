@@ -855,7 +855,7 @@ abstract class AbstractInstance
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
      */
-    public static function getMonthlyAccuratePage(int $page, Query $queryCaller = null, string $countableField = null): array
+    public static function getMonthlyAccuratePage(int $page, Query|null $queryCaller = null, string|null $countableField = null): array
     {
         if (!$queryCaller) $queryCaller = static::getQueryBuilder();
         $originalSelect = $queryCaller->getColumns();
@@ -879,7 +879,7 @@ abstract class AbstractInstance
      * @throws InvalidCountableFieldException
      * @throws SchemaNotDefinedException
      */
-    public static function getMonthlyAccuratePages(Query $query = null, string $countableField = null): MonthlyAccuratePages
+    public static function getMonthlyAccuratePages(Query|null $query = null, string|null $countableField = null): MonthlyAccuratePages
     {
         if (!$countableField) throw InvalidCountableFieldException::getInstance(__METHOD__, static::COMPONENT);
 
@@ -1066,7 +1066,8 @@ abstract class AbstractInstance
                     $relatedSchema = Schema::get($field->getComponent());
                     $relatedIdFields = $relatedSchema->getIdentifiers();
                     if (count($relatedIdFields) === 1) {
-                        $relatedId = (int)$value[$relatedIdFields[0]->getName()];
+                        $relatedIdKey = $relatedIdFields[0]->getName();
+                        $relatedId = isset($value[$relatedIdKey]) ? (int)$value[$relatedIdKey] : 0;
                         if ($relatedId > 0) {
                             $setter = '_setIntegerVal';
                             $methodCallData = ['fieldName' => $field->getName(), 'value' => $relatedId];
@@ -1081,7 +1082,7 @@ abstract class AbstractInstance
                     $setter = '_setForeignListVal';
                     $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
 
-                } elseif (is_array($value) && is_numeric($value[0])) {
+                } elseif (is_array($value) && isset($value[0]) && is_numeric($value[0])) {
                     $setter = '_setForeignListVal';
                     $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
 
@@ -1151,9 +1152,9 @@ abstract class AbstractInstance
 
         $accessPolicyName = isset($this->accessPolicy) ? $this->accessPolicy->name : '';
 
-        if (!$recursiveReadController->log(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue())) {
-            return [];
-        }
+//        if (!$recursiveReadController->log(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue())) {
+//            return [];
+//        }
 
         $schema = Schema::get(static::COMPONENT);
         $r = [];

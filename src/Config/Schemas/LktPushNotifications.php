@@ -27,7 +27,7 @@ Schema::add(
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(StringField::define('description')->setIsI18nJson())
         ->addField(AssocJSONField::define('descriptionData', 'description')->setIsI18nJson())
-        ->addField(AssocJSONField::define('data'))
+        ->addField(AssocJSONField::define('payload', 'data'))
         ->addField(IntegerChoiceField::enumChoice(NotificationStatus::class, 'status'))
         ->addField(IntegerChoiceField::enumChoice(QueuePriority::class, 'priority'))
         ->addField(IntegerChoiceField::enumChoice(NotificationTargetType::class, 'targetType', 'target_type'))

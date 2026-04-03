@@ -170,13 +170,13 @@ class ParseColumn
     public static function i18nJSONDatumToInstance($value)
     {
         if (is_string($value)){
-            $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
-            $value = ParseColumn::HTMLDatumToInstance($value);
             $value = json_decode($value, true);
+//            $value = ParseColumn::HTMLDatumToInstance($value);
 
             $availableLanguages = Locale::getAvailableLangCodesValues();
             foreach ($availableLanguages as $language) {
                 if (!isset($value[$language])) $value[$language] = '';
+                $value[$language] = htmlspecialchars_decode($value[$language], JSON_UNESCAPED_UNICODE|ENT_QUOTES);
             }
 
             return $value;

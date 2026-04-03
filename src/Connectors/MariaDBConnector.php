@@ -113,7 +113,9 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         $r = [];
-        foreach ($result as $row) $r[] = $row;
+        foreach ($result as $row) {
+            $r[] = $row;
+        }
 
         QueryCache::set($this->name, $sql, $r);
         return $r;
@@ -204,7 +206,8 @@ class MariaDBConnector extends DatabaseConnector
     {
         $r = [];
         foreach ($params as $field => $value) {
-            $v = addslashes(stripslashes($value));
+//            $v = addslashes(stripslashes($value));
+            $v = $value;
             if (strpos($value, 'JSON_SET(') === 0) {
                 if ($type === 'create' || $type === 'insert') {
                     $value = str_replace($field, '"{}"', $value);
@@ -218,6 +221,7 @@ class MariaDBConnector extends DatabaseConnector
                 $r[] = "`{$field}`='{$v}'";
             }
         }
+
         return trim(implode(',', $r));
     }
 
@@ -442,11 +446,12 @@ class MariaDBConnector extends DatabaseConnector
                         if (!$field->isI18nJson()) {
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);
                             $v = $this->escapeDatabaseCharacters($v);
-//                            $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+                            $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+
                         } else {
                             foreach ($value as $k => &$v) {
                                 $v = $this->escapeDatabaseCharacters($v);
-//                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
                             }
 
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);

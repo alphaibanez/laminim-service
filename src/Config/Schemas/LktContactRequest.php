@@ -44,4 +44,31 @@ Schema::add(
         ->addField(StringField::define('clientOS', 'client_os'))
         ->addField(StringField::define('clientBrowser', 'client_browser'))
         ->addField(StringField::define('clientBrowserVersion', 'client_browser_version'))
+
+        ->addAccessPolicy('app', [
+            'name',
+            'message',
+            'email',
+            'contactReason',
+        ])
+
+        ->addAccessPolicy('admin', [
+            'name',
+            'message',
+            'email',
+            'contactReason',
+        ])
+        ->addAccessPolicy('create', [
+            'id',
+            'name',
+            'message',
+            'email',
+            'contactReason',
+            'clientProtocol',
+            'clientUserAgent',
+            'clientIPAddress',
+            'clientOS',
+            'clientBrowser',
+            'clientBrowserVersion',
+        ])
 );

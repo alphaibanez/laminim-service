@@ -6,6 +6,7 @@ use donatj\UserAgent\UserAgentParser;
 use Lkt\Config\Settings\ContactSettings;
 use Lkt\Exceptions\SilentHttpExceptionException;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
+use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Generated\GeneratedLktContactRequest;
 use Lkt\Http\Networking\Networking;
 use function Lkt\Tools\Parse\clearInput;
@@ -37,13 +38,14 @@ class LktContactRequest extends GeneratedLktContactRequest
         $parser = new UserAgentParser();
         $ua = $parser->parse();
 
-
         $name = clearInput($data['name']);
         $email = clearInput($data['email']);
         $message = clearInput($data['message']);
         $contactReason = (int)$data['contactReason'];
 
-        $r = [
+        $this->setAccessPolicy('create', AccessPolicyEndOfLife::UntilNextWrite);
+
+        return [
             'createdAt' => time(),
             'name' => $name,
             'email' => $email,
@@ -56,12 +58,5 @@ class LktContactRequest extends GeneratedLktContactRequest
             'clientBrowserVersion' => $ua->browserVersion(),
             'clientOS' => $ua->platform(),
         ];
-
-        $user = LktUser::getSignedInUser();
-        if ($user instanceof LktUser) {
-            $r['userId'] = $user->getId();
-        }
-
-        return $r;
     }
 }

@@ -426,8 +426,10 @@ class Translations
         $itemBasedTranslations = [];
         $schemas = Schema::getSchemasWithItemToI18nPolicy();
         foreach ($schemas as $schema) {
-            $query = $schema->getQueryBuilder();
             $policy = $schema->getItemToI18nPolicy();
+            if ($policy->i18nKey === '') continue;
+
+            $query = $schema->getQueryBuilder();
             $policy->tweakQueryBuilder($query);
 
             $items = $schema->getMany($query);

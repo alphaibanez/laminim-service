@@ -16,6 +16,7 @@ final class Networking
     readonly public string $requestMethod;
     readonly public string $cleanedRequestUri;
     readonly public string $serverName;
+    readonly public string $userAgent;
     protected string $publicUrl = '';
 
     private function __construct()
@@ -46,6 +47,8 @@ final class Networking
 
             $protocol = 'HTTP/1.0';
             if ('HTTP/1.1' == $_SERVER['SERVER_PROTOCOL']) $protocol = 'HTTP/1.1';
+            elseif ('HTTP/2.0' == $_SERVER['SERVER_PROTOCOL']) $protocol = 'HTTP/2.0';
+            elseif ('HTTP/3.0' == $_SERVER['SERVER_PROTOCOL']) $protocol = 'HTTP/3.0';
             $this->httpProtocolVersion = $protocol;
 
             $this->httpHost = "{$this->httpProtocol}://{$_SERVER['HTTP_HOST']}";
@@ -58,6 +61,8 @@ final class Networking
 
             $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
 
+            $this->userAgent = trim($_SERVER['HTTP_USER_AGENT']);
+
         } else {
             $this->remoteAddress = '';
             $this->httpOrigin = '';
@@ -69,6 +74,7 @@ final class Networking
             $this->requestMethod = '';
             $this->cleanedRequestUri = '';
             $this->serverName = '';
+            $this->userAgent = '';
         }
     }
 

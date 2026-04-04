@@ -15,7 +15,7 @@ class FileFormatsSeeder extends AbstractSeed
      */
     public function run() : void
     {
-        LktFileFormat::createIfMissing([
+        LktFileFormat::mkIfNot([
             'name' => [
                 'es' => 'CSV', 'en' => 'CSV',
             ],
@@ -25,7 +25,7 @@ class FileFormatsSeeder extends AbstractSeed
             ]
         ]);
 
-        LktFileFormat::createIfMissing([
+        LktFileFormat::mkIfNot([
             'name' => [
                 'es' => 'ODS', 'en' => 'ODS',
             ],
@@ -35,7 +35,7 @@ class FileFormatsSeeder extends AbstractSeed
             ]
         ]);
 
-        LktFileFormat::createIfMissing([
+        LktFileFormat::mkIfNot([
             'name' => [
                 'es' => 'XLS', 'en' => 'XLS',
             ],
@@ -45,7 +45,7 @@ class FileFormatsSeeder extends AbstractSeed
             ]
         ]);
 
-        LktFileFormat::createIfMissing([
+        LktFileFormat::mkIfNot([
             'name' => [
                 'es' => 'XLSX', 'en' => 'XLSX',
             ],

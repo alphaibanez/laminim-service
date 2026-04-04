@@ -15,11 +15,11 @@ class DateFormatsSeeder extends AbstractSeed
      */
     public function run() : void
     {
-        LktDateFormat::createIfMissing(['format' => 'yyyy-mm-dd']);
-        LktDateFormat::createIfMissing(['format' => 'yyyy/mm/dd']);
-        LktDateFormat::createIfMissing(['format' => 'dd-mm-yyyy']);
-        LktDateFormat::createIfMissing(['format' => 'dd/mm/yyyy']);
-        LktDateFormat::createIfMissing(['format' => 'mm-dd-yyyy']);
-        LktDateFormat::createIfMissing(['format' => 'mm/dd/yyyy']);
+        LktDateFormat::mkIfNot(['format' => 'yyyy-mm-dd']);
+        LktDateFormat::mkIfNot(['format' => 'yyyy/mm/dd']);
+        LktDateFormat::mkIfNot(['format' => 'dd-mm-yyyy']);
+        LktDateFormat::mkIfNot(['format' => 'dd/mm/yyyy']);
+        LktDateFormat::mkIfNot(['format' => 'mm-dd-yyyy']);
+        LktDateFormat::mkIfNot(['format' => 'mm/dd/yyyy']);
     }
 }

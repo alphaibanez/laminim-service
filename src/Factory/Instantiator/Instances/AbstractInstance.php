@@ -1662,4 +1662,24 @@ abstract class AbstractInstance
     {
         return Instantiator::getCustomWhere(static::COMPONENT);
     }
+
+    public static function mkOrUp(array $data): static
+    {
+        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
+        if (!$instance) {
+            $instance = static::getInstance()->autoCreate($data);
+        } else {
+            $instance->autoUpdate($data);
+        }
+        return $instance;
+    }
+
+    public static function mkIfNot(array $data): static
+    {
+        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
+        if (!$instance) {
+            $instance = static::getInstance()->autoCreate($data);
+        }
+        return $instance;
+    }
 }

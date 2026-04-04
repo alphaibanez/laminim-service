@@ -2,6 +2,7 @@
 
 namespace Lkt\Translations;
 
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktTranslation;
 use Lkt\Locale\Locale;
 use Lkt\Translations\DTO\FeedWithReferenceDataResponse;
@@ -421,6 +422,33 @@ class Translations
         $codedTranslations = Translations::getLangTranslations();
 
         $r = [...$codedTranslations, ...$r];
+
+        $itemBasedTranslations = [];
+        $schemas = Schema::getSchemasWithItemToI18nPolicy();
+        foreach ($schemas as $schema) {
+            $query = $schema->getQueryBuilder();
+            $policy = $schema->getItemToI18nPolicy();
+            $policy->tweakQueryBuilder($query);
+
+            $items = $schema->getMany($query);
+
+            if (count($items) === 0) continue;
+
+            $valueField = $schema->getField($policy->valueField);
+            $valueFieldGetter = $valueField->getGetterForPrimitiveValue();
+            $labelField = $schema->getField($policy->labelField);
+            $labelFieldGetter = $labelField->getGetterForPrimitiveValue();
+
+
+            $temp = [];
+            foreach ($items as $item) {
+                $temp[$item->{$valueFieldGetter}()] = $item->$labelFieldGetter();
+            }
+
+            $itemBasedTranslations[$policy->i18nKey] = $temp;
+        }
+
+        $r = [...$r, ...$itemBasedTranslations];
 
         static::$combinedStack[$lang] = $r;
 

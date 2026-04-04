@@ -43,6 +43,7 @@ use Lkt\Factory\Schemas\Fields\UrlField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
+use Lkt\Factory\Schemas\ValueObjects\ItemToI18nPolicy;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\Factory\Schemas\Values\TableValue;
 use Lkt\Http\Response;
@@ -1213,6 +1214,11 @@ final class Schema
         return Instantiator::make($this->getComponent(), $id);
     }
 
+    public function getMany(Query $query)
+    {
+        return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
+    }
+
     public function getQueryBuilder(): Query
     {
         list($queryBuilder) = Instantiator::getQueryCaller($this->getComponent());
@@ -1338,5 +1344,29 @@ final class Schema
                 }
             }
         }
+    }
+
+    protected ItemToI18nPolicy|null $itemToI18nPolicy = null;
+    public function setItemToI18nPolicy(string $i18nKey, string $valueField, string $labelField, callable|null $queryBuilderTweak = null): static
+    {
+        $this->itemToI18nPolicy = new ItemToI18nPolicy($i18nKey, $valueField, $labelField, $queryBuilderTweak);
+        return $this;
+    }
+
+    public function hasItemToI18nPolicy(): bool
+    {
+        return $this->itemToI18nPolicy instanceof ItemToI18nPolicy;
+    }
+
+    public function getItemToI18nPolicy():? ItemToI18nPolicy
+    {
+        return $this->itemToI18nPolicy;
+    }
+
+    public static function getSchemasWithItemToI18nPolicy()
+    {
+        return array_filter(static::$stack, function (Schema $schema) {
+            return $schema->hasItemToI18nPolicy();
+        });
     }
 }

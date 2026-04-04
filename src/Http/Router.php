@@ -4,6 +4,7 @@ namespace Lkt\Http;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Lkt\Exceptions\SilentHttpExceptionException;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Networking\Networking;
@@ -191,14 +192,27 @@ class Router
                 // Version migration helper
                 $method = new \ReflectionMethod($handler[0], $handler[1]);
 
-                if ($method->getParameters()[0]?->getType()?->getName() === 'Lkt\Http\Request') {
-                    $response = call_user_func($handler, $request);
 
-                } elseif ($method->getParameters()[0]?->getType()?->getName() === 'array' || $method->getParameters()[0]?->getType() === null) {
-                    $response = call_user_func($handler, $request->params);
-                } else {
-                    $response = call_user_func($handler, $request);
+                try {
+                    if ($method->getParameters()[0]?->getType()?->getName() === 'Lkt\Http\Request') {
+                        $response = call_user_func($handler, $request);
+
+                    } elseif ($method->getParameters()[0]?->getType()?->getName() === 'array' || $method->getParameters()[0]?->getType() === null) {
+                        $response = call_user_func($handler, $request->params);
+                    } else {
+                        $response = call_user_func($handler, $request);
+                    }
+
+                } catch (SilentHttpExceptionException $exception) {
+
+                    switch ($exception->silentCode) {
+                        case 'max-contact-requests-reached':
+                            Notification::sendFailToast(['text' => "You'll be able to submit more forms tomorrow"]);
+                            $response = Response::forbidden();
+                    }
+
                 }
+
 
                 if ($response instanceof Response) {
                     $responseData = $response->getResponseData();

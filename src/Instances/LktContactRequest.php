@@ -4,7 +4,7 @@ namespace Lkt\Instances;
 
 use donatj\UserAgent\UserAgentParser;
 use Lkt\Config\Settings\ContactSettings;
-use Lkt\Exceptions\SilentHttpExceptionException;
+use Lkt\Exceptions\SilentHttpException;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Generated\GeneratedLktContactRequest;
@@ -32,7 +32,7 @@ class LktContactRequest extends GeneratedLktContactRequest
         $previousAttempts = count(static::getMany($counterQuery));
 
         if ($previousAttempts >= ContactSettings::$maxRequestPerIp) {
-            throw SilentHttpExceptionException::getInstance('max-contact-requests-reached');
+            throw SilentHttpException::getInstance('max-contact-requests-reached');
         }
 
         $parser = new UserAgentParser();

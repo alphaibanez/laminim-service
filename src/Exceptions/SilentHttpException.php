@@ -4,7 +4,7 @@ namespace Lkt\Exceptions;
 
 use Exception;
 
-class SilentHttpExceptionException extends Exception
+class SilentHttpException extends Exception
 {
     public readonly string $silentCode;
 

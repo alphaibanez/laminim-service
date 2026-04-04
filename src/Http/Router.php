@@ -4,7 +4,7 @@ namespace Lkt\Http;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Lkt\Exceptions\SilentHttpExceptionException;
+use Lkt\Exceptions\SilentHttpException;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Networking\Networking;
@@ -203,7 +203,7 @@ class Router
                         $response = call_user_func($handler, $request);
                     }
 
-                } catch (SilentHttpExceptionException $exception) {
+                } catch (SilentHttpException $exception) {
 
                     switch ($exception->silentCode) {
                         case 'max-contact-requests-reached':

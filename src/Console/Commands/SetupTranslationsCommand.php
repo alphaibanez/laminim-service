@@ -347,6 +347,14 @@ class SetupTranslationsCommand extends Command
             'es' => 'Diccionario',
             'en' => 'Dictionary',
         ], $parentId);
+        LktTranslation::createIfMissing('contact-reason', TranslationType::Text, [
+            'es' => 'Motivos de contacto',
+            'en' => 'Contact reasons',
+        ], $parentId);
+        LktTranslation::createIfMissing('contact-request', TranslationType::Text, [
+            'es' => 'Solicitudes de contacto',
+            'en' => 'Contact requests',
+        ], $parentId);
 
         $parent = LktTranslation::createIfMissing('webPages', TranslationType::Many, []);
         $parentId = $parent->getId();

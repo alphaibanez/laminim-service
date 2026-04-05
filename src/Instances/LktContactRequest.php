@@ -4,6 +4,7 @@ namespace Lkt\Instances;
 
 use donatj\UserAgent\UserAgentParser;
 use Lkt\Config\Settings\ContactSettings;
+use Lkt\Enums\TimeInSeconds;
 use Lkt\Exceptions\SilentHttpException;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
@@ -19,20 +20,23 @@ class LktContactRequest extends GeneratedLktContactRequest
     {
         $networking = Networking::getInstance();
 
-        $now = new \DateTime();
-        $now->sub(\DateInterval::createFromDateString('24 hours'));
+        if (is_numeric(ContactSettings::$maxRequestPerIp) && ContactSettings::$maxRequestPerIp > 0) {
+            $now = new \DateTime();
+            $time = ContactSettings::$maxRequestPeriod ?? TimeInSeconds::OneDay->value;
+            $now->sub(\DateInterval::createFromDateString("{$time} seconds"));
 
-        $dateLimit = $now->format('Y-m-d H:i:s');
+            $dateLimit = $now->format('Y-m-d H:i:s');
 
-        $counterQuery = static::getQueryCaller()
-            ->andClientIPAddressEqual($networking->remoteAddress)
-            ->andClientUserAgentEqual($networking->userAgent)
-            ->andCreatedAtGreaterOrEqualThan($dateLimit);
+            $counterQuery = static::getQueryCaller()
+                ->andClientIPAddressEqual($networking->remoteAddress)
+                ->andClientUserAgentEqual($networking->userAgent)
+                ->andCreatedAtGreaterOrEqualThan($dateLimit);
 
-        $previousAttempts = count(static::getMany($counterQuery));
+            $previousAttempts = count(static::getMany($counterQuery));
 
-        if ($previousAttempts >= ContactSettings::$maxRequestPerIp) {
-            throw SilentHttpException::getInstance('max-contact-requests-reached');
+            if ($previousAttempts >= ContactSettings::$maxRequestPerIp) {
+                throw SilentHttpException::getInstance('max-contact-requests-reached');
+            }
         }
 
         $parser = new UserAgentParser();

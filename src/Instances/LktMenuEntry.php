@@ -53,6 +53,7 @@ class LktMenuEntry extends GeneratedLktMenuEntry
                     'type' => $this->getReadMenuType(),
                     'anchor' => [
                         'text' => $data['text'],
+                        'readonly' => true,
                     ],
                     'children' => $data['children'],
                 ];

@@ -345,6 +345,10 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Solicitudes de contacto',
             'en' => 'Contact requests',
         ], $parentId);
+        LktTranslation::createIfMissing('contact', TranslationType::Text, [
+            'es' => 'Contacto',
+            'en' => 'Contact',
+        ], $parentId);
 
         $parent = LktTranslation::createIfMissing('webPages', TranslationType::Many, []);
         $parentId = $parent->getId();

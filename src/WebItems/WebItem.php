@@ -22,6 +22,8 @@ class WebItem
 
     protected array $adminAccessPoliciesPerAction = [];
 
+    protected string $menuGroup = '';
+
     public function __construct(
         readonly public string $component,
         readonly public string|null $publicComponentName = null,
@@ -126,5 +128,16 @@ class WebItem
     public static function getAll(): array
     {
         return static::$WEB_ITEMS;
+    }
+
+    public function setMenuGroup(string $key): static
+    {
+        $this->menuGroup = $key;
+        return $this;
+    }
+
+    public function getMenuGroup(): string
+    {
+        return $this->menuGroup;
     }
 }

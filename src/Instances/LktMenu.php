@@ -4,6 +4,7 @@ namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktMenu;
 use Lkt\Menus\Enums\MenuEntryType;
+use Lkt\Translations\Translations;
 use Lkt\WebItems\Enums\WebItemAdminMenuRegister;
 use Lkt\WebItems\WebItem;
 
@@ -56,7 +57,9 @@ class LktMenu extends GeneratedLktMenu
             $r[] = $entry->setAccessPolicy('r-app-menu')->autoRead();
         }
 
+        $groups = [];
         if ($this->includeAvailableAdminRoutes() && is_object($user) && ($user->isAdministrator() || $user->hasAdminAccess())) {
+            $i = count($r);
             foreach (WebItem::getAll() as $webItem) {
                 if ($webItem->includeInAdminMenu === WebItemAdminMenuRegister::Never) continue;
                 if (in_array($webItem->publicComponentName, $nativeIncludedAdminWebItems)) continue;
@@ -70,7 +73,27 @@ class LktMenu extends GeneratedLktMenu
                     ->setType(MenuEntryType::WebItems->value)
                     ->setComponent($webItem->publicComponentName ?? $webItem->component)
                 ;
-                $r[] = $anonymousEntry->setAccessPolicy('r-app-menu')->autoRead();
+
+                $group = $webItem->getMenuGroup();
+                if ($group) {
+                    if (!$groups[$group]) {
+
+                        $text = Translations::get("webItems.{$group}");
+                        if (!$text) $text = $group;
+
+                        $r[] = LktMenuEntry::getInstance()
+                            ->setName($text)
+                            ->setType(MenuEntryType::Parent->value)
+                            ->setAccessPolicy('r-app-menu')->autoRead();
+                        $groups[$group] = $i;
+                    }
+                    $r[$groups[$group]]['children'][] = $anonymousEntry->setAccessPolicy('r-app-menu')->autoRead();
+
+                } else {
+                    $r[] = $anonymousEntry->setAccessPolicy('r-app-menu')->autoRead();
+                }
+
+                ++$i;
             }
         }
         return $r;

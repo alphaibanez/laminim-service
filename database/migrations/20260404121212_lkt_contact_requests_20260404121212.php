@@ -42,6 +42,7 @@ class LktContactRequests20260404121212 extends AbstractMigration
             ->addColumn('contact_reason_id', 'integer', ['default' => 0])
             ->addColumn('name', 'string', ['limit' => 255, 'default' => ''])
             ->addColumn('email', 'string', ['limit' => 255, 'default' => ''])
+            ->addColumn('phone', 'string', ['limit' => 25, 'default' => ''])
             ->addColumn('message', 'text', ['null' => true, 'default' => ''])
 
             ->addColumn('client_protocol', 'string', ['limit' => 10, 'default' => 'http'])

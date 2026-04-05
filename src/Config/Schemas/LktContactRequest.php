@@ -36,6 +36,7 @@ Schema::add(
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('name'))
         ->addField(EmailField::define('email'))
+        ->addField(StringField::define('phone'))
         ->addField(StringField::define('message'))
         ->addField(ForeignKeyField::defineRelation(LktContactReason::COMPONENT, 'contactReason', 'contact_reason_id'))
         ->addField(StringField::define('clientProtocol', 'client_protocol'))
@@ -49,6 +50,7 @@ Schema::add(
             'name',
             'message',
             'email',
+            'phone',
             'contactReason',
         ])
 
@@ -56,6 +58,7 @@ Schema::add(
             'name',
             'message',
             'email',
+            'phone',
             'contactReason',
         ])
         ->addAccessPolicy('create', [
@@ -63,6 +66,7 @@ Schema::add(
             'name',
             'message',
             'email',
+            'phone',
             'contactReason',
             'clientProtocol',
             'clientUserAgent',

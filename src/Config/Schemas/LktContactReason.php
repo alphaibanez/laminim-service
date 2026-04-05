@@ -40,4 +40,10 @@ Schema::add(
         ->addField(VisibilityStatusField::define()->setDefaultValue(WebPageStatus::Public->value))
 
         ->setItemToI18nPolicy('contactReasons', 'id', 'name')
+
+        ->addAccessPolicy('admin', [
+            'id',
+            'name',
+            'status',
+        ])
 );

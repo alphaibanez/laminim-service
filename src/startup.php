@@ -7,7 +7,6 @@ use Lkt\Console\Commands\GenerateCommand;
 use Lkt\Console\Commands\MailDeliveryCommand;
 use Lkt\Console\Commands\MakeCrontabCommand;
 use Lkt\Console\Commands\RunCrontabCommand;
-use Lkt\Console\Commands\SetupTranslationsCommand;
 use Lkt\Console\Commands\ShowCrontabCommand;
 use Lkt\Console\Commands\SyncOpenExchangeRatesCommand;
 use Lkt\Console\Commands\SyncRestCountriesCommand;
@@ -65,7 +64,6 @@ if (php_sapi_name() == 'cli') {
     Commander::register(new MailDeliveryCommand());
     Commander::register(new MakeCrontabCommand());
     Commander::register(new RunCrontabCommand());
-    Commander::register(new SetupTranslationsCommand());
     Commander::register(new ShowCrontabCommand());
     Commander::register(new SyncRestCountriesCommand());
     Commander::register(new SyncOpenExchangeRatesCommand());

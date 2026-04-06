@@ -40,6 +40,8 @@ abstract class AbstractRoute
 
     protected array $httpEventHandlers = [];
 
+    protected bool $logRoute = false;
+
     public function __construct(string $route, callable $handler)
     {
         $this->route = $route;
@@ -345,5 +347,16 @@ abstract class AbstractRoute
         $r->setAdminRoute();
         Router::addRoute($r);
         return $r;
+    }
+
+    public function setLogMode(bool $status = true): static
+    {
+        $this->logRoute = $status;
+        return $this;
+    }
+
+    public function hasToBeLogged(): bool
+    {
+        return $this->logRoute;
     }
 }

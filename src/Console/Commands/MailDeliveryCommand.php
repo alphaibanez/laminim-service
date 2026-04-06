@@ -14,11 +14,12 @@ use function Lkt\Tools\Parse\clearInput;
 
 class MailDeliveryCommand extends Command
 {
-    protected static $defaultName = 'lkt:mail-delivery';
 
     protected function configure()
     {
         $this
+            ->setName('lkt:mail-delivery')
+
             // the short description shown while running "php bin/console list"
             ->setDescription('Automatically delivers pending mails')
             ->addArgument('from', InputArgument::OPTIONAL, 'Custom mail from')
@@ -29,7 +30,7 @@ class MailDeliveryCommand extends Command
             ->setHelp('');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("Starting mailing");
 

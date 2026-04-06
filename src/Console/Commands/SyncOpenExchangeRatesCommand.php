@@ -13,17 +13,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncOpenExchangeRatesCommand extends Command
 {
-    protected static $defaultName = 'lkt:sync:open-exchange-rates';
 
     protected function configure()
     {
         $this
+            ->setName('lkt:sync:open-exchange-rates')
             ->setDescription('Synchronize with Open Exchange Rates API')
             ->setHelp('Synchronize with Open Exchange Rates API')
             ->addArgument('connector', InputArgument::REQUIRED, 'Specify which connector shall be used');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $connectorName = $input->getArgument('connector');
         $connector = OpenExchangeRatesConnector::get($connectorName);

@@ -9,11 +9,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RunCrontabCommand extends Command
 {
-    protected static $defaultName = 'lkt:run:crontab';
 
     protected function configure()
     {
         $this
+            ->setName('lkt:run:crontab')
+
             // the short description shown while running "php bin/console list"
             ->setDescription('Automatically generates a fresh crontab file')
 
@@ -23,7 +24,7 @@ class RunCrontabCommand extends Command
         ;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $data = Commander::getExecutableCommands();

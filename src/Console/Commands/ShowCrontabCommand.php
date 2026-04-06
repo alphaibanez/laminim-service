@@ -9,11 +9,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ShowCrontabCommand extends Command
 {
-    protected static $defaultName = 'lkt:show:crontab';
 
     protected function configure()
     {
         $this
+            ->setName('lkt:show:crontab')
+
             // the short description shown while running "php bin/console list"
             ->setDescription('Automatically generates a fresh crontab file')
 
@@ -23,7 +24,7 @@ class ShowCrontabCommand extends Command
         ;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $data = Commander::getCrontabConfig();

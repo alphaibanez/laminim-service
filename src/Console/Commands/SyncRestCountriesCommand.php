@@ -14,18 +14,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncRestCountriesCommand extends Command
 {
-    protected static $defaultName = 'lkt:sync:rest-countries';
 
     protected function configure()
     {
         $this
+            ->setName('lkt:sync:rest-countries')
             ->setDescription('Synchronize with Rest Countries API')
             ->setHelp('Synchronize with Rest Countries API')
             ->addArgument('text', InputArgument::REQUIRED, 'Determines which text should be imported as country name: official|common')
             ->addArgument('connector', InputArgument::OPTIONAL, 'Specify which connector shall be used. If zero (0), uses an anonymous connector in order to fetch public API', 0);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $connectorName = $input->getArgument('connector');
         $anonymousConnector = (int)$connectorName === 0;

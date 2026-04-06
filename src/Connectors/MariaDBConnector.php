@@ -505,4 +505,15 @@ class MariaDBConnector extends DatabaseConnector
         }
         return $whereConstraint;
     }
+
+    public function getDatabases(): array
+    {
+        $r = [];
+        $results = $this->query("SHOW DATABASES;");
+        foreach ($results as $dbName) {
+            $r[] = $dbName['Database'];
+        }
+
+        return $r;
+    }
 }

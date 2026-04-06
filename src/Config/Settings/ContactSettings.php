@@ -2,6 +2,8 @@
 
 namespace Lkt\Config\Settings;
 
+use Lkt\Enums\TimeInSeconds;
+
 class ContactSettings
 {
     /**
@@ -16,5 +18,5 @@ class ContactSettings
      * It's expressed in seconds
      * The greater the number, the greater the restriction
      */
-    public static int $maxRequestPeriod = 86400;
+    public static int $maxRequestPeriod = TimeInSeconds::OneDay->value;
 }

@@ -349,6 +349,50 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Contacto',
             'en' => 'Contact',
         ], $parentId);
+        LktTranslation::createIfMissing('stored-file', TranslationType::Text, [
+            'es' => 'Archivos',
+            'en' => 'Files',
+        ], $parentId);
+
+
+        $parent = LktTranslation::createIfMissing('webItem', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('user', TranslationType::Text, [
+            'es' => 'Usuario',
+            'en' => 'User',
+        ], $parentId);
+        LktTranslation::createIfMissing('user-role', TranslationType::Text, [
+            'es' => 'Rol de usuario',
+            'en' => 'User Role',
+        ], $parentId);
+        LktTranslation::createIfMissing('menu', TranslationType::Text, [
+            'es' => 'Menu',
+            'en' => 'Menu',
+        ], $parentId);
+        LktTranslation::createIfMissing('menu-entry', TranslationType::Text, [
+            'es' => 'Entrada de Menú',
+            'en' => 'Menu Entry',
+        ], $parentId);
+        LktTranslation::createIfMissing('i18n', TranslationType::Text, [
+            'es' => 'Traducción',
+            'en' => 'Translation',
+        ], $parentId);
+        LktTranslation::createIfMissing('many-i18n', TranslationType::Text, [
+            'es' => 'Diccionario',
+            'en' => 'Dictionary',
+        ], $parentId);
+        LktTranslation::createIfMissing('contact-reason', TranslationType::Text, [
+            'es' => 'Motivo de contacto',
+            'en' => 'Contact reason',
+        ], $parentId);
+        LktTranslation::createIfMissing('contact-request', TranslationType::Text, [
+            'es' => 'Solicitud de contacto',
+            'en' => 'Contact request',
+        ], $parentId);
+        LktTranslation::createIfMissing('stored-file', TranslationType::Text, [
+            'es' => 'Archivo',
+            'en' => 'File',
+        ], $parentId);
 
         $parent = LktTranslation::createIfMissing('webPages', TranslationType::Many, []);
         $parentId = $parent->getId();

@@ -4,12 +4,14 @@ namespace Lkt\Http;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Lkt\Debug\VarDumper;
 use Lkt\Exceptions\SilentHttpException;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Networking\Networking;
 use Lkt\Http\Routes\AbstractRoute;
 use Lkt\Http\Routes\GetRoute;
+use Lkt\Instances\LktHttpRequestLog;
 use Lkt\Instances\LktUser;
 use Lkt\Users\Interfaces\SessionUserInterface;
 use function FastRoute\simpleDispatcher;
@@ -213,6 +215,17 @@ class Router
 
                 }
 
+                if ($route->hasToBeLogged()) {
+                    LktHttpRequestLog::getInstance()
+                        ->setAccessPolicy('create')
+                        ->autoCreate([
+                            'route' => $route->getRoute(),
+                            'method' => $route->getMethod(),
+                            'responseStatus' => $response instanceof Response ? $response->getCode() : 0,
+                            'payload' => $request->params,
+                        ]);
+                }
+
 
                 if ($response instanceof Response) {
                     $responseData = $response->getResponseData();
@@ -398,5 +411,22 @@ class Router
             header("{$networking->httpProtocolVersion} 401 Unauthorized");
             die ("Not authorized");
         }
+    }
+
+    public static function getHTTPRequestHeaders(): array
+    {
+        $r = [];
+
+        foreach ($_SERVER as $key => $value) {
+            if (str_starts_with($key, 'HTTP_')) {
+                $header = str_replace('_', '-', substr($key, 5));
+                $header = explode('-', $header);
+                $header = array_map(function (string $str) { return ucfirst(strtolower($str)); }, $header);
+                $header = implode('-', $header);
+                $r[$header] = $value;
+            }
+        }
+
+        return $r;
     }
 }

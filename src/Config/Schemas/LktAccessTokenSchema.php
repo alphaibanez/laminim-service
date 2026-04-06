@@ -6,7 +6,6 @@ use Lkt\Enums\AccessTokenDuration;
 use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;

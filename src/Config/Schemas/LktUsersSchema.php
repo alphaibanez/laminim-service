@@ -55,5 +55,37 @@ Schema::add(
         ->addField(BooleanField::define('isAdministrator', 'is_administrator'))
         ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
         ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))
+
         ->addAccessPolicy('change-password', ['password'])
+
+        ->addAccessPolicy('admin', [
+            'id',
+            'firstName',
+            'lastName',
+            'fullName',
+            'email',
+            'credentialIdentifier',
+            'preferredLanguage',
+            'preferredThemeMode',
+            'appRoles',
+            'adminRoles',
+            'canReceivePushNotifications',
+            'canReceiveMailNotifications',
+        ])
+
+        ->addAccessPolicy('create', [
+            'id',
+            'firstName',
+            'lastName',
+            'fullName',
+            'email',
+            'password',
+            'credentialIdentifier',
+            'preferredLanguage',
+            'preferredThemeMode',
+            'appRoles',
+            'adminRoles',
+            'canReceivePushNotifications',
+            'canReceiveMailNotifications',
+        ])
 );

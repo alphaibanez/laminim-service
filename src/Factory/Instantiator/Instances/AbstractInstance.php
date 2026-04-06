@@ -46,6 +46,7 @@ use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
+use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -1023,7 +1024,7 @@ abstract class AbstractInstance
                 }
             }
 
-            if (!$field || $field instanceof MethodGetterField) continue;
+            if (!$field || $field instanceof MethodGetterField || $field instanceof ConcatField) continue;
 
             $composedDatum = !$schema->hasFieldDefined($param) && !$isPivotDatumFeed;
 

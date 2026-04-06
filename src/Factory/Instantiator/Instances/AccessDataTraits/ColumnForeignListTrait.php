@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Helpers\UpdatedRelatedDataProcessor;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -181,6 +182,9 @@ trait ColumnForeignListTrait
 
         if (count($dataProcessor->relatedIds) > 0) {
             $this->_setForeignListVal($fieldName, $dataProcessor->relatedIds);
+
+        } elseif (count($data) === 0 && count($this->_getForeignListIds($fieldName)) > 0) {
+            $this->_setForeignListVal($fieldName, []);
         }
         return $this;
     }

@@ -20,6 +20,9 @@ Schema::add(
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'name' => 'label',
+            'id',
+            'name',
+            'nameData',
         ])
         ->setItemsPerPage(20)
         ->setCountableField('id')

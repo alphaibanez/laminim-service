@@ -63,4 +63,15 @@ Schema::add(
         )
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+
+        ->addAccessPolicy('admin', [
+            'id',
+            'type',
+            'config',
+            'src',
+            'embedCode',
+            'name',
+            'nameData',
+            'children',
+        ])
 );

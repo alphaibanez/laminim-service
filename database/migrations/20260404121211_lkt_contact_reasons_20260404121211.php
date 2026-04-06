@@ -42,6 +42,8 @@ class LktContactReasons20260404121211 extends AbstractMigration
             ->addColumn('status', 'integer', ['limit' => 12])
         ;
 
+        $table->addIndex(['status']);
+
         $table->create();
     }
 }

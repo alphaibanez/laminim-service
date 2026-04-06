@@ -94,22 +94,6 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Agregar diccionario y seguir',
             'en' => 'Add dictionary and new',
         ], $parentId);
-        LktTranslation::createIfMissing('i18nTitleSingle', TranslationType::Text, [
-            'es' => 'Traducción',
-            'en' => 'Translation',
-        ], $parentId);
-        LktTranslation::createIfMissing('i18nTitleMany', TranslationType::Text, [
-            'es' => 'Traducciones',
-            'en' => 'Translations',
-        ], $parentId);
-        LktTranslation::createIfMissing('dictionaryTitleSingle', TranslationType::Text, [
-            'es' => 'Diccionario',
-            'en' => 'Dictionary',
-        ], $parentId);
-        LktTranslation::createIfMissing('dictionaryTitleMany', TranslationType::Text, [
-            'es' => 'Diccionarios',
-            'en' => 'Dictionaries',
-        ], $parentId);
 
         $parent = LktTranslation::createIfMissing('userRoleCapability', TranslationType::Many, []);
         $parentId = $parent->getId();
@@ -247,14 +231,6 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('addAndNew', TranslationType::Text, [
             'es' => 'Agregar rol y seguir',
             'en' => 'Add role and new',
-        ], $parentId);
-        LktTranslation::createIfMissing('titleSingle', TranslationType::Text, [
-            'es' => 'Rol de usuario',
-            'en' => 'User role',
-        ], $parentId);
-        LktTranslation::createIfMissing('titleMany', TranslationType::Text, [
-            'es' => 'Roles de usuario',
-            'en' => 'User Roles',
         ], $parentId);
 
 
@@ -836,6 +812,17 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('addAndNew', TranslationType::Text, [
             'es' => 'Agregar y otro',
             'en' => 'Add and other',
+        ], $parentId);
+
+        $parent = LktTranslation::createIfMissing('fileEntityType', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Imagen',
+            'en' => 'Image',
+        ], $parentId);
+        LktTranslation::createIfMissing('5', TranslationType::Text, [
+            'es' => 'Vídeo (iframe)',
+            'en' => 'Video (iframe)',
         ], $parentId);
     }
 }

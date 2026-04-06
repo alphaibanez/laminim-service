@@ -78,4 +78,11 @@ class LktFileEntity extends GeneratedLktFileEntity
         }
         return '';
     }
+
+    public function getContainerStorageUnit()
+    {
+        if ($this->typeIsStorageUnit()) return $this->getId();
+
+        return $this->getParent()?->getContainerStorageUnit();
+    }
 }

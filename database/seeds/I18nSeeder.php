@@ -224,14 +224,6 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Eliminar elementos',
             'en' => 'Drop items',
         ], $parentId);
-        LktTranslation::createIfMissing('add', TranslationType::Text, [
-            'es' => 'Agregar rol',
-            'en' => 'Add role',
-        ], $parentId);
-        LktTranslation::createIfMissing('addAndNew', TranslationType::Text, [
-            'es' => 'Agregar rol y seguir',
-            'en' => 'Add role and new',
-        ], $parentId);
 
 
 
@@ -816,6 +808,10 @@ class I18nSeeder extends AbstractSeed
 
         $parent = LktTranslation::createIfMissing('fileEntityType', TranslationType::Many, []);
         $parentId = $parent->getId();
+        LktTranslation::createIfMissing('0', TranslationType::Text, [
+            'es' => 'Unidad de almacenamiento',
+            'en' => 'Storage unit',
+        ], $parentId);
         LktTranslation::createIfMissing('2', TranslationType::Text, [
             'es' => 'Imagen',
             'en' => 'Image',

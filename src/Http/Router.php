@@ -222,7 +222,10 @@ class Router
                             'route' => $route->getRoute(),
                             'method' => $route->getMethod(),
                             'responseStatus' => $response instanceof Response ? $response->getCode() : 0,
-                            'payload' => $request->params,
+                            'payload' => [
+                                'params' => $request->params,
+                                'files' => $_FILES,
+                            ],
                         ]);
                 }
 

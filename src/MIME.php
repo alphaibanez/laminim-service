@@ -195,6 +195,7 @@ class MIME
             '7z' => static::SEVEN_ZIP,
             'tar' => static::TAR,
             'gzip' => static::GZIP,
+            'gz' => static::GZIP,
             'bz' => static::BZIP,
             'bz2' => static::BZIP2,
             'arc' => static::ARCHIVE_DOCUMENT,

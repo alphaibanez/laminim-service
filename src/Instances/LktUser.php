@@ -2,16 +2,20 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Config\Settings\UserSettings;
 use Lkt\Enums\AccessTokenPurpose;
+use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
+use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Generated\GeneratedLktUser;
-use Lkt\Generated\LktUserQueryBuilder;
+use Lkt\Generated\LktUserWhere;
 use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Http\Router;
 use Lkt\Locale\Locale;
 use Lkt\Translations\Translations;
 use Lkt\Users\Enums\RoleCapability;
+use Lkt\Users\Enums\UserAuthenticationMode;
 use Lkt\Users\Interfaces\SessionUserInterface;
 
 class LktUser extends GeneratedLktUser implements SessionUserInterface
@@ -52,8 +56,17 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     public static function authenticate(string $username, string $password): ?static
     {
         $query = static::getQueryCaller()
-            ->andEmailEqual($username)
             ->andPasswordEqual($password);
+
+        if (UserSettings::$authMode === UserAuthenticationMode::Email) {
+            $query->andEmailEqual($username);
+
+        } elseif (UserSettings::$authMode === UserAuthenticationMode::Identifier) {
+            $query->andCredentialIdentifierEqual($username);
+
+        } elseif (UserSettings::$authMode === UserAuthenticationMode::Dynamic) {
+            $query->andWhere(LktUserWhere::emailEqual($username)->orCredentialIdentifierEqual($username));
+        }
 
         $user = static::getOne($query);
 
@@ -253,5 +266,14 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         $accessToken = LktAccessToken::fromUser($this, AccessTokenPurpose::Identifier);
         if ($accessToken) $accessToken->delete();
         return $this;
+    }
+
+    protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array
+    {
+        if ($this->isAnonymous() && $this->accessPolicy->name === 'admin') {
+            $this->setAccessPolicy('create', AccessPolicyEndOfLife::UntilNextWrite);
+        }
+
+        return $data;
     }
 }

@@ -5,6 +5,7 @@ namespace Lkt\Instances;
 use donatj\UserAgent\UserAgentParser;
 use Lkt\Generated\GeneratedLktAuthenticationLog;
 use Lkt\Users\Enums\PerformedAuthAction;
+use function Lkt\Tools\Parse\clearInput;
 
 class LktAuthenticationLog extends GeneratedLktAuthenticationLog
 {
@@ -33,9 +34,9 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setClientProtocol($_SERVER['SERVER_PROTOCOL'])
             ->setClientIPAddress($_SERVER['REMOTE_ADDR'])
             ->setClientUserAgent($_SERVER['HTTP_USER_AGENT'])
-            ->setClientBrowser($ua->browser())
-            ->setClientBrowserVersion($ua->browserVersion())
-            ->setClientOS($ua->platform())
+            ->setClientBrowser(clearInput($ua->browser()))
+            ->setClientBrowserVersion(clearInput($ua->browserVersion()))
+            ->setClientOS(clearInput($ua->platform()))
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword($attemptedPassword)
             ->setAttemptsCounter(count($previousAttempts));
@@ -61,9 +62,9 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setClientProtocol($_SERVER['SERVER_PROTOCOL'])
             ->setClientIPAddress($_SERVER['REMOTE_ADDR'])
             ->setClientUserAgent($_SERVER['HTTP_USER_AGENT'])
-            ->setClientBrowser($ua->browser())
-            ->setClientBrowserVersion($ua->browserVersion())
-            ->setClientOS($ua->platform())
+            ->setClientBrowser(clearInput($ua->browser()))
+            ->setClientBrowserVersion(clearInput($ua->browserVersion()))
+            ->setClientOS(clearInput($ua->platform()))
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword('');
 
@@ -84,9 +85,9 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setClientProtocol($_SERVER['SERVER_PROTOCOL'])
             ->setClientIPAddress($_SERVER['REMOTE_ADDR'])
             ->setClientUserAgent($_SERVER['HTTP_USER_AGENT'])
-            ->setClientBrowser($ua->browser())
-            ->setClientBrowserVersion($ua->browserVersion())
-            ->setClientOS($ua->platform())
+            ->setClientBrowser(clearInput($ua->browser()))
+            ->setClientBrowserVersion(clearInput($ua->browserVersion()))
+            ->setClientOS(clearInput($ua->platform()))
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword('');
 
@@ -107,9 +108,9 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
             ->setClientProtocol($_SERVER['SERVER_PROTOCOL'])
             ->setClientIPAddress($_SERVER['REMOTE_ADDR'])
             ->setClientUserAgent($_SERVER['HTTP_USER_AGENT'])
-            ->setClientBrowser($ua->browser())
-            ->setClientBrowserVersion($ua->browserVersion())
-            ->setClientOS($ua->platform())
+            ->setClientBrowser(clearInput($ua->browser()))
+            ->setClientBrowserVersion(clearInput($ua->browserVersion()))
+            ->setClientOS(clearInput($ua->platform()))
             ->setAttemptedCredential($attemptedCredential)
             ->setAttemptedPassword('');
 

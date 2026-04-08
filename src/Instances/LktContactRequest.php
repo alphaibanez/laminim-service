@@ -58,9 +58,9 @@ class LktContactRequest extends GeneratedLktContactRequest
             'clientProtocol' => $networking->httpProtocol,
             'clientIPAddress' => $networking->remoteAddress,
             'clientUserAgent' => $networking->userAgent,
-            'clientBrowser' => $ua->browser(),
-            'clientBrowserVersion' => $ua->browserVersion(),
-            'clientOS' => $ua->platform(),
+            'clientBrowser' => clearInput($ua->browser()),
+            'clientBrowserVersion' => clearInput($ua->browserVersion()),
+            'clientOS' => clearInput($ua->platform()),
         ];
     }
 }

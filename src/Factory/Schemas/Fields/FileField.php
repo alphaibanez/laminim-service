@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
 use Lkt\Factory\Schemas\Traits\FieldWithMultipleOptionTrait;
@@ -41,10 +42,11 @@ class FileField extends AbstractField
 
     final public function getStorePath($instance = null): string
     {
+        $r = '';
         if ($this->storePath instanceof FieldFilePathValue) {
-            return $this->storePath->getValue($instance);
+            $r = $this->storePath->getValue($instance);
         }
-        return '';
+        return $r;
     }
 
 

@@ -3,7 +3,6 @@
 namespace Lkt\Instances;
 
 use donatj\UserAgent\UserAgentParser;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Generated\GeneratedLktHttpRequestLog;
@@ -40,9 +39,9 @@ class LktHttpRequestLog extends GeneratedLktHttpRequestLog
             'clientProtocol' => $networking->httpProtocol,
             'clientIPAddress' => $networking->remoteAddress,
             'clientUserAgent' => $networking->userAgent,
-            'clientBrowser' => $ua->browser(),
-            'clientBrowserVersion' => $ua->browserVersion(),
-            'clientOS' => $ua->platform(),
+            'clientBrowser' => clearInput($ua->browser()),
+            'clientBrowserVersion' => clearInput($ua->browserVersion()),
+            'clientOS' => clearInput($ua->platform()),
         ];
     }
 }

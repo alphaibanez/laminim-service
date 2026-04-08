@@ -212,7 +212,8 @@ class ParseColumn
         $value = trim($value);
         if ($value === '') return null;
 
-        $directory = new Directory(FileSystemConnection::getDiskDriver(), $field->getStorePath($instance));
+        $storePath = $field->getStorePath($instance);
+        $directory = new Directory(FileSystemConnection::getDiskDriver(), $storePath);
         return new File(FileSystemConnection::getDiskDriver(), $directory, $value);
     }
 

@@ -9,6 +9,7 @@ use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
+use function Lkt\Tools\System\makePathToDirectory;
 
 class FileUploadHelper
 {
@@ -23,9 +24,12 @@ class FileUploadHelper
     public static function uploadFileField(FileField $field, array $file, AbstractInstance $instance, Schema $schema): ?array
     {
         $storePath = $field->getStorePath($instance);
+        if (!$storePath) $instance::getSchemaStorePath($instance);
         if ($storePath === ''){
             throw UnsetFieldStorePathException::getInstance($field->getName(), $schema->getComponent());
         }
+
+        makePathToDirectory($storePath);
 
         // Simple validation (max file size and allowed mime types)
         $validator = new \Lkt\FileUpload\Validator\Simple($field->getMaxFileSize(), $field->getSupportedFormats());

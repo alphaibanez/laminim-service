@@ -70,6 +70,8 @@ use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
+use Lkt\FileBrowser\Enums\FileEntityType;
+use Lkt\Instances\LktFileEntity;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
 use Lkt\QueryBuilding\SelectBuilder;
@@ -1683,5 +1685,30 @@ abstract class AbstractInstance
             $instance = static::getInstance()->autoCreate($data);
         }
         return $instance;
+    }
+
+    public static $schemaStorePath = null;
+    public static $schemaPublicPath = null;
+
+
+    public static function getSchemaStorePath($instance): string
+    {
+        if (is_callable(static::$schemaStorePath)) {
+            return call_user_func(static::$schemaStorePath, $instance);
+        }
+        return '';
+    }
+
+
+    public static function getSchemaPublicPath(LktFileEntity|null $instance = null): string
+    {
+        if ($instance instanceof LktFileEntity) {
+            if ($instance->getType() === FileEntityType::StorageUnit->value || $instance->getType() === FileEntityType::Directory->value) return '';
+        }
+
+        if (is_callable(static::$schemaPublicPath)) {
+            return call_user_func(static::$schemaPublicPath, $instance);
+        }
+        return '';
     }
 }

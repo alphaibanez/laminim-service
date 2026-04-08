@@ -14,6 +14,7 @@ use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileBrowser\Enums\FileEntityType;
 use Lkt\Instances\LktFileEntity;
+use Lkt\Instances\LktUser;
 
 Schema::add(
     Schema::table('lkt_file_entities', LktFileEntity::COMPONENT)
@@ -53,6 +54,7 @@ Schema::add(
                 ->setStorePath([LktFileEntity::class, 'getSchemaStorePath'])
                 ->setPublicPath([LktFileEntity::class, 'getSchemaPublicPath'])
         )
+        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('embedCode', 'embed_code'))
         ->addField(AssocJSONField::define('config'))
         ->addField(
@@ -73,5 +75,6 @@ Schema::add(
             'name',
             'nameData',
             'children',
+            'createdBy',
         ])
 );

@@ -2,8 +2,8 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\FileBrowser\Enums\FileEntityType;
 use Lkt\Generated\GeneratedLktFileEntity;
 use Lkt\Http\Response;
 use Lkt\MIME;
@@ -11,9 +11,6 @@ use Lkt\MIME;
 class LktFileEntity extends GeneratedLktFileEntity
 {
     const COMPONENT = 'lkt-file-entity';
-
-    public static $schemaStorePath = null;
-    public static $schemaPublicPath = null;
 
     public function read()
     {
@@ -50,33 +47,12 @@ class LktFileEntity extends GeneratedLktFileEntity
         if (!$fileName) return Response::notFound();
 
         $file = $this->getSrc();
-        $content = file_get_contents($file->path);
+        $storePath = $this::getSchemaStorePath($this) ?? $file->directory->path;
+        $content = file_get_contents("{$storePath}/{$fileName}");
         return Response::ok($content)
             ->setContentTypeMIME(MIME::getByExtension(pathinfo($fileName, PATHINFO_EXTENSION)))
             ->enableCacheToOneYear()
             ;
-    }
-
-
-    public static function getSchemaStorePath($instance): string
-    {
-        if (is_callable(static::$schemaStorePath)) {
-            return call_user_func(static::$schemaStorePath, $instance);
-        }
-        return '';
-    }
-
-
-    public static function getSchemaPublicPath(LktFileEntity|null $instance = null): string
-    {
-        if ($instance instanceof LktFileEntity) {
-            if ($instance->getType() === FileEntityType::StorageUnit->value || $instance->getType() === FileEntityType::Directory->value) return '';
-        }
-
-        if (is_callable(static::$schemaPublicPath)) {
-            return call_user_func(static::$schemaPublicPath, $instance);
-        }
-        return '';
     }
 
     public function getContainerStorageUnit()

@@ -224,7 +224,6 @@ class ParseColumn
      */
     public static function multipleFileDatumToInstance($value, FileField $field, $instance = null): array
     {
-
         if (is_null($value)) return [];
         if (is_string($value)) {
             $value = explode(';', $value);

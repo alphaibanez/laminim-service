@@ -805,6 +805,14 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Agregar y otro',
             'en' => 'Add and other',
         ], $parentId);
+        LktTranslation::createIfMissing('download', TranslationType::Text, [
+            'es' => 'Descargar',
+            'en' => 'Download',
+        ], $parentId);
+        LktTranslation::createIfMissing('upload', TranslationType::Text, [
+            'es' => 'Subir',
+            'en' => 'Upload',
+        ], $parentId);
 
         $parent = LktTranslation::createIfMissing('fileEntityType', TranslationType::Many, []);
         $parentId = $parent->getId();

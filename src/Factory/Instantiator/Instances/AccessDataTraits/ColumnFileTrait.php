@@ -208,7 +208,7 @@ trait ColumnFileTrait
     protected function _getInternalPath(string $fieldName): string
     {
         $file = $this->_getFileVal($fieldName);
-        return trim($file->directory->path);
+        return $this::getSchemaStorePath($this) ?? $file->directory->path;
     }
 
     /**

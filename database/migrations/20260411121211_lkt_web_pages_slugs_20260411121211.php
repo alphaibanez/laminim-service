@@ -1,9 +1,9 @@
 <?php
 
-use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
+use Phinx\Migration\AbstractMigration;
 
-class LKtWebPages20250330104201 extends AbstractMigration
+class LktWebPagesSlugs20260411121211 extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,25 +32,20 @@ class LKtWebPages20250330104201 extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('lkt_web_pages', ['collation' => 'utf8mb4_unicode_ci'])
+        $table = $this->table('lkt_web_pages__slugs', ['collation' => 'utf8mb4_unicode_ci']);
+
+        $table
+            ->addColumn('created_by', 'integer', ['default' => 0])
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('published_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('created_by', 'integer', ['default' => 0])
-
-            ->addColumn('status', 'integer', ['limit' => 12])
             ->addColumn('name', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('summary', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('slug', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-
-            ->addColumn('type', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0])
-            ->addColumn('parent_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR])
-            ->addColumn('parent_component', 'string', ['limit' => 250])
-
-            ->addColumn('seo_title', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('keywords', 'text', ['null' => true, 'default' => null])
-            ->addColumn('web_elements', 'text', ['null' => true, 'default' => null])
+            ->addColumn('page_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR])
+            ->addColumn('category_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR])
         ;
+
+        $table->addIndex(['page_id']);
+        $table->addIndex(['category_id']);
 
         $table->create();
     }

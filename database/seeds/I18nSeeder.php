@@ -321,6 +321,14 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Archivos',
             'en' => 'Files',
         ], $parentId);
+        LktTranslation::createIfMissing('page-category', TranslationType::Text, [
+            'es' => 'Categorías',
+            'en' => 'Categories',
+        ], $parentId);
+        LktTranslation::createIfMissing('page-slugs', TranslationType::Text, [
+            'es' => 'URLs',
+            'en' => 'URLs',
+        ], $parentId);
 
 
         $parent = LktTranslation::createIfMissing('webItem', TranslationType::Many, []);
@@ -360,6 +368,14 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('stored-file', TranslationType::Text, [
             'es' => 'Archivo',
             'en' => 'File',
+        ], $parentId);
+        LktTranslation::createIfMissing('page-category', TranslationType::Text, [
+            'es' => 'Categoría',
+            'en' => 'Category',
+        ], $parentId);
+        LktTranslation::createIfMissing('page-slugs', TranslationType::Text, [
+            'es' => 'URL',
+            'en' => 'URL',
         ], $parentId);
 
         $parent = LktTranslation::createIfMissing('webPages', TranslationType::Many, []);

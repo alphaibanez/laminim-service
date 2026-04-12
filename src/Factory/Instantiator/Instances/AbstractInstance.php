@@ -988,6 +988,8 @@ abstract class AbstractInstance
         /** @var PivotField[] $pivotFields */
         $pivotFields = $schema->getPivotFields();
 
+        $composedInstances = [];
+
         foreach ($params as $param => $value) {
 
             $isPivotDatumFeed = false;
@@ -1033,16 +1035,19 @@ abstract class AbstractInstance
 
             // Composed related data
             if ($composedDatum) {
-                if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
-                    /** @var AbstractInstance $composedInstance */
-                    $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
-                } else {
-                    $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
-                    if (!$fieldComposingThisField) continue;
-                    /** @var AbstractInstance $composedInstance */
-                    $composedInstance = $instance->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
+                if (!$composedInstances[$param]) {
+                    if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
+                        /** @var AbstractInstance $composedInstance */
+                        $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
+                    } else {
+                        $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
+                        if (!$fieldComposingThisField) continue;
+                        /** @var AbstractInstance $composedInstance */
+                        $composedInstance = $instance->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
+                    }
+                    $composedInstances[$param] = $composedInstance;
                 }
-                $composedInstance::feedInstance($composedInstance, [
+                $composedInstances[$param]::feedInstance($composedInstance, [
                     $field->getName() => $value,
                 ], $internalMethodsArguments);
                 continue;
@@ -1143,6 +1148,10 @@ abstract class AbstractInstance
             $instance->callOwnMethod($setter, $methodCallData);
         }
 
+//        foreach ($composedInstances as $param => $instance) {
+//            $instance->save();
+//        }
+
         return $instance;
     }
 
@@ -1152,7 +1161,7 @@ abstract class AbstractInstance
      */
     public function readFields(array $fields = [], array $internalMethodsArguments = []): array
     {
-        $recursiveReadController = RecursiveReadController::getInstance();
+//        $recursiveReadController = RecursiveReadController::getInstance();
 
         $accessPolicyName = isset($this->accessPolicy) ? $this->accessPolicy->name : '';
 
@@ -1386,7 +1395,6 @@ abstract class AbstractInstance
 
                 $additionalData = $internalMethodsArguments;
 
-
                 $getter = $field->getGetterForPrimitiveValue();
 
                 $additionalData = $this->prepareOwnMethodCallArguments($getter, $additionalData, $field->getName());
@@ -1397,7 +1405,7 @@ abstract class AbstractInstance
             }
         }
 
-        RecursiveReadController::endStack(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue());
+//        RecursiveReadController::endStack(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue());
 
         if (method_exists($this, 'postProcessRead')) return $this->postProcessRead($r);
         return $r;

@@ -9,7 +9,15 @@ class VarDumper
         $isCLI = php_sapi_name() === 'cli';
 
         if (!$isCLI) echo '<pre>';
-        print_r($data);
+        if ($data === true) {
+            print_r('true');
+        } elseif ($data === false) {
+            print_r('false');
+        } elseif ($data === null) {
+            print_r('null');
+        } else {
+            print_r($data);
+        }
         if (!$isCLI) echo '</pre>';
     }
 

@@ -11,6 +11,7 @@ use Lkt\CodeMaker\FieldGeneration\FileFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FloatFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\CompositionSchema;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
@@ -436,7 +437,7 @@ class FieldsCodeHelper
                     $composedPrimitiveReturnType = '?string';
                     $composedPrimitiveInputType = 'string';
 
-                } elseif ($composedField instanceof BooleanField || $composedField instanceof BooleansComputedField || $composedField instanceof StringEqualComputedField || $composedField instanceof StringInComputedField || $field instanceof StringAboveMinLengthComputedField || $field instanceof StringBelowMaxLengthComputedField || $field instanceof StringBetweenMinAndMaxLengthComputedField) {
+                } elseif ($composedField instanceof BooleanField || $composedField instanceof BooleansComputedField || $composedField instanceof StringEqualComputedField || $composedField instanceof StringInComputedField || $composedField instanceof StringAboveMinLengthComputedField || $composedField instanceof StringBelowMaxLengthComputedField || $composedField instanceof StringBetweenMinAndMaxLengthComputedField) {
                     $composedPrimitiveReturnType = '?bool';
                     $composedPrimitiveInputType = 'bool';
 
@@ -444,14 +445,14 @@ class FieldsCodeHelper
                     $composedPrimitiveReturnType = '?float';
                     $composedPrimitiveInputType = 'float';
 
-                } elseif ($composedField instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+                } elseif ($composedField instanceof DateTimeField || $composedField instanceof UnixTimeStampField) {
                     $composedPrimitiveReturnType = '?\Carbon\Carbon';
                     $composedPrimitiveInputType = '\Carbon\Carbon|\DateTime|string|int|null';
 
                 } elseif ($composedField instanceof FileField) {
                     $additionalFields = $composedField->isMultiple() ? 'files' : 'file';
 
-                } elseif ($composedField instanceof ForeignKeysField || $field instanceof RelatedField || $field instanceof RelatedKeysField || $field instanceof PivotField) {
+                } elseif ($composedField instanceof ForeignKeysField || $composedField instanceof RelatedField || $composedField instanceof RelatedKeysField || $composedField instanceof PivotField) {
                     $relatedSchema = Schema::get($composedField->getComponent());
                     $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
 

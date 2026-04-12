@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -878,7 +879,9 @@ final class Schema
             }
 
             if ($composedField) {
-                $r[$fieldName] = $composedField;
+                $f = clone $composedField;
+                $f->setName($fieldName);
+                $r[$fieldName] = $f;
             }
         }
         return $r;
@@ -912,8 +915,13 @@ final class Schema
     {
         foreach ($this->getCompositionFields() as $compositionField) {
             $compositionContent = $compositionField->getCompositionContent();
-            if (is_array($compositionContent) && in_array($fieldName, $compositionContent)) {
-                return $compositionField;
+            if (is_array($compositionContent)) {
+                if (in_array($fieldName, $compositionContent)) {
+                    return $compositionField;
+                }
+                if (array_key_exists($fieldName, $compositionContent)) {
+                    return $compositionField;
+                }
             }
         }
 
@@ -1150,7 +1158,7 @@ final class Schema
         foreach ($accessPolicy->availableFields as $key => $val) {
             $searchKey = is_numeric($key) ? $val : $key;
             $f = $accessPolicy->getSchemaField($this, $searchKey);
-            if (!$f) $accessPolicy->getSchemaCompositionField($this, $searchKey);
+            if (!$f) $f = $accessPolicy->getSchemaCompositionField($this, $searchKey);
 
             if ($f) {
                 $r[$val] = $f;
@@ -1173,9 +1181,21 @@ final class Schema
     {
         $accessPolicy = $accessPolicy instanceof AccessPolicyUsage ? $this->getAccessPolicy($accessPolicy->name) : $this->getAccessPolicy($accessPolicy);
 
-        return array_filter($this->getComposedFields(), function (AbstractField $field) use ($accessPolicy) {
-            return $accessPolicy->includesCompositionField($field);
-        });
+        $r = [];
+        foreach ($this->getComposedFields() as $key => $field) {
+            $included = false;
+            if ($accessPolicy->includesCompositionField($field, $key)) {
+                $included = true;
+            }
+
+            if ($included) {
+                /** @var AbstractField $f */
+                $f = clone $field;
+                $f->setName($key);
+                $r[$key] = $f;
+            }
+        }
+        return $r;
     }
 
     /**

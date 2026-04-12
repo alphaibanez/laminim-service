@@ -6,6 +6,7 @@ use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -38,9 +39,22 @@ Schema::add(
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(AssocJSONField::define('config'))
 
+        ->addField(
+            RelatedField::defineRelation(LktWebPageSlug::COMPONENT, 'slug', 'webCategory')
+                ->setSingleMode()
+                ->setCompositionContent([
+                    'requestUri' => 'slug',
+                    'requestUriData' => 'slugData',
+                ])
+                ->setCompositionValue('webCategory', 'id')
+        )
+
         ->addAccessPolicy('admin', [
             'id',
             'nameData',
             'config',
-        ])
+        ], [
+            'requestUri',
+            'requestUriData',
+            ])
 );

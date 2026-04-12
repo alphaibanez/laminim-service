@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
@@ -129,6 +130,13 @@ trait ColumnCompositionTrait
                     $setter = $identifier->getSetterForPrimitiveValue();
                     $emptyInstance->{$setter}((int)$this->getIdColumnValue());
                 }
+            }
+
+            $feedColum = $compositionField->getColumn();
+            $feedField = $composedSchema->getField($feedColum);
+            if ($feedField) {
+                $setter = $feedField->getSetterForPrimitiveValue();
+                $emptyInstance->{$setter}($this->getIdColumnValue());
             }
 
             $backPointerField = $composedSchema->getOneFieldPointingToComponent(static::COMPONENT);

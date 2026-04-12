@@ -34,16 +34,15 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(StringField::define('name')->setIsI18nJson()->setIsUnique())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(StringField::define('slug')->setIsI18nJson()->setIsUnique())
+        ->addField(StringField::define('slug')->setIsI18nJson())
         ->addField(AssocJSONField::define('slugData', 'name')->setIsI18nJson())
         ->addField(ForeignKeyField::defineRelation(LktWebPage::COMPONENT, 'webPage', 'page_id')->setDefaultValue(0))
         ->addField(ForeignKeyField::defineRelation(LktWebPage::COMPONENT, 'webCategory', 'category_id')->setDefaultValue(0))
 
         ->addAccessPolicy('admin', [
             'id',
-            'name',
-            'config',
+            'slugData',
+            'webPage',
+            'webCategory',
         ])
 );

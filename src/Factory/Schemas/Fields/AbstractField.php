@@ -52,6 +52,12 @@ abstract class AbstractField
         return $this->name->getValue();
     }
 
+    final public function setName(string $name): static
+    {
+        $this->name = new FieldNameValue($name);
+        return $this;
+    }
+
     final public function getColumn(): string
     {
         return $this->column->getValue();

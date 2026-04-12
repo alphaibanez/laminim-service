@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Connectors\DatabaseConnector;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Helpers\UpdatedRelatedDataProcessor;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;

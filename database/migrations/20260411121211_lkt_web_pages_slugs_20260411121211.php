@@ -38,7 +38,6 @@ class LktWebPagesSlugs20260411121211 extends AbstractMigration
             ->addColumn('created_by', 'integer', ['default' => 0])
             ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('name', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('slug', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
             ->addColumn('page_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR])
             ->addColumn('category_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR])

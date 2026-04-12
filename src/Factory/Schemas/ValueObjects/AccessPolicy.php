@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\ValueObjects;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -41,8 +42,11 @@ class AccessPolicy
         return in_array($field->getName(), $this->availableFields);
     }
 
-    public function includesCompositionField(AbstractField $field): bool
+    public function includesCompositionField(AbstractField $field, string|null $aliasKey = null): bool
     {
+        if ($aliasKey && in_array($aliasKey, $this->availableCompositionFields)) {
+            return true;
+        }
         return in_array($field->getName(), $this->availableCompositionFields);
     }
 
@@ -80,9 +84,9 @@ class AccessPolicy
         }
 
         if (in_array($fieldName, $this->availableCompositionFields)) {
-            $keys = array_keys($this->availableCompositionFields, $fieldName);
-            $key = reset($keys);
+            $key = $fieldName;
         }
+
         if (!$key) return null;
         return $schema->getCompositionFieldComposingThisField($key);
     }

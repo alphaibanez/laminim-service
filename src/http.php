@@ -94,15 +94,15 @@ DeleteRoute::register('/web/element/{id}', [LktWebElementHttp::class, 'drop']);
 /**
  * Web Pages Routes
  */
-GetRoute::register('/web/pages', [LktWebPageHttp::class, 'index']);
-GetRoute::register('/web/pages/{type}', [LktWebPageHttp::class, 'index']);
+GetRoute::admin('/web/pages', [LktWebPageHttp::class, 'index']);
+GetRoute::admin('/web/pages/{type}', [LktWebPageHttp::class, 'index']);
 
-PostRoute::register('/web/page', [LktWebPageHttp::class, 'create']);
+PostRoute::admin('/web/page', [LktWebPageHttp::class, 'create']);
+GetRoute::admin('/web/page/{id:\d+}', [LktWebPageHttp::class, 'read']);
+GetRoute::admin('/web/page/{id:\d+}/children', [LktWebPageHttp::class, 'children']);
+PutRoute::admin('/web/page/{id:\d+}', [LktWebPageHttp::class, 'update']);
+DeleteRoute::admin('/web/page/{id:\d+}', [LktWebPageHttp::class, 'drop']);
 GetRoute::register('/web/page', [LktWebPageHttp::class, 'view']);
-GetRoute::register('/web/page/{id:\d+}', [LktWebPageHttp::class, 'read']);
-GetRoute::register('/web/page/{id:\d+}/children', [LktWebPageHttp::class, 'children']);
-PutRoute::register('/web/page/{id:\d+}', [LktWebPageHttp::class, 'update']);
-DeleteRoute::register('/web/page/{id:\d+}', [LktWebPageHttp::class, 'drop']);
 
 /**
  * File browser

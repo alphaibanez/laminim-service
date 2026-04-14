@@ -132,11 +132,13 @@ trait ColumnCompositionTrait
                 }
             }
 
-            $feedColum = $compositionField->getColumn();
-            $feedField = $composedSchema->getField($feedColum);
-            if ($feedField) {
-                $setter = $feedField->getSetterForPrimitiveValue();
-                $emptyInstance->{$setter}($this->getIdColumnValue());
+            if (!$this->isAnonymous()) {
+                $feedColum = $compositionField->getColumn();
+                $feedField = $composedSchema->getField($feedColum);
+                if ($feedField) {
+                    $setter = $feedField->getSetterForPrimitiveValue();
+                    $emptyInstance->{$setter}($this->getIdColumnValue());
+                }
             }
 
             $backPointerField = $composedSchema->getOneFieldPointingToComponent(static::COMPONENT);

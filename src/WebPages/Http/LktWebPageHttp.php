@@ -2,9 +2,10 @@
 
 namespace Lkt\WebPages\Http;
 
+use Lkt\Http\Request;
 use Lkt\Http\Response;
 use Lkt\Instances\LktWebPage;
-use Lkt\WebPages\Enums\WebPageStatus;
+use Lkt\Instances\LktWebPageSlug;
 use function Lkt\Tools\Parse\clearInput;
 
 class LktWebPageHttp
@@ -37,7 +38,8 @@ class LktWebPageHttp
 
         return Response::ok([
             'results' => $response,
-            'perms' => ['create']
+            'perms' => ['create'],
+            'maxPage' => 1,
         ]);
     }
     public static function create(array $params): Response
@@ -62,20 +64,31 @@ class LktWebPageHttp
         ]);
     }
 
-    public static function view(array $params): Response
+    public static function view(Request $request): Response
     {
-        $slug = $params['slug'];
-        $slug = explode('/', $slug);
-        $slug = $slug[count($slug) - 1];
+        $slug = LktWebPageSlug::fromSlug($request->params['slug']);
 
-        $query = LktWebPage::getQueryCaller();
-        $query->andSlugEqual($slug)->andStatusEqual(WebPageStatus::Public->value);
-        $instance = LktWebPage::getOne($query);
-        if (!$instance || $instance->isAnonymous()) return Response::notFound();
+        if (!$slug) return Response::notFound();
 
-        return Response::ok([
-            'item' => $instance->autoRead(),
-        ]);
+        if ($slug->getWebPageId() > 0) {
+            $webPage = $slug->getWebPage();
+            return Response::ok([
+                'item' => $webPage->setAccessPolicy('public-read')->autoRead(),
+                'type' => 'page',
+                'pageType' => $webPage->getType(),
+            ]);
+        }
+
+        if ($slug->getWebCategoryId() > 0) {
+            return Response::ok([
+                'item' => $slug->getWebCategory()->autoRead(),
+                'results' => [],
+                'maxPage' => 1,
+                'type' => 'category',
+            ]);
+        }
+
+        return Response::notFound();
     }
 
     public static function children(array $params): Response
@@ -89,11 +102,11 @@ class LktWebPageHttp
         ]);
     }
 
-    public static function update(array $params): Response
+    public static function update(Request $request): Response
     {
-        $instance = LktWebPage::getInstance((int)$params['id']);
+        $instance = LktWebPage::getInstance((int)$request->params['id']);
         if ($instance->isAnonymous()) return Response::notFound();
-        $instance->autoUpdate($params);
+        $instance->autoUpdate($request->params);
 
         return Response::ok([
             'id' => $instance->getId(),

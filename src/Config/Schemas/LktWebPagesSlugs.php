@@ -35,7 +35,7 @@ Schema::add(
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('slug')->setIsI18nJson())
-        ->addField(AssocJSONField::define('slugData', 'name')->setIsI18nJson())
+        ->addField(AssocJSONField::define('slugData', 'slug')->setIsI18nJson())
         ->addField(ForeignKeyField::defineRelation(LktWebPage::COMPONENT, 'webPage', 'page_id')->setDefaultValue(0))
         ->addField(ForeignKeyField::defineRelation(LktWebPage::COMPONENT, 'webCategory', 'category_id')->setDefaultValue(0))
 

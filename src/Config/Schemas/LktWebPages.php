@@ -76,7 +76,7 @@ Schema::add(
         )
 
         ->addField(AssocJSONField::define('seoTitleData', 'seo_title')->setIsI18nJson())
-        ->addField(AssocJSONField::define('keywords')->setIsI18nJson())
+        ->addField(StringField::define('keywords')->setIsI18nJson())
         ->addField(AssocJSONField::define('keywordsData', 'seo_title')->setIsI18nJson())
         ->addField(
             ForeignKeysField::defineRelation(LktWebElement::COMPONENT, 'webElements', 'web_elements')

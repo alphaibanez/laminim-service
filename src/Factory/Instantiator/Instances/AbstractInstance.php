@@ -165,6 +165,11 @@ abstract class AbstractInstance
         return $this;
     }
 
+    public function getUpdatedData(): array
+    {
+        return $this->UPDATED;
+    }
+
     /**
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
@@ -1718,5 +1723,10 @@ abstract class AbstractInstance
             return call_user_func(static::$schemaPublicPath, $instance);
         }
         return '';
+    }
+
+    public static function getBatchActions(array $items): BatchActions
+    {
+        return BatchActions::fromComponent(static::COMPONENT, $items);
     }
 }

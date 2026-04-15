@@ -4,6 +4,7 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
+use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
@@ -205,6 +206,33 @@ class MariaDBConnector extends DatabaseConnector
     public function makeUpdateParams(array $params = [], string $type = 'insert') :string
     {
         $r = [];
+        $parsed = $this->makeUpdateParamsArray($params, $type);
+        foreach ( $parsed as $field => $value) {
+            $r[] = "`{$field}`={$value}";
+        }
+//        foreach ($params as $field => $value) {
+////            $v = addslashes(stripslashes($value));
+//            $v = $value;
+//            if (strpos($value, 'JSON_SET(') === 0) {
+//                if ($type === 'create' || $type === 'insert') {
+//                    $value = str_replace($field, '"{}"', $value);
+//                }
+//                $r[] = "`{$field}`={$value}";
+//            }
+//            elseif (strpos($value, 'COMPRESS(') === 0){
+//                $r[] = "`{$field}`={$value}";
+//            }
+//            else {
+//                $r[] = "`{$field}`='{$v}'";
+//            }
+//        }
+
+        return trim(implode(',', $r));
+    }
+
+    public function makeUpdateParamsArray(array $params = [], string $type = 'insert') :array
+    {
+        $r = [];
         foreach ($params as $field => $value) {
 //            $v = addslashes(stripslashes($value));
             $v = $value;
@@ -212,17 +240,17 @@ class MariaDBConnector extends DatabaseConnector
                 if ($type === 'create' || $type === 'insert') {
                     $value = str_replace($field, '"{}"', $value);
                 }
-                $r[] = "`{$field}`={$value}";
+                $r[$field] = "{$value}";
             }
             elseif (strpos($value, 'COMPRESS(') === 0){
-                $r[] = "`{$field}`={$value}";
+                $r[$field] = "{$value}";
             }
             else {
-                $r[] = "`{$field}`='{$v}'";
+                $r[$field] = "'{$v}'";
             }
         }
 
-        return trim(implode(',', $r));
+        return $r;
     }
 
     public function getLastInsertedId(): int
@@ -515,5 +543,44 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         return $r;
+    }
+
+    public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static
+    {
+        $values = [];
+        foreach ($items as $item) {
+            $parsed = $this->prepareDataToStore($schema, $item->getUpdatedData());
+            $builder->updateData($parsed);
+
+            $values[] = $this->makeUpdateParamsArray($builder->getData(), 'create');
+        }
+
+        $valuesKeys = '(' . implode(',', array_keys($values[0])) . ')';
+        $values = array_map(function (array $v) { return implode(', ', $v); }, $values);
+        $valuesString = '(' . implode('),(', $values) . ')';
+
+        $query = $mode === BatchInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
+
+        $query .= " {$schema->getTable()} $valuesKeys VALUES $valuesString";
+
+        if ($mode === BatchInsertMode::onDuplicatedUpdate) {
+            $updateKeys = [];
+            $identifiers = array_map(function (AbstractField $f) { return $f->getColumn();}, $schema->getIdentifiers());
+            $fields = array_map(function (AbstractField $f) { return $f->getColumn();}, $schema->getSameTableFields());
+            $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {
+                return !in_array($f, $identifiers);
+            }));
+
+            foreach ($fields as $field) {
+                $updateKeys[] = "{$field} = VALUES({$field})";
+            }
+
+            if (count($updateKeys) > 0) {
+                $updateKeysStr = implode(', ', $updateKeys);
+                $query .= " ON DUPLICATE KEY UPDATE {$updateKeysStr}";
+            }
+        }
+
+        $this->query($query);
     }
 }

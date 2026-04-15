@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LKtWebPages20260411121212 extends AbstractMigration
+class LKtWebPages20260411121213 extends AbstractMigration
 {
     /**
      * Change Method.

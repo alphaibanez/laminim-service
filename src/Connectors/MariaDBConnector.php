@@ -336,6 +336,7 @@ class MariaDBConnector extends DatabaseConnector
 
             case 'update':
             case 'insert':
+            case 'insert-ignore':
                 $data = $this->makeUpdateParams($builder->getData(), $type);
 
                 if ($type === 'update') {
@@ -344,6 +345,10 @@ class MariaDBConnector extends DatabaseConnector
 
                 if ($type === 'insert') {
                     return "INSERT INTO {$builder->getTable()} SET {$data}";
+                }
+
+                if ($type === 'insert-ignore') {
+                    return "INSERT IGNORE INTO {$builder->getTable()} SET {$data}";
                 }
                 return '';
 

@@ -2,6 +2,7 @@
 
 namespace Lkt\Connectors;
 
+use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
@@ -126,6 +127,8 @@ abstract class DatabaseConnector
     abstract public function makeUpdateParams(array $params = [], string $type = 'create') :string;
     abstract public function getQuery(Query $builder, string $type, string $countableField = null): string;
     abstract public function prepareDataToStore(Schema $schema, array $data): array;
+    abstract public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static;
+    abstract public function batchDrop(array $items, Query $builder, Schema $schema): static;
 
     public function escapeDatabaseCharacters(string $str): string
     {

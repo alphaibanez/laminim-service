@@ -3,11 +3,11 @@
 namespace Lkt\Factory\Instantiator;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Process\ProcessQueryCallerData;
-use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Schema;
@@ -30,16 +30,14 @@ class Instantiator
         $schema = Schema::get($component);
         $code = $schema->getInstanceCode($data, $id);
 
-        if (InstanceCache::inCache($code)) {
-            return InstanceCache::load($code);
-        }
+        if (InstanceCache::inCache($code)) return InstanceCache::load($code);
 
         $schema = Schema::get($component);
 
         $callable = [$schema->getInstanceSettings()->getAppClass(), 'getInstance'];
 
         /** @var AbstractInstance $r */
-        $r = call_user_func_array($callable, ['id' => $id, 'component' => $component, 'initialData' => $data]);
+        $r = call_user_func_array($callable, ['id' => $id, 'initialData' => $data]);
 
         return $r;
     }
@@ -66,7 +64,7 @@ class Instantiator
                 $converter = new RawResultsToInstanceConverter($component, $item);
                 $itemData = $converter->parse();
 
-                $r = new $appClass($component, $itemData);
+                $r = new $appClass($itemData);
                 $r->setData($itemData);
                 InstanceCache::store($code, $r);
                 $response[] = $r;

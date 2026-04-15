@@ -13,7 +13,6 @@ use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
-use Lkt\Factory\Instantiator\Helpers\RecursiveReadController;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnBooleanTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnColorTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnCompositionTrait;
@@ -46,7 +45,6 @@ use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
-use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
@@ -106,7 +104,6 @@ abstract class AbstractInstance
         ColumnCompositionTrait,
         ColumnConstantValueTrait;
 
-    protected $TYPE;
     protected array $DATA = [];
     protected array $UPDATED = [];
     protected array $UPLOADING_FILES = [];
@@ -127,15 +124,10 @@ abstract class AbstractInstance
     protected AccessPolicyUsage|null $accessPolicy = null;
 
     /**
-     * @param string|null $component
      * @param array $initialData
      */
-    public function __construct(string $component = null, array $initialData = [])
+    public function __construct(array $initialData = [])
     {
-        if (!$component && static::COMPONENT) {
-            $component = static::COMPONENT;
-        }
-        $this->TYPE = $component;
         $this->DATA = $initialData;
     }
 
@@ -160,7 +152,6 @@ abstract class AbstractInstance
             }
         }
 
-
         $this->DATA = $initialData;
         return $this;
     }
@@ -174,9 +165,9 @@ abstract class AbstractInstance
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
-    public static function getInstance($id = null, string $component = self::COMPONENT, array $initialData = []): static
+    public static function getInstance($id = null, array $initialData = []): static
     {
-        if (!$component) $component = static::COMPONENT;
+        $component = static::COMPONENT;
         if (!$id || !$component) {
             $r = new static();
 
@@ -216,7 +207,7 @@ abstract class AbstractInstance
         }
 
         if (count($initialData) > 0) {
-            $r = new static($component, $initialData);
+            $r = new static($initialData);
             $r->setData($initialData);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
@@ -241,7 +232,7 @@ abstract class AbstractInstance
             $converter = new RawResultsToInstanceConverter($component, $data[0]);
             $itemData = $converter->parse();
 
-            $r = new static($component, $itemData);
+            $r = new static($itemData);
             $r->setData($itemData);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);

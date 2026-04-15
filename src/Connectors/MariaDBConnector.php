@@ -4,6 +4,7 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
@@ -580,6 +581,33 @@ class MariaDBConnector extends DatabaseConnector
                 $query .= " ON DUPLICATE KEY UPDATE {$updateKeysStr}";
             }
         }
+
+        $this->query($query);
+        return $this;
+    }
+
+    public function batchDrop(array $items, Query $builder, Schema $schema): static
+    {
+        $values = [];
+        $identifiers = $schema->getIdentifiers();
+
+        foreach ($items as $item) {
+            $idValues = [];
+            foreach ($identifiers as $identifier) {
+                $getter = $identifier->getGetterForPrimitiveValue();
+                $idValues[$identifier->getName()] = $item->{$getter}();
+            }
+            $parsed = $this->prepareDataToStore($schema, $idValues);
+            $builder->updateData($parsed);
+
+            $values[] = $this->makeUpdateParams($builder->getData(), 'create');
+        }
+
+        $valuesString = '(' . implode(') OR (', $values) . ')';
+
+        $query = "DELETE FROM";
+
+        $query .= " {$schema->getTable()} WHERE {$valuesString}";
 
         $this->query($query);
         return $this;

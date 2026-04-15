@@ -9,6 +9,7 @@ use InfluxDB2\Model\WritePrecision;
 use InfluxDB2\Service\BucketsService;
 use InfluxDB2\Service\OrganizationsService;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\JSONField;
@@ -368,5 +369,15 @@ class InfluxConnector extends DatabaseConnector
     {
         $this->bucket = $bucket;
         return $this;
+    }
+
+    public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static
+    {
+        // TODO: Implement batchInsert() method.
+    }
+
+    public function batchDrop(array $items, Query $builder, Schema $schema): static
+    {
+        // TODO: Implement batchDrop() method.
     }
 }

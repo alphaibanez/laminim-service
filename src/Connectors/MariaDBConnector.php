@@ -582,5 +582,6 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         $this->query($query);
+        return $this;
     }
 }

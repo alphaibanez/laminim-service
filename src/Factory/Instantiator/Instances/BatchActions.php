@@ -39,40 +39,6 @@ class BatchActions
         $builder = $dbIntegration->query;
         $connection = $dbIntegration->databaseConnector;
 
-        $values = [];
-        foreach ($this->items as $item) {
-            $parsed = $connection->prepareDataToStore($this->schema, $item->getUpdatedData());
-            $builder->updateData($parsed);
-
-            $values[] = $connection->makeUpdateParamsArray($builder->getData(), 'create');
-        }
-
-        $valuesKeys = '(' . implode(',', array_keys($values[0])) . ')';
-        $values = array_map(function (array $v) { return implode(', ', $v); }, $values);
-        $valuesString = '(' . implode('),(', $values) . ')';
-
-        $query = $mode === BatchInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
-
-        $query .= " {$this->schema->getTable()} $valuesKeys VALUES $valuesString";
-
-        if ($mode === BatchInsertMode::onDuplicatedUpdate) {
-            $updateKeys = [];
-            $identifiers = array_map(function (AbstractField $f) { return $f->getColumn();}, $this->schema->getIdentifiers());
-            $fields = array_map(function (AbstractField $f) { return $f->getColumn();}, $this->schema->getSameTableFields());
-            $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {
-                return !in_array($f, $identifiers);
-            }));
-
-            foreach ($fields as $field) {
-                $updateKeys[] = "{$field} = VALUES({$field})";
-            }
-
-            if (count($updateKeys) > 0) {
-                $updateKeysStr = implode(', ', $updateKeys);
-                $query .= " ON DUPLICATE KEY UPDATE {$updateKeysStr}";
-            }
-        }
-
-        $connection->query($query);
+        $connection->batchInsert($this->items, $builder, $this->schema, $mode);
     }
 }

@@ -982,6 +982,11 @@ final class Schema
         return $this->idFields;
     }
 
+    public function getIdentifiersNames(): array
+    {
+        return array_map(function (AbstractField $field) { return $field->getName();}, $this->getIdentifiers());
+    }
+
     public function hasComplexPrimaryKey(): bool
     {
         return count($this->complexPrimaryKey) > 1;
@@ -1029,7 +1034,12 @@ final class Schema
 
     /**
      * @return array|mixed
-     * @throws InvalidComponentException
+     *  @throws InvalidComponentException
+     *@deprecated
+     * Avoid using this method.
+     * Replaced by
+     *  - getIdentifiers (object oriented)
+     *  - getIdentifiersNames (strings)
      */
     public function getIdColumn()
     {

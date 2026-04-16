@@ -2,6 +2,7 @@
 
 namespace Lkt\Http;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\DTO\GrantedPermsAttempt;
@@ -99,7 +100,18 @@ class Request
 
             if ($this->targetComponent && $extractIdKey) {
                 $schema = Schema::get($this->targetComponent);
-                $idValue = (int)digArray($this->params, $extractIdKey);
+                $idValue = digArray($this->params, $extractIdKey);
+                if (strpos($idValue, ',') !== false) {
+                    $identifiers = array_values($schema->getIdentifiers());
+                    $idValues = explode(',', $idValue);
+                    $tmp = [];
+                    foreach ($identifiers  as $i => $identifier) {
+                        $tmp[$identifier->getName()] = $idValues[$i];
+                    }
+                    $idValue = $tmp;
+                } else {
+                    $idValue = (int)$idValue;
+                }
                 $instance = $schema->getItemInstance($idValue);
 
                 $this->extractedTargetInstanceIdFromParamsKey = $extractIdKey;

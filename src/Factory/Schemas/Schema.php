@@ -1389,4 +1389,34 @@ final class Schema
             return $schema->hasItemToI18nPolicy();
         });
     }
+
+    public function applyIdentifierConstraintsToQuery(Query $query, AbstractInstance $instance): static
+    {
+        $origIdColumn = $this->getIdColumn();
+        $origIdColumn = $origIdColumn[0];
+
+        if ($this->hasComplexPrimaryKey()) {
+            $identifiers = $this->getIdentifiers();
+            foreach ($identifiers as $identifier) {
+                $getter = $identifier->getGetterForPrimitiveValue();
+                $query->andIntegerEqual($identifier->getColumn(), $instance->{$getter}());
+            }
+
+        } elseif ($this->isPivot()) {
+            $pivotColumns = $this->getIdColumn();
+            foreach ($pivotColumns as $pivotColumn) {
+                $idColumn = $this->getField($pivotColumn);
+                $getter = $idColumn->getGetterForPrimitiveValue();
+                $query->andIntegerEqual($idColumn->getColumn(), $instance->{$getter}());
+            }
+        } else {
+            $idColumn = $this->getField($origIdColumn);
+            $getter = $idColumn->getGetterForPrimitiveValue();
+            $idValue = $instance->getIdColumnValue();
+            if (!$idValue) $idValue = $instance->{$getter}();
+            $query->andIntegerEqual($idColumn->getColumn(), $idValue);
+        }
+
+        return $this;
+    }
 }

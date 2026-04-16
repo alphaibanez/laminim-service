@@ -593,6 +593,50 @@ class MariaDBConnector extends DatabaseConnector
         return $this;
     }
 
+    public function batchUpdate(array $items, Query $builder, Schema $schema): static
+    {
+        $values = [];
+        /** @var AbstractInstance $item */
+        foreach ($items as $item) {
+            $parsed = $this->prepareDataToStore($schema, $item->getUpdatedData());
+            $builder->updateData($parsed);
+            $schema->applyIdentifierConstraintsToQuery($builder, $item);
+
+            $values[] = $this->getQuery($builder, 'update');
+        }
+
+        VarDumper::die($values);
+
+        $valuesKeys = '(' . implode(',', array_keys($values[0])) . ')';
+        $values = array_map(function (array $v) { return implode(', ', $v); }, $values);
+        $valuesString = '(' . implode('),(', $values) . ')';
+
+        $query = $mode === BatchInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
+
+        $query .= " {$schema->getTable()} $valuesKeys VALUES $valuesString";
+
+        if ($mode === BatchInsertMode::onDuplicatedUpdate) {
+            $updateKeys = [];
+            $identifiers = array_map(function (AbstractField $f) { return $f->getColumn();}, $schema->getIdentifiers());
+            $fields = array_map(function (AbstractField $f) { return $f->getColumn();}, $schema->getSameTableFields());
+            $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {
+                return !in_array($f, $identifiers);
+            }));
+
+            foreach ($fields as $field) {
+                $updateKeys[] = "{$field} = VALUES({$field})";
+            }
+
+            if (count($updateKeys) > 0) {
+                $updateKeysStr = implode(', ', $updateKeys);
+                $query .= " ON DUPLICATE KEY UPDATE {$updateKeysStr}";
+            }
+        }
+
+        $this->query($query);
+        return $this;
+    }
+
     public function batchDrop(array $items, Query $builder, Schema $schema): static
     {
         $values = [];

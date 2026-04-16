@@ -32,7 +32,7 @@ GetRoute::admin('/admin-api/opts-{page:\d+}/{component}', BasicHttpHandler::Page
     ->setRequiredPermissions(['ls'])
     ->setTargetAccessPolicy('lkt-related');;
 
-GetRoute::admin('/admin-api/r-{id:\d+}/{component}', BasicHttpHandler::Read)
+GetRoute::admin('/admin-api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])

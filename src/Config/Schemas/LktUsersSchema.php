@@ -56,6 +56,11 @@ Schema::add(
         ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
         ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))
 
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+            'fullName' => 'label',
+        ])
+
         ->addAccessPolicy('change-password', ['password'])
 
         ->addAccessPolicy('admin', [

@@ -42,6 +42,17 @@ class BatchActions
         $connection->batchInsert($this->items, $builder, $this->schema, $mode);
     }
 
+    public function update(): void
+    {
+        if (count($this->items) === 0) return;
+
+        $dbIntegration = ComponentDatabaseIntegration::from($this->schema->getComponent());
+        $builder = $dbIntegration->query;
+        $connection = $dbIntegration->databaseConnector;
+
+        $connection->batchUpdate($this->items, $builder, $this->schema);
+    }
+
     public function drop(): void
     {
         if (count($this->items) === 0) return;

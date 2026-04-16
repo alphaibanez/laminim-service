@@ -945,30 +945,16 @@ final class Schema
                 return $field instanceof PivotLeftIdField || $field instanceof PivotRightIdField;
             });
 
-            $this->idColumns = array_keys($fields);
-            $this->idFields = array_values($fields);
-            $this->idColumnsInTable = array_map(function ($field) {
-                return $field->getColumn();
-            }, $fields);
-            return $this->idFields;
-        }
-
-        if ($this->hasComplexPrimaryKey()) {
+        } elseif ($this->hasComplexPrimaryKey()) {
             $fields = array_filter($stack, function (AbstractField $field) {
                 return in_array($field->getName(), $this->complexPrimaryKey);
             });
 
-            $this->idColumns = array_keys($fields);
-            $this->idFields = array_values($fields);
-            $this->idColumnsInTable = array_map(function ($field) {
-                return $field->getColumn();
-            }, $fields);
-            return $this->idFields;
+        } else {
+            $fields = array_filter($stack, function (AbstractField $field) {
+                return $field instanceof IdField || $field->isIdentifier();
+            });
         }
-
-        $fields = array_filter($stack, function (AbstractField $field) {
-            return $field instanceof IdField || $field->isIdentifier();
-        });
 
         $this->idColumns = array_values(array_map(function (AbstractField $field) {
             $r = $field->getName();

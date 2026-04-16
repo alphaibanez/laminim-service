@@ -1392,29 +1392,31 @@ final class Schema
 
     public function applyIdentifierConstraintsToQuery(Query $query, AbstractInstance $instance): static
     {
-        $origIdColumn = $this->getIdColumn();
-        $origIdColumn = $origIdColumn[0];
+        /** @var AbstractField[] $fields */
+        $fields = [];
 
         if ($this->hasComplexPrimaryKey()) {
-            $identifiers = $this->getIdentifiers();
-            foreach ($identifiers as $identifier) {
-                $getter = $identifier->getGetterForPrimitiveValue();
-                $query->andIntegerEqual($identifier->getColumn(), $instance->{$getter}());
-            }
+            $fields = $this->getIdentifiers();
 
         } elseif ($this->isPivot()) {
-            $pivotColumns = $this->getIdColumn();
-            foreach ($pivotColumns as $pivotColumn) {
-                $idColumn = $this->getField($pivotColumn);
-                $getter = $idColumn->getGetterForPrimitiveValue();
-                $query->andIntegerEqual($idColumn->getColumn(), $instance->{$getter}());
-            }
+            $fields = $this->getIdentifiers();
+
         } else {
-            $idColumn = $this->getField($origIdColumn);
-            $getter = $idColumn->getGetterForPrimitiveValue();
-            $idValue = $instance->getIdColumnValue();
-            if (!$idValue) $idValue = $instance->{$getter}();
-            $query->andIntegerEqual($idColumn->getColumn(), $idValue);
+            $origIdColumn = $this->getIdColumn();
+            $fields = [$this->getField($origIdColumn[0])];
+        }
+
+        foreach ($fields as $field) {
+            $getter = $field->getGetterForPrimitiveValue();
+            if ($field instanceof IntegerField) {
+                $query->andIntegerEqual($field->getColumn(), $instance->{$getter}());
+
+            } elseif ($field instanceof StringField) {
+                $query->andStringEqual($field->getColumn(), $instance->{$getter}());
+
+            } elseif ($field instanceof DateTimeField) {
+                $query->andDatetimeEqual($field->getColumn(), $instance->{$getter}());
+            }
         }
 
         return $this;

@@ -389,6 +389,7 @@ abstract class AbstractInstance
             $queryBuilder->updateData($parsed);
 
             if ($isUpdate) {
+                // @todo use $schema->applyIdentifierConstraintsToQuery method instead
                 if ($schema->hasComplexPrimaryKey()) {
                     $identifiers = $schema->getIdentifiers();
                     foreach ($identifiers as $identifier) {

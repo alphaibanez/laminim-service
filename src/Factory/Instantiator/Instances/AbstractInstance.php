@@ -384,39 +384,12 @@ abstract class AbstractInstance
 
         if (count($this->UPDATED) > 0) {
 
-
             // Save current instance process
             $queryBuilder->updateData($parsed);
 
             if ($isUpdate) {
-                // @todo use $schema->applyIdentifierConstraintsToQuery method instead
-                if ($schema->hasComplexPrimaryKey()) {
-                    $identifiers = $schema->getIdentifiers();
-                    foreach ($identifiers as $identifier) {
-                        $originalValueKey = $identifier->getGetterForPrimitiveValue();
-                        $originalValueKey = lcfirst(substr($originalValueKey, 3));
-                        $queryBuilder->andIntegerEqual($identifier->getColumn(), $this->DATA[$originalValueKey]);
-                    }
-                    $query = $connection->getUpdateQuery($queryBuilder);
-
-                } elseif ($schema->isPivot()) {
-                    $pivotColumns = $schema->getIdColumn();
-                    foreach ($pivotColumns as $pivotColumn) {
-                        $idColumn = $schema->getField($pivotColumn);
-                        $originalValueKey = $idColumn->getGetterForPrimitiveValue();
-                        $originalValueKey = lcfirst(substr($originalValueKey, 3));
-                        $idColumn = $idColumn->getColumn();
-                        $queryBuilder->andIntegerEqual($idColumn, $this->DATA[$originalValueKey]);
-                    }
-                    $query = $connection->getUpdateQuery($queryBuilder);
-                } else {
-                    $idColumn = $schema->getField($origIdColumn);
-                    $idColumn = $idColumn->getColumn();
-                    $idValue = $this->getIdColumnValue();
-                    if (!$idValue) $idValue = $this->DATA[$origIdColumn];
-                    $queryBuilder->andIntegerEqual($idColumn, $idValue);
-                    $query = $connection->getUpdateQuery($queryBuilder);
-                }
+                $schema->applyIdentifierConstraintsToQuery($queryBuilder, $this);
+                $query = $connection->getUpdateQuery($queryBuilder);
             } else {
                 $query = $connection->getInsertQuery($queryBuilder);
             }

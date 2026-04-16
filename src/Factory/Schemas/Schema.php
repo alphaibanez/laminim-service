@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Schemas;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -1389,18 +1388,7 @@ final class Schema
     public function applyIdentifierConstraintsToQuery(Query $query, AbstractInstance $instance): static
     {
         /** @var AbstractField[] $fields */
-        $fields = [];
-
-        if ($this->hasComplexPrimaryKey()) {
-            $fields = $this->getIdentifiers();
-
-        } elseif ($this->isPivot()) {
-            $fields = $this->getIdentifiers();
-
-        } else {
-            $origIdColumn = $this->getIdColumn();
-            $fields = [$this->getField($origIdColumn[0])];
-        }
+        $fields = $this->getIdentifiers();
 
         foreach ($fields as $field) {
             $getter = $field->getGetterForPrimitiveValue();

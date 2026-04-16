@@ -40,15 +40,15 @@ class LKtWebPages20250330104201 extends AbstractMigration
 
             ->addColumn('status', 'integer', ['limit' => 12])
             ->addColumn('name', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('summary', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('slug', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
+            ->addColumn('summary', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci']) //removed
+            ->addColumn('slug', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci']) //removed
 
             ->addColumn('type', 'integer', ['limit' => MysqlAdapter::INT_REGULAR, 'default' => 0])
             ->addColumn('parent_id', 'integer', ['limit' => MysqlAdapter::INT_REGULAR])
             ->addColumn('parent_component', 'string', ['limit' => 250])
 
-            ->addColumn('seo_title', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('keywords', 'text', ['null' => true, 'default' => null])
+            ->addColumn('seo_title', 'text', ['null' => true, 'default' => null, 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci']) //removed
+            ->addColumn('keywords', 'text', ['null' => true, 'default' => null]) //removed
             ->addColumn('web_elements', 'text', ['null' => true, 'default' => null])
         ;
 

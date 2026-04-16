@@ -16,7 +16,7 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktWebElement;
 use Lkt\Instances\LktWebPage;
-use Lkt\Instances\LktWebPageSlug;
+use Lkt\Instances\LktWebPageMetas;
 use Lkt\WebPages\Enums\WebPageStatus;
 
 
@@ -58,33 +58,37 @@ Schema::add(
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(IntegerChoiceField::enumChoice(WebPageStatus::class, 'status'))
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(StringField::define('summary')->setIsI18nJson())
-        ->addField(StringField::define('seoTitle', 'seo_title')->setIsI18nJson())
         ->addField(IntegerField::define('type'))
+
+        ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('summaryData', 'summary')->setIsI18nJson())
 
         ->addField(
-            RelatedField::defineRelation(LktWebPageSlug::COMPONENT, 'slug', 'webPage')
+            RelatedField::defineRelation(LktWebPageMetas::COMPONENT, 'metas', 'webPage')
                 ->setSingleMode()
                 ->setCompositionContent([
-                    'requestUri' => 'slug',
-                    'requestUriData' => 'slugData',
+                    'slug' => 'slug',
+                    'slugData' => 'slugData',
+                    'keywords' => 'keywords',
+                    'keywordsData' => 'keywordsData',
+                    'description' => 'description',
+                    'descriptionData' => 'descriptionData',
+                    'preventRobotsIndex' => 'preventRobotsIndex',
+                    'preventRobotsFollow' => 'preventRobotsFollow',
                 ])
                 ->setCompositionValue('webCategory', 'id')
         )
 
-        ->addField(AssocJSONField::define('seoTitleData', 'seo_title')->setIsI18nJson())
-        ->addField(StringField::define('keywords')->setIsI18nJson())
-        ->addField(AssocJSONField::define('keywordsData', 'seo_title')->setIsI18nJson())
         ->addField(
             ForeignKeysField::defineRelation(LktWebElement::COMPONENT, 'webElements', 'web_elements')
         )
         ->addAccessPolicy('public-read', [
             'name',
-            'keywords',
             'webElements',
-            'requestUri' => 'slug',
+            'description',
+            'keywords',
+            'slug',
+            'preventRobotsIndex',
+            'preventRobotsFollow',
         ])
 );

@@ -1017,6 +1017,7 @@ abstract class AbstractInstance
                     }
                     $composedInstances[$param] = $composedInstance;
                 }
+
                 $composedInstances[$param]::feedInstance($composedInstance, [
                     $field->getName() => $value,
                 ], $internalMethodsArguments);

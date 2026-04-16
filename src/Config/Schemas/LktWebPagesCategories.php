@@ -12,7 +12,7 @@ use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktWebPageCategory;
-use Lkt\Instances\LktWebPageSlug;
+use Lkt\Instances\LktWebPageMetas;
 
 Schema::add(
     Schema::table('lkt_web_pages__categories', LktWebPageCategory::COMPONENT)
@@ -40,11 +40,17 @@ Schema::add(
         ->addField(AssocJSONField::define('config'))
 
         ->addField(
-            RelatedField::defineRelation(LktWebPageSlug::COMPONENT, 'slug', 'webCategory')
+            RelatedField::defineRelation(LktWebPageMetas::COMPONENT, 'metas', 'webCategory')
                 ->setSingleMode()
                 ->setCompositionContent([
-                    'requestUri' => 'slug',
-                    'requestUriData' => 'slugData',
+                    'slug' => 'slug',
+                    'slugData' => 'slugData',
+                    'description' => 'description',
+                    'descriptionData' => 'descriptionData',
+                    'keywords' => 'keywords',
+                    'keywordsData' => 'keywordsData',
+                    'preventRobotsIndex' => 'preventRobotsIndex',
+                    'preventRobotsFollow' => 'preventRobotsFollow',
                 ])
                 ->setCompositionValue('webCategory', 'id')
         )
@@ -53,8 +59,16 @@ Schema::add(
             'id',
             'nameData',
             'config',
+            'keywordsData',
+            'slugData',
+            'descriptionData',
+            'preventRobotsIndex',
+            'preventRobotsFollow',
         ], [
-            'requestUri',
-            'requestUriData',
+            'keywordsData',
+            'slugData',
+            'descriptionData',
+            'preventRobotsIndex',
+            'preventRobotsFollow',
             ])
 );

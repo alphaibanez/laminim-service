@@ -5,7 +5,7 @@ namespace Lkt\WebPages\Http;
 use Lkt\Http\Request;
 use Lkt\Http\Response;
 use Lkt\Instances\LktWebPage;
-use Lkt\Instances\LktWebPageSlug;
+use Lkt\Instances\LktWebPageMetas;
 use function Lkt\Tools\Parse\clearInput;
 
 class LktWebPageHttp
@@ -66,7 +66,7 @@ class LktWebPageHttp
 
     public static function view(Request $request): Response
     {
-        $slug = LktWebPageSlug::fromSlug($request->params['slug']);
+        $slug = LktWebPageMetas::fromSlug($request->params['slug']);
 
         if (!$slug) return Response::notFound();
 

@@ -2,12 +2,11 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Debug\VarDumper;
-use Lkt\Generated\GeneratedLktWebPageSlug;
+use Lkt\Generated\GeneratedLktWebPageMetas;
 
-class LktWebPageSlug extends GeneratedLktWebPageSlug
+class LktWebPageMetas extends GeneratedLktWebPageMetas
 {
-    const COMPONENT = 'lkt-web-page-slug';
+    const COMPONENT = 'lkt-web-page-metas';
 
     public static function fromSlug(string $slug): static|null
     {

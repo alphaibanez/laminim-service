@@ -38,7 +38,7 @@ class BatchActions
         return new static(Schema::get($component), $items);
     }
 
-    public function insert(BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): void
+    public function create(BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): void
     {
         if (count($this->items) === 0) return;
 

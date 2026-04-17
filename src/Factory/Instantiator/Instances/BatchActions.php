@@ -70,7 +70,7 @@ class BatchActions
         $connection->batchDrop($this->items, $builder, $this->schema);
     }
 
-    public function read(string $accessPolicyName = '', string $mode = ''): array
+    public function read(string|null $accessPolicyName = '', string $mode = ''): array
     {
         if (count($this->items) === 0) return [];
 

@@ -891,9 +891,10 @@ final class Schema
     {
         $r = [];
         foreach ($this->getCompositionFields() as $compositionField) {
-            $r = array_merge($r, $this->getFieldComposedFields($compositionField));
+            foreach ($this->getFieldComposedFields($compositionField) as $k => $f) {
+                $r[$k] = $f;
+            }
         }
-
         return $r;
     }
 

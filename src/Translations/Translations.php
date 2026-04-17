@@ -2,6 +2,7 @@
 
 namespace Lkt\Translations;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktTranslation;
 use Lkt\Locale\Locale;

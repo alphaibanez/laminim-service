@@ -7,7 +7,9 @@ function arrayValuesRecursive(array $array = []): array
 
     foreach ($array as $value) {
         if (is_array($value)) {
-            $r = array_merge($r, arrayValuesRecursive($value));
+            $temp = arrayValuesRecursive($value);
+            foreach ($temp as $k => $v) $r[$k] = $v;
+//            $r = array_merge($r, arrayValuesRecursive($value));
         } else {
             $r[] = $value;
         }

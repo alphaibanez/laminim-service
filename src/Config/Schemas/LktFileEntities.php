@@ -35,7 +35,7 @@ Schema::add(
             'embedCode',
             'name',
             'nameData',
-            'children',
+//            'children',
         ])
         ->addField(IdField::define('id'))
         ->addField(

@@ -308,8 +308,7 @@ class Router
             }
         }
 
-
-        $params = array_merge($params, $request);
+        foreach ($request as $k => $v) $params[$k] = $v;
 
         // Unescape json data
         if (count($params) > 0) {

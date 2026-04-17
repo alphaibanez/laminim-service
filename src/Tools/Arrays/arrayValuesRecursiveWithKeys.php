@@ -9,7 +9,8 @@ function arrayValuesRecursiveWithKeys(array $array = [], string $divider = '.', 
     foreach ($array as $key => $value) {
         $t = array_merge($parentKeys, [$key]);
         if (is_array($value)) {
-            $r = array_merge($r, arrayValuesRecursiveWithKeys($value, $divider, $t));
+            $temp = arrayValuesRecursiveWithKeys($value, $divider, $t);
+            foreach ($temp as $k => $v) $r[$k] = $v;
         } else {
             $k = implode($divider, $t);
             $r[$k] = $value;

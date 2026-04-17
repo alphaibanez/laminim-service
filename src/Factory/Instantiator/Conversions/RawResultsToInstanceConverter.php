@@ -9,7 +9,6 @@ use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 
@@ -44,7 +43,9 @@ final class RawResultsToInstanceConverter
     final public function parse(): array
     {
         $r = $this->parseData();
-        return array_merge($r, $this->checkData($r));
+        $data = $this->checkData($r);
+        foreach ($data as $datum => $val) $r[$datum] = $val;
+        return $r;
     }
 
     /**

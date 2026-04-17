@@ -21,7 +21,7 @@ class DataMixer
         foreach ($x as $y) {
             $handled = call_user_func_array($y, [$params]);
             if (is_array($handled)) {
-                $r = array_merge($r, $handled);
+                foreach ($handled as $k => $v) $r[$k] = $v;
             }
         }
 

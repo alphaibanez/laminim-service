@@ -602,7 +602,7 @@ class MariaDBConnector extends DatabaseConnector
             $builder = $schema->getQueryBuilder();
             $parsed = $this->prepareDataToStore($schema, $item->getUpdatedData());
             $builder->updateData($parsed);
-            $schema->applyIdentifierConstraintsToQuery($builder, $item);
+            $schema->applyIdentifierConstraintsToQueryFromInstance($builder, $item);
 
             $values[] = $this->getQuery($builder, 'update');
         }

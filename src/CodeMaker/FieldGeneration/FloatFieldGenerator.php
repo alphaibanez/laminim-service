@@ -8,8 +8,14 @@ class FloatFieldGenerator extends AbstractFieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():float { return \$this->_getFloatVal('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Formatted():float { return \$this->_getFloatFormattedVal('{$this->data->fieldName}'); }";
+        if ($this->data->isMultiple) {
+            $r[] = "/** @return float[] */";
+            $r[] = "public function get{$this->data->methodName}():array { return \$this->_getFloatVal('{$this->data->fieldName}'); }";
+
+        } else {
+            $r[] = "public function get{$this->data->methodName}():float { return \$this->_getFloatVal('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}Formatted():float { return \$this->_getFloatFormattedVal('{$this->data->fieldName}'); }";
+        }
 
         return implode(' ', $r);
     }
@@ -19,7 +25,12 @@ class FloatFieldGenerator extends AbstractFieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(float \${$this->data->fieldName}):static { return \$this->_setFloatVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+        if ($this->data->isMultiple) {
+            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { return \$this->_setFloatVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+
+        } else {
+            $r[] = "public function set{$this->data->methodName}(float \${$this->data->fieldName}):static { return \$this->_setFloatVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+        }
 
         return implode(' ', $r);
     }

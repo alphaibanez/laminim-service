@@ -99,6 +99,29 @@ class ParseColumn
 
     /**
      * @param $value
+     * @return int[]
+     */
+    public static function floatArrayDatum($value, int|null $minValue = null): array
+    {
+        if (is_null($value)) return [];
+        if (is_string($value)) {
+            $value = explode(';', $value);
+        }
+        if (!is_array($value)) $value = [$value];
+        $r = [];
+        foreach ($value as $item) {
+            $r[] = (float)$item;
+        }
+        if ($minValue) {
+            $r = array_filter($r, function ($item) use ($minValue) {
+                return $item >= $minValue;
+            });
+        }
+        return $r;
+    }
+
+    /**
+     * @param $value
      * @return float
      */
     public static function floatDatum($value): float

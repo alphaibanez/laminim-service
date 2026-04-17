@@ -2,7 +2,9 @@
 
 namespace Lkt\Http;
 
+use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Controllers\LktPermissionController;
+use Lkt\Debug\VarDumper;
 use Lkt\Enums\Permission;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Schema;
@@ -233,13 +235,14 @@ class BasicHttpHandler
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $rawResults = $helperInstance::getPage($request->page, $builder);
-        $results = [];
-        foreach ($rawResults as $rawResult) {
-            if ($accessPolicy) {
-                $rawResult->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-            }
-            $results[] = $rawResult->autoRead();
-        }
+        $batchActions = $helperInstance::getBatchActions($rawResults);
+        $results = $batchActions->read($accessPolicy);
+//        foreach ($rawResults as $rawResult) {
+//            if ($accessPolicy) {
+//                $rawResult->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+//            }
+//            $results[] = $rawResult->autoRead();
+//        }
 
         $perm = [];
         if ($request->loggedUser) {
@@ -300,13 +303,14 @@ class BasicHttpHandler
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $rawResults = $helperInstance::getMany($builder);
-        $results = [];
-        foreach ($rawResults as $rawResult) {
-            if ($accessPolicy) {
-                $rawResult->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-            }
-            $results[] = $rawResult->autoRead();
-        }
+        $batchActions = $helperInstance::getBatchActions($rawResults);
+        $results = $batchActions->read($accessPolicy);
+//        foreach ($rawResults as $rawResult) {
+//            if ($accessPolicy) {
+//                $rawResult->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+//            }
+//            $results[] = $rawResult->autoRead();
+//        }
 
         $perm = [];
         if ($request->loggedUser) {

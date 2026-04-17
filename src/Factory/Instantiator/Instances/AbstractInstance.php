@@ -167,11 +167,10 @@ abstract class AbstractInstance
      */
     public static function getInstance($id = null, array $initialData = []): static
     {
-        $component = static::COMPONENT;
-        if (!$id || !$component) {
+        if (!$id) {
             $r = new static();
 
-            $schema = Schema::get($component);
+            $schema = Schema::get(static::COMPONENT);
             $fields = $schema->getChoiceFieldsWithDefaultValue();
 
             if (count($fields)) {
@@ -195,7 +194,7 @@ abstract class AbstractInstance
 
         $codeId = is_array($id) ? implode('-', $id) : $id;
 
-        $schema = Schema::get($component);
+        $schema = Schema::get(static::COMPONENT);
         $code = $schema->getInstanceCode([], $codeId);
 
 //        $code = Instantiator::getInstanceCode($component, $codeId);
@@ -213,23 +212,15 @@ abstract class AbstractInstance
             return InstanceCache::load($code);
         }
 
-        $dbIntegration = ComponentDatabaseIntegration::from($component);
+        $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
         $builder = $dbIntegration->query;
         $schema = $dbIntegration->schema;
 
-        $identifiers = $schema->getIdentifiers();
-
-        if (is_array($id) && $schema->hasComplexPrimaryKey()){
-            foreach ($identifiers as $identifier) $builder->andIntegerEqual($identifier->getColumn(), $id[$identifier->getName()]);
-
-        } else {
-            foreach ($identifiers as $identifier) $builder->andIntegerEqual($identifier->getColumn(), $id);
-        }
-
+        $schema->applyIdentifierConstraintsToQueryFromData($builder, $id);
 
         $data = $builder->selectDistinct();
         if (count($data) > 0) {
-            $converter = new RawResultsToInstanceConverter($component, $data[0]);
+            $converter = new RawResultsToInstanceConverter(static::COMPONENT, $data[0]);
             $itemData = $converter->parse();
 
             $r = new static($itemData);
@@ -388,7 +379,7 @@ abstract class AbstractInstance
             $queryBuilder->updateData($parsed);
 
             if ($isUpdate) {
-                $schema->applyIdentifierConstraintsToQuery($queryBuilder, $this);
+                $schema->applyIdentifierConstraintsToQueryFromInstance($queryBuilder, $this);
                 $query = $connection->getUpdateQuery($queryBuilder);
             } else {
                 $query = $connection->getInsertQuery($queryBuilder);
@@ -1195,12 +1186,14 @@ abstract class AbstractInstance
                     }
 
                 } else {
-                    $t = [];
-                    foreach ($items as $item) {
-                        if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                        $t[] = $item->readAsRelated();
-                    }
-                    $r[$responseKey] = $t;
+//                    $t = [];
+                    $helperInstance = $relatedSchema->getItemInstance();
+                    $batchActions = $helperInstance::getBatchActions($items);
+//                    foreach ($items as $item) {
+//                        if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+//                        $t[] = $item->readAsRelated();
+//                    }
+                    $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
                 }
 
             } elseif ($field instanceof ForeignKeysField) {
@@ -1270,6 +1263,16 @@ abstract class AbstractInstance
                 if (!$relatedAccessPolicy && $field->getComponent() && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
                     $relatedAccessPolicy = 'lkt-related';
                 }
+
+//                if ($key === $field->getAppendForeignKeysName()) {
+//                    $t = array_map(function (AbstractInstance $item) { return $item->getIdColumnValue();}, $items);
+//
+//                } else {
+//                    $relatedSchema = Schema::get($field->getComponent());
+//                    $helperInstance = $relatedSchema->getItemInstance();
+//                    $batchActions = $helperInstance::getBatchActions($items);
+//                    $t = $batchActions->read($relatedAccessPolicy, 'related');
+//                }
 
                 foreach ($items as $item) {
                     if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);

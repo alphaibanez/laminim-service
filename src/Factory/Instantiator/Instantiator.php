@@ -32,8 +32,6 @@ class Instantiator
 
         if (InstanceCache::inCache($code)) return InstanceCache::load($code);
 
-        $schema = Schema::get($component);
-
         $callable = [$schema->getInstanceSettings()->getAppClass(), 'getInstance'];
 
         /** @var AbstractInstance $r */

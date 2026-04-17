@@ -101,18 +101,19 @@ class Request
             if ($this->targetComponent && $extractIdKey) {
                 $schema = Schema::get($this->targetComponent);
                 $idValue = digArray($this->params, $extractIdKey);
+                $identifiers = array_values($schema->getIdentifiers());
                 if (strpos($idValue, ',') !== false) {
-                    $identifiers = array_values($schema->getIdentifiers());
                     $idValues = explode(',', $idValue);
-                    $tmp = [];
-                    foreach ($identifiers  as $i => $identifier) {
-                        $tmp[$identifier->getName()] = $idValues[$i];
-                    }
-                    $idValue = $tmp;
+
                 } else {
-                    $idValue = (int)$idValue;
+                    $idValues = [$idValue];
                 }
-                $instance = $schema->getItemInstance($idValue);
+                $tmp = [];
+                foreach ($identifiers  as $i => $identifier) {
+                    $tmp[$identifier->getName()] = $idValues[$i];
+                }
+                $idValue = $tmp;
+                $instance =  $schema->getItemInstance($idValue);
 
                 $this->extractedTargetInstanceIdFromParamsKey = $extractIdKey;
                 $targetInstance = $instance;

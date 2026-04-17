@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -1385,7 +1386,7 @@ final class Schema
         });
     }
 
-    public function applyIdentifierConstraintsToQuery(Query $query, AbstractInstance $instance): static
+    public function applyIdentifierConstraintsToQueryFromInstance(Query $query, AbstractInstance $instance): static
     {
         /** @var AbstractField[] $fields */
         $fields = $this->getIdentifiers();
@@ -1400,6 +1401,34 @@ final class Schema
 
             } elseif ($field instanceof DateTimeField) {
                 $query->andDatetimeEqual($field->getColumn(), $instance->{$getter}());
+            }
+        }
+
+        return $this;
+    }
+
+    public function applyIdentifierConstraintsToQueryFromData(Query $query, array|int|string $data): static
+    {
+        /** @var AbstractField[] $fields */
+        $fields = $this->getIdentifiers();
+
+        if (!is_array($data)) {
+            if (count($fields) === 1) {
+                $data = [$fields[0]->getName() => $data];
+            } else {
+                return $this;
+            }
+        }
+
+        foreach ($fields as $field) {
+            if ($field instanceof IntegerField) {
+                $query->andIntegerEqual($field->getColumn(), $data[$field->getName()]);
+
+            } elseif ($field instanceof StringField) {
+                $query->andStringEqual($field->getColumn(), $data[$field->getName()]);
+
+            } elseif ($field instanceof DateTimeField) {
+                $query->andDatetimeEqual($field->getColumn(), $data[$field->getName()]);
             }
         }
 

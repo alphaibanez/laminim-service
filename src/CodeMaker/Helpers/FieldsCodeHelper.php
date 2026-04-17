@@ -154,6 +154,7 @@ class FieldsCodeHelper
             }
 
             if ($field instanceof FloatField) {
+                $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = FloatFieldGenerator::generateCode($fieldGeneratorData);
                 continue;
             }

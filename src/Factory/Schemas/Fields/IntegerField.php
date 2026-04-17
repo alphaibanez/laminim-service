@@ -9,10 +9,10 @@ class IntegerField extends AbstractField
 {
     const TYPE = 'integer';
 
-    protected int|null $minValue = null;
-
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait;
+
+    protected int|null $minValue = null;
 
     public function setMinValue(int $val): static
     {

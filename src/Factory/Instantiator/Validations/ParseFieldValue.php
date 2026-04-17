@@ -51,6 +51,7 @@ class ParseFieldValue
         if ($field instanceof IntegerField && $field->isMultiple()) return ParseColumn::integerArrayDatum($value, $field->getMinValue());
         if ($field instanceof IntegerField) return ParseColumn::integerDatum($value);
 
+        if ($field instanceof FloatField && $field->isMultiple()) return ParseColumn::floatArrayDatum($value, $field->getMinValue());
         if ($field instanceof FloatField) return ParseColumn::floatDatum($value);
 
         if ($field instanceof UnixTimeStampField) return ParseColumn::unixTimeStampDatum($value);

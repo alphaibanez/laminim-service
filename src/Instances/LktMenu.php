@@ -81,7 +81,7 @@ class LktMenu extends GeneratedLktMenu
                         $text = Translations::get("webItems.{$group}");
                         if (!$text) $text = $group;
 
-                        $r[] = LktMenuEntry::getInstance()
+                        $r[$i] = LktMenuEntry::getInstance()
                             ->setName($text)
                             ->setType(MenuEntryType::Parent->value)
                             ->setAccessPolicy('r-app-menu')->autoRead();
@@ -90,7 +90,7 @@ class LktMenu extends GeneratedLktMenu
                     $r[$groups[$group]]['children'][] = $anonymousEntry->setAccessPolicy('r-app-menu')->autoRead();
 
                 } else {
-                    $r[] = $anonymousEntry->setAccessPolicy('r-app-menu')->autoRead();
+                    $r[$i] = $anonymousEntry->setAccessPolicy('r-app-menu')->autoRead();
                 }
 
                 ++$i;

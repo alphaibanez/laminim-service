@@ -4,6 +4,7 @@ namespace Lkt\Http;
 
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
+use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\DTO\TargetAccessPolicy;
@@ -102,19 +103,40 @@ class Request
                 $schema = Schema::get($this->targetComponent);
                 $idValue = digArray($this->params, $extractIdKey);
                 $identifiers = array_values($schema->getIdentifiers());
-                if (strpos($idValue, ',') !== false) {
-                    $idValues = explode(',', $idValue);
+
+                $tmp = [];
+
+                if (!$idValue) {
+                    if ($this->payload) {
+                        $idValues = $this->payload;
+                    } else {
+                        $idValues = $this->params;
+                    }
+
+                    foreach ($identifiers  as $i => $identifier) {
+                        $name = $identifier->getName();
+                        if ($identifier instanceof ForeignKeyField && isset($idValues[$name. 'Id'])) {
+                            $tmp[$name] = $idValues[$name. 'Id'];
+
+                        } else {
+                            $tmp[$name] = $idValues[$name];
+                        }
+                    }
 
                 } else {
-                    $idValues = [$idValue];
-                }
-                $tmp = [];
-                foreach ($identifiers  as $i => $identifier) {
-                    $tmp[$identifier->getName()] = $idValues[$i];
+                    if (strpos($idValue, ',') !== false) {
+                        $idValues = explode(',', $idValue);
+
+                    } else {
+                        $idValues = [$idValue];
+                    }
+
+                    foreach ($identifiers  as $i => $identifier) {
+                        $tmp[$identifier->getName()] = $idValues[$i];
+                    }
                 }
                 $idValue = $tmp;
                 $instance =  $schema->getItemInstance($idValue);
-
                 $this->extractedTargetInstanceIdFromParamsKey = $extractIdKey;
                 $targetInstance = $instance;
                 if (!$instance) {

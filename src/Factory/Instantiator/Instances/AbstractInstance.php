@@ -659,25 +659,7 @@ abstract class AbstractInstance
         $connector = $dbIntegration->databaseConnectorName;
         $schema = $dbIntegration->schema;
 
-        if ($schema->isPivot()) {
-            $pivotColumns = $schema->getIdColumn();
-            foreach ($pivotColumns as $pivotColumn) {
-                $idColumn = $schema->getField($pivotColumn);
-                $originalValueKey = $idColumn->getGetterForPrimitiveValue();
-                $originalValueKey = lcfirst(substr($originalValueKey, 3));
-                $idColumn = $idColumn->getColumn();
-                $caller->andIntegerEqual($idColumn, $this->DATA[$originalValueKey]);
-            }
-
-        } else {
-
-            $origIdColumn = $schema->getIdColumn();
-            $origIdColumn = $origIdColumn[0];
-            $idColumn = $schema->getField($origIdColumn);
-            $idColumn = $idColumn->getColumn();
-            $id = (int)$this->DATA[$origIdColumn];
-            $caller->andIntegerEqual($idColumn, $id);
-        }
+        $schema->applyIdentifierConstraintsToQueryFromInstance($caller, $this);
 
         $connection->query($connection->getDeleteQuery($caller));
 

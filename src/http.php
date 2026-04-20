@@ -63,6 +63,7 @@ PostRoute::admin('/admin-api/dup/{component}', BasicHttpHandler::Duplicate)
 DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
+    ->setPayloadValueParamsExtractionKey('payload')
     ->setRequiredPermissions(['rm'])
     ->setTargetAccessPolicy('admin');
 

@@ -441,7 +441,15 @@ class MariaDBConnector extends DatabaseConnector
                     $value = (int)$value;
                 }
 
-                if ($field instanceof FloatField) {
+                if ($field instanceof FloatField && $field->isMultiple()) {
+                    $valueAux = [];
+                    foreach ($value as $item) {
+                        $valueAux[] = (float)$item;
+                    }
+                    $value = implode(';', $valueAux);
+                }
+
+                else if ($field instanceof FloatField) {
                     $value = (float)$value;
                 }
 
@@ -631,6 +639,8 @@ class MariaDBConnector extends DatabaseConnector
 
             $values[] = $this->makeUpdateParams($builder->getData(), 'create');
         }
+
+        if (count($values) === 0) return $this;
 
         $valuesString = '(' . implode(') OR (', $values) . ')';
 

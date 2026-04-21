@@ -6,18 +6,18 @@ use Lkt\Factory\Schemas\Values\BooleanValue;
 
 trait FieldWithNullOptionTrait
 {
-    protected ?BooleanValue $allowNull = null;
+    protected ?BooleanValue $nullable = null;
 
     final public function setNullable(bool $allow = true): self
     {
-        $this->allowNull = new BooleanValue($allow);
+        $this->nullable = new BooleanValue($allow);
         return $this;
     }
 
-    final public function canBeNull(): bool
+    final public function isNullable(): bool
     {
-        if ($this->allowNull instanceof BooleanValue) {
-            return $this->allowNull->getValue();
+        if ($this->nullable instanceof BooleanValue) {
+            return $this->nullable->getValue();
         }
         return false;
     }

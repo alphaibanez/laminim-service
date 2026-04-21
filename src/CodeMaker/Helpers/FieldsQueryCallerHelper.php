@@ -47,7 +47,7 @@ class FieldsQueryCallerHelper
             ];
 
             if ($field instanceof ForeignKeyField || ($field instanceof IntegerField && !$field->isMultiple())) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof IntegerChoiceField) {
                     $templateData['comparatorsIn'] = $field->getComparatorsIn();
@@ -67,7 +67,7 @@ class FieldsQueryCallerHelper
             }
 
             if ($field instanceof StringField || $field instanceof HTMLField || $field instanceof EmailField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $templateData['isI18n'] = method_exists($field, 'isI18nJson') ? $field->isI18nJson() : false;
 
                 if ($field instanceof StringChoiceField) {
@@ -102,7 +102,7 @@ class FieldsQueryCallerHelper
             }
 
             if ($field instanceof EncryptField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/encrypt-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -118,7 +118,7 @@ class FieldsQueryCallerHelper
 
 
             if ($field instanceof FloatField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/float-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -134,7 +134,7 @@ class FieldsQueryCallerHelper
 
 
             if ($field instanceof BooleanField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/boolean-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -150,7 +150,7 @@ class FieldsQueryCallerHelper
 
 
             if ($field instanceof ForeignKeysField || ($field instanceof IntegerField && $field->isMultiple())) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/foreign-keys-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -166,7 +166,7 @@ class FieldsQueryCallerHelper
 
 
             if ($field instanceof DateTimeField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/datetime-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -182,7 +182,7 @@ class FieldsQueryCallerHelper
 
 
             if ($field instanceof ConcatField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $templateData['separator'] =  $field->getSeparator();
                 $templateData['columns'] =  $field->getConcatenatedFieldsAsString($schema);
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/concat-builder.phtml')

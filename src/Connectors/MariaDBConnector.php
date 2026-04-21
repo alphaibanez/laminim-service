@@ -381,6 +381,7 @@ class MariaDBConnector extends DatabaseConnector
 
         foreach ($fields as $column => $field) {
             $columnKey = $column;
+            $nullable = $field->isNullable();
             if ($field instanceof ForeignKeyField) {
                 $columnKey .= 'Id';
             }
@@ -432,7 +433,11 @@ class MariaDBConnector extends DatabaseConnector
                 if ($field instanceof IntegerField && $field->isMultiple()) {
                     $valueAux = [];
                     foreach ($value as $item) {
-                        $valueAux[] = (int)$item;
+                        if ($nullable && !is_numeric($item)) {
+                            $valueAux[] = 'null';
+                        } else {
+                            $valueAux[] = (int)$item;
+                        }
                     }
                     $value = implode(';', $valueAux);
                 }
@@ -444,7 +449,11 @@ class MariaDBConnector extends DatabaseConnector
                 if ($field instanceof FloatField && $field->isMultiple()) {
                     $valueAux = [];
                     foreach ($value as $item) {
-                        $valueAux[] = (float)$item;
+                        if ($nullable && !is_numeric($item)) {
+                            $valueAux[] = 'null';
+                        } else {
+                            $valueAux[] = (float)$item;
+                        }
                     }
                     $value = implode(';', $valueAux);
                 }

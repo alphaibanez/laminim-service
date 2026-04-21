@@ -43,7 +43,7 @@ class FieldsGroupByHelper
             ];
 
             if ($field instanceof ForeignKeyField || $field instanceof IntegerField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof IntegerChoiceField) {
                     $templateData['comparatorsIn'] = $field->getComparatorsIn();
@@ -56,7 +56,7 @@ class FieldsGroupByHelper
             }
 
             if ($field instanceof StringField || $field instanceof HTMLField || $field instanceof EmailField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof StringChoiceField) {
                     $options = $field->getAllowedOptions();
@@ -77,7 +77,7 @@ class FieldsGroupByHelper
             }
 
             if ($field instanceof EncryptField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/group-by/group-by.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -86,7 +86,7 @@ class FieldsGroupByHelper
 
 
             if ($field instanceof FloatField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/group-by/group-by.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -95,7 +95,7 @@ class FieldsGroupByHelper
 
 
             if ($field instanceof BooleanField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/group-by/group-by.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -104,7 +104,7 @@ class FieldsGroupByHelper
 
 
             if ($field instanceof ForeignKeysField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/group-by/group-by.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -113,7 +113,7 @@ class FieldsGroupByHelper
 
 
             if ($field instanceof DateTimeField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/group-by/group-by.phtml')
                     ->setData($templateData)
                     ->parse();

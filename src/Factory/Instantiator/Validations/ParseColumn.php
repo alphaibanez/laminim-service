@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator\Validations;
 
 use Carbon\Carbon;
+use Lkt\Debug\VarDumper;
 use Lkt\FileReader\Directory;
 use Lkt\FileReader\File;
 use Lkt\Factory\Instantiator\SystemConnections\FileSystemConnection;
@@ -78,7 +79,7 @@ class ParseColumn
      * @param $value
      * @return int[]
      */
-    public static function integerArrayDatum($value, int|null $minValue = null): array
+    public static function integerArrayDatum($value, int|null $minValue = null, bool $nullable = false): array
     {
         if (is_null($value)) return [];
         if (is_string($value)) {
@@ -87,7 +88,12 @@ class ParseColumn
         if (!is_array($value)) $value = [$value];
         $r = [];
         foreach ($value as $item) {
-            $r[] = (int)$item;
+            if (is_numeric($item)) {
+                $r[] = (int)$item;
+            } else {
+                if ($nullable) $r[] = null;
+                else $r[] = 0;
+            }
         }
         if ($minValue) {
             $r = array_filter($r, function ($item) use ($minValue) {
@@ -101,7 +107,7 @@ class ParseColumn
      * @param $value
      * @return int[]
      */
-    public static function floatArrayDatum($value, int|null $minValue = null): array
+    public static function floatArrayDatum($value, int|null $minValue = null, bool $nullable = false): array
     {
         if (is_null($value)) return [];
         if (is_string($value)) {
@@ -110,7 +116,12 @@ class ParseColumn
         if (!is_array($value)) $value = [$value];
         $r = [];
         foreach ($value as $item) {
-            $r[] = (float)$item;
+            if (is_numeric($item)) {
+                $r[] = (float)$item;
+            } else {
+                if ($nullable) $r[] = null;
+                else $r[] = 0;
+            }
         }
         if ($minValue) {
             $r = array_filter($r, function ($item) use ($minValue) {

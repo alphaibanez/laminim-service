@@ -44,7 +44,7 @@ class FieldsSelectBuilderHelper
             ];
 
             if ($field instanceof ForeignKeyField || $field instanceof IntegerField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof IntegerChoiceField) {
                     $templateData['comparatorsIn'] = $field->getComparatorsIn();
@@ -57,7 +57,7 @@ class FieldsSelectBuilderHelper
             }
 
             if ($field instanceof StringField || $field instanceof HTMLField || $field instanceof EmailField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof StringChoiceField) {
                     $options = $field->getAllowedOptions();
@@ -78,7 +78,7 @@ class FieldsSelectBuilderHelper
             }
 
             if ($field instanceof EncryptField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -87,7 +87,7 @@ class FieldsSelectBuilderHelper
 
 
             if ($field instanceof FloatField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -96,7 +96,7 @@ class FieldsSelectBuilderHelper
 
 
             if ($field instanceof BooleanField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -105,7 +105,7 @@ class FieldsSelectBuilderHelper
 
 
             if ($field instanceof ForeignKeysField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
                     ->setData($templateData)
                     ->parse();
@@ -114,7 +114,7 @@ class FieldsSelectBuilderHelper
 
 
             if ($field instanceof DateTimeField) {
-                $templateData['canBeNull'] =  $field->canBeNull();
+                $templateData['canBeNull'] =  $field->isNullable();
                 $templateData['isDate'] =  true;
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
                     ->setData($templateData)

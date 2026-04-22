@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas;
 
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -1330,6 +1331,15 @@ final class Schema
         $langCode = Locale::getLangCode();
 
         foreach ($data as $fieldName => $value) {
+
+            $mode = null;
+
+            if (str_contains($fieldName, ':')) {
+                $aux = explode(':', $fieldName);
+                $mode = FieldFilterMode::tryFrom($aux[0]);
+                $fieldName = $aux[1];
+            }
+
             $field = $this->getField($fieldName);
             if (!$field) continue;
 
@@ -1358,6 +1368,46 @@ final class Schema
                         $langCode = Locale::getLangCode();
                         $builder->andStringEqual($field->getLocaleColumn($langCode), $value);
                     }
+                }
+
+            } else if ($field instanceof DateTimeField) {
+                $col = $field->getColumn();
+                switch ($mode) {
+                    case FieldFilterMode::greaterOrEqualThan:
+                        $builder->andDatetimeGreaterOrEqualThan($col, $value);
+                        break;
+
+                    case FieldFilterMode::greaterThan:
+                        $builder->andDatetimeGreaterThan($col, $value);
+                        break;
+
+                    case FieldFilterMode::lowerOrEqualThan:
+                        $builder->andDatetimeLowerOrEqualThan($col, $value);
+                        break;
+
+                    case FieldFilterMode::lowerThan:
+                        $builder->andDatetimeLowerThan($col, $value);
+                        break;
+
+                    case FieldFilterMode::notEqual:
+                        $builder->andDatetimeNot($col, $value);
+                        break;
+
+                    case FieldFilterMode::notLike:
+                        $builder->andDatetimeNotLike($col, $value);
+                        break;
+
+                    case FieldFilterMode::notBeginsLike:
+                        $builder->andDatetimeNotBeginsLike($col, $value);
+                        break;
+
+                    case FieldFilterMode::notEndsLike:
+                        $builder->andDatetimeNotEndsLike($col, $value);
+                        break;
+
+                    default:
+                        $builder->andDatetimeEqual($col, $value);
+                        break;
                 }
             }
         }

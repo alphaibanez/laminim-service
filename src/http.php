@@ -30,7 +30,7 @@ GetRoute::admin('/admin-api/opts-{page:\d+}/{component}', BasicHttpHandler::Page
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
-    ->setTargetAccessPolicy('lkt-related');;
+    ->setTargetAccessPolicy('lkt-related');
 
 GetRoute::admin('/admin-api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')

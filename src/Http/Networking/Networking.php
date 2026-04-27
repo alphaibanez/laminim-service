@@ -84,6 +84,14 @@ final class Networking
         return self::$instance;
     }
 
+    public function getFullyQualifiedUrl(string $url): string
+    {
+        $r = str_replace('://', '(#-_-#)', "$this->publicUrl{$url}");
+        $r = str_replace('//', '/', $r);
+        $r = str_replace('(#-_-#)', '://', $r);
+        return $r;
+    }
+
     /**
      * @deprecated
      */

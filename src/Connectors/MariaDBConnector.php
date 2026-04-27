@@ -381,7 +381,7 @@ class MariaDBConnector extends DatabaseConnector
 
         foreach ($fields as $column => $field) {
             $columnKey = $column;
-            $nullable = $field->isNullable();
+            $nullable = method_exists($field, 'isNullable') && $field->isNullable();
             if ($field instanceof ForeignKeyField) {
                 $columnKey .= 'Id';
             }

@@ -103,6 +103,12 @@ class BasicHttpHandler
         $accessPolicy = $request->getTargetAccessPolicy(WebItemAction::Update);
         if ($accessPolicy instanceof Response) return $accessPolicy;
 
+        $schema = Schema::get($request->targetComponent);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Update, WebItemActionHook::BeforeAction, [
+            'request' => $request
+        ]);
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
         if ($accessPolicy) {
             $request->targetInstance->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
         }
@@ -115,7 +121,6 @@ class BasicHttpHandler
 
         if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessUpdate, $request->httpEventHandlers, []);
 
-        $schema = Schema::get($request->targetComponent);
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Update, WebItemActionHook::Success, [
             'request' => $request
         ]);

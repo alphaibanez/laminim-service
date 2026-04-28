@@ -302,8 +302,24 @@ abstract class AbstractInstance
             }
         }
 
+        // Update only: auto update values
+        if ($isUpdate) {
+            /** @var AbstractField $fieldsWithDefaultValue */
+            $fieldsWithDefaultValue = $schema->getFieldsToUpdateOnInstanceUpdate();
+            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
+                $defaultValueKey = $fieldWithDefaultValue->getName();
+                if (isset($this->UPDATED[$defaultValueKey])) continue;
+
+                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
+                if (isset($this->UPDATED[$defaultValueKey])) continue;
+
+                $defaultValue = $fieldWithDefaultValue->getOnInstanceUpdateValue();
+                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
+                $this->{$setter}($defaultValue);
+            }
+
         // Create only: set default values
-        if (!$isUpdate) {
+        } else {
             /** @var AbstractField $fieldsWithDefaultValue */
             $fieldsWithDefaultValue = $schema->getFieldsWithDefaultValue();
             foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {

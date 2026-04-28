@@ -172,6 +172,19 @@ abstract class AbstractField
         return $this->defaultValue[0];
     }
 
+    public function getOnInstanceUpdateValue(): mixed
+    {
+        if (property_exists($this, 'onUpdateCurrentTimestamp') && $this->onUpdateCurrentTimestamp === true) {
+            return new \DateTime();
+        }
+
+        if (is_callable($this->defaultValue[0])) {
+            return call_user_func($this->defaultValue[0]);
+        }
+
+        return $this->defaultValue[0];
+    }
+
     public function overrideWithDefaultValueIfEqualTo($value): static
     {
         $this->onEqualOverrideWithDefaultValue[] = $value;

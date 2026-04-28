@@ -623,6 +623,17 @@ final class Schema
         });
     }
 
+    public function getFieldsToUpdateOnInstanceUpdate(): array
+    {
+        return array_filter($this->getAllFields(), function (AbstractField $field) {
+            if (method_exists($field, 'hasToSetCurrentTimeStampOnUpdate') && $field->hasToSetCurrentTimeStampOnUpdate() === true) {
+                return true;
+            }
+
+            return false;
+        });
+    }
+
     /**
      * @param string $field
      * @param bool $searchComposed

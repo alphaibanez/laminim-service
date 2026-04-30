@@ -8,7 +8,7 @@ trait FieldWithFormatsOptionTrait
 
     public function addFormat(string $name, string $format): static
     {
-        $this->formats[$name] = $format;
+        $this->formats[$name] = [false, $format];
         return $this;
     }
 

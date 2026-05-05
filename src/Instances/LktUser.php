@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use Lkt\Config\Settings\UserSettings;
+use Lkt\Debug\VarDumper;
 use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -122,8 +123,12 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         $token = Router::getBearerToken();
         if ($token) {
             $accessToken = LktAccessToken::fromToken($token, AccessTokenPurpose::Identifier);
-            if ($accessToken) return $accessToken->getUserId();
+            if ($accessToken) {
+                $id = $accessToken->getUserId();
+            }
         }
+
+        if ((!isset($_SESSION['user']) || !$_SESSION['user']) && $id > 0) $_SESSION['user'] = $id;
 
         return $id;
     }

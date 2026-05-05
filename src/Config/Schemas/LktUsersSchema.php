@@ -37,6 +37,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
         ->addField(IntegerChoiceField::enumChoice(UserStatus::class, 'status')->setDefaultValue(UserStatus::Active->value))
         ->addField(StringField::define('firstName', 'firstname'))

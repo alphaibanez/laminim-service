@@ -38,6 +38,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
         ->addField(StringField::define('name')->setIsI18nJson()->setIsUnique())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())

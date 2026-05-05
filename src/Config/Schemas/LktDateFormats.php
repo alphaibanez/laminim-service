@@ -36,6 +36,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
         ->addField(StringField::define('format')->setIsUnique())
         ->addField(BooleanField::define('isActive', 'is_active'))

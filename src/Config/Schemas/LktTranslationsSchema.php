@@ -43,6 +43,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
         ->addField(StringChoiceField::choice(TranslationType::getChoiceOptions(), 'type'))
         ->addField(StringField::define('property'))

@@ -31,6 +31,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
 
         ->addField(StringField::define('isoCodeAlpha3', 'iso_code_alpha3'))

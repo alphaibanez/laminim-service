@@ -32,6 +32,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'userId', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
 

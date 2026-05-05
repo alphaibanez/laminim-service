@@ -35,6 +35,7 @@ Schema::add(
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
         )
         ->addField(IntegerChoiceField::enumChoice(PerformedAuthAction::class, 'performedAction', 'performed_action'))
         ->addField(StringField::define('attemptedCredential', 'attempted_credential'))

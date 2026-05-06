@@ -42,6 +42,6 @@ Schema::add(
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(AssocJSONField::define('permissions'))
-        ->addAccessPolicy('admin', ['id', 'name', 'permissions'])
+        ->addAccessPolicy('admin', ['id', 'nameData', 'permissions'])
         ->addAccessPolicy('duplicate', ['nameData', 'permissions'])
 );

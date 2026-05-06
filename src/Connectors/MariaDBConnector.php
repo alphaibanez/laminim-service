@@ -182,7 +182,7 @@ class MariaDBConnector extends DatabaseConnector
 
         if (str_starts_with($column, 'UNCOMPRESS') || str_starts_with($column, "'") || str_starts_with($column, "DISTINCT") || strpos($column, '(') > 0) {
             if ($alias !== '') {
-                $r = "{$key} AS {$alias}";
+                $r = "{$key} AS `{$alias}`";
             } else {
                 $r = $key;
             }
@@ -190,13 +190,13 @@ class MariaDBConnector extends DatabaseConnector
 
         elseif (str_starts_with($key, $prependTable)) {
             if ($alias !== '') {
-                $r = "{$key} AS {$alias}";
+                $r = "{$key} AS `{$alias}`";
             } else {
                 $r = $key;
             }
         } else {
             if ($alias !== '') {
-                $r = "{$prependTable}{$key} AS {$alias}";
+                $r = "{$prependTable}{$key} AS `{$alias}`";
             } else {
                 $r = "{$prependTable}{$key}";
             }

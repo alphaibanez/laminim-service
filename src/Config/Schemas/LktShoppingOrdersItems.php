@@ -10,9 +10,8 @@ use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktCurrency;
+use Lkt\Instances\LktShoppingOrder;
 use Lkt\Instances\LktShoppingOrderItem;
-use Lkt\Instances\LktUser;
 
 Schema::add(
     Schema::table('lkt_shopping_orders__items', LktShoppingOrderItem::COMPONENT)
@@ -34,15 +33,21 @@ Schema::add(
                 ->setCurrentTimeStampOnUpdate()
         )
 
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id'))
-        ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
+        ->addField(ForeignKeyField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
+        ->addField(IntegerField::define('componentId', 'component_id'))
+        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId'))
 
         ->addField(StringField::define('SKU', 'sku'))
         ->addField(StringField::define('name'))
 
-        ->addField(FloatField::define('pricePerUnit', 'price_unit'))
-        ->addField(IntegerField::define('quantity'))
-        ->addField(FloatField::define('taxAmount', 'tax_amount'))
-        ->addField(FloatField::define('discountAmount', 'discount_amount'))
-        ->addField(FloatField::define('total'))
+        ->addField(FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0))
+        ->addField(IntegerField::define('quantity')->setDefaultValue(1))
+        ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
+        ->addField(FloatField::define('discountAmount', 'discount_amount')->setDefaultValue(0))
+        ->addField(FloatField::define('total')->setDefaultValue(0))
+
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+            'name' => 'label',
+        ])
 );

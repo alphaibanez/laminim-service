@@ -7,11 +7,13 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
-use Lkt\Factory\Schemas\Fields\StringField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCurrency;
 use Lkt\Instances\LktShoppingOrder;
+use Lkt\Instances\LktShoppingOrderItem;
+use Lkt\Instances\LktShoppingOrderPayment;
 use Lkt\Instances\LktUser;
 use Lkt\Shop\Enums\OrderStatus;
 
@@ -35,12 +37,14 @@ Schema::add(
                 ->setCurrentTimeStampOnUpdate()
         )
 
-        ->addField(IntegerChoiceField::enumChoice(OrderStatus::class, 'status'))
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id'))
+        ->addField(IntegerChoiceField::enumChoice(OrderStatus::class, 'status')->setDefaultValue(OrderStatus::Pending))
+        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
-        ->addField(FloatField::define('subTotal', 'subtotal'))
-        ->addField(FloatField::define('taxTotal', 'tax_total'))
-        ->addField(FloatField::define('shippingTotal', 'shipping_total'))
-        ->addField(FloatField::define('discountTotal', 'discount_total'))
-        ->addField(FloatField::define('total', 'total'))
+        ->addField(FloatField::define('subTotal', 'subtotal')->setDefaultValue(0))
+        ->addField(FloatField::define('taxTotal', 'tax_total')->setDefaultValue(0))
+        ->addField(FloatField::define('shippingTotal', 'shipping_total')->setDefaultValue(0))
+        ->addField(FloatField::define('discountTotal', 'discount_total')->setDefaultValue(0))
+        ->addField(FloatField::define('total', 'total')->setDefaultValue(0))
+        ->addField(RelatedField::defineRelation(LktShoppingOrderItem::COMPONENT, 'items', 'order_id'))
+        ->addField(RelatedField::defineRelation(LktShoppingOrderPayment::COMPONENT, 'payments', 'order_id'))
 );

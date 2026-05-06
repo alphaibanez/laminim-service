@@ -1317,11 +1317,16 @@ final class Schema
         return null;
     }
 
-    public function getInstanceCode(array $instanceData, string|int|array|null $instanceId = null): string
+    public function getInstanceCode(array|AbstractInstance $instanceData, string|int|array|null $instanceId = null): string
     {
         if (is_array($instanceId)) $instanceId = implode('-', $instanceId);
 
         if (!$instanceId) {
+
+            if ($instanceData instanceof AbstractInstance) {
+                $instanceData = $instanceData->autoRead();
+            }
+
             $relatedIdentifiers = $this->getIdentifiers();
 
             $instanceCode = [];
@@ -1335,6 +1340,23 @@ final class Schema
         return "{$this->getComponent()}_{$instanceId}";
     }
 
+    public function decodeInstanceCode(string $code): null|array
+    {
+        $component = $this->component->getValue();
+        if (!str_starts_with($code, "{$component}_")) return null;
+
+        $l = strlen("{$component}_");
+        $code = substr($code, $l);
+        $data = explode('-', $code);
+
+        $relatedIdentifiers = array_values($this->getIdentifiers());
+
+        $r = [];
+        foreach ($relatedIdentifiers as $i => $identifier) {
+            $r[$identifier->getName()] = $data[$i];
+        }
+        return $r;
+    }
 
 
     public function filterBuilder(Query &$builder, array $data): void

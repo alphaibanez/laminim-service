@@ -6,6 +6,7 @@ use Exception;
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
+use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
@@ -475,14 +476,14 @@ abstract class AbstractInstance
                         $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
                         $getter = $dynamicComponentField->getGetterForPrimitiveValue();
                         $dynamicType = $this->{$getter}();
-                        if ($dynamicType !== '') $relatedComponent = $dynamicType;
+                        if (is_numeric($dynamicType)) $relatedComponent = ComponentId::getComponent((int)$dynamicType);
+                        elseif ($dynamicType !== '') $relatedComponent = $dynamicType;
                     }
                 }
 
                 $relatedSchema = Schema::get($relatedComponent);
 
                 $relatedIdColumn = $relatedSchema->getIdColumn()[0];
-                $relatedIdColumnGetter = 'get' . ucfirst($relatedIdColumn);
                 $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
                 $relatedMode = false;
@@ -501,18 +502,17 @@ abstract class AbstractInstance
                 }
 
                 $currentIds = [];
+
+                /** @var AbstractInstance[] $currentItems */
                 foreach ($currentItems as $currentItem) {
-                    $idAux = (int)$currentItem->{$relatedIdColumnGetter}();
-                    if ($idAux > 0 && !in_array($idAux, $currentIds, true)) {
-                        $currentIds[] = $idAux;
-                    }
+                    $code = $relatedSchema->getInstanceCode($currentItem);
+                    if (!in_array($code, $currentIds, true)) $currentIds[] = $code;
                 }
 
                 $updatedIds = [];
                 foreach ($data as $datum) {
-                    if ($datum[$relatedIdColumn] > 0) {
-                        $updatedIds[] = (int)$datum[$relatedIdColumn];
-                    }
+                    $code = $relatedSchema->getInstanceCode($datum);
+                    if ($code) $updatedIds[] = $code;
                 }
 
                 $diff = compareArrays($currentIds, $updatedIds);
@@ -520,7 +520,7 @@ abstract class AbstractInstance
                 // Delete
                 if (method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
                     foreach ($diff['deleted'] as $deletedId) {
-                        $ins = $relatedClass::getInstance($deletedId);
+                        $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
                         $ins->delete();
                     }
                 }
@@ -544,14 +544,12 @@ abstract class AbstractInstance
 
                     if ($datum[$relatedIdColumn] > 0) {
                         $ins = $relatedClass::getInstance($datum[$relatedIdColumn]);
-                        $ins::feedInstance($ins, $datum);
-                        $ins->save();
-
                     } else {
                         $ins = $relatedClass::getInstance();
-                        $ins::feedInstance($ins, $datum);
-                        $ins->save();
                     }
+
+                    $ins::feedInstance($ins, $datum);
+                    $ins->save();
 
                     if ($foreignKeysMode) $foreignKeysIds[] = $ins->getId();
                 }
@@ -1228,7 +1226,7 @@ abstract class AbstractInstance
 
                 }
 
-                if (!$relatedAccessPolicy && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
+                if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
                     $relatedAccessPolicy = 'lkt-related';
                 }
 

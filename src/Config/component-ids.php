@@ -1,0 +1,55 @@
+<?php
+
+namespace Lkt\Config;
+
+use Lkt\Factory\Instantiator\ComponentId;
+use Lkt\Factory\Instantiator\Enums\LaminimComponentId;
+use Lkt\Instances\LktAccessToken;
+use Lkt\Instances\LktAuthenticationLog;
+use Lkt\Instances\LktContactReason;
+use Lkt\Instances\LktContactRequest;
+use Lkt\Instances\LktCountry;
+use Lkt\Instances\LktCurrency;
+use Lkt\Instances\LktDateFormat;
+use Lkt\Instances\LktFileEntity;
+use Lkt\Instances\LktFileFormat;
+use Lkt\Instances\LktHttpRequestLog;
+use Lkt\Instances\LktMenu;
+use Lkt\Instances\LktMenuEntry;
+use Lkt\Instances\LktPendingMail;
+use Lkt\Instances\LktShoppingOrder;
+use Lkt\Instances\LktShoppingOrderItem;
+use Lkt\Instances\LktShoppingOrderPayment;
+use Lkt\Instances\LktShoppingOrderStatusLog;
+use Lkt\Instances\LktTranslation;
+use Lkt\Instances\LktUser;
+use Lkt\Instances\LktUserRole;
+use Lkt\Instances\LktWebElement;
+use Lkt\Instances\LktWebPage;
+use Lkt\Instances\LktWebPageCategory;
+use Lkt\Instances\LktWebPageMetas;
+
+ComponentId::add(LaminimComponentId::User->value, LktUser::COMPONENT);
+ComponentId::add(LaminimComponentId::UserRole->value, LktUserRole::COMPONENT);
+ComponentId::add(LaminimComponentId::AccessToken->value, LktAccessToken::COMPONENT);
+ComponentId::add(LaminimComponentId::AuthenticationLog->value, LktAuthenticationLog::COMPONENT);
+ComponentId::add(LaminimComponentId::ContactReason->value, LktContactReason::COMPONENT);
+ComponentId::add(LaminimComponentId::ContactRequest->value, LktContactRequest::COMPONENT);
+ComponentId::add(LaminimComponentId::Country->value, LktCountry::COMPONENT);
+ComponentId::add(LaminimComponentId::Currency->value, LktCurrency::COMPONENT);
+ComponentId::add(LaminimComponentId::DateFormat->value, LktDateFormat::COMPONENT);
+ComponentId::add(LaminimComponentId::FileEntity->value, LktFileEntity::COMPONENT);
+ComponentId::add(LaminimComponentId::FileFormat->value, LktFileFormat::COMPONENT);
+ComponentId::add(LaminimComponentId::HttpRequestLog->value, LktHttpRequestLog::COMPONENT);
+ComponentId::add(LaminimComponentId::Menu->value, LktMenu::COMPONENT);
+ComponentId::add(LaminimComponentId::MenuEntry->value, LktMenuEntry::COMPONENT);
+ComponentId::add(LaminimComponentId::PendingMailing->value, LktPendingMail::COMPONENT);
+ComponentId::add(LaminimComponentId::ShoppingOrder->value, LktShoppingOrder::COMPONENT);
+ComponentId::add(LaminimComponentId::ShoppingOrderItem->value, LktShoppingOrderItem::COMPONENT);
+ComponentId::add(LaminimComponentId::ShoppingOrderPayment->value, LktShoppingOrderPayment::COMPONENT);
+ComponentId::add(LaminimComponentId::ShoppingOrderStatusLog->value, LktShoppingOrderStatusLog::COMPONENT);
+ComponentId::add(LaminimComponentId::Translation->value, LktTranslation::COMPONENT);
+ComponentId::add(LaminimComponentId::WebElement->value, LktWebElement::COMPONENT);
+ComponentId::add(LaminimComponentId::WebPage->value, LktWebPage::COMPONENT);
+ComponentId::add(LaminimComponentId::WebPageCategory->value, LktWebPageCategory::COMPONENT);
+ComponentId::add(LaminimComponentId::WebPageMeta->value, LktWebPageMetas::COMPONENT);

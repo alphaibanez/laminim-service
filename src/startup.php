@@ -36,6 +36,7 @@ requireFiles([
 
     // Load Factory Schemas
     __DIR__ . '/Config/Schemas/*.php',
+    __DIR__ . '/Config/component-ids.php',
     __DIR__ . '/WebPages/functions/*.php',
     __DIR__ . '/Mailing/functions.php',
 ]);

@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
+use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 
@@ -44,7 +46,8 @@ class UpdatedRelatedDataProcessor
                 $dynamicComponentField = $this->schema->getField($dynamicComponentFieldName);
                 $getter = $dynamicComponentField->getGetterForPrimitiveValue();
                 $dynamicType = $this->referrer->{$getter}();
-                if ($dynamicType !== '') $this->relatedComponent = $dynamicType;
+                if (is_numeric($dynamicType)) $this->relatedComponent = ComponentId::getComponent((int)$dynamicType);
+                elseif ($dynamicType !== '') $this->relatedComponent = $dynamicType;
             }
         }
 

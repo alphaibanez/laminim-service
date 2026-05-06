@@ -17,9 +17,7 @@ use Lkt\Shop\Enums\PaymentStatus;
 
 Schema::add(
     Schema::table('lkt_shopping_orders__payments', LktShoppingOrderPayment::COMPONENT)
-
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingOrderPayment::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
-
         ->setItemsPerPage(20)
         ->setCountableField('id')
         ->addField(IdField::define('id'))
@@ -32,11 +30,13 @@ Schema::add(
             DateTimeField::define('paidAt', 'paid_at')
                 ->setDefaultReadFormat('Y-m-d')
         )
-
-        ->addField(IntegerChoiceField::enumChoice(PaymentStatus::class, 'status'))
+        ->addField(IntegerChoiceField::enumChoice(PaymentStatus::class, 'status')->setDefaultValue(PaymentStatus::Pending->value))
         ->addField(IntegerChoiceField::enumChoice(PaymentMethod::class, 'paymentMethod', 'payment_method'))
         ->addField(ForeignKeyField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
-
-        ->addField(FloatField::define('amount'))
-        ->addField(StringField::define('transactionID', 'transaction_id'))
+        ->addField(FloatField::define('amount')->setDefaultValue(0))
+        ->addField(StringField::define('transactionID', 'transaction_id')->setDefaultValue(''))
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+            'amount' => 'label',
+        ])
 );

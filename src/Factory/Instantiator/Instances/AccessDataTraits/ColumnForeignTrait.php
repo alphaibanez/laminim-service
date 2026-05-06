@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Helpers\UpdatedRelatedDataProcessor;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
@@ -30,7 +32,8 @@ trait ColumnForeignTrait
                     $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
                     $getter = $dynamicComponentField->getGetterForPrimitiveValue();
                     $dynamicType = $this->{$getter}();
-                    if ($dynamicType !== '') $type = $dynamicType;
+                    if (is_numeric($dynamicType)) $type = ComponentId::getComponent((int)$dynamicType);
+                    elseif ($dynamicType !== '') $type = $dynamicType;
                 }
                 $id = $this->_getIntegerVal($fieldName . 'Id');
             }

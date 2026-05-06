@@ -2,7 +2,9 @@
 
 namespace Lkt\Instances;
 
-class LktShoppingOrderStatusLog
+use Lkt\Generated\GeneratedLktShoppingOrderStatusLog;
+
+class LktShoppingOrderStatusLog extends GeneratedLktShoppingOrderStatusLog
 {
     const COMPONENT = 'lkt-shopping-order-status-log';
 }

@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
@@ -31,13 +32,17 @@ class PivotField extends AbstractField
         string $pivotTable,
         string $name,
         string $column = '',
+        string|null $schemaComponent = null,
     ): static
     {
         $r = (new static($name, $column))->setComponent($component);
-        $schemaName = ['pivot', $name];
-        if ($column) $schemaName[] = $column;
-        $schemaName[] = $component;
-        $r->pivotSchema = Schema::pivotTable($pivotTable, implode('-', $schemaName))->register();
+        if (!$schemaComponent) {
+            $schemaName = ['pivot', $name];
+            if ($column) $schemaName[] = $column;
+            $schemaName[] = $component;
+            $schemaComponent = implode('-', $schemaName);
+        }
+        $r->pivotSchema = Schema::pivotTable($pivotTable, $schemaComponent)->register();
 
         return $r;
     }

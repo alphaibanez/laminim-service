@@ -2,12 +2,14 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCurrency;
@@ -37,6 +39,9 @@ Schema::add(
                 ->setCurrentTimeStampOnUpdate()
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+
+        ->addField(StringField::define('name')->setIsI18nJson())
+        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
 
         ->addField(IntegerChoiceField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global))
         ->addField(IntegerChoiceField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent))

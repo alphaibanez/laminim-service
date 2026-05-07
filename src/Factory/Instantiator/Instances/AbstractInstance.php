@@ -233,6 +233,17 @@ abstract class AbstractInstance
         return new static();
     }
 
+    /**
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
+    public static function getInstanceOrNull($id = null, array $initialData = []): static|null
+    {
+        $instance = static::getInstance($id, $initialData);
+        if ($instance->isAnonymous()) return null;
+        return $instance;
+    }
+
     public function isAnonymous(): bool
     {
         return count($this->DATA) === 0;

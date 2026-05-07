@@ -41,6 +41,7 @@ class LKtShoppingCoupons20260505181822 extends AbstractMigration
 
             ->addColumn('type', 'integer', ['default' => 0])
             ->addColumn('discount_type', 'integer', ['default' => 0])
+            ->addColumn('name', 'text', ['null' => true, 'default' => null])
             ->addColumn('value', 'decimal', ['precision' => 20, 'scale' => 3, 'default' => 0])
             ->addColumn('currency_id', 'integer', ['default' => 0])
 

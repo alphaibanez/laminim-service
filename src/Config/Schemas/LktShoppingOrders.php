@@ -54,8 +54,7 @@ Schema::add(
         ->addField(RelatedField::defineRelation(LktShoppingOrderItem::COMPONENT, 'items', 'order_id'))
         ->addField(RelatedField::defineRelation(LktShoppingOrderPayment::COMPONENT, 'payments', 'order_id'))
 
-
-        ->addField(PivotField::definePivot(LktShoppingCoupon::COMPONENT, 'lkt_shopping_orders__coupons', 'coupons', 'order_id')
+        ->addField(PivotField::definePivot(LktShoppingCoupon::COMPONENT, 'lkt_shopping_orders__coupons', 'coupons', 'order_id', LktShoppingOrderPivotCoupon::COMPONENT)
             ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
             ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupon', 'coupon_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))

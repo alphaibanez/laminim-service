@@ -5,6 +5,7 @@ namespace Lkt\Connectors\Traits\Revolut;
 use Lkt\Connectors\Enums\RevolutUrl;
 use Lkt\Connectors\RevolutResponse\ErrorResponse;
 use Lkt\Connectors\RevolutResponse\OrderResponse;
+use Lkt\Debug\VarDumper;
 
 trait OrdersTrait
 {
@@ -54,7 +55,9 @@ trait OrdersTrait
                 return new OrderResponse(json_decode($result, true));
 
             default:
-                return new ErrorResponse(json_decode($result, true));
+                $httpResponse = json_decode($result, true);
+                if (!is_array($httpResponse)) $httpResponse = [];
+                return new ErrorResponse($httpResponse);
         }
     }
 

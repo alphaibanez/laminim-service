@@ -2,7 +2,9 @@
 
 namespace Lkt\Instances;
 
-class LktMenuPivotEntry
+use Lkt\Generated\GeneratedLktMenuPivotEntry;
+
+class LktMenuPivotEntry extends GeneratedLktMenuPivotEntry
 {
     const COMPONENT = 'lkt-menu-pivot-entry';
 }

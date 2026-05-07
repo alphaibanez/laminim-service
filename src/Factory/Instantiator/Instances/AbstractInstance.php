@@ -961,7 +961,6 @@ abstract class AbstractInstance
         foreach ($params as $param => $value) {
 
             $isPivotDatumFeed = false;
-            $feedPivotField;
 
             if ($accessPolicy) {
 

@@ -34,7 +34,9 @@ trait ColumnIntegerTrait
             $fieldName => $value,
         ], false);
 
-        foreach ($converter->parse() as $key => $value) $this->UPDATED[$key] = $value;
+        foreach ($converter->parse() as $key => $value) {
+            if ($this->DATA[$key] !== $value) $this->UPDATED[$key] = $value;
+        }
         return $this;
     }
 }

@@ -30,7 +30,7 @@ trait ColumnEmailTrait
         ], false);
 
         foreach ($converter->parse() as $key => $value) {
-            $this->UPDATED[$key] = $value;
+            if ($this->DATA[$key] !== $value) $this->UPDATED[$key] = $value;
         }
         return $this;
     }

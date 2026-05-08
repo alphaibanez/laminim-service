@@ -137,6 +137,22 @@ abstract class AbstractInstance
         if ($accessPolicy instanceof AccessPolicy) {
             $this->accessPolicy = new AccessPolicyUsage(static::COMPONENT, $accessPolicy->name, $accessPolicyEndOfLife);
         } else {
+            $schema = Schema::get(static::COMPONENT);
+            $isAnonymous = $this->isAnonymous();
+            if ($accessPolicyEndOfLife === AccessPolicyEndOfLife::UntilNextWrite) {
+                $modifier = $isAnonymous ? 'mk' : 'up';
+                if ($schema->hasAccessPolicy("{$modifier}:$accessPolicy")) {
+                    $accessPolicy = "{$modifier}:$accessPolicy";
+
+                } elseif ($schema->hasAccessPolicy("w:$accessPolicy")) {
+                    $accessPolicy = "w:$accessPolicy";
+                }
+            } elseif ($accessPolicyEndOfLife === AccessPolicyEndOfLife::UntilNextRead) {
+                if ($schema->hasAccessPolicy("r:$accessPolicy")) {
+                    $accessPolicy = "r:$accessPolicy";
+                }
+            }
+
             $this->accessPolicy = new AccessPolicyUsage(static::COMPONENT, $accessPolicy, $accessPolicyEndOfLife);
         }
         return $this;
@@ -495,6 +511,7 @@ abstract class AbstractInstance
                 $relatedSchema = Schema::get($relatedComponent);
 
                 $relatedIdColumn = $relatedSchema->getIdColumn()[0];
+                /** @var AbstractInstance $relatedClass */
                 $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
                 $relatedMode = false;
@@ -546,6 +563,9 @@ abstract class AbstractInstance
                     }
                 }
 
+                $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+                if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';
+
 
                 // Update or create
                 foreach ($data as $datum) {
@@ -555,12 +575,14 @@ abstract class AbstractInstance
 
                     if ($datum[$relatedIdColumn] > 0) {
                         $ins = $relatedClass::getInstance($datum[$relatedIdColumn]);
+                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
+                        $ins->autoUpdate($datum);
+
                     } else {
                         $ins = $relatedClass::getInstance();
+                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
+                        $ins->autoCreate($datum);
                     }
-
-                    $ins::feedInstance($ins, $datum);
-                    $ins->save();
 
                     if ($foreignKeysMode) $foreignKeysIds[] = $ins->getId();
                 }

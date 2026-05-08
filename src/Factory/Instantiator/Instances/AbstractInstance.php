@@ -563,7 +563,9 @@ abstract class AbstractInstance
                     }
                 }
 
-                $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+                if ($this->accessPolicy->name) {
+                    $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+                }
                 if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';
 
 

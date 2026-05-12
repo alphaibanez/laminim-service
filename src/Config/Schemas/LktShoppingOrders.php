@@ -33,18 +33,18 @@ Schema::add(
         ->addField(IdField::define('id'))
         ->addField(
             DateTimeField::define('createdAt', 'created_at')
-                ->setDefaultReadFormat('Y-m-d')
+                ->setDefaultReadFormat('Y-m-d H:i:s')
                 ->setCurrentTimeStampAsDefaultValue()
         )
         ->addField(
             DateTimeField::define('updatedAt', 'updated_at')
-                ->setDefaultReadFormat('Y-m-d')
+                ->setDefaultReadFormat('Y-m-d H:i:s')
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
 
         ->addField(IntegerChoiceField::enumChoice(OrderStatus::class, 'status')->setDefaultValue(OrderStatus::Pending))
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
         ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
         ->addField(FloatField::define('subTotal', 'subtotal')->setDefaultValue(0))
         ->addField(FloatField::define('taxTotal', 'tax_total')->setDefaultValue(0))

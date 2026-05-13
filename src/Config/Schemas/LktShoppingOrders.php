@@ -60,4 +60,9 @@ Schema::add(
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
+
+        ->addAccessPolicy('admin', [
+            'id', 'createdAt', 'status', 'user',
+            'total'
+        ])
 );

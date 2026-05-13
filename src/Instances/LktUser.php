@@ -266,6 +266,11 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         return LktAccessToken::createIdentifierAccessToken($this, $expiresAt);
     }
 
+    public function getActiveIdentifierAccessToken(\DateTime $expiresAt): LktAccessToken
+    {
+        return LktAccessToken::getActiveIdentifierAccessToken($this, $expiresAt);
+    }
+
     public function revokeIdentifierAccessToken(): static
     {
         $accessToken = LktAccessToken::fromUser($this, AccessTokenPurpose::Identifier);

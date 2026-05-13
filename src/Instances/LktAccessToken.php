@@ -88,4 +88,28 @@ class LktAccessToken extends GeneratedLktAccessToken
             ->setDuration(AccessTokenDuration::Temporary->value)
             ->save();
     }
+
+    public static function getActiveIdentifierAccessToken(LktUser $user, \DateTime $expiresAt): static
+    {
+        $previousToken = static::getOne(
+            static::getQueryCaller()
+                ->andUserEqual($user->getId())
+                ->andPurposeEqual(AccessTokenPurpose::Identifier->value)
+                ->andDurationEqual(AccessTokenDuration::Temporary->value)
+        );
+
+        if ($previousToken) {
+            return $previousToken
+                ->setExpiresAt($expiresAt)
+                ->save();
+        }
+
+        return static::getInstance()
+            ->setUserId($user->getId())
+            ->setToken(static::mkToken())
+            ->setExpiresAt($expiresAt)
+            ->setPurpose(AccessTokenPurpose::Identifier->value)
+            ->setDuration(AccessTokenDuration::Temporary->value)
+            ->save();
+    }
 }

@@ -7,6 +7,7 @@ use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -47,6 +48,7 @@ Schema::add(
         ->addField(StringField::define('clientOS', 'client_os'))
         ->addField(StringField::define('clientBrowser', 'client_browser'))
         ->addField(StringField::define('clientBrowserVersion', 'client_browser_version'))
+        ->addField(MethodGetterField::define('getFormattedPayload', 'getFormattedPayload'))
 
         ->addAccessPolicy('app', [
             'route',
@@ -57,11 +59,12 @@ Schema::add(
         ])
 
         ->addAccessPolicy('admin', [
+            'id',
+            'createdAt',
             'route',
             'method',
             'responseStatus',
-            'payload',
-            'request',
+            'getFormattedPayload' => 'payload',
         ])
         ->addAccessPolicy('create', [
             'id',

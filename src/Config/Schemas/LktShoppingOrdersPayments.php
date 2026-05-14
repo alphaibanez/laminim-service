@@ -38,5 +38,12 @@ Schema::add(
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'amount' => 'label',
+            'id',
+            'createdAt',
+            'paidAt',
+            'status',
+            'paymentMethod',
+            'amount',
+            'transactionID',
         ])
 );

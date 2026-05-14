@@ -11,4 +11,13 @@ enum WebItemAction: string
     case Update = 'up';
     case Duplicate = 'dup';
     case Drop = 'rm';
+
+    public static function readOnly(): array
+    {
+        return [
+            WebItemAction::List,
+            WebItemAction::Page,
+            WebItemAction::Read,
+        ];
+    }
 }

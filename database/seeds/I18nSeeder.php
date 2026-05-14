@@ -329,6 +329,14 @@ class I18nSeeder extends AbstractSeed
             'es' => 'URLs',
             'en' => 'URLs',
         ], $parentId);
+        LktTranslation::createIfMissing('shopping-order', TranslationType::Text, [
+            'es' => 'Pedidos',
+            'en' => 'Orders',
+        ], $parentId);
+        LktTranslation::createIfMissing('http-request-log', TranslationType::Text, [
+            'es' => 'HTTP Logs',
+            'en' => 'HTTP Logs',
+        ], $parentId);
 
 
         $parent = LktTranslation::createIfMissing('webItem', TranslationType::Many, []);
@@ -376,6 +384,14 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('page-slugs', TranslationType::Text, [
             'es' => 'URL',
             'en' => 'URL',
+        ], $parentId);
+        LktTranslation::createIfMissing('shopping-order', TranslationType::Text, [
+            'es' => 'Pedido',
+            'en' => 'Order',
+        ], $parentId);
+        LktTranslation::createIfMissing('http-request-log', TranslationType::Text, [
+            'es' => 'HTTP Log',
+            'en' => 'HTTP Log',
         ], $parentId);
 
         $parent = LktTranslation::createIfMissing('webPages', TranslationType::Many, []);

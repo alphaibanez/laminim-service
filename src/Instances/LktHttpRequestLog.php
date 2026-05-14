@@ -44,4 +44,10 @@ class LktHttpRequestLog extends GeneratedLktHttpRequestLog
             'clientOS' => clearInput($ua->platform()),
         ];
     }
+
+    public function getFormattedPayload(): string
+    {
+        $p = json_encode($this->getPayload());
+        return "<pre>{$p}</pre>";
+    }
 }

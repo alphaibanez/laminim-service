@@ -26,7 +26,10 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
     public function addPayment(array $payload): LktShoppingOrderPayment
     {
         $payment = LktShoppingOrderPayment::getInstance();
-        return $payment->autoCreate($payload);
+        return $payment->autoCreate([
+            ...$payload,
+            'order' => $this->getId(),
+        ]);
     }
 
     /**
@@ -38,7 +41,10 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         $items = [];
         foreach ($payload as $value) {
             $ins = LktShoppingOrderItem::getInstance();
-            $ins::feedInstance($ins, $value);
+            $ins::feedInstance($ins, [
+                ...$value,
+                'order' => $this->getId(),
+            ]);
             $items[] = $ins;
         }
 

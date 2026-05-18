@@ -250,4 +250,54 @@ trait OrdersTrait
                 return new ErrorResponse(json_decode($result, true));
         }
     }
+
+
+    /**
+     * @param string $orderId
+     * @return array|ErrorResponse|null
+     * @see https://developer.revolut.com/docs/merchant/pay-order
+     */
+    public function payForAnOrder(string $orderId, array $payload): array|ErrorResponse|null
+    {
+        $url = $this->sandbox ? RevolutUrl::SandboxMerchantAPI->value : RevolutUrl::MerchantAPI->value;
+        $url = "{$url}/api/orders/{$orderId}/payments";
+
+        $postFields = json_encode($payload);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $postFields,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Accept: application/json',
+                "Revolut-Api-Version: {$this->apiVersion->value}",
+                "Authorization: Bearer {$this->clientSecret}"
+            ],
+        ]);
+
+        $result = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        if ($curl === false) {
+            return null;
+        }
+
+        switch ($httpCode) {
+            case 200:
+            case 201:
+                return json_decode($result, true);
+
+            default:
+                return new ErrorResponse(json_decode($result, true));
+        }
+    }
 }

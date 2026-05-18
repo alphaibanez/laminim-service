@@ -256,6 +256,8 @@ trait OrdersTrait
      * @param string $orderId
      * @return array|ErrorResponse|null
      * @see https://developer.revolut.com/docs/merchant/pay-order
+     * @see https://developer.revolut.com/docs/guides/accept-payments/tutorials/save-and-charge-payment-methods/charge-saved-payment-method
+     * @see https://developer.revolut.com/docs/guides/accept-payments/tutorials/save-and-charge-payment-methods/checkout-with-saved-card#step-4-use-payments-endpoint-to-initiate-payment
      */
     public function payForAnOrder(string $orderId, array $payload): array|ErrorResponse|null
     {

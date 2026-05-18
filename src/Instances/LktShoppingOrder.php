@@ -23,6 +23,16 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         return $this;
     }
 
+    public function confirmPayment(LktShoppingOrderPayment $payment): static
+    {
+        $payment
+            ->setPaidAt(time())
+            ->setStatusCompleted()
+            ->save();
+
+        return $this;
+    }
+
     public function addPayment(array $payload): LktShoppingOrderPayment
     {
         $payment = LktShoppingOrderPayment::getInstance();

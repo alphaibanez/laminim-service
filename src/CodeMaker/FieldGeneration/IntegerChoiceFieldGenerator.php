@@ -2,6 +2,8 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Debug\VarDumper;
+
 class IntegerChoiceFieldGenerator extends AbstractFieldGenerator
 {
     public function getGetters(): string
@@ -63,7 +65,12 @@ class IntegerChoiceFieldGenerator extends AbstractFieldGenerator
             $lowerFieldMethod = lcfirst($this->data->methodName);
             foreach ($optionsMethods as $i => $option) {
 
-                $optionVal = is_int($this->data->options[$i]) ? $this->data->options[$i] : "(int){$this->data->options[$i]}";
+                $optionVal = $this->data->options[$i];
+                if (is_object($optionVal) && isset($optionVal->value)) {
+                    $optionVal = $optionVal->value;
+                } elseif (!is_int($optionVal)) {
+                    $optionVal = (int)$optionVal;
+                }
 
                 $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->_getIntegerChoiceVal('{$this->data->fieldName}') === {$optionVal}; }";
 

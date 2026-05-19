@@ -333,6 +333,10 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Pedidos',
             'en' => 'Orders',
         ], $parentId);
+        LktTranslation::createIfMissing('shopping-order-payment', TranslationType::Text, [
+            'es' => 'Pagos',
+            'en' => 'Payments',
+        ], $parentId);
         LktTranslation::createIfMissing('http-request-log', TranslationType::Text, [
             'es' => 'HTTP Logs',
             'en' => 'HTTP Logs',
@@ -388,6 +392,10 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('shopping-order', TranslationType::Text, [
             'es' => 'Pedido',
             'en' => 'Order',
+        ], $parentId);
+        LktTranslation::createIfMissing('shopping-order-payment', TranslationType::Text, [
+            'es' => 'Pago',
+            'en' => 'Payment',
         ], $parentId);
         LktTranslation::createIfMissing('http-request-log', TranslationType::Text, [
             'es' => 'HTTP Log',

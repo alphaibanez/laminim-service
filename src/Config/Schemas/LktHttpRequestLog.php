@@ -26,12 +26,12 @@ Schema::add(
         ->addField(IdField::define('id'))
         ->addField(
             DateTimeField::define('createdAt', 'created_at')
-                ->setDefaultReadFormat('Y-m-d')
+                ->setDefaultReadFormat('Y-m-d H:i:s')
                 ->setCurrentTimeStampAsDefaultValue()
         )
         ->addField(
             DateTimeField::define('updatedAt', 'updated_at')
-                ->setDefaultReadFormat('Y-m-d')
+                ->setDefaultReadFormat('Y-m-d H:i:s')
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )

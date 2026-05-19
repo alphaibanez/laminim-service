@@ -63,6 +63,10 @@ Schema::add(
 
         ->addAccessPolicy('admin', [
             'id', 'createdAt', 'status', 'user',
-            'total'
+            'total','payments'
+        ])
+
+        ->addAccessPolicy('w:admin', [
+            'id', 'status',
         ])
 );

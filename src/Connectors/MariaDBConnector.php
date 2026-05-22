@@ -4,7 +4,6 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -247,6 +246,9 @@ class MariaDBConnector extends DatabaseConnector
             elseif (strpos($value, 'COMPRESS(') === 0){
                 $r[$field] = "{$value}";
             }
+            elseif (is_null($value)){
+                $r[$field] = 'NULL';
+            }
             else {
                 $r[$field] = "'{$v}'";
             }
@@ -388,6 +390,11 @@ class MariaDBConnector extends DatabaseConnector
 
             if (array_key_exists($columnKey, $data)){
                 $value = $data[$columnKey];
+
+                if (is_null($value) && $field->isNullable()) {
+                    $parsed[$field->getColumn()] = $value;
+                    continue;
+                }
 
                 $compress = $field instanceof JSONField && $field->isCompressed();
 

@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Exception;
 use Lkt\Connectors\Cache\QueryCache;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
@@ -993,7 +992,6 @@ abstract class AbstractInstance
                         $pivotSchema = $pivotField->getPivotSchema();
                         if ($pivotSchema->hasField($param)) {
                             $isPivotDatumFeed = true;
-                            $feedPivotField = $pivotSchema->getField($param);
                             $field = $pivotField;
                         }
                     }
@@ -1014,7 +1012,6 @@ abstract class AbstractInstance
                     $pivotSchema = $pivotField->getPivotSchema();
                     if ($pivotSchema->hasField($param)) {
                         $isPivotDatumFeed = true;
-                        $feedPivotField = $pivotSchema->getField($param);
                         $field = $pivotField;
                     }
                 }
@@ -1537,7 +1534,7 @@ abstract class AbstractInstance
 //        if (count($args) < count($params)) return false;
 
         foreach ($params as $param) {
-            if (!$param->isOptional() && !isset($args[$param->getName()])) return false;
+            if (!$param->isOptional() && !array_key_exists($param->getName(), $args)) return false;
         }
         return true;
     }

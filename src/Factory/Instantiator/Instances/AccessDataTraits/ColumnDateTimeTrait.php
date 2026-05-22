@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Carbon\Carbon;
 use DateTime;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 
 trait ColumnDateTimeTrait
@@ -70,22 +71,22 @@ trait ColumnDateTimeTrait
      */
     protected function _setDateTimeVal(string $fieldName, Carbon|DateTime|int|string|null $value = null): static
     {
-        $raeValueToConvert = null;
+        $rawValueToConvert = null;
         if ($value instanceof Carbon) {
-            $raeValueToConvert = $value->format('Y-m-d H:i:s');
+            $rawValueToConvert = $value->format('Y-m-d H:i:s');
 
         } elseif ($value instanceof DateTime) {
-            $raeValueToConvert = $value->format('Y-m-d H:i:s');
+            $rawValueToConvert = $value->format('Y-m-d H:i:s');
 
         } elseif (is_string($value)) {
-            $raeValueToConvert = $value;
+            $rawValueToConvert = $value;
 
         } elseif (is_int($value)) {
-            $raeValueToConvert = date('Y-m-d H:i:s', $value);
+            $rawValueToConvert = date('Y-m-d H:i:s', $value);
         }
 
         $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-            $fieldName => $raeValueToConvert,
+            $fieldName => $rawValueToConvert,
         ], false);
 
         foreach ($converter->parse() as $key => $value) {

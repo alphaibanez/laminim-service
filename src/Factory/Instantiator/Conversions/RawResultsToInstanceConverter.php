@@ -68,15 +68,15 @@ final class RawResultsToInstanceConverter
                 $storeKey .= 'Id';
 
                 // Fix: parse foreign key integer datum while updating data
-                if (!isset($data[$searchKey]) && isset($data[$storeKey])) {
+                if (!array_key_exists($searchKey, $data) && array_key_exists($storeKey, $data) ) {
                     $searchKey = $storeKey;
                 }
             }
 
-            $originalValue = isset($data[$searchKey]) ? $data[$searchKey] : null;
+            $originalValue = array_key_exists($searchKey, $data) ? $data[$searchKey] : null;
             $value = ParseFieldValue::parse($field, $originalValue, $this->instance);
 
-            if ($allFields || isset($data[$searchKey])) {
+            if ($allFields || array_key_exists($searchKey, $data)) {
                 $result[$storeKey] = $value;
 
                 if ($field instanceof FileField) {

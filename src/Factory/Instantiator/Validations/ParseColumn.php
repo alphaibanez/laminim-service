@@ -3,11 +3,10 @@
 namespace Lkt\Factory\Instantiator\Validations;
 
 use Carbon\Carbon;
-use Lkt\Debug\VarDumper;
-use Lkt\FileReader\Directory;
-use Lkt\FileReader\File;
 use Lkt\Factory\Instantiator\SystemConnections\FileSystemConnection;
 use Lkt\Factory\Schemas\Fields\FileField;
+use Lkt\FileReader\Directory;
+use Lkt\FileReader\File;
 use Lkt\Locale\Locale;
 
 class ParseColumn
@@ -167,9 +166,7 @@ class ParseColumn
     public static function dateTimeDatum($value): ?Carbon
     {
         if (is_null($value)) {
-            $value = '';
-        } else {
-            $value = trim($value);
+            return null;
         }
         if ($value === '') return null;
 

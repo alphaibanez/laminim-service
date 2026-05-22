@@ -73,6 +73,7 @@ final class RawResultsToInstanceConverter
                 }
             }
 
+            // Use array_key_exists over isset because if value is null, isset returns a false positive
             $originalValue = array_key_exists($searchKey, $data) ? $data[$searchKey] : null;
             $value = ParseFieldValue::parse($field, $originalValue, $this->instance);
 

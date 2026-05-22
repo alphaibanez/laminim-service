@@ -1534,6 +1534,7 @@ abstract class AbstractInstance
 //        if (count($args) < count($params)) return false;
 
         foreach ($params as $param) {
+            // Use array_key_exists over isset because if value is null, isset returns a false positive
             if (!$param->isOptional() && !array_key_exists($param->getName(), $args)) return false;
         }
         return true;

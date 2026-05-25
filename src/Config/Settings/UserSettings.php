@@ -15,4 +15,10 @@ class UserSettings
      *  - dynamic
      */
     public static UserAuthenticationMode $authMode = UserAuthenticationMode::Dynamic;
+
+    /**
+     * @laminim
+     * Configure password secure seed
+     */
+    public static string $passwordSecureSeed = 'changeMe123$';
 }

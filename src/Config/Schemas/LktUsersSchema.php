@@ -2,10 +2,12 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Config\Settings\UserSettings;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
+use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
@@ -45,7 +47,7 @@ Schema::add(
         ->addField(ConcatField::concat('fullName', ['firstName', 'lastName'], ' '))
         ->addField(ConcatField::concat('name', ['firstName', 'lastName'], ' '))
         ->addField(EmailField::define('email'))
-        ->addField(StringField::define('password'))
+        ->addField(EncryptField::sha256Hash(UserSettings::$passwordSecureSeed, 'password'))
         ->addField(StringField::define('preferredLanguage', 'preferred_language')->setDefaultValue(function () {
             return trim(Locale::getLangCode());
         }))

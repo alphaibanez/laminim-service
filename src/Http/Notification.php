@@ -113,6 +113,13 @@ class Notification
         return $instance;
     }
 
+    public static function sendUpdateApp(): static
+    {
+        $instance = new static( NotificationCategory::UpdateApp, []);
+        Router::addPendingNotification($instance);
+        return $instance;
+    }
+
     public function toArray(): array
     {
         $payload = [];

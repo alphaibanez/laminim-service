@@ -853,6 +853,10 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Subir',
             'en' => 'Upload',
         ], $parentId);
+        LktTranslation::createIfMissing('updateApp', TranslationType::Text, [
+            'es' => 'Actualizar app',
+            'en' => 'Update app',
+        ], $parentId);
 
         $parent = LktTranslation::createIfMissing('fileEntityType', TranslationType::Many, []);
         $parentId = $parent->getId();

@@ -895,5 +895,20 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Cancelado',
             'en' => 'Cancelled',
         ], $parentId);
+
+        $parent = LktTranslation::createIfMissing('shoppingOrderPaymentStatusOptions', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Pendiente',
+            'en' => 'Pending',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Completado',
+            'en' => 'Finished',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Fallido',
+            'en' => 'Failed',
+        ], $parentId);
     }
 }

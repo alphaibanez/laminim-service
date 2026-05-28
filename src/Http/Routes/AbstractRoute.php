@@ -24,6 +24,9 @@ abstract class AbstractRoute
     protected string $targetComponent = '';
     protected bool $targetIsLoggedUser = false;
     protected TargetAccessPolicy $targetAccessPolicy;
+
+    /** @var TargetAccessPolicy[] */
+    protected array $targetAccessPolicyAttempts = [];
     protected string $extractIdColumnValueFromParamsKey = '';
     protected string $extractPageFromParamsKey = '';
     protected string $extractWebItemFromParamsKey = '';
@@ -113,6 +116,29 @@ abstract class AbstractRoute
         if (is_string($accessPolicy)) $accessPolicy = TargetAccessPolicy::simple($accessPolicy);
         $this->targetAccessPolicy = $accessPolicy;
         return $this;
+    }
+
+    public function setTargetAccessPolicyAttempts(string|TargetAccessPolicy|array $accessPolicies): static
+    {
+        if (is_array($accessPolicies)) {
+            $t = [];
+            foreach ($accessPolicies as $accessPolicy) {
+                if (is_string($accessPolicy)) $t[] = TargetAccessPolicy::simple($accessPolicy);
+                else $t[] = $accessPolicy;
+            }
+            $accessPolicies = $t;
+
+        }
+        elseif (is_string($accessPolicies)) $accessPolicies = [TargetAccessPolicy::simple($accessPolicies)];
+        elseif ($accessPolicies instanceof TargetAccessPolicy) $accessPolicies = [$accessPolicies];
+
+        $this->targetAccessPolicyAttempts = $accessPolicies;
+        return $this;
+    }
+
+    public function getTargetAccessPolicyAttempts(): array
+    {
+        return $this->targetAccessPolicyAttempts;
     }
 
     public function setGrantedPermsAttempt(array|GrantedPermsAttempt $perms): static

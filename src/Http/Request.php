@@ -22,6 +22,9 @@ class Request
     readonly public AccessLevel $accessLevel;
     readonly public string $targetComponent;
     readonly public TargetAccessPolicy $targetAccessPolicy;
+
+    /** @var TargetAccessPolicy[] */
+    protected array $targetAccessPolicyAttempts;
     readonly public GrantedPermsAttempt $attemptToGrantPerms;
     readonly public string $extractedTargetInstanceIdFromParamsKey;
     readonly public WebItem|null $targetWebItem;
@@ -87,6 +90,7 @@ class Request
             $this->targetWebItem = null;
         }
 
+        $this->targetAccessPolicyAttempts = $route->getTargetAccessPolicyAttempts();
         $this->targetAccessPolicy = $route->getTargetAccessPolicy();
         $this->attemptToGrantPerms = $route->getGrantedPermsAttempt();
 
@@ -183,20 +187,51 @@ class Request
 
     public function getTargetAccessPolicy(WebItemAction $webItemAction): string|Response
     {
+        $policy = null;
+
+        if (count($this->targetAccessPolicyAttempts) > 0 && $this->targetComponent) {
+            $schema = Schema::get($this->targetComponent);
+            foreach ($this->targetAccessPolicyAttempts as $policyAttempt) {
+                $key = '';
+                switch ($policyAttempt->type) {
+                    case 'simple':
+                        $key = $policyAttempt->public;
+                        break;
+
+                    case 'per-access-level':
+                        if ($this->accessLevel === AccessLevel::OnlyAdminUsers) {
+                            $key = $policyAttempt->admin;
+                        } else if ($this->accessLevel === AccessLevel::OnlyLoggedUsers) {
+                            $key = $policyAttempt->logged;
+                        } else {
+                            $key = $policyAttempt->public;
+                        }
+                        break;
+                }
+
+                if ($schema->hasAccessPolicy($key)) {
+                    $policy = $policyAttempt;
+                    break;
+                }
+            }
+        }
+
+        if (!$policy) $policy = $this->targetAccessPolicy;
+
         $accessPolicy = '';
 
-        switch ($this->targetAccessPolicy->type) {
+        switch ($policy->type) {
             case 'simple':
-                $accessPolicy = $this->targetAccessPolicy->public;
+                $accessPolicy = $policy->public;
                 break;
 
             case 'per-access-level':
                 if ($this->accessLevel === AccessLevel::OnlyAdminUsers) {
-                    $accessPolicy = $this->targetAccessPolicy->admin;
+                    $accessPolicy = $policy->admin;
                 } else if ($this->accessLevel === AccessLevel::OnlyLoggedUsers) {
-                    $accessPolicy = $this->targetAccessPolicy->logged;
+                    $accessPolicy = $policy->logged;
                 } else {
-                    $accessPolicy = $this->targetAccessPolicy->public;
+                    $accessPolicy = $policy->public;
                 }
                 break;
         }

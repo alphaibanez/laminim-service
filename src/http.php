@@ -18,19 +18,22 @@ use Lkt\WebPages\Http\LktWebPageHttp;
 GetRoute::admin('/admin-api/ls/{component}', BasicHttpHandler::List)
     ->setWebItemValueParamsExtractionKey('component')
     ->setRequiredPermissions(['ls'])
-    ->setGrantedPermsAttempt(['mk' => 'create']);
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+    ->setTargetAccessPolicyAttempts('admin-ls');
 
 GetRoute::admin('/admin-api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
-    ->setGrantedPermsAttempt(['mk' => 'create']);
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+    ->setTargetAccessPolicyAttempts(['admin-pg', 'admin-ls']);
 
 GetRoute::admin('/admin-api/opts-{page:\d+}/{component}', BasicHttpHandler::Page)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
-    ->setTargetAccessPolicy('lkt-related');
+    ->setTargetAccessPolicy('lkt-related')
+    ->setTargetAccessPolicyAttempts(['admin-opt', 'admin-pg', 'admin-ls']);
 
 GetRoute::admin('/admin-api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')

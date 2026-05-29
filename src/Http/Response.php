@@ -2,6 +2,7 @@
 
 namespace Lkt\Http;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Http\Traits\ContentTypeTrait;
 use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
@@ -20,6 +21,8 @@ class Response
     protected string $headerContentDisposition = '';
 
     protected bool $sendCacheFlag = false;
+
+    protected array $customHeaders = [];
 
     public function __construct(int $code = 1, array|string|BaseWriter $responseData = [])
     {
@@ -153,6 +156,12 @@ class Response
             ->setExpiresHeaderToOneYear();
     }
 
+    public function setCustomHeaders(array $headers): static
+    {
+        $this->customHeaders = $headers;
+        return $this;
+    }
+
     public function sendHeaders(): static
     {
         $this->sendStatusHeader();
@@ -180,6 +189,10 @@ class Response
 
         if ($this->code === -1 || $this->code === 301 || $this->code === 302 || $this->code === 303) {
             header('Location: ' . $this->responseData);
+        }
+
+        foreach ($this->customHeaders as $header => $value) {
+            header("{$header}: {$value}");
         }
 
         return $this;

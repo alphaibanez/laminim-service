@@ -213,12 +213,10 @@ trait CustomerTrait
      * @return ErrorResponse|null
      * @see https://developer.revolut.com/docs/merchant/delete-customer
      */
-    public function deleteCustomer(string $customerId, array $payload): ErrorResponse|bool
+    public function deleteCustomer(string $customerId): ErrorResponse|bool
     {
         $url = $this->sandbox ? RevolutUrl::SandboxMerchantAPI->value : RevolutUrl::MerchantAPI->value;
         $url = "{$url}/api/1.0/customers/{$customerId}";
-
-        $postFields = json_encode($payload);
 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -230,7 +228,6 @@ trait CustomerTrait
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'DELETE',
-            CURLOPT_POSTFIELDS => $postFields,
             CURLOPT_HTTPHEADER => [
                 "Revolut-Api-Version: {$this->apiVersion->value}",
                 "Authorization: Bearer {$this->clientSecret}"

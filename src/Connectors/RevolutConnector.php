@@ -5,18 +5,20 @@ namespace Lkt\Connectors;
 use Lkt\Connectors\Enums\RevolutApiVersion;
 use Lkt\Connectors\Traits\Revolut\CustomerTrait;
 use Lkt\Connectors\Traits\Revolut\OrdersTrait;
+use Lkt\Connectors\Traits\Revolut\PaymentTrait;
 use Lkt\Connectors\Traits\Revolut\WebhookTrait;
 
 class RevolutConnector
 {
     use OrdersTrait,
         CustomerTrait,
-        WebhookTrait;
+        WebhookTrait,
+        PaymentTrait;
 
     protected string $clientId = '';
     protected string $clientSecret = '';
 
-    protected RevolutApiVersion $apiVersion = RevolutApiVersion::V_2025_10_16;
+    protected RevolutApiVersion $apiVersion = RevolutApiVersion::V_2026_04_20;
 
     protected bool $sandbox = false;
 

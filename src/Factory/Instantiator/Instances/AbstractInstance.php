@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Exception;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
@@ -560,6 +561,20 @@ abstract class AbstractInstance
                             $relatedForeignKeyKey .= 'Id';
                         }
                     }
+
+                } elseif ($foreignKeysMode) {
+
+                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
+                    if ($relatedForeignKeyColumn instanceof RelatedKeysField) {
+                        $relatedForeignKeyKey = $relatedForeignKeyColumn?->getAppendForeignKeysName();
+                        if (!$relatedForeignKeyKey) $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
+
+                        if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
+                            if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
+                                $relatedForeignKeyKey .= 'Id';
+                            }
+                        }
+                    }
                 }
 
                 if ($this->accessPolicy->name) {
@@ -570,7 +585,10 @@ abstract class AbstractInstance
 
                 // Update or create
                 foreach ($data as $datum) {
-                    if ($relatedMode && !$datum[$relatedForeignKeyKey]) {
+                    if ($relatedMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
+                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
+                    }
+                    elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
                         $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
                     }
 

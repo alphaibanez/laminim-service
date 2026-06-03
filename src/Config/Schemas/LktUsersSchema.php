@@ -11,9 +11,11 @@ use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Instances\LktShoppingCoupon;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktUserRole;
 use Lkt\Locale\Locale;
@@ -59,6 +61,8 @@ Schema::add(
         ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
         ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))
 
+        ->addField(RelatedField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupons', 'user_id'))
+
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'fullName' => 'label',
@@ -79,6 +83,7 @@ Schema::add(
             'adminRoles',
             'canReceivePushNotifications',
             'canReceiveMailNotifications',
+            'coupons',
         ])
 
         ->addAccessPolicy('create', [

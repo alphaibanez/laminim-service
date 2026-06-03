@@ -51,4 +51,12 @@ Schema::add(
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id'))
         ->addField(IntegerChoiceField::enumChoice(UserStatus::class, 'userStatus', 'user_status')
             ->setDefaultValue(UserStatus::Undefined->value))
+
+        ->addAccessPolicy('sign-in-history', [
+            'id',
+            'createdAt',
+            'clientOS',
+            'clientBrowser',
+            'clientBrowserVersion',
+        ])
 );

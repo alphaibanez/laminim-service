@@ -1283,9 +1283,9 @@ final class Schema
         });
     }
 
-    public function runWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook, array $handlerArgs): Response|null
+    public function runWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook, array $handlerArgs, array|null $customHooks = null): Response|null
     {
-        $hooks = $this->getWebItemActionHookHandlers($action, $hook);
+        $hooks = is_null($customHooks) ? $this->getWebItemActionHookHandlers($action, $hook) : $customHooks;
         foreach ($hooks as $hook) {
 
             $args = $handlerArgs;

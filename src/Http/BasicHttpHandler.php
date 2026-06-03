@@ -239,6 +239,15 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
+        // Custom route hooks
+        $customRouteHooks = $request->route->getWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
+            'query' => $builder,
+            'request' => $request,
+        ], $customRouteHooks);
+
+        if ($hookHandlerResponse) return $hookHandlerResponse;
+
         $rawResults = $helperInstance::getPage($request->page, $builder);
         $batchActions = $helperInstance::getBatchActions($rawResults);
         $results = $batchActions->read($accessPolicy);

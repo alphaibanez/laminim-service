@@ -42,7 +42,7 @@ class Request
 
     public function __construct(
         readonly public array       $params = [],
-        AbstractRoute $route,
+        readonly public AbstractRoute $route,
         bool $ensureLoggedUser = true,
     )
     {

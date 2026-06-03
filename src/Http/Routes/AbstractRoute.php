@@ -10,6 +10,9 @@ use Lkt\Http\Enums\SiteMapChangeFrequency;
 use Lkt\Http\HttpEventHandler;
 use Lkt\Http\Router;
 use Lkt\Http\SiteMap\SiteMapConfig;
+use Lkt\WebItems\Enums\WebItemAction;
+use Lkt\WebItems\Enums\WebItemActionHook;
+use Lkt\WebItems\WebItemActionHookHandler;
 
 abstract class AbstractRoute
 {
@@ -44,6 +47,11 @@ abstract class AbstractRoute
     protected array $httpEventHandlers = [];
 
     protected bool $logRoute = false;
+
+    /**
+     * @var WebItemActionHookHandler[]
+     */
+    protected array $webItemActionHookHandlers = [];
 
     public function __construct(string $route, callable $handler)
     {
@@ -280,6 +288,24 @@ abstract class AbstractRoute
     public function getAccessCheckers(): array
     {
         return $this->accessCheckers;
+    }
+
+    public function addWebItemActionHookHandler(WebItemActionHookHandler $handler): static
+    {
+        $this->webItemActionHookHandlers[] = $handler;
+        return $this;
+    }
+
+    /**
+     * @param WebItemAction $action
+     * @param WebItemActionHook $hook
+     * @return WebItemActionHookHandler[]
+     */
+    public function getWebItemActionHookHandlers(WebItemAction $action, WebItemActionHook $hook): array
+    {
+        return array_filter($this->webItemActionHookHandlers, function (WebItemActionHookHandler $handler) use ($action, $hook) {
+            return $handler->action === $action && $handler->hook === $hook;
+        });
     }
 
     public function addToSiteMap(string|SiteMapChangeFrequency $changeFrequency = SiteMapChangeFrequency::Never, float $priority = 0.0): static

@@ -46,6 +46,8 @@ Schema::add(
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
 
+        ->addField(StringField::define('code'))
+
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
 
@@ -69,4 +71,50 @@ Schema::add(
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
+
+    ->setRelatedAccessPolicy([
+        'id' => 'value',
+        'id',
+        'createdAt',
+        'nameData',
+        'code',
+    ])
+
+    ->addAccessPolicy('admin', [
+        'id',
+        'createdAt',
+        'creator',
+        'nameData',
+        'code',
+        'type',
+        'discountType',
+        'value',
+        'currency',
+        'startsAt',
+        'endsAt',
+        'usageLimit',
+        'usageLimitPerUser',
+        'minimumOrderAmount',
+        'isActive',
+        'stackable',
+    ])
+
+    ->addAccessPolicy('redeem', [
+        'id',
+        'createdAt',
+        'creator' => 'owner',
+        'name',
+        'code',
+        'type',
+        'discountType',
+        'value',
+        'currency',
+        'startsAt',
+        'endsAt',
+        'usageLimit',
+        'usageLimitPerUser',
+        'minimumOrderAmount',
+        'isActive',
+        'stackable',
+    ])
 );

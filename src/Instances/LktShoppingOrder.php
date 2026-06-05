@@ -63,4 +63,55 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
 
         return $items;
     }
+
+    public function applyCoupon(LktShoppingCoupon $coupon): bool
+    {
+        $currentCoupons = $this->getCoupons();
+        $needle = $coupon->getId();
+        foreach ($currentCoupons as $currentCoupon) if ($currentCoupon->getId() === $needle) return false;
+
+
+        $this->linkPivot(LktShoppingOrderPivotCoupon::COMPONENT, $coupon->getId());
+        return true;
+    }
+
+    public function reCalc(): static
+    {
+        $total = $this->getSubTotal();
+        $discount = 0;
+
+        $coupons = $this->getCoupons();
+        $nonAccumulativeCoupons = array_filter($coupons, function (LktShoppingCoupon $c) {
+            return $c->stackable();
+        });
+
+        // If there isn't any non stackable coupon,
+        // then do accumulative discount
+        if (count($nonAccumulativeCoupons) === 0) {
+
+            // Sort coupons in order to apply first the fixed quantity discount
+            usort($coupons, function (LktShoppingCoupon $a, LktShoppingCoupon $b) {
+                if ($a->discountTypeIsFixed() && !$b->discountTypeIsFixed()) return -1;
+                if (!$a->discountTypeIsFixed() && $b->discountTypeIsFixed()) return 1;
+                return 0;
+            });
+
+            foreach ($coupons as $coupon) {
+                $discount += $coupon->getDiscount($total);
+                $total -= $discount;
+            }
+
+        // Apply only the first non stackable coupon
+        } else {
+            reset($nonAccumulativeCoupons);
+            $coupon = $nonAccumulativeCoupons[0];
+            $discount += $coupon->getDiscount($total);
+            $total -= $discount;
+        }
+
+        return $this
+            ->setTotal($total)
+            ->setDiscountTotal($discount)
+            ->save();
+    }
 }

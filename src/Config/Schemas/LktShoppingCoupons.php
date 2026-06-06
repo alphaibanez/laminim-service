@@ -57,8 +57,8 @@ Schema::add(
         ->addField(FloatField::define('value', 'value')->setDefaultValue(0))
         ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
 
-        ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s'))
-        ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s'))
+        ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
+        ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
 
         ->addField(FloatField::define('usageLimit', 'usage_limit')->setDefaultValue(0))
         ->addField(FloatField::define('usageLimitPerUser', 'usage_limit_per_user')->setDefaultValue(0))

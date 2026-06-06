@@ -19,14 +19,24 @@ class LktShoppingCoupon extends GeneratedLktShoppingCoupon
         return $price * ($value/100);
     }
 
-    public static function findActiveCode(string $code)
+    public static function findActiveCode(string $code): static|null
     {
         $query = static::getQueryCaller()
             ->andIsActiveIsTrue()
             ->andCodeEqual($code)
         ;
 
-//        $timeStartConstraint = LktShoppingCouponWhere::startsAt();
+        $now = date('Y-m-d H:i:s');
+
+        $timeStartConstraint = LktShoppingCouponWhere::startsAtIsNull()
+            ->orStartsAtGreaterOrEqualThan($now);
+
+        $timeEndConstraint = LktShoppingCouponWhere::endsAtIsNull()
+            ->orEndsAtLowerOrEqualThan($now);
+
+        $query
+            ->andWhere($timeStartConstraint)
+            ->andWhere($timeEndConstraint);
 
 
         return static::getOne($query);

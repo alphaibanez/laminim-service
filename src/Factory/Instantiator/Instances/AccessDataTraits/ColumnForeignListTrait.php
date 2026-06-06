@@ -150,7 +150,16 @@ trait ColumnForeignListTrait
             $fieldName => $value,
         ], false);
 
-        $this->UPDATED = $this->UPDATED + $converter->parse();
+        $parsed = $converter->parse();
+
+        // Infinite loop avoid
+        $instanceId = $this->getIdColumnValue();
+        $index = array_search($instanceId, $parsed[$fieldName]);
+        if ($index !== false) {
+            unset($parsed[$fieldName][$index]);
+        }
+
+        $this->UPDATED = $this->UPDATED + $parsed;
         return $this;
     }
 

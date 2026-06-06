@@ -101,6 +101,23 @@ Schema::add(
         'stackable',
     ])
 
+    ->addAccessPolicy('w:admin', [
+        'owner',
+        'nameData',
+        'code',
+        'type',
+        'discountType',
+        'value',
+        'currency',
+        'startsAt',
+        'endsAt',
+        'usageLimit',
+        'usageLimitPerUser',
+        'minimumOrderAmount',
+        'isActive',
+        'stackable',
+    ])
+
     ->addAccessPolicy('admin-opt', [
         'id' => 'value',
         'id',

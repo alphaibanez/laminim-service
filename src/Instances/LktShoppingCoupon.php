@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktShoppingCoupon;
+use Lkt\Generated\LktShoppingCouponWhere;
 
 class LktShoppingCoupon extends GeneratedLktShoppingCoupon
 {
@@ -20,6 +21,14 @@ class LktShoppingCoupon extends GeneratedLktShoppingCoupon
 
     public static function findActiveCode(string $code)
     {
+        $query = static::getQueryCaller()
+            ->andIsActiveIsTrue()
+            ->andCodeEqual($code)
+        ;
 
+//        $timeStartConstraint = LktShoppingCouponWhere::startsAt();
+
+
+        return static::getOne($query);
     }
 }

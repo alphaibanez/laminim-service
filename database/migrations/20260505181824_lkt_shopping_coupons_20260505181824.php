@@ -36,6 +36,7 @@ class LKtShoppingCoupons20260505181824 extends AbstractMigration
 
         $table
             ->addColumn('code', 'string', ['limit' => 16, 'default' => ''])
+            ->addColumn('owned_by', 'integer', ['default' => 0])
         ;
 
         $table->addIndex(['code']);

@@ -17,4 +17,9 @@ class LktShoppingCoupon extends GeneratedLktShoppingCoupon
 
         return $price * ($value/100);
     }
+
+    public static function findActiveCode(string $code)
+    {
+
+    }
 }

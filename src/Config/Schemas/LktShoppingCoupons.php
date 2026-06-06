@@ -30,7 +30,7 @@ Schema::add(
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
 
         ->setItemsPerPage(20)
-        ->setOwnershipField('creator')
+        ->setOwnershipField('owner')
         ->setCountableField('id')
         ->addField(IdField::define('id'))
         ->addField(
@@ -44,9 +44,10 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'owner', 'owned_by')->setOnReadIncludeOptions())
 
-        ->addField(StringField::define('code'))
+        ->addField(StringField::define('code')->setIsUnique())
 
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
@@ -56,8 +57,8 @@ Schema::add(
         ->addField(FloatField::define('value', 'value')->setDefaultValue(0))
         ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
 
-        ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d'))
-        ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d'))
+        ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s'))
+        ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s'))
 
         ->addField(FloatField::define('usageLimit', 'usage_limit')->setDefaultValue(0))
         ->addField(FloatField::define('usageLimitPerUser', 'usage_limit_per_user')->setDefaultValue(0))
@@ -84,6 +85,28 @@ Schema::add(
         'id',
         'createdAt',
         'creator',
+        'owner',
+        'nameData',
+        'code',
+        'type',
+        'discountType',
+        'value',
+        'currency',
+        'startsAt',
+        'endsAt',
+        'usageLimit',
+        'usageLimitPerUser',
+        'minimumOrderAmount',
+        'isActive',
+        'stackable',
+    ])
+
+    ->addAccessPolicy('admin-opt', [
+        'id' => 'value',
+        'id',
+        'createdAt',
+        'creator',
+        'owner',
         'nameData',
         'code',
         'type',
@@ -102,7 +125,7 @@ Schema::add(
     ->addAccessPolicy('redeem', [
         'id',
         'createdAt',
-        'creator' => 'owner',
+        'owner',
         'name',
         'code',
         'type',

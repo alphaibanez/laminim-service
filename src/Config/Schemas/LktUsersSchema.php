@@ -61,7 +61,7 @@ Schema::add(
         ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
         ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))
 
-        ->addField(RelatedField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupons', 'user_id'))
+        ->addField(RelatedField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupons', 'owned_by'))
 
         ->setRelatedAccessPolicy([
             'id' => 'value',

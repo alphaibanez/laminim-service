@@ -167,6 +167,21 @@ class I18nSeeder extends AbstractSeed
             'en' => 'Send push notifications',
         ], $parentId);
 
+        LktTranslation::createIfMissing('appRoles', TranslationType::Text, [
+            'es' => 'Roles (Aplicación)',
+            'en' => 'Roles (App)',
+        ], $parentId);
+
+        LktTranslation::createIfMissing('adminRoles', TranslationType::Text, [
+            'es' => 'Roles (Administración)',
+            'en' => 'Roles (Admin)',
+        ], $parentId);
+
+        LktTranslation::createIfMissing('signInHistory', TranslationType::Text, [
+            'es' => 'Histórico de accesos',
+            'en' => 'Sign In History',
+        ], $parentId);
+
         $parent = LktTranslation::createIfMissing('canReceiveMailNotificationsOptions', TranslationType::Many, []);
         $parentId = $parent->getId();
         LktTranslation::createIfMissing('0', TranslationType::Text, [

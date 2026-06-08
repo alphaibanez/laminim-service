@@ -1,0 +1,53 @@
+<?php
+
+namespace Lkt\Config\Schemas;
+
+use Lkt\Factory\Schemas\Fields\BooleanField;
+use Lkt\Factory\Schemas\Fields\DateTimeField;
+use Lkt\Factory\Schemas\Fields\FloatField;
+use Lkt\Factory\Schemas\Fields\ForeignKeyField;
+use Lkt\Factory\Schemas\Fields\IdField;
+use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\InstanceSettings;
+use Lkt\Factory\Schemas\Schema;
+use Lkt\Instances\LktCountry;
+use Lkt\Instances\LktShoppingPrice;
+use Lkt\Shop\Enums\PriceCriteria;
+use Lkt\Shop\Enums\PriceType;
+
+Schema::add(
+    Schema::table('lkt_shopping_prices', LktShoppingPrice::COMPONENT)
+
+        ->setInstanceSettings(InstanceSettings::simple(LktShoppingPrice::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
+
+        ->setItemsPerPage(20)
+        ->setCountableField('id')
+        ->addField(IdField::define('id'))
+        ->addField(
+            DateTimeField::define('createdAt', 'created_at')
+                ->setDefaultReadFormat('Y-m-d')
+                ->setCurrentTimeStampAsDefaultValue()
+        )
+        ->addField(
+            DateTimeField::define('updatedAt', 'updated_at')
+                ->setDefaultReadFormat('Y-m-d')
+                ->setCurrentTimeStampAsDefaultValue()
+                ->setCurrentTimeStampOnUpdate()
+        )
+
+        ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
+
+        ->addField(ForeignKeyField::defineRelation(LktCountry::COMPONENT, 'country', 'country_id'))
+        ->addField(IntegerField::define('componentId', 'component_id'))
+        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId'))
+
+        ->addField(FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0))
+        ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
+        ->addField(IntegerChoiceField::enumChoice(PriceType::class, 'type', 'price_type')->setDefaultValue(PriceType::Override->value))
+        ->addField(IntegerChoiceField::enumChoice(PriceCriteria::class, 'attachedCriteria', 'attached_criteria')->setDefaultValue(PriceCriteria::ByCountry->value))
+
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+        ])
+);

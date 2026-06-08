@@ -21,6 +21,8 @@ use Lkt\Instances\LktShoppingOrder;
 use Lkt\Instances\LktShoppingOrderItem;
 use Lkt\Instances\LktShoppingOrderPayment;
 use Lkt\Instances\LktShoppingOrderStatusLog;
+use Lkt\Instances\LktShoppingPrice;
+use Lkt\Instances\LktShoppingSubscription;
 use Lkt\Instances\LktTranslation;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktUserRole;
@@ -48,6 +50,8 @@ ComponentId::add(LaminimComponentId::ShoppingOrder->value, LktShoppingOrder::COM
 ComponentId::add(LaminimComponentId::ShoppingOrderItem->value, LktShoppingOrderItem::COMPONENT);
 ComponentId::add(LaminimComponentId::ShoppingOrderPayment->value, LktShoppingOrderPayment::COMPONENT);
 ComponentId::add(LaminimComponentId::ShoppingOrderStatusLog->value, LktShoppingOrderStatusLog::COMPONENT);
+ComponentId::add(LaminimComponentId::ShoppingSubscription->value, LktShoppingSubscription::COMPONENT);
+ComponentId::add(LaminimComponentId::ShoppingPrice->value, LktShoppingPrice::COMPONENT);
 ComponentId::add(LaminimComponentId::Translation->value, LktTranslation::COMPONENT);
 ComponentId::add(LaminimComponentId::WebElement->value, LktWebElement::COMPONENT);
 ComponentId::add(LaminimComponentId::WebPage->value, LktWebPage::COMPONENT);

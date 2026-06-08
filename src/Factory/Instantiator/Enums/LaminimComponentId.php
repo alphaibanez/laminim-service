@@ -28,4 +28,6 @@ enum LaminimComponentId: int
     case WebPage = 22;
     case WebPageCategory = 23;
     case WebPageMeta = 24;
+    case ShoppingSubscription = 25;
+    case ShoppingPrice = 26;
 }

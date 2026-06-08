@@ -20,6 +20,8 @@ use Lkt\Instances\LktShoppingOrder;
 use Lkt\Instances\LktShoppingOrderItem;
 use Lkt\Instances\LktShoppingOrderPayment;
 use Lkt\Instances\LktShoppingOrderPivotCoupon;
+use Lkt\Instances\LktShoppingOrderPivotSubscription;
+use Lkt\Instances\LktShoppingSubscription;
 use Lkt\Instances\LktUser;
 use Lkt\Shop\Enums\OrderStatus;
 
@@ -59,6 +61,13 @@ Schema::add(
             ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupon', 'coupon_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+        )
+
+        ->addField(PivotField::definePivot(LktShoppingSubscription::COMPONENT, 'lkt_shopping_orders__subscriptions', 'subscriptions', 'order_id', LktShoppingOrderPivotCoupon::COMPONENT)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingSubscription::COMPONENT, 'subscription', 'subscription_id'))
+            ->setPivotPositionField(PivotPositionField::define('position'))
+            ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
 
         ->addAccessPolicy('admin', [

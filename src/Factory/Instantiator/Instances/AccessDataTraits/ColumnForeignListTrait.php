@@ -154,9 +154,11 @@ trait ColumnForeignListTrait
 
         // Infinite loop avoid
         $instanceId = $this->getIdColumnValue();
-        $index = array_search($instanceId, $parsed[$fieldName]);
-        if ($index !== false) {
-            unset($parsed[$fieldName][$index]);
+        if (is_array($parsed[$fieldName])) {
+            $index = array_search($instanceId, $parsed[$fieldName]);
+            if ($index !== false) {
+                unset($parsed[$fieldName][$index]);
+            }
         }
 
         $this->UPDATED = $this->UPDATED + $parsed;

@@ -42,7 +42,7 @@ Schema::add(
         )
         ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
 
-        ->addField(IntegerChoiceField::enumChoice(SubscriptionStatus::class, 'status'))
+        ->addField(IntegerChoiceField::enumChoice(SubscriptionStatus::class, 'status')->setDefaultValue(SubscriptionStatus::Inactive->value))
 
         ->addField(IntegerField::define('componentId', 'component_id'))
         ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId'))

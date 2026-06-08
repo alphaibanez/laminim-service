@@ -64,6 +64,17 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         return $items;
     }
 
+    public function linkSubscription(LktShoppingSubscription $subscription): bool
+    {
+        $current = $this->getSubscriptions();
+        $needle = $subscription->getId();
+        foreach ($current as $item) if ($item->getId() === $needle) return false;
+
+
+        $this->linkPivot(LktShoppingOrderPivotSubscription::COMPONENT, $subscription->getId());
+        return true;
+    }
+
     public function applyCoupon(LktShoppingCoupon $coupon): bool
     {
         $currentCoupons = $this->getCoupons();

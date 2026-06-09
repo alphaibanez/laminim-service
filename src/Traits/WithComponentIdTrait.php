@@ -2,7 +2,6 @@
 
 namespace Lkt\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\WebItems\WebItem;
 

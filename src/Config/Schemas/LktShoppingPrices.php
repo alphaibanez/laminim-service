@@ -12,6 +12,7 @@ use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCountry;
+use Lkt\Instances\LktCurrency;
 use Lkt\Instances\LktShoppingPrice;
 use Lkt\Shop\Enums\PriceCriteria;
 use Lkt\Shop\Enums\PriceType;
@@ -38,9 +39,10 @@ Schema::add(
 
         ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
 
-        ->addField(ForeignKeyField::defineRelation(LktCountry::COMPONENT, 'country', 'country_id'))
+        ->addField(ForeignKeyField::defineRelation(LktCountry::COMPONENT, 'country', 'country_id')->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id')->setOnReadIncludeOptions())
         ->addField(IntegerField::define('componentId', 'component_id'))
-        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId'))
+        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
 
         ->addField(FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0))
         ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
@@ -49,5 +51,45 @@ Schema::add(
 
         ->setRelatedAccessPolicy([
             'id' => 'value',
+        ])
+
+        ->addAccessPolicy('admin', [
+            'id',
+            'createdAt',
+            'isActive',
+            'country',
+            'currency',
+            'pricePerUnit',
+            'taxAmount',
+            'type',
+            'attachedCriteria',
+            'product',
+            'webItemName',
+        ])
+
+        ->addAccessPolicy('w:admin', [
+            'isActive',
+            'countryId',
+            'currencyId',
+            'productId',
+            'componentId',
+            'pricePerUnit',
+            'taxAmount',
+            'type',
+            'attachedCriteria',
+        ])
+
+        ->addAccessPolicy('admin-ls', [
+            'id',
+            'createdAt',
+            'isActive',
+            'country',
+            'currency',
+            'pricePerUnit',
+            'taxAmount',
+            'type',
+            'attachedCriteria',
+            'product',
+            'webItemName',
         ])
 );

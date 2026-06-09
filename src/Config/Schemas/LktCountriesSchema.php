@@ -40,4 +40,23 @@ Schema::add(
 
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+
+        ->addAccessPolicy('admin', [
+            'id',
+            'nameData',
+            'isoCodeAlpha2',
+            'isoCodeNumeric3',
+            'syncExcluded',
+        ])
+
+        ->addAccessPolicy('admin-opt', [
+            'id' => 'value',
+            'name' => 'label',
+        ])
+
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+            'name' => 'label',
+        ])
+
 );

@@ -42,6 +42,7 @@ class LktShoppingPrices20260505181827 extends AbstractMigration
             ->addColumn('product_id', 'integer', ['default' => 0])
             ->addColumn('component_id', 'integer', ['default' => 0])
             ->addColumn('country_id', 'integer', ['default' => 0])
+            ->addColumn('currency_id', 'integer', ['default' => 0])
             ->addColumn('attached_criteria', 'smallinteger', ['default' => 0])
             ->addColumn('price_type', 'smallinteger', ['default' => 0])
 

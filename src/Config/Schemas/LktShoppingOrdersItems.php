@@ -35,7 +35,7 @@ Schema::add(
 
         ->addField(ForeignKeyField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
         ->addField(IntegerField::define('componentId', 'component_id'))
-        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId'))
+        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
 
         ->addField(StringField::define('SKU', 'sku'))
         ->addField(StringField::define('name'))

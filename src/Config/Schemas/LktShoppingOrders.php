@@ -63,7 +63,7 @@ Schema::add(
             ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
 
-        ->addField(PivotField::definePivot(LktShoppingSubscription::COMPONENT, 'lkt_shopping_orders__subscriptions', 'subscriptions', 'order_id', LktShoppingOrderPivotCoupon::COMPONENT)
+        ->addField(PivotField::definePivot(LktShoppingSubscription::COMPONENT, 'lkt_shopping_orders__subscriptions', 'subscriptions', 'order_id', LktShoppingOrderPivotSubscription::COMPONENT)
             ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
             ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingSubscription::COMPONENT, 'subscription', 'subscription_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))

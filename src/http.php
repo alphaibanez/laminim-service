@@ -71,6 +71,64 @@ DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
     ->setTargetAccessPolicy('admin');
 
 /**
+ * Setup app web items routes
+ */
+GetRoute::admin('/api/ls/{component}', BasicHttpHandler::List)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setRequiredPermissions(['ls'])
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+    ->setTargetAccessPolicyAttempts('admin-ls');
+
+GetRoute::admin('/api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setPageValueParamsExtractionKey('page')
+    ->setRequiredPermissions(['ls'])
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+    ->setTargetAccessPolicyAttempts(['admin-pg', 'admin-ls']);
+
+GetRoute::admin('/api/opts-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setPageValueParamsExtractionKey('page')
+    ->setRequiredPermissions(['ls'])
+    ->setTargetAccessPolicy('lkt-related')
+    ->setTargetAccessPolicyAttempts(['admin-opt', 'admin-pg', 'admin-ls']);
+
+GetRoute::admin('/api/r-{id}/{component}', BasicHttpHandler::Read)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('id')
+    ->setRequiredPermissions(['r'])
+    ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
+    ->setTargetAccessPolicy('admin');
+
+PostRoute::admin('/api/mk/{component}', BasicHttpHandler::Create)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setAnonymousTarget()
+    ->setRequiredPermissions(['mk'])
+    ->setPayloadValueParamsExtractionKey('payload')
+    ->setTargetAccessPolicy('admin');
+
+PutRoute::admin('/api/up/{component}', BasicHttpHandler::Update)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('payload.id')
+    ->setRequiredPermissions(['up'])
+    ->setPayloadValueParamsExtractionKey('payload')
+    ->setTargetAccessPolicy('admin');
+
+PostRoute::admin('/api/dup/{component}', BasicHttpHandler::Duplicate)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('payload.id')
+    ->setRequiredPermissions(['mk'])
+    ->setPayloadValueParamsExtractionKey('payload')
+    ->setTargetAccessPolicy('duplicate');
+
+DeleteRoute::admin('/api/rm/{component}', BasicHttpHandler::Drop)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('payload.id')
+    ->setPayloadValueParamsExtractionKey('payload')
+    ->setRequiredPermissions(['rm'])
+    ->setTargetAccessPolicy('admin');
+
+/**
  * Public translations routes
  */
 GetRoute::register('/i18n', [LktTranslationsHttp::class, 'i18n']);

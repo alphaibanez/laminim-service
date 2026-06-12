@@ -13,6 +13,7 @@ use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 
 class BatchActions
 {
@@ -70,13 +71,15 @@ class BatchActions
         $connection->batchDrop($this->items, $builder, $this->schema);
     }
 
-    public function read(string|null $accessPolicyName = '', string $mode = ''): array
+    public function read(string|null|AccessPolicy $accessPolicyName = '', string $mode = ''): array
     {
         if (count($this->items) === 0) return [];
 
         $preFetchForeignKey = [];
         $preFetchForeignKeys = [];
 //        $preFetchRelatedKeys = [];
+
+        if ($accessPolicyName instanceof AccessPolicy) $accessPolicyName = $accessPolicyName->name;
 
         $accessPolicy = $accessPolicyName ? $this->schema->getAccessPolicy($accessPolicyName) : null;
         $fields = $this->schema->getRelationalFields();

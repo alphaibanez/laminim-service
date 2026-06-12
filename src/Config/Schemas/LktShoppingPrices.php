@@ -51,6 +51,16 @@ Schema::add(
 
         ->setRelatedAccessPolicy([
             'id' => 'value',
+            'id',
+            'isActive',
+            'country',
+            'currency',
+            'pricePerUnit',
+            'taxAmount',
+            'type',
+            'attachedCriteria',
+            'product',
+            'webItemName',
         ])
 
         ->addAccessPolicy('admin', [

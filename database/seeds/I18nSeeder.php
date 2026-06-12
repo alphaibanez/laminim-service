@@ -961,6 +961,31 @@ class I18nSeeder extends AbstractSeed
         ], $parentId);
 
 
+
+        $parent = LktTranslation::createIfMissing('shoppingSubscriptionStatusOptions', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('0', TranslationType::Text, [
+            'es' => 'Inactiva',
+            'en' => 'Inactive',
+        ], $parentId);
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Activa',
+            'en' => 'Active',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Finalizada',
+            'en' => 'Finished',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Cancelación solicitada',
+            'en' => 'Request for cancellation',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Cancelada',
+            'en' => 'Cancelled',
+        ], $parentId);
+
+
         $parent = LktTranslation::createIfMissing('tabs', TranslationType::Many, []);
         $parentId = $parent->getId();
         LktTranslation::createIfMissing('main', TranslationType::Text, [

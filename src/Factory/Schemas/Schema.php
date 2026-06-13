@@ -929,10 +929,16 @@ final class Schema
         foreach ($this->getCompositionFields() as $compositionField) {
             $compositionContent = $compositionField->getCompositionContent();
             if (is_array($compositionContent)) {
-                if (in_array($fieldName, $compositionContent)) {
+
+                $foreignIdMatcher = "{$fieldName}Id";
+                if (substr($fieldName, -2) === 'Id') {
+                    $foreignIdMatcher = substr($fieldName, 0, strlen($fieldName) -2);
+                }
+
+                if (in_array($fieldName, $compositionContent) || in_array($foreignIdMatcher, $compositionContent)) {
                     return $compositionField;
                 }
-                if (array_key_exists($fieldName, $compositionContent)) {
+                if (array_key_exists($fieldName, $compositionContent)|| array_key_exists($foreignIdMatcher, $compositionContent)) {
                     return $compositionField;
                 }
             }

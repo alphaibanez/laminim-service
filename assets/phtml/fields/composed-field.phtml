@@ -92,4 +92,15 @@ public function has<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) :b
     public function get<?php echo $fieldMethod;?>PublicPath() :?string {
         return $this<?php echo $nestedCompositionCalls?>->_getCompositionInstance('<?php echo $compositionFieldName;?>')?->_getPublicPath('<?php echo $fieldName;?>');
     }
+<?php elseif($additionalFields === 'foreign-key'): ?>
+    public function get<?php echo $fieldMethod;?>Id() :?int {
+        return $this<?php echo $nestedCompositionCalls?>->_getCompositionInstance('<?php echo $compositionFieldName;?>')?->_getIntegerVal('<?php echo $fieldName;?>Id');
+    }
+    public function set<?php echo $fieldMethod;?>Id(<?php echo $composedPrimitiveInputType; ?> $<?php echo $fieldName;?><?php echo $additionalInput ? ", $additionalInput" : '';?>)  {
+        $additionalData = $this->_getCompositionAdditionalData([
+        <?php echo $additionalInputDetection;?>
+        ], null, null, null);
+        $this<?php echo $nestedCompositionCalls?>->_setCompositionVal('<?php echo $compositionFieldName;?>', '<?php echo $fieldName;?>Id', $<?php echo $fieldName;?>, $additionalData);
+        return $this;
+    }
 <?php endif; ?>

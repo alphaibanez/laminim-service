@@ -421,6 +421,7 @@ class FieldsCodeHelper
                 }
 
                 if ($composedField instanceof ForeignKeyField) {
+                    $additionalFields = 'foreign-key';
 
                 } elseif ($composedField instanceof IntegerField) {
                     if ($composedField->isMultiple()) {
@@ -495,7 +496,7 @@ class FieldsCodeHelper
                     'additionalFields' => $additionalFields,
                     'additionalInput' => $additionalInput,
                     'additionalInputDetection' => $additionalInputDetection,
-                    '$prepareCompositionDataWithField' => $prepareCompositionDataWithField,
+                    'prepareCompositionDataWithField' => $prepareCompositionDataWithField,
                     'nestedCompositionCalls' => implode('', $nestedCompositionCalls),
                 ];
 

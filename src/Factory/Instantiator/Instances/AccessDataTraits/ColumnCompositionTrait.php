@@ -223,6 +223,9 @@ trait ColumnCompositionTrait
 
         $schema = Schema::get(static::COMPONENT);
         $field = $schema->getCompositionField($fieldName);
+        if ($fieldName === 'billingCountry') {
+            VarDumper::die($field);
+        }
         $composedFieldName = $fieldName;
 
         if (!$field) {

@@ -1041,7 +1041,15 @@ abstract class AbstractInstance
 
             // Composed related data
             if ($composedDatum) {
-                if (!$composedInstances[$param]) {
+
+                $composedKey = $param;
+                $l = strlen($param);
+                $endsWithId = substr($param, $l - 2, 2) === 'Id';
+                if ($endsWithId) {
+                    $composedKey = substr($param, 0, $l - 2);
+                }
+
+                if (!$composedInstances[$composedKey]) {
                     if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
                         /** @var AbstractInstance $composedInstance */
                         $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
@@ -1051,12 +1059,21 @@ abstract class AbstractInstance
                         /** @var AbstractInstance $composedInstance */
                         $composedInstance = $instance->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
                     }
-                    $composedInstances[$param] = $composedInstance;
+                    $composedInstances[$composedKey] = $composedInstance;
                 }
 
-                $composedInstances[$param]::feedInstance($composedInstance, [
-                    $field->getName() => $value,
-                ], $internalMethodsArguments);
+
+                if ($endsWithId) {
+                    $composedInstances[$composedKey]::feedInstance($composedInstance, [
+                        "{$composedKey}Id" => $value,
+                    ], $internalMethodsArguments);
+
+                } else {
+                    $composedInstances[$composedKey]::feedInstance($composedInstance, [
+                        $composedKey=> $value,
+                    ], $internalMethodsArguments);
+                }
+
                 continue;
             }
 

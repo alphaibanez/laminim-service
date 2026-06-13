@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Exception;
 use Lkt\Connectors\Cache\QueryCache;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
@@ -1298,7 +1297,7 @@ abstract class AbstractInstance
 
                 if ($item instanceof AbstractInstance) {
                     if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                    $item = $item->readAsRelated();
+                    $item = $item->autoRead();
                 }
                 if (!is_array($item)) $item = [];
                 $r[$responseKey] = $item;

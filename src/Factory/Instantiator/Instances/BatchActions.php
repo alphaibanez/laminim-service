@@ -133,8 +133,6 @@ class BatchActions
             }
         }
 
-//        VarDumper::die($preFetchRelatedKeys);
-
         $components = array_unique([...array_keys($preFetchForeignKey), ...array_keys($preFetchForeignKeys)]);
         foreach ($components as $component) {
             if (!$component) continue;

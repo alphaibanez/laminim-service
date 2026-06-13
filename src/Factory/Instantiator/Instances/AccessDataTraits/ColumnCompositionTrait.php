@@ -176,6 +176,12 @@ trait ColumnCompositionTrait
         if (is_object($composedInstance)) {
             if ($composedField) {
                 $composedFieldGetter = $composedField?->getGetterForPrimitiveValue();
+                if ($composedField instanceof ForeignKeyField) {
+                    $endsWithId = substr($fieldName, strlen($fieldName) - 2, 2) === 'Id';
+                    if (!$endsWithId) {
+                        $composedFieldGetter =  $composedField?->getGetterForData();
+                    }
+                }
                 if (!$composedFieldGetter) return null;
 
                 $additionalData = $this->_getCompositionAdditionalData($additionalData, $composedComponent, $composedInstance, $composedFieldGetter);
@@ -223,9 +229,6 @@ trait ColumnCompositionTrait
 
         $schema = Schema::get(static::COMPONENT);
         $field = $schema->getCompositionField($fieldName);
-        if ($fieldName === 'billingCountry') {
-            VarDumper::die($field);
-        }
         $composedFieldName = $fieldName;
 
         if (!$field) {

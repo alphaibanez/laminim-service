@@ -157,7 +157,6 @@ class BasicHttpHandler
 
 
         if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
-            Notification::sendRedirect("/admin/web-items/{$request->targetWebItem->publicComponentName}/{$duplicated->getId()}", true);
             if (count(Notification::$defaultSuccessDuplicateNotificationPayload) > 0) {
                 Notification::sendSuccessToast(Notification::$defaultSuccessDuplicateNotificationPayload);
             }

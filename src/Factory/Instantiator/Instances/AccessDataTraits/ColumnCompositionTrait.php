@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;

@@ -1000,5 +1000,29 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Tienda',
             'en' => 'Shop',
         ], $parentId);
+
+
+        $parent = LktTranslation::createIfMissing('userStatusOptions', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('0', TranslationType::Text, [
+            'es' => 'Activo',
+            'en' => 'Active',
+        ], $parentId);
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Inactivo',
+            'en' => 'Inactive',
+        ], $parentId);
+        LktTranslation::createIfMissing('2', TranslationType::Text, [
+            'es' => 'Activando',
+            'en' => 'Activating',
+        ], $parentId);
+        LktTranslation::createIfMissing('3', TranslationType::Text, [
+            'es' => 'Archivado',
+            'en' => 'Archived',
+        ], $parentId);
+        LktTranslation::createIfMissing('4', TranslationType::Text, [
+            'es' => 'Bloqueado',
+            'en' => 'Blocked',
+        ], $parentId);
     }
 }

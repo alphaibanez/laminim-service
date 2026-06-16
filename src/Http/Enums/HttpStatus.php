@@ -4,6 +4,7 @@ namespace Lkt\Http\Enums;
 
 enum HttpStatus: int
 {
+    case NotDefined = 0;
     case Ok = 200;
     case Created = 201;
     case Accepted = 202;

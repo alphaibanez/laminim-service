@@ -52,6 +52,7 @@ class Request
 
         if ($this->accessLevel === AccessLevel::OnlyNotLoggedUsers && $this->loggedUser) {
             $this->hasValidAccess = false;
+            $this->hasValidAccessStatus = HttpStatus::Unauthorized;
             return;
         }
 
@@ -63,6 +64,7 @@ class Request
 
         if ($this->accessLevel === AccessLevel::OnlyAdminUsers && !$this->loggedUser?->hasAdminAccess()) {
             $this->hasValidAccess = false;
+            $this->hasValidAccessStatus = HttpStatus::Unauthorized;
             return;
         }
         $this->hasValidAccessStatus = null;

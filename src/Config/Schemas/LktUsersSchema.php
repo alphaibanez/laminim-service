@@ -84,6 +84,7 @@ Schema::add(
             'canReceivePushNotifications',
             'canReceiveMailNotifications',
             'coupons',
+            'status',
         ])
 
         ->addAccessPolicy('create', [
@@ -93,6 +94,7 @@ Schema::add(
             'fullName',
             'email',
             'password',
+            'status',
             'credentialIdentifier',
             'preferredLanguage',
             'preferredThemeMode',

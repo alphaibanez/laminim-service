@@ -84,7 +84,14 @@ class ParseColumn
         if (is_string($value)) {
             $value = explode(';', $value);
         }
-        if (!is_array($value)) $value = [$value];
+        if (!is_array($value)) {
+            if ($value) {
+                $value = [$value];
+            } else {
+                $value = [];
+            }
+        }
+
         $r = [];
         foreach ($value as $item) {
             if (is_numeric($item)) {

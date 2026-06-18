@@ -332,6 +332,10 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Contacto',
             'en' => 'Contact',
         ], $parentId);
+        LktTranslation::createIfMissing('shop', TranslationType::Text, [
+            'es' => 'Ecommerce',
+            'en' => 'Ecommerce',
+        ], $parentId);
         LktTranslation::createIfMissing('stored-file', TranslationType::Text, [
             'es' => 'Archivos',
             'en' => 'Files',
@@ -355,6 +359,14 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('shopping-coupon', TranslationType::Text, [
             'es' => 'Cupones',
             'en' => 'Coupons',
+        ], $parentId);
+        LktTranslation::createIfMissing('shopping-subscription', TranslationType::Text, [
+            'es' => 'Suscripciones',
+            'en' => 'Subscriptions',
+        ], $parentId);
+        LktTranslation::createIfMissing('shopping-price', TranslationType::Text, [
+            'es' => 'Precios',
+            'en' => 'Prices',
         ], $parentId);
         LktTranslation::createIfMissing('http-request-log', TranslationType::Text, [
             'es' => 'HTTP Logs',
@@ -419,6 +431,14 @@ class I18nSeeder extends AbstractSeed
         LktTranslation::createIfMissing('shopping-coupon', TranslationType::Text, [
             'es' => 'Cupón',
             'en' => 'Coupon',
+        ], $parentId);
+        LktTranslation::createIfMissing('shopping-subscription', TranslationType::Text, [
+            'es' => 'Suscripción',
+            'en' => 'Subscription',
+        ], $parentId);
+        LktTranslation::createIfMissing('shopping-price', TranslationType::Text, [
+            'es' => 'Precio',
+            'en' => 'Price',
         ], $parentId);
         LktTranslation::createIfMissing('http-request-log', TranslationType::Text, [
             'es' => 'HTTP Log',

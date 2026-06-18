@@ -1049,15 +1049,15 @@ abstract class AbstractInstance
                 }
 
                 if (!$composedInstances[$composedKey]) {
-                    if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
-                        /** @var AbstractInstance $composedInstance */
-                        $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
-                    } else {
+//                    if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
+//                        /** @var AbstractInstance $composedInstance */
+//                        $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
+//                    } else {
                         $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
                         if (!$fieldComposingThisField) continue;
                         /** @var AbstractInstance $composedInstance */
                         $composedInstance = $instance->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
-                    }
+//                    }
                     $composedInstances[$composedKey] = $composedInstance;
                 }
 
@@ -1160,6 +1160,10 @@ abstract class AbstractInstance
 
             } else {
                 $methodCallData = [$field->getName() => $value];
+            }
+
+            if (!is_array($methodCallData)) {
+                continue;
             }
 
             $methodCallData = [...$internalMethodsArguments, ...$methodCallData];

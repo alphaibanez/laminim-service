@@ -4,6 +4,12 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Exception;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\DataControllers\StringDataController;
+use Lkt\Factory\Instance\DTO\GroupedData;
+use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instance\Traits\WithIdentifierValueTrait;
+use Lkt\Factory\Instance\Traits\WithStringDataTrait;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
@@ -79,8 +85,12 @@ use function Lkt\Tools\Arrays\compareArrays;
 use function Lkt\Tools\Pagination\getTotalPages;
 use function Lkt\Tools\Parse\clearInput;
 
-abstract class AbstractInstance
+abstract class AbstractInstance implements Item
 {
+    use WithStringDataTrait;
+
+    use WithIdentifierValueTrait;
+
     use ColumnStringTrait,
         ColumnIntegerTrait,
         ColumnFloatTrait,
@@ -129,6 +139,11 @@ abstract class AbstractInstance
     public function __construct(array $initialData = [])
     {
         $this->DATA = $initialData;
+
+        $schema = Schema::get(static::COMPONENT);
+        $groupedData = new GroupedData($schema, $initialData);
+
+        $this->initStringData($schema, $this, $groupedData->stringData);
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static
@@ -259,13 +274,9 @@ abstract class AbstractInstance
         return $instance;
     }
 
-    public function isAnonymous(): bool
-    {
-        return count($this->DATA) === 0;
-    }
-
 
     /**
+     * @deprecated
      * @return mixed
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException

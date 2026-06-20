@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas;
 
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
@@ -758,6 +759,13 @@ final class Schema
         return null;
     }
 
+    public function getStringField(string $field): ?StringField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof StringField) return $r;
+        return null;
+    }
+
     /**
      * @return FileField[]
      */
@@ -1247,6 +1255,17 @@ final class Schema
     public function getItemInstance($id = null)
     {
         return Instantiator::make($this->getComponent(), $id);
+    }
+
+    public function getOne(Query $queryCaller = null): Item|null
+    {
+        if (!$queryCaller) $queryCaller = $this->getQueryBuilder();
+        $queryCaller->pagination(1, 1);
+        $r = Instantiator::makeResults($this->getComponent(), $queryCaller->selectDistinct());
+        if (count($r) > 0) {
+            return $r[0];
+        }
+        return null;
     }
 
     public function getMany(Query $query)

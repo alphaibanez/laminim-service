@@ -3,14 +3,11 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
-use Lkt\Factory\Instance\Enums\InvalidDataMode;
-use Lkt\Factory\Instance\Enums\TrimMode;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
-final class IntegerDataController
+final class MultipleIntegerDataController
 {
     private array $data = [];
     private array $payload = [];
@@ -25,7 +22,11 @@ final class IntegerDataController
         foreach ($data as $k => $datum) $this->setOriginal($k, $datum);
     }
 
-    public function get(string $key): int|null
+    /**
+     * @param string $key
+     * @return int[]|null
+     */
+    public function get(string $key): array|null
     {
         if (array_key_exists($key, $this->payload)) {
             return $this->payload[$key];
@@ -59,35 +60,54 @@ final class IntegerDataController
         $currentValue = $this->get($key);
         $parsedValue = $this->parse($key, $value);
 
-        if ($parsedValue !== $currentValue) {
+        $diff = array_diff($currentValue, $parsedValue);
+        if (count($diff) === 0) {
             $this->payload[$key] = $parsedValue;
         }
 
         return $this;
     }
 
-    public function parse(string $key, $value): int|null
+    public function parse(string $key, $value): array|null
     {
         if ($value === null) return null;
 
         $f = $this->schema->getIntegerField($key);
+        $nullable = $f->isNullable();
         $minValue = $f->getMinValue();
 
-        if (is_int($value)) {
-            if ($value > $minValue) return $minValue;
-            return $value;
+        if (is_string($value)) {
+            $value = explode(';', $value);
         }
 
-        $mode = $f->getInvalidDataMode();
+        if (!is_array($value)) {
+            if ($value) {
+                $value = [$value];
+            } else {
+                $value = [];
+            }
+        }
 
-        return match ($mode) {
-            InvalidDataMode::CastToType => (int)$value < $minValue ? $minValue : (int)$value,
-            InvalidDataMode::CastToEmpty => '',
-            default => null,
-        };
+        $r = [];
+        foreach ($value as $item) {
+            if (is_numeric($item)) {
+                $r[] = (int)$item;
+            } else {
+                if ($nullable) $r[] = null;
+                else $r[] = 0;
+            }
+        }
+        if ($minValue) {
+            $r = array_filter($r, function ($item) use ($minValue) {
+                return $item >= $minValue;
+            });
+        }
+
+        return $r;
+
     }
 
-    public function getOriginal(string $key): int|null
+    public function getOriginal(string $key): array|null
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];

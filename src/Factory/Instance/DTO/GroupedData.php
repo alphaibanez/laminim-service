@@ -10,11 +10,13 @@ final readonly class GroupedData
 {
     public array $stringData;
     public array $integerData;
+    public array $multipleIntegerData;
 
     public function __construct(Schema $schema, array $data)
     {
         $stringData = [];
         $integerData = [];
+        $multipleIntegerData = [];
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
@@ -23,11 +25,16 @@ final readonly class GroupedData
                 $stringData[$k] = $data[$k];
             }
             elseif ($field instanceof IntegerField) {
-                $integerData[$k] = $data[$k];
+                if ($field->isMultiple()) {
+                    $multipleIntegerData[$k] = $data[$k];
+                } else {
+                    $integerData[$k] = $data[$k];
+                }
             }
         }
 
         $this->stringData = $stringData;
         $this->integerData = $integerData;
+        $this->multipleIntegerData = $multipleIntegerData;
     }
 }

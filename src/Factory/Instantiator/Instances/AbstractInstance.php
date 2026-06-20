@@ -10,6 +10,7 @@ use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\WithIdentifierValueTrait;
 use Lkt\Factory\Instance\Traits\WithIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\WithMultipleIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\WithStringDataTrait;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\ComponentId;
@@ -89,7 +90,8 @@ use function Lkt\Tools\Parse\clearInput;
 abstract class AbstractInstance implements Item
 {
     use WithStringDataTrait,
-        WithIntegerDataTrait;
+        WithIntegerDataTrait,
+        WithMultipleIntegerDataTrait;
 
     use WithIdentifierValueTrait;
 
@@ -147,7 +149,8 @@ abstract class AbstractInstance implements Item
 
         $this
             ->initStringData($schema, $this, $groupedData->stringData)
-            ->initIntegerData($schema, $this, $groupedData->integerData);
+            ->initIntegerData($schema, $this, $groupedData->integerData)
+            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData);
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static

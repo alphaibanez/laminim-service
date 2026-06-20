@@ -766,6 +766,13 @@ final class Schema
         return null;
     }
 
+    public function getIntegerField(string $field): ?IntegerField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof IntegerField) return $r;
+        return null;
+    }
+
     /**
      * @return FileField[]
      */

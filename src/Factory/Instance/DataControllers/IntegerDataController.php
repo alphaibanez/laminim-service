@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
@@ -11,7 +10,7 @@ use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
-final class StringDataController
+final class IntegerDataController
 {
     private array $data = [];
     private array $payload = [];
@@ -26,7 +25,7 @@ final class StringDataController
         foreach ($data as $k => $datum) $this->setOriginal($k, $datum);
     }
 
-    public function get(string $key): string|null
+    public function get(string $key): int|null
     {
         if (array_key_exists($key, $this->payload)) {
             return $this->payload[$key];
@@ -43,27 +42,18 @@ final class StringDataController
     {
         $v = $this->get($key);
 
-        $f = $this->schema->getStringField($key);
+        $f = $this->schema->getIntegerField($key);
         $mode = $f->getEmptyDataMode();
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
-        return $v !== '';
+        return $v > 0;
     }
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getStringField($key);
+        $f = $this->schema->getIntegerField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
-        }
-
-        if (is_object($f) && method_exists($f, 'isUnique') && $f->isUnique()) {
-            $setter = 'and' . ucfirst($key) . 'Equal';
-            $builder = $this->schema->getQueryBuilder()->{$setter}($value);
-            $result = $this->schema->getOne($builder);
-            if ($result instanceof Item && $result->isSameIdentifierValue($this->item->getIdentifierValue())) {
-                throw DuplicatedValueException::getInstance($value);
-            }
         }
 
         $currentValue = $this->get($key);
@@ -80,33 +70,22 @@ final class StringDataController
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getStringField($key);
-        $trimMode = $f->getTrimMode();
+        $f = $this->schema->getIntegerField($key);
 
-        if (is_string($value)) {
-            return $this->trim($value, $trimMode);
+        if (is_int($value)) {
+            return $value;
         }
 
         $mode = $f->getInvalidDataMode();
 
         return match ($mode) {
-            InvalidDataMode::CastToType => $this->trim((string)$value, $trimMode),
+            InvalidDataMode::CastToType => (int)$value,
             InvalidDataMode::CastToEmpty => '',
             default => null,
         };
     }
 
-    private function trim(string $value, TrimMode $mode): string
-    {
-        return match ($mode) {
-            TrimMode::Full => trim($value),
-            TrimMode::Start => ltrim($value),
-            TrimMode::End => rtrim($value),
-            default => $value,
-        };
-    }
-
-    public function getOriginal(string $key): string|null
+    public function getOriginal(string $key): int|null
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
@@ -117,7 +96,7 @@ final class StringDataController
 
     public function setOriginal(string $key, $value): self
     {
-        $f = $this->schema->getStringField($key);
+        $f = $this->schema->getIntegerField($key);
         $parsedValue = $this->parse($key, $value);
         $this->data[$key] = $parsedValue;
         return $this;

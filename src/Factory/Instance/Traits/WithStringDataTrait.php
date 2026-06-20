@@ -14,7 +14,6 @@ trait WithStringDataTrait
     private function initStringData(Schema $schema, Item $item, array $rawData): static
     {
         $this->stringData = new StringDataController($schema, $item, $rawData);
-        VarDumper::die($this->stringData->set('firstName', 'heee')->set('lastName', null)->set('email', 0));
         return $this;
     }
 }

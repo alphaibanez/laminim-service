@@ -2,21 +2,27 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 
 trait ColumnIntegerTrait
 {
-    protected function _getIntegerVal(string $fieldName): int|array
+    use ItemWithIntegerDataTrait;
+
+    protected function _getIntegerVal(string $fieldName): int|array|null
     {
+//        return (int)$this->integerData->get($fieldName);
+
+
         $schema = Schema::get(static::COMPONENT);
         /** @var IntegerField $field */
         $field = $schema->getField($fieldName);
 
         if (isset($this->UPDATED[$fieldName])) return $this->UPDATED[$fieldName];
         if (isset($this->DATA[$fieldName])) return $this->DATA[$fieldName];
-        if ($field->isMultiple()) return [];
+        if (method_exists($field, 'isMultiple') && $field->isMultiple()) return [];
         return 0;
     }
 

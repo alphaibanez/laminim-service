@@ -7,6 +7,8 @@ use Lkt\Factory\Schemas\Traits\FieldWithAvailableOptionsFilterOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithCompositionOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithDynamicComponentOptionTrait;
+use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithOnReadIncludeOptionsTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
@@ -24,7 +26,9 @@ class ForeignKeyField extends IntegerField
         FieldWithRelatedAccessPolicyOptionTrait,
         FieldWithPrefabRoleTrait,
         FieldWithOnReadIncludeOptionsTrait,
-        FieldRelatedClonePolicyOptionTrait;
+        FieldRelatedClonePolicyOptionTrait,
+        FieldWithInvalidDataModeTrait,
+        FieldWithEmptyDataModeTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {

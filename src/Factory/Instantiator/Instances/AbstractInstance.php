@@ -14,6 +14,7 @@ use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIdentifierValueTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
@@ -107,7 +108,8 @@ abstract class AbstractInstance implements Item
         ItemWithUnixTimestampDataTrait,
         ItemWithDateDataTrait,
         ItemWithColorDataTrait,
-        ItemWithEncryptDataTrait;
+        ItemWithEncryptDataTrait,
+        ItemWithForeignKeyDataTrait;
 
     use ItemWithIdentifierValueTrait;
 
@@ -175,9 +177,8 @@ abstract class AbstractInstance implements Item
             ->initDateData($schema, $this, $groupedData->dateData)
             ->initColorData($schema, $this, $groupedData->colorData)
             ->initEncryptData($schema, $this, $groupedData->encryptData)
+            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
         ;
-
-//        VarDumper::die($this);
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static

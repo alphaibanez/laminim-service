@@ -1827,6 +1827,7 @@ abstract class AbstractInstance implements Item
         foreach ($this->unixTimeStampData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->foreignKeyData->getPayload() as $k => $v) $r[$k] = $v;
 
         return $r;
     }

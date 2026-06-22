@@ -177,7 +177,7 @@ abstract class AbstractInstance implements Item
             ->initEncryptData($schema, $this, $groupedData->encryptData)
         ;
 
-        VarDumper::die($this);
+//        VarDumper::die($this);
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static

@@ -7,8 +7,10 @@ use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
 use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
 final class IntegerDataController
@@ -75,17 +77,30 @@ final class IntegerDataController
         $minValue = $f->getMinValue();
 
         if (is_int($value)) {
-            if (is_int($minValue) && $value > $minValue) return $minValue;
+            if (is_int($minValue) && $value > $minValue) {
+                $value = $minValue;
+            }
             return $value;
+
+        } else {
+            $mode = $f->getInvalidDataMode();
+
+            $value = match ($mode) {
+                InvalidDataMode::CastToType => is_int($minValue) && (int)$value < $minValue ? $minValue : (int)$value,
+                InvalidDataMode::CastToEmpty => 0,
+                default => null,
+            };
         }
 
-        $mode = $f->getInvalidDataMode();
+        if ($f instanceof IntegerChoiceField) {
+            $availableOptions = $f->getAllowedOptions();
 
-        return match ($mode) {
-            InvalidDataMode::CastToType => is_int($minValue) && (int)$value < $minValue ? $minValue : (int)$value,
-            InvalidDataMode::CastToEmpty => 0,
-            default => null,
-        };
+            if (!in_array($value, $availableOptions, true)) {
+                throw InvalidIntegerChoiceValueException::getInstance($value, $key, $this->schema->getComponent());
+            }
+        }
+
+        return $value;
     }
 
     public function getOriginal(string $key): int|null

@@ -4,7 +4,9 @@ namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
 final class MultipleIntegerDataController
@@ -97,10 +99,27 @@ final class MultipleIntegerDataController
                 else $r[] = 0;
             }
         }
+
         if (is_int($minValue) && $minValue) {
             $r = array_filter($r, function ($item) use ($minValue) {
                 return $item >= $minValue;
             });
+        }
+
+        if ($f instanceof IntegerChoiceField) {
+            $availableOptions = $f->getAllowedOptions();
+
+            foreach ($value as $val) {
+
+                $v = $val;
+                if (is_object($v) && isset($v->value)) {
+                    $v = $v->value;
+                }
+
+                if (!in_array($v, $availableOptions, true)) {
+                    throw InvalidIntegerChoiceValueException::getInstance($v, $key, $this->schema->getComponent());
+                }
+            }
         }
 
         return $r;

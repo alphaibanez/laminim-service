@@ -12,6 +12,7 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Schema;
@@ -31,6 +32,8 @@ final readonly class GroupedData
     public array $encryptData;
     public array $foreignKeyData;
     public array $foreignKeysData;
+    public array $relatedItemData;
+    public array $relatedItemsData;
 
     public function __construct(Schema $schema, array $data)
     {
@@ -47,6 +50,8 @@ final readonly class GroupedData
         $encryptData = [];
         $foreignKeyData = [];
         $foreignKeysData = [];
+        $relatedItemData = [];
+        $relatedItemsData = [];
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
@@ -62,7 +67,8 @@ final readonly class GroupedData
                 $foreignKeyData[$k] = $data[$k1];
             }
             elseif ($field instanceof ForeignKeysField) {
-                $foreignKeyData[$k] = $data[$k];
+                $k1 = "{$k}Ids";
+                $foreignKeysData[$k] = $data[$k1];
             }
             elseif ($field instanceof IntegerField) {
                 if ($field->isMultiple()) {
@@ -93,6 +99,15 @@ final readonly class GroupedData
             elseif ($field instanceof EncryptField) {
                 $encryptData[$k] = $data[$k];
             }
+
+            // This should never occur since it's remote data
+            elseif ($field instanceof RelatedField) {
+                if ($field->isSingleMode()) {
+                    $relatedItemData[$k] = $data[$k];
+                } else {
+                    $relatedItemsData[$k] = $data[$k];
+                }
+            }
         }
 
         $this->booleanData = $booleanData;
@@ -108,5 +123,7 @@ final readonly class GroupedData
         $this->encryptData = $encryptData;
         $this->foreignKeyData = $foreignKeyData;
         $this->foreignKeysData = $foreignKeysData;
+        $this->relatedItemData = $relatedItemData;
+        $this->relatedItemsData = $relatedItemsData;
     }
 }

@@ -15,10 +15,12 @@ use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithForeignKeysDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIdentifierValueTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithUnixTimestampDataTrait;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
@@ -110,7 +112,8 @@ abstract class AbstractInstance implements Item
         ItemWithColorDataTrait,
         ItemWithEncryptDataTrait,
         ItemWithForeignKeyDataTrait,
-        ItemWithForeignKeysDataTrait;
+        ItemWithForeignKeysDataTrait,
+        ItemWithRelatedItemDataTrait;
 
     use ItemWithIdentifierValueTrait;
 
@@ -180,6 +183,7 @@ abstract class AbstractInstance implements Item
             ->initEncryptData($schema, $this, $groupedData->encryptData)
             ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
             ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
+            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
         ;
     }
 

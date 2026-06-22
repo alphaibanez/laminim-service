@@ -109,7 +109,8 @@ abstract class AbstractInstance implements Item
         ItemWithDateDataTrait,
         ItemWithColorDataTrait,
         ItemWithEncryptDataTrait,
-        ItemWithForeignKeyDataTrait;
+        ItemWithForeignKeyDataTrait,
+        ItemWithForeignKeysDataTrait;
 
     use ItemWithIdentifierValueTrait;
 
@@ -178,6 +179,7 @@ abstract class AbstractInstance implements Item
             ->initColorData($schema, $this, $groupedData->colorData)
             ->initEncryptData($schema, $this, $groupedData->encryptData)
             ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
+            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
         ;
     }
 

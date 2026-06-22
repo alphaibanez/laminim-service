@@ -10,6 +10,7 @@ use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
+use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
@@ -29,6 +30,7 @@ final readonly class GroupedData
     public array $colorData;
     public array $encryptData;
     public array $foreignKeyData;
+    public array $foreignKeysData;
 
     public function __construct(Schema $schema, array $data)
     {
@@ -44,6 +46,7 @@ final readonly class GroupedData
         $colorData = [];
         $encryptData = [];
         $foreignKeyData = [];
+        $foreignKeysData = [];
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
@@ -57,6 +60,9 @@ final readonly class GroupedData
             elseif ($field instanceof ForeignKeyField) {
                 $k1 = "{$k}Id";
                 $foreignKeyData[$k] = $data[$k1];
+            }
+            elseif ($field instanceof ForeignKeysField) {
+                $foreignKeyData[$k] = $data[$k];
             }
             elseif ($field instanceof IntegerField) {
                 if ($field->isMultiple()) {
@@ -101,5 +107,6 @@ final readonly class GroupedData
         $this->colorData = $colorData;
         $this->encryptData = $encryptData;
         $this->foreignKeyData = $foreignKeyData;
+        $this->foreignKeysData = $foreignKeysData;
     }
 }

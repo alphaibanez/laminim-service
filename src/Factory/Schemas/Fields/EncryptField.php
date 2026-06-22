@@ -2,13 +2,17 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithSecureSeedTrait;
 
 class EncryptField extends AbstractField
 {
     use FieldWithNullOptionTrait,
-        FieldWithSecureSeedTrait;
+        FieldWithSecureSeedTrait,
+        FieldWithInvalidDataModeTrait,
+        FieldWithEmptyDataModeTrait;
 
     protected string $algorithm = 'sha256';
     protected bool $hashMode = false;

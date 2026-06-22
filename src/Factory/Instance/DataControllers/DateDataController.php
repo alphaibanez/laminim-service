@@ -2,12 +2,12 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Factory\Instance\Enums\EmptyDataMode;
+use Carbon\Carbon;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
-final class MultipleIntegerDataController
+final class DateDataController
 {
     private array $data = [];
     private array $payload = [];
@@ -22,11 +22,7 @@ final class MultipleIntegerDataController
         foreach ($data as $k => $datum) $this->setOriginal($k, $datum);
     }
 
-    /**
-     * @param string $key
-     * @return int[]|null
-     */
-    public function get(string $key): array|null
+    public function get(string $key): Carbon|null
     {
         if (array_key_exists($key, $this->payload)) {
             return $this->payload[$key];
@@ -42,17 +38,12 @@ final class MultipleIntegerDataController
     public function has(string $key): bool
     {
         $v = $this->get($key);
-
-        $f = $this->schema->getIntegerField($key);
-        $mode = $f->getEmptyDataMode();
-
-        if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
-        return $v > 0;
+        return $v !== null;
     }
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getIntegerField($key);
+        $f = $this->schema->getUnixTimestampField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
         }
@@ -60,54 +51,39 @@ final class MultipleIntegerDataController
         $currentValue = $this->get($key);
         $parsedValue = $this->parse($key, $value);
 
-        $diff = array_diff($currentValue, $parsedValue);
-        if (count($diff) === 0) {
+        if ($parsedValue !== $currentValue) {
             $this->payload[$key] = $parsedValue;
         }
 
         return $this;
     }
 
-    public function parse(string $key, $value): array|null
+    public function parse(string $key, $value): Carbon|null
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getIntegerField($key);
-        $nullable = $f->isNullable();
-        $minValue = $f->getMinValue();
+        if ($value instanceof Carbon) return $value;
+        if ($value instanceof \DateTime) {
+            return new Carbon(date('Y-m-d H:i:s', $value->getTimestamp()));
+        }
 
         if (is_string($value)) {
-            $value = explode(';', $value);
+            $value = trim($value);
+            if ($value === '') return null;
+            if ($value === '0000-00-00 00:00:00') return null;
         }
 
-        if (!is_array($value)) {
-            if ($value) {
-                $value = [$value];
-            } else {
-                $value = [];
-            }
-        }
+        $str = date('Y-m-d H:i:s', (int)$value);
 
-        $r = [];
-        foreach ($value as $item) {
-            if (is_numeric($item)) {
-                $r[] = (int)$item;
-            } else {
-                if ($nullable) $r[] = null;
-                else $r[] = 0;
-            }
-        }
-        if (is_int($minValue) && $minValue) {
-            $r = array_filter($r, function ($item) use ($minValue) {
-                return $item >= $minValue;
-            });
-        }
+        try {
+            return new Carbon($str);
 
-        return $r;
-
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
-    public function getOriginal(string $key): array|null
+    public function getOriginal(string $key): Carbon|null
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];

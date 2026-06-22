@@ -4,7 +4,7 @@ namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Factory\Schemas\Schema;
 
-trait WithIdentifierValueTrait
+trait ItemWithIdentifierValueTrait
 {
     private array|null $identifierValue = null;
 

@@ -6,7 +6,7 @@ use Lkt\Factory\Instance\DataControllers\IntegerDataController;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;
 
-trait WithIntegerDataTrait
+trait ItemWithIntegerDataTrait
 {
     private IntegerDataController $integerData;
 

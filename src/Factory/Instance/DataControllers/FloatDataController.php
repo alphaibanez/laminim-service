@@ -3,11 +3,12 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
+use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
-final class MultipleIntegerDataController
+final class FloatDataController
 {
     private array $data = [];
     private array $payload = [];
@@ -22,11 +23,7 @@ final class MultipleIntegerDataController
         foreach ($data as $k => $datum) $this->setOriginal($k, $datum);
     }
 
-    /**
-     * @param string $key
-     * @return int[]|null
-     */
-    public function get(string $key): array|null
+    public function get(string $key): float|null
     {
         if (array_key_exists($key, $this->payload)) {
             return $this->payload[$key];
@@ -43,7 +40,7 @@ final class MultipleIntegerDataController
     {
         $v = $this->get($key);
 
-        $f = $this->schema->getIntegerField($key);
+        $f = $this->schema->getFloatField($key);
         $mode = $f->getEmptyDataMode();
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
@@ -52,7 +49,7 @@ final class MultipleIntegerDataController
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getIntegerField($key);
+        $f = $this->schema->getFloatField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
         }
@@ -60,54 +57,35 @@ final class MultipleIntegerDataController
         $currentValue = $this->get($key);
         $parsedValue = $this->parse($key, $value);
 
-        $diff = array_diff($currentValue, $parsedValue);
-        if (count($diff) === 0) {
+        if ($parsedValue !== $currentValue) {
             $this->payload[$key] = $parsedValue;
         }
 
         return $this;
     }
 
-    public function parse(string $key, $value): array|null
+    public function parse(string $key, $value): float|null
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getIntegerField($key);
-        $nullable = $f->isNullable();
+        $f = $this->schema->getFloatField($key);
         $minValue = $f->getMinValue();
 
-        if (is_string($value)) {
-            $value = explode(';', $value);
+        if (is_int($value)) {
+            if (is_float($minValue) && $value > $minValue) return $minValue;
+            return $value;
         }
 
-        if (!is_array($value)) {
-            if ($value) {
-                $value = [$value];
-            } else {
-                $value = [];
-            }
-        }
+        $mode = $f->getInvalidDataMode();
 
-        $r = [];
-        foreach ($value as $item) {
-            if (is_numeric($item)) {
-                $r[] = (int)$item;
-            } else {
-                if ($nullable) $r[] = null;
-                else $r[] = 0;
-            }
-        }
-        if (is_int($minValue) && $minValue) {
-            $r = array_filter($r, function ($item) use ($minValue) {
-                return $item >= $minValue;
-            });
-        }
-
-        return $r;
-
+        return match ($mode) {
+            InvalidDataMode::CastToType => is_float($minValue) && (float)$value < $minValue ? $minValue : (float)$value,
+            InvalidDataMode::CastToEmpty => 0,
+            default => null,
+        };
     }
 
-    public function getOriginal(string $key): array|null
+    public function getOriginal(string $key): float|null
     {
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];

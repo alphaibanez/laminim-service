@@ -773,6 +773,41 @@ final class Schema
         return null;
     }
 
+    public function getFloatField(string $field): ?FloatField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof FloatField) return $r;
+        return null;
+    }
+
+    public function getBooleanField(string $field): ?BooleanField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof BooleanField) return $r;
+        return null;
+    }
+
+    public function getUnixTimestampField(string $field): ?UnixTimeStampField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof UnixTimeStampField) return $r;
+        return null;
+    }
+
+    public function getColorField(string $field): ?ColorField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof ColorField) return $r;
+        return null;
+    }
+
+    public function getEncryptField(string $field): ?EncryptField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof EncryptField) return $r;
+        return null;
+    }
+
     /**
      * @return FileField[]
      */

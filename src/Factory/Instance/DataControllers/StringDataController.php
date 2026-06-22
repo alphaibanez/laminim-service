@@ -117,7 +117,6 @@ final class StringDataController
 
     public function setOriginal(string $key, $value): self
     {
-        $f = $this->schema->getStringField($key);
         $parsedValue = $this->parse($key, $value);
         $this->data[$key] = $parsedValue;
         return $this;
@@ -127,5 +126,17 @@ final class StringDataController
     {
         $this->data = [...$this->data, ... $this->payload];
         return $this;
+    }
+
+    public function getPayload(): array
+    {
+        return $this->payload;
+    }
+
+    public function __debugInfo() {
+        return [
+            'data' => $this->data,
+            'payload' => $this->payload,
+        ];
     }
 }

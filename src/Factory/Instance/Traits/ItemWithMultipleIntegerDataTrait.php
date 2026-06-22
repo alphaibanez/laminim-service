@@ -7,7 +7,7 @@ use Lkt\Factory\Instance\DataControllers\MultipleIntegerDataController;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;
 
-trait WithMultipleIntegerDataTrait
+trait ItemWithMultipleIntegerDataTrait
 {
     private MultipleIntegerDataController $multipleIntegerData;
 

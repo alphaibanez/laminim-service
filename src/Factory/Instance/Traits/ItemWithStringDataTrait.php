@@ -2,12 +2,11 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DataControllers\StringDataController;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;
 
-trait WithStringDataTrait
+trait ItemWithStringDataTrait
 {
     private StringDataController $stringData;
 

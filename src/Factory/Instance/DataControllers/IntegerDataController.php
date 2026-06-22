@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
@@ -74,15 +75,15 @@ final class IntegerDataController
         $minValue = $f->getMinValue();
 
         if (is_int($value)) {
-            if ($value > $minValue) return $minValue;
+            if (is_int($minValue) && $value > $minValue) return $minValue;
             return $value;
         }
 
         $mode = $f->getInvalidDataMode();
 
         return match ($mode) {
-            InvalidDataMode::CastToType => (int)$value < $minValue ? $minValue : (int)$value,
-            InvalidDataMode::CastToEmpty => '',
+            InvalidDataMode::CastToType => is_int($minValue) && (int)$value < $minValue ? $minValue : (int)$value,
+            InvalidDataMode::CastToEmpty => 0,
             default => null,
         };
     }
@@ -107,5 +108,17 @@ final class IntegerDataController
     {
         $this->data = [...$this->data, ... $this->payload];
         return $this;
+    }
+
+    public function getPayload(): array
+    {
+        return $this->payload;
+    }
+
+    public function __debugInfo() {
+        return [
+            'data' => $this->data,
+            'payload' => $this->payload,
+        ];
     }
 }

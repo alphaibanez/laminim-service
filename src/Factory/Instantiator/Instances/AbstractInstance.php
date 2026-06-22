@@ -8,10 +8,18 @@ use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DataControllers\StringDataController;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instance\Traits\WithIdentifierValueTrait;
-use Lkt\Factory\Instance\Traits\WithIntegerDataTrait;
-use Lkt\Factory\Instance\Traits\WithMultipleIntegerDataTrait;
-use Lkt\Factory\Instance\Traits\WithStringDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithIdentifierValueTrait;
+use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithUnixTimestampDataTrait;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
@@ -89,11 +97,19 @@ use function Lkt\Tools\Parse\clearInput;
 
 abstract class AbstractInstance implements Item
 {
-    use WithStringDataTrait,
-        WithIntegerDataTrait,
-        WithMultipleIntegerDataTrait;
+    use ItemWithStringDataTrait,
+        ItemWithIntegerDataTrait,
+        ItemWithMultipleIntegerDataTrait,
+        ItemWithFloatDataTrait,
+        ItemWithMultipleFloatDataTrait,
+        ItemWithEmailDataTrait,
+        ItemWithBooleanDataTrait,
+        ItemWithUnixTimestampDataTrait,
+        ItemWithDateDataTrait,
+        ItemWithColorDataTrait,
+        ItemWithEncryptDataTrait;
 
-    use WithIdentifierValueTrait;
+    use ItemWithIdentifierValueTrait;
 
     use ColumnStringTrait,
         ColumnIntegerTrait,
@@ -149,8 +165,19 @@ abstract class AbstractInstance implements Item
 
         $this
             ->initStringData($schema, $this, $groupedData->stringData)
+            ->initEmailData($schema, $this, $groupedData->emailData)
+            ->initBooleanData($schema, $this, $groupedData->booleanData)
             ->initIntegerData($schema, $this, $groupedData->integerData)
-            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData);
+            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
+            ->initFloatData($schema, $this, $groupedData->floatData)
+            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
+            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
+            ->initDateData($schema, $this, $groupedData->dateData)
+            ->initColorData($schema, $this, $groupedData->colorData)
+            ->initEncryptData($schema, $this, $groupedData->encryptData)
+        ;
+
+        VarDumper::die($this);
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static
@@ -1781,5 +1808,25 @@ abstract class AbstractInstance implements Item
     public static function getBatchActions(array $items): BatchActions
     {
         return BatchActions::fromComponent(static::COMPONENT, $items);
+    }
+
+    public function getUpdatePayload(): array
+    {
+        $r = [];
+        foreach ($this->UPDATED as $k => $v) $r[$k] = $v;
+
+        foreach ($this->stringData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->integerData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->multipleIntegerData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->floatData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->multipleFloatData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->booleanData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->emailData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->dateData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->unixTimeStampData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
+
+        return $r;
     }
 }

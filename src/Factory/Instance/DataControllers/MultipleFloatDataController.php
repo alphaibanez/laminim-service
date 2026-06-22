@@ -7,7 +7,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
-final class MultipleIntegerDataController
+final class MultipleFloatDataController
 {
     private array $data = [];
     private array $payload = [];
@@ -24,7 +24,7 @@ final class MultipleIntegerDataController
 
     /**
      * @param string $key
-     * @return int[]|null
+     * @return float[]|null
      */
     public function get(string $key): array|null
     {
@@ -43,7 +43,7 @@ final class MultipleIntegerDataController
     {
         $v = $this->get($key);
 
-        $f = $this->schema->getIntegerField($key);
+        $f = $this->schema->getFloatField($key);
         $mode = $f->getEmptyDataMode();
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
@@ -52,7 +52,7 @@ final class MultipleIntegerDataController
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getIntegerField($key);
+        $f = $this->schema->getFloatField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
         }
@@ -72,7 +72,7 @@ final class MultipleIntegerDataController
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getIntegerField($key);
+        $f = $this->schema->getFloatField($key);
         $nullable = $f->isNullable();
         $minValue = $f->getMinValue();
 
@@ -91,13 +91,13 @@ final class MultipleIntegerDataController
         $r = [];
         foreach ($value as $item) {
             if (is_numeric($item)) {
-                $r[] = (int)$item;
+                $r[] = (float)$item;
             } else {
                 if ($nullable) $r[] = null;
                 else $r[] = 0;
             }
         }
-        if (is_int($minValue) && $minValue) {
+        if (is_float($minValue) && $minValue) {
             $r = array_filter($r, function ($item) use ($minValue) {
                 return $item >= $minValue;
             });

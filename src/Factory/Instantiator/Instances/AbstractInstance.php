@@ -170,27 +170,27 @@ abstract class AbstractInstance implements Item
     {
         $this->DATA = $initialData;
 
-        $schema = Schema::get(static::COMPONENT);
-        $groupedData = new GroupedData($schema, $initialData);
-
-        $this
-            ->initStringData($schema, $this, $groupedData->stringData)
-            ->initEmailData($schema, $this, $groupedData->emailData)
-            ->initBooleanData($schema, $this, $groupedData->booleanData)
-            ->initIntegerData($schema, $this, $groupedData->integerData)
-            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
-            ->initFloatData($schema, $this, $groupedData->floatData)
-            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
-            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
-            ->initDateData($schema, $this, $groupedData->dateData)
-            ->initColorData($schema, $this, $groupedData->colorData)
-            ->initEncryptData($schema, $this, $groupedData->encryptData)
-            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
-            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
-            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
-            ->initJSONData($schema, $this, $groupedData->jsonData)
-            ->initFileData($schema, $this, $groupedData->fileData)
-        ;
+//        $schema = Schema::get(static::COMPONENT);
+//        $groupedData = new GroupedData($schema, $initialData);
+//
+//        $this
+//            ->initStringData($schema, $this, $groupedData->stringData)
+//            ->initEmailData($schema, $this, $groupedData->emailData)
+//            ->initBooleanData($schema, $this, $groupedData->booleanData)
+//            ->initIntegerData($schema, $this, $groupedData->integerData)
+//            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
+//            ->initFloatData($schema, $this, $groupedData->floatData)
+//            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
+//            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
+//            ->initDateData($schema, $this, $groupedData->dateData)
+//            ->initColorData($schema, $this, $groupedData->colorData)
+//            ->initEncryptData($schema, $this, $groupedData->encryptData)
+//            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
+//            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
+//            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
+//            ->initJSONData($schema, $this, $groupedData->jsonData)
+//            ->initFileData($schema, $this, $groupedData->fileData)
+//        ;
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static

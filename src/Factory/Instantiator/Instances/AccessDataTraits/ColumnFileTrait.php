@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Traits\ItemWithFileDataTrait;
 use Lkt\FileReader\File;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
@@ -12,6 +14,8 @@ use Lkt\MIME;
 
 trait ColumnFileTrait
 {
+//    use ItemWithFileDataTrait;
+
     /**
      * @param string $fieldName
      * @return File|null|File[]

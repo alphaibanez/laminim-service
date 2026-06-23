@@ -808,6 +808,13 @@ final class Schema
         return null;
     }
 
+    public function getJSONField(string $field): ?JSONField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof JSONField) return $r;
+        return null;
+    }
+
     /**
      * @return FileField[]
      */
@@ -1384,7 +1391,7 @@ final class Schema
         return null;
     }
 
-    public function getInstanceCode(array|AbstractInstance $instanceData, string|int|array|null $instanceId = null): string
+    public function getInstanceCode(array|AbstractInstance|Item $instanceData, string|int|array|null $instanceId = null): string
     {
         if (is_array($instanceId)) $instanceId = implode('-', $instanceId);
 

@@ -8,10 +8,12 @@ use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
+use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
@@ -34,6 +36,9 @@ final readonly class GroupedData
     public array $foreignKeysData;
     public array $relatedItemData;
     public array $relatedItemsData;
+    public array $jsonData;
+    public array $fileData;
+    public array $multipleFileData;
 
     public function __construct(Schema $schema, array $data)
     {
@@ -52,6 +57,9 @@ final readonly class GroupedData
         $foreignKeysData = [];
         $relatedItemData = [];
         $relatedItemsData = [];
+        $jsonData = [];
+        $fileData = [];
+        $multipleFileData = [];
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
@@ -99,6 +107,16 @@ final readonly class GroupedData
             elseif ($field instanceof EncryptField) {
                 $encryptData[$k] = $data[$k];
             }
+            elseif ($field instanceof JSONField) {
+                $jsonData[$k] = $data[$k];
+            }
+            elseif ($field instanceof FileField) {
+                if ($field->isMultiple()) {
+                    $multipleFileData[$k] = $data[$k];
+                } else {
+                    $fileData[$k] = $data[$k];
+                }
+            }
 
             // This should never occur since it's remote data
             elseif ($field instanceof RelatedField) {
@@ -125,5 +143,8 @@ final readonly class GroupedData
         $this->foreignKeysData = $foreignKeysData;
         $this->relatedItemData = $relatedItemData;
         $this->relatedItemsData = $relatedItemsData;
+        $this->jsonData = $jsonData;
+        $this->fileData = $fileData;
+        $this->multipleFileData = $multipleFileData;
     }
 }

@@ -1,0 +1,174 @@
+<?php
+
+namespace Lkt\Factory\Instance\DataControllers;
+
+use Lkt\Factory\Instance\Enums\EmptyDataMode;
+use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
+use Lkt\Factory\Instantiator\SystemConnections\FileSystemConnection;
+use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Schema;
+use Lkt\FileReader\Directory;
+use Lkt\FileReader\File;
+use Lkt\MIME;
+
+final class FileDataController
+{
+    private array $data = [];
+    private array $payload = [];
+    private array $httpUpload = [];
+
+    private Schema $schema;
+    private Item $item;
+
+    public function __construct(Schema &$schema, Item &$ins, array $data)
+    {
+        $this->schema = $schema;
+        $this->item = $ins;
+        foreach ($data as $k => $datum) $this->setOriginal($k, $datum);
+    }
+
+    public function get(string $key): File|string|null
+    {
+        if (array_key_exists($key, $this->payload)) {
+            return $this->payload[$key];
+        }
+
+        if (array_key_exists($key, $this->data)) {
+            return $this->data[$key];
+        }
+
+        return null;
+    }
+
+    public function has(string $key): bool
+    {
+        $v = $this->get($key);
+
+        $f = $this->schema->getFileField($key);
+        $mode = $f->getEmptyDataMode();
+
+        if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
+        return $v !== '';
+    }
+
+    public function set(string $key, $value): self
+    {
+        $f = $this->schema->getFileField($key);
+        if (!$f) {
+            throw InvalidItemDataAssignException::missingField($key);
+        }
+
+        $currentValue = $this->get($key);
+        $parsedValue = $this->parse($key, $value);
+
+        if ($parsedValue !== $currentValue) {
+            $this->payload[$key] = $parsedValue;
+        }
+
+        return $this;
+    }
+
+    public function parse(string $key, $value): File|string|null
+    {
+        if ($value === null) return null;
+
+        if ($value instanceof File) return $value;
+
+        if (is_string($value)) {
+            $value = trim($value);
+            if ($value === '') return null;
+        }
+
+        if (str_contains($value, ';base64,')) {
+            return $value;
+        }
+
+        $field = $this->schema->getFileField($key);
+
+        $storePath = $field->getStorePath($this->item);
+        $directory = new Directory(FileSystemConnection::getDiskDriver(), $storePath);
+        return new File(FileSystemConnection::getDiskDriver(), $directory, $value);
+    }
+
+    public function getOriginal(string $key): File|string|null
+    {
+        if (array_key_exists($key, $this->data)) {
+            return $this->data[$key];
+        }
+
+        return null;
+    }
+
+    public function setOriginal(string $key, $value): self
+    {
+        $parsedValue = $this->parse($key, $value);
+        $this->data[$key] = $parsedValue;
+        return $this;
+    }
+
+    public function dumpPayloadIntoOriginal(): self
+    {
+        $this->data = [...$this->data, ... $this->payload];
+        return $this;
+    }
+
+    public function getPayload(): array
+    {
+        return $this->payload;
+    }
+
+    public function __debugInfo() {
+        return [
+            'data' => $this->data,
+            'payload' => $this->payload,
+            'httpUpload' => $this->httpUpload,
+        ];
+    }
+
+    public function base64ToFile(string $key): self
+    {
+        $file = $this->get($key);
+        $content = $file instanceof File ? $file->path : $file;
+        $base64 = explode(';base64,', $content)[1];
+        $content = base64_decode($base64);
+
+        $f = finfo_open();
+
+        $mime_type = finfo_buffer($f, $content, FILEINFO_MIME_TYPE);
+        finfo_close($f);
+
+        $ext = MIME::getExtensionByMime($mime_type);
+
+        $field = $this->schema->getFileField($key);
+        $storePath = $field->getStorePath($this);
+
+        $component = $this->schema->getComponent();
+        $id = $this->schema->getInstanceCode($this->item);
+        $storeName = "$component-$id-$key.$ext";
+        $name = "$storePath/$storeName";
+
+        file_put_contents($name, $content);
+
+        $this->set($key, $storeName);
+        return $this;
+    }
+
+    public function addUploadingFile(string $key, array|null $value = null): self
+    {
+        $this->httpUpload[$key] = $value;
+        return $this;
+    }
+
+    public function httpUploadToFile(string $key): self
+    {
+        $field = $this->schema->getFileField($key);
+        $uploadData = FileUploadHelper::uploadFileField($field, $this->httpUpload[$key], $this->item, $this->schema);
+
+        if (is_array($uploadData)) {
+            $this->set($key, $uploadData['name']);
+        }
+        unset($this->httpUpload[$key]);
+        return $this;
+    }
+}

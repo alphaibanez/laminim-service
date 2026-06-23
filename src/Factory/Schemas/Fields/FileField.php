@@ -2,9 +2,9 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
+use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithMultipleOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Values\FieldFilePathValue;
@@ -15,7 +15,8 @@ class FileField extends AbstractField
     const TYPE = 'file';
 
     use FieldWithNullOptionTrait,
-        FieldWithMultipleOptionTrait;
+        FieldWithMultipleOptionTrait,
+        FieldWithEmptyDataModeTrait;
 
     protected ?FieldFilePathValue $storePath = null;
     protected ?FieldFilePathValue $publicPath = null;

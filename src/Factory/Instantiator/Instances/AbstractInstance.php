@@ -13,11 +13,13 @@ use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithFileDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeysDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIdentifierValueTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithJSONDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
@@ -113,7 +115,9 @@ abstract class AbstractInstance implements Item
         ItemWithEncryptDataTrait,
         ItemWithForeignKeyDataTrait,
         ItemWithForeignKeysDataTrait,
-        ItemWithRelatedItemDataTrait;
+        ItemWithRelatedItemDataTrait,
+        ItemWithFileDataTrait,
+        ItemWithJSONDataTrait;
 
     use ItemWithIdentifierValueTrait;
 
@@ -166,25 +170,27 @@ abstract class AbstractInstance implements Item
     {
         $this->DATA = $initialData;
 
-//        $schema = Schema::get(static::COMPONENT);
-//        $groupedData = new GroupedData($schema, $initialData);
+        $schema = Schema::get(static::COMPONENT);
+        $groupedData = new GroupedData($schema, $initialData);
 
-//        $this
-//            ->initStringData($schema, $this, $groupedData->stringData)
-//            ->initEmailData($schema, $this, $groupedData->emailData)
-//            ->initBooleanData($schema, $this, $groupedData->booleanData)
-//            ->initIntegerData($schema, $this, $groupedData->integerData)
-//            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
-//            ->initFloatData($schema, $this, $groupedData->floatData)
-//            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
-//            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
-//            ->initDateData($schema, $this, $groupedData->dateData)
-//            ->initColorData($schema, $this, $groupedData->colorData)
-//            ->initEncryptData($schema, $this, $groupedData->encryptData)
-//            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
-//            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
-//            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
-//        ;
+        $this
+            ->initStringData($schema, $this, $groupedData->stringData)
+            ->initEmailData($schema, $this, $groupedData->emailData)
+            ->initBooleanData($schema, $this, $groupedData->booleanData)
+            ->initIntegerData($schema, $this, $groupedData->integerData)
+            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
+            ->initFloatData($schema, $this, $groupedData->floatData)
+            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
+            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
+            ->initDateData($schema, $this, $groupedData->dateData)
+            ->initColorData($schema, $this, $groupedData->colorData)
+            ->initEncryptData($schema, $this, $groupedData->encryptData)
+            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
+            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
+            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
+            ->initJSONData($schema, $this, $groupedData->jsonData)
+            ->initFileData($schema, $this, $groupedData->fileData)
+        ;
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static

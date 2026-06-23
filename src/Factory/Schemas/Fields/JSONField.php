@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Schemas\Traits\FieldWithCompressOptionTrait;
+use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Values\BooleanValue;
 
@@ -11,7 +12,8 @@ class JSONField extends AbstractField
     const TYPE = 'json';
 
     use FieldWithCompressOptionTrait,
-        FieldWithNullOptionTrait;
+        FieldWithNullOptionTrait,
+        FieldWithEmptyDataModeTrait;
 
     protected ?BooleanValue $assoc = null;
 

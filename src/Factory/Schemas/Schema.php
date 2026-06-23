@@ -815,6 +815,13 @@ final class Schema
         return null;
     }
 
+    public function getConstantField(string $field): ?ConstantValueField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof ConstantValueField) return $r;
+        return null;
+    }
+
     /**
      * @return FileField[]
      */

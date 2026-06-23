@@ -10,6 +10,7 @@ use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
@@ -117,7 +118,8 @@ abstract class AbstractInstance implements Item
         ItemWithForeignKeysDataTrait,
         ItemWithRelatedItemDataTrait,
         ItemWithFileDataTrait,
-        ItemWithJSONDataTrait;
+        ItemWithJSONDataTrait,
+        ItemWithConstantDataTrait;
 
     use ItemWithIdentifierValueTrait;
 
@@ -190,6 +192,8 @@ abstract class AbstractInstance implements Item
 //            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
 //            ->initJSONData($schema, $this, $groupedData->jsonData)
 //            ->initFileData($schema, $this, $groupedData->fileData)
+//
+//            ->initConstantData($schema, $this)
 //        ;
     }
 

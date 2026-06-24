@@ -1847,4 +1847,9 @@ abstract class AbstractInstance implements Item
 
         return $r;
     }
+
+    public function getAccessPolicyUsage(): ?AccessPolicyUsage
+    {
+        return $this->accessPolicy;
+    }
 }

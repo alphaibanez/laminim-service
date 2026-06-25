@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Traits;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
@@ -25,7 +26,7 @@ trait FieldWithComponentOptionTrait
         return $this;
     }
 
-    final public function getComponent(Schema|null $schema = null, AbstractInstance|null $instance = null): string
+    final public function getComponent(Schema|null $schema = null, AbstractInstance|Item|null $instance = null): string
     {
         if ($schema && $instance && method_exists($this, 'getDynamicComponentField')) {
             $dynamicComponentFieldName = $this->getDynamicComponentField();

@@ -123,7 +123,6 @@ final class MultipleIntegerDataController
         }
 
         return $r;
-
     }
 
     public function getOriginal(string $key): array|null

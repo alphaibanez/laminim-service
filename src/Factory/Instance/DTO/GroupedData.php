@@ -15,6 +15,8 @@ use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
+use Lkt\Factory\Schemas\Fields\RelatedKeysField;
+use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Schema;
@@ -116,6 +118,14 @@ final readonly class GroupedData
                 } else {
                     $fileData[$k] = $data[$k];
                 }
+            }
+
+            elseif ($field instanceof RelatedKeysField) {
+                $relatedItemsData[$k] = $data[$k];
+            }
+
+            elseif ($field instanceof RelatedKeysMergeField) {
+                $relatedItemsData[$k] = $data[$k];
             }
 
             // This should never occur since it's remote data

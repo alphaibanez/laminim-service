@@ -7,6 +7,9 @@ use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 
+/**
+ * @deprecated
+ */
 class UpdatedRelatedDataProcessor
 {
     protected Schema $schema;

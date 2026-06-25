@@ -24,6 +24,7 @@ use Lkt\Factory\Instance\Traits\ItemWithJSONDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithUnixTimestampDataTrait;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
@@ -117,6 +118,7 @@ abstract class AbstractInstance implements Item
         ItemWithForeignKeyDataTrait,
         ItemWithForeignKeysDataTrait,
         ItemWithRelatedItemDataTrait,
+        ItemWithRelatedItemsDataTrait,
         ItemWithFileDataTrait,
         ItemWithJSONDataTrait,
         ItemWithConstantDataTrait;
@@ -190,6 +192,7 @@ abstract class AbstractInstance implements Item
 //            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
 //            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
 //            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
+//            ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData)
 //            ->initJSONData($schema, $this, $groupedData->jsonData)
 //            ->initFileData($schema, $this, $groupedData->fileData)
 //

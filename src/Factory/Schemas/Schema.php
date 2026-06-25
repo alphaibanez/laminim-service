@@ -839,6 +839,22 @@ final class Schema
         return null;
     }
 
+    public function getRelatedKeysField(string $field): ?RelatedKeysField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof RelatedKeysField) return $r;
+        return null;
+    }
+
+    public function getKindOfRelatedField(string $field): null|RelatedField|RelatedKeysField|RelatedKeysMergeField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof RelatedField) return $r;
+        if ($r instanceof RelatedKeysField) return $r;
+        if ($r instanceof RelatedKeysMergeField) return $r;
+        return null;
+    }
+
     public function getForeignKeyField(string $field): ?ForeignKeyField
     {
         $r = $this->getField($field);

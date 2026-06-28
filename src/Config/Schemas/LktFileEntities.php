@@ -66,6 +66,8 @@ Schema::add(
         )
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+        ->addField(StringField::define('langSpecificEmbedCode', 'lang_specific_embed_code')->setIsI18nJson())
+        ->addField(AssocJSONField::define('langSpecificEmbedCodeData', 'lang_specific_embed_code')->setIsI18nJson())
 
         ->addAccessPolicy('admin', [
             'id',
@@ -75,6 +77,7 @@ Schema::add(
             'embedCode',
             'name',
             'nameData',
+            'langSpecificEmbedCodeData',
             'children',
             'createdBy',
         ])

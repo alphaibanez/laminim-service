@@ -1160,7 +1160,7 @@ abstract class AbstractInstance implements Item
                     $setter = '_setIntegerVal';
                     $methodCallData = ['fieldName' => $field->getName(), 'value' => (int)$value];
                 } elseif (is_array($value)) {
-                    $relatedSchema = Schema::get($field->getComponent());
+                    $relatedSchema = Schema::get($field->getComponent($schema, $instance));
                     $relatedIdFields = $relatedSchema->getIdentifiers();
                     if (count($relatedIdFields) === 1) {
                         $relatedIdKey = $relatedIdFields[0]->getName();

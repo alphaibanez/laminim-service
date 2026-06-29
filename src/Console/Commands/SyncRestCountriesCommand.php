@@ -3,6 +3,7 @@
 namespace Lkt\Console\Commands;
 
 use Lkt\Connectors\RestCountriesConnector;
+use Lkt\Debug\VarDumper;
 use Lkt\Instances\LktCountry;
 use Lkt\Locale\Enums\LangCode;
 use Lkt\Locale\Locale;
@@ -28,7 +29,7 @@ class SyncRestCountriesCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $connectorName = $input->getArgument('connector');
-        $anonymousConnector = (int)$connectorName === 0;
+        $anonymousConnector = strlen($connectorName) === 0;
         if ($anonymousConnector) {
             $connector = RestCountriesConnector::defineAnonymous();
 
@@ -36,7 +37,10 @@ class SyncRestCountriesCommand extends Command
             $connector = RestCountriesConnector::get($connectorName);
         }
 
-        if (!$connector) return -1;
+        if (!$connector) {
+            $output->writeln("No connector. Aborted.");
+            return -1;
+        }
 
         $text = $input->getArgument('text');
         if (!in_array($text, ['official', 'common'])) {
@@ -45,41 +49,60 @@ class SyncRestCountriesCommand extends Command
 
         $availableLanguages = Locale::getAvailableLangCodes();
 
-        $fields = ['cca2', 'ccn3', 'name', 'translations'];
-        $fieldsStr = implode(',', $fields);
+        $fields = ['codes.alpha_2', 'codes.alpha_3', "names.{$text}", 'names.translations'];
+        $fieldsStr = implode('%2C', $fields);
 
-        $response = $connector->query("/v3.1/all?fields={$fieldsStr}");
-        $results = \json_decode($response->result);
-        foreach ($results as $result) {
-            $isoCodeCCA2 = trim($result->cca2);
-            $isoCodeCCN3 = trim($result->ccn3);
+        $itemsPerPage = 100; // Free plan limit
+        $requested = 0;
+        $total = 254; // Amount of results received at 2026/07
 
-            $country = LktCountry::getOne(LktCountry::getQueryCaller()->andIsoCodeAlpha2Equal($isoCodeCCA2));
-            if ($country && $country->syncExcluded()) continue;
+        do {
+            $q = "?pretty&limit={$itemsPerPage}&response_fields={$fieldsStr}";
 
-            if (!$country) $country = LktCountry::getInstance()->setIsoCodeAlpha2($isoCodeCCA2)->setIsoCodeNumeric3($isoCodeCCN3);
-
-            $nameData = $country->getNameData();
-
-            foreach ($availableLanguages as $language) {
-                $restLang = match ($language) {
-                    LangCode::Spanish => 'spa',
-                    LangCode::Turkish => 'tur',
-                    LangCode::Japanese => 'jpn',
-                    LangCode::Italian => 'ita',
-                    LangCode::Russian => 'rus',
-                    LangCode::English => '',
-                    default => null
-                };
-
-                if ($restLang === null) continue;
-
-                $name = $restLang ? $result->translations->{$restLang}->{$text} : $result->name->{$text};
-                $nameData[$language->value] = $name;
+            if ($requested > 0) {
+                $q .= "&offset={$requested}";
             }
 
-            $country->setUpdatedAt(time())->setNameData($nameData)->save();
-        }
+            $response = $connector->query($q);
+            $results = \json_decode($response->result);
+            $objects = $results->data->objects;
+            $meta = $results->data->meta;
+
+            $total = (int)$meta->total;
+            $requested += (int)$meta->count;
+
+            foreach ($objects as $result) {
+                $isoCodeCCA2 = trim($result->codes->alpha_2);
+                $isoCodeCCN3 = trim($result->codes->alpha_3);
+
+                $country = LktCountry::getOne(LktCountry::getQueryCaller()->andIsoCodeAlpha2Equal($isoCodeCCA2));
+                if ($country && $country->syncExcluded()) continue;
+
+                if (!$country) $country = LktCountry::getInstance()->setIsoCodeAlpha2($isoCodeCCA2)->setIsoCodeNumeric3($isoCodeCCN3);
+
+                $nameData = $country->getNameData();
+
+                foreach ($availableLanguages as $language) {
+                    $restLang = match ($language) {
+                        LangCode::Spanish => 'spa',
+                        LangCode::Turkish => 'tur',
+                        LangCode::Japanese => 'jpn',
+                        LangCode::Italian => 'ita',
+                        LangCode::Russian => 'rus',
+                        LangCode::English => '',
+                        default => null
+                    };
+
+                    if ($restLang === null) continue;
+
+                    $name = $restLang ? $result->names->translations->{$restLang}->{$text} : $result->names->{$text};
+                    $nameData[$language->value] = $name;
+                }
+
+                $country->setUpdatedAt(time())->setNameData($nameData)->save();
+            }
+
+        } while ($requested <= $total);
 
         return 1;
     }

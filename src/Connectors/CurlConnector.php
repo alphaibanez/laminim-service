@@ -3,6 +3,7 @@
 namespace Lkt\Connectors;
 
 use Lkt\Connectors\Curl\CurlResponse;
+use Lkt\Debug\VarDumper;
 
 class CurlConnector extends AbstractCurlConnector
 {
@@ -31,6 +32,21 @@ class CurlConnector extends AbstractCurlConnector
     public static function getAllConnectors(): array
     {
         return static::$connectors;
+    }
+
+    protected function getQueryHeaders(): array
+    {
+        $r = [];
+
+        if (count($this->headers) > 0) {
+            $r = [...$this->headers];
+        }
+
+        if ($this->apiToken) {
+            $r[] = "Authorization: Bearer {$this->apiToken}";
+        }
+
+        return $r;
     }
 
     public function query(string $url = '', array $args = [], string $method = 'GET'): CurlResponse
@@ -68,8 +84,9 @@ class CurlConnector extends AbstractCurlConnector
 
         curl_setopt($ch, CURLOPT_URL, $link);
 
-        if (count($this->headers) > 0) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $headers = $this->getQueryHeaders();
+        if (count($headers) > 0) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
 
         $result = curl_exec($ch);

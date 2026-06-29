@@ -9,6 +9,7 @@ abstract class AbstractCurlConnector
     protected string $user = '';
     protected string $password = '';
     protected string $database = '';
+    protected string $apiToken = '';
     protected int $port = 0;
     protected string $charset = '';
     protected array $headers = [];
@@ -112,5 +113,16 @@ abstract class AbstractCurlConnector
     {
         $this->headers = $headers;
         return $this;
+    }
+
+    public function setApiToken(string $token): static
+    {
+        $this->apiToken = $token;
+        return $this;
+    }
+
+    public function getApiToken(): string
+    {
+        return $this->apiToken;
     }
 }

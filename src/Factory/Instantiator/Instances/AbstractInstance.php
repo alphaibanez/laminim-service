@@ -641,7 +641,7 @@ abstract class AbstractInstance implements Item
                     }
                 }
 
-                if ($this->accessPolicy->name) {
+                if (isset($this->accessPolicy) && $this->accessPolicy->name) {
                     $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
                 }
                 if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';

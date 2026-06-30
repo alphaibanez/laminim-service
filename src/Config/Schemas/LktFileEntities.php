@@ -33,6 +33,7 @@ Schema::add(
             'config',
             'src',
             'embedCode',
+            'langSpecificEmbedCodeData',
             'name',
             'nameData',
 //            'children',

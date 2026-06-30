@@ -116,6 +116,8 @@ final class MultipleIntegerDataController
                     $v = $v->value;
                 }
 
+                if (is_string($v)) $v = (int)$v;
+
                 if (!in_array($v, $availableOptions, true)) {
                     throw InvalidIntegerChoiceValueException::getInstance($v, $key, $this->schema->getComponent());
                 }

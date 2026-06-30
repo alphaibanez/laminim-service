@@ -112,6 +112,8 @@ trait ColumnIntegerChoiceTrait
                     $v = $v->value;
                 }
 
+                if (is_string($v)) $v = (int)$v;
+
                 if (!in_array($v, $availableOptions, true)) {
                     throw InvalidIntegerChoiceValueException::getInstance($v, $fieldName, static::COMPONENT);
                 }

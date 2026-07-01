@@ -1118,7 +1118,7 @@ abstract class AbstractInstance implements Item
 //                        /** @var AbstractInstance $composedInstance */
 //                        $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
 //                    } else {
-                        $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
+                        $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
                         if (!$fieldComposingThisField) continue;
                         /** @var AbstractInstance $composedInstance */
                         $composedInstance = $instance->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);

@@ -107,6 +107,7 @@ trait ColumnCompositionTrait
 
         if ($composedInstance === null) {
             $appClass = $composedSchema->getInstanceSettings()->getAppClass();
+            /** @var AbstractInstance $emptyInstance */
             $emptyInstance = $appClass::getInstance();
             $emptyInstance::feedInstance($emptyInstance, $emptyInstance->prepareCrudData($additionalData, CrudOperation::Create));
 
@@ -136,7 +137,9 @@ trait ColumnCompositionTrait
                 $feedField = $composedSchema->getField($feedColum);
                 if ($feedField) {
                     $setter = $feedField->getSetterForPrimitiveValue();
-                    $emptyInstance->{$setter}($this->getIdColumnValue());
+                    if (method_exists($emptyInstance, $setter)) {
+                        $emptyInstance->{$setter}($this->getIdColumnValue());
+                    }
                 }
             }
 

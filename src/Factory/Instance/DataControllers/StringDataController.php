@@ -133,6 +133,11 @@ final class StringDataController
         return $this->payload;
     }
 
+    public function getOriginalData(): array
+    {
+        return $this->data;
+    }
+
     public function __debugInfo() {
         return [
             'data' => $this->data,

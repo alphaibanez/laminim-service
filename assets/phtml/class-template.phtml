@@ -48,8 +48,18 @@ class <?php echo $className; ?> extends <?php echo $extends?> <?php echo $implem
         return $r;
     }
 
-    /** @return <?php echo $queryCaller;?> */
+    /** @deprecated @return <?php echo $queryCaller;?> */
     public static function getQueryCaller()
+    {
+        /**
+        * @var <?php echo $queryCaller;?> $builder
+        */
+        list($builder) = Instantiator::getCustomQueryCaller(static::COMPONENT);
+        return $builder;
+    }
+
+    /** @return <?php echo $queryCaller;?> */
+    public static function getQueryBuilder()
     {
         /**
         * @var <?php echo $queryCaller;?> $builder

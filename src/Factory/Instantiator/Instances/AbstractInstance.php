@@ -11,6 +11,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
@@ -123,7 +124,8 @@ abstract class AbstractInstance implements Item
         ItemWithJSONDataTrait,
         ItemWithConstantDataTrait;
 
-    use ItemWithIdentifierValueTrait;
+    use ItemWithIdentifierValueTrait,
+        ItemWithDataTrait;
 
     use ColumnStringTrait,
         ColumnIntegerTrait,
@@ -241,9 +243,18 @@ abstract class AbstractInstance implements Item
         return $this;
     }
 
+    /**
+     * @deprecated use getUpdatedPayload instead
+     * @return array
+     */
     public function getUpdatedData(): array
     {
         return $this->UPDATED;
+    }
+
+    public function getSchema(): Schema|null
+    {
+        return Schema::get(static::COMPONENT);
     }
 
     /**
@@ -364,6 +375,14 @@ abstract class AbstractInstance implements Item
     }
 
 
+    /**
+     * @deprecated
+     * Name can be confused due to similarity with feed
+     * @todo Should be renamed to something like clearUpdatedData
+     *
+     * @param array $data
+     * @return $this
+     */
     public function hydrate(array $data): static
     {
         if (count($data) === 0) {
@@ -374,410 +393,410 @@ abstract class AbstractInstance implements Item
         return $this;
     }
 
-    public function save(): static
-    {
-        $isUpdate = !$this->isAnonymous();
-
-        $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
-        $queryBuilder = $dbIntegration->query;
-        $connection = $dbIntegration->databaseConnector;
-        $schema = $dbIntegration->schema;
-
-        if (isset($this->accessPolicy) && $this->accessPolicy) {
-            $accessPolicyExcludedFields = $schema->getAccessPolicyExcludedFields($this->accessPolicy->name);
-
-            foreach ($accessPolicyExcludedFields as $accessPolicyExcludedField) {
-                $key = $accessPolicyExcludedField->getName();
-                $hasKey = $accessPolicyExcludedField->getGetterForChecker();
-                if (array_key_exists($key, $this->UPDATED)) unset($this->UPDATED[$key]);
-                if (array_key_exists($hasKey, $this->UPDATED)) unset($this->UPDATED[$hasKey]);
-            }
-        }
-
-        // Update only: auto update values
-        if ($isUpdate) {
-            /** @var AbstractField $fieldsWithDefaultValue */
-            $fieldsWithDefaultValue = $schema->getFieldsToUpdateOnInstanceUpdate();
-            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
-                $defaultValueKey = $fieldWithDefaultValue->getName();
-                if (isset($this->UPDATED[$defaultValueKey])) continue;
-
-                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
-                if (isset($this->UPDATED[$defaultValueKey])) continue;
-
-                $defaultValue = $fieldWithDefaultValue->getOnInstanceUpdateValue();
-                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
-                $this->{$setter}($defaultValue);
-            }
-
-        // Create only: set default values
-        } else {
-            /** @var AbstractField $fieldsWithDefaultValue */
-            $fieldsWithDefaultValue = $schema->getFieldsWithDefaultValue();
-            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
-                $defaultValueKey = $fieldWithDefaultValue->getName();
-                if (isset($this->UPDATED[$defaultValueKey])) continue;
-
-                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
-                if (isset($this->UPDATED[$defaultValueKey])) continue;
-
-                $defaultValue = $fieldWithDefaultValue->getDefaultValue();
-                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
-                $this->{$setter}($defaultValue);
-            }
-        }
-
-
-        $fileFields = $schema->getFileFields();
-
-        $pendingUploadBase64Files = [];
-        $pendingUploadBase64MultipleFiles = [];
-        if (count($this->UPDATED) > 0) {
-            // Check if it's needed to store a base64 file:
-            foreach ($fileFields as $fileField) {
-                if ($this->_fileValUpdatedWithBase64Data($fileField->getName())) {
-                    $storePath = $fileField->getStorePath($this);
-                    if ($storePath === ''){
-                        throw UnsetFieldStorePathException::getInstance($fileField->getName(), $schema->getComponent());
-                    }
-
-                    if ($fileField->isMultiple()) {
-                        $pendingUploadBase64MultipleFiles[$fileField->getName()] = $this->UPDATED[$fileField->getName()];
-                        $this->UPDATED[$fileField->getName()] = [];
-
-                    } else {
-                        $pendingUploadBase64Files[$fileField->getName()] = $this->UPDATED[$fileField->getName()];
-                        $this->UPDATED[$fileField->getName()] = '';
-                    }
-                }
-            }
-        }
-
-        foreach ($schema->getMandatoryFields() as $mandatoryField) {
-            $checkerMethod = $mandatoryField->getGetterForChecker();
-            if (!$this->{$checkerMethod}()) {
-                $additionalFieldsToColumn =  array_filter($schema->getFields(), function (AbstractField $field) use ($mandatoryField) {
-                    return $field->getName() !== $mandatoryField->getName()
-                        && $field->getColumn() === $mandatoryField->getColumn();
-                });
-                $ok = false;
-                if (count($additionalFieldsToColumn) > 0) {
-                    foreach ($additionalFieldsToColumn as $additionalFieldToColumn) {
-                        $additionalCheckerMethod = $additionalFieldToColumn->getGetterForChecker();
-                        $ok = $ok || $this->{$additionalCheckerMethod}();
-                    }
-                }
-
-                if (!$ok) {
-                    throw MissedMandatoryValueException::getInstance($schema->getComponent() . '.' .$mandatoryField->getName());
-                }
-            }
-        }
-
-        $parsed = $connection->prepareDataToStore($schema, $this->UPDATED);
-
-        $origIdColumn = $schema->getIdColumn();
-        $origIdColumn = $origIdColumn[0];
-
-        $id = 0;
-
-        if (count($this->UPDATED) > 0) {
-
-            // Save current instance process
-            $queryBuilder->updateData($parsed);
-
-            if ($isUpdate) {
-                $schema->applyIdentifierConstraintsToQueryFromInstance($queryBuilder, $this);
-                $query = $connection->getUpdateQuery($queryBuilder);
-            } else {
-                $query = $connection->getInsertQuery($queryBuilder);
-            }
-
-            $queryResponse = $connection->query($query);
-
-            if ($queryResponse !== false) {
-                foreach ($this->UPDATED as $k => $v) {
-                    $this->DATA[$k] = $v;
-                    unset($this->UPDATED[$k]);
-                }
-            }
-
-            $id = (int)$connection->getLastInsertedId();
-            $reload = true;
-        }
-
-        // Get current instance ID (if it's been created)
-        if ($id > 0 && (!isset($this->DATA[$origIdColumn]) || !$this->DATA[$origIdColumn])) {
-            $this->DATA[$origIdColumn] = $id;
-
-        } elseif ($this->DATA[$origIdColumn] > 0) {
-            $id = $this->DATA[$origIdColumn];
-        }
-
-        $hasToReUpdate = false;
-
-        if (count($pendingUploadBase64Files) > 0) {
-            foreach ($pendingUploadBase64Files as $fileFieldName => $fileFieldValue) {
-                $this->_storeBase64DataAsFile($fileFieldName, $fileFieldValue, $id);
-                $hasToReUpdate = true;
-            }
-        }
-
-        if (count($pendingUploadBase64MultipleFiles) > 0) {
-            foreach ($pendingUploadBase64MultipleFiles as $fileFieldName => $fileFieldValue) {
-                $this->_storeBase64DataAsFiles($fileFieldName, $fileFieldValue, $id);
-                $hasToReUpdate = true;
-            }
-        }
-
-        if (count($this->UPLOADING_FILES) > 0) {
-            // Check if it's needed to store a base64 file:
-            foreach ($fileFields as $fileField) {
-                $key = $fileField->getName();
-                if (is_array($this->UPLOADING_FILES[$key])) {
-                    $uploadData = FileUploadHelper::uploadFileField($fileField, $this->UPLOADING_FILES[$key], $this, $schema);
-
-                    if (is_array($uploadData)) {
-                        $this->_setFileVal($key, $uploadData['name']);
-                        $hasToReUpdate = true;
-                    }
-                    unset($this->UPLOADING_FILES[$key]);
-                }
-            }
-        }
-
-        // Update relational data
-        if (count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
-            foreach ($this->PENDING_UPDATE_RELATED_DATA as $column => $data) {
-
-                if (!$isUpdate && count($data) === 0) continue;
-
-                /** @var RelatedField $field */
-                $field = $schema->getField($column);
-                $relatedComponent = $field->getComponent();
-
-                if ($field instanceof ForeignKeysField && count($data) === 0) {
-                    $currentItems = $this->_getForeignListData($column);
-                    if (count($currentItems) === 0) continue;
-                }
-
-                if (method_exists($field, 'getDynamicComponentField')) { // Check due to RelatedField not implementing this feature yet
-                    $dynamicComponentFieldName = $field->getDynamicComponentField();
-                    if ($dynamicComponentFieldName !== '') {
-                        $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
-                        $getter = $dynamicComponentField->getGetterForPrimitiveValue();
-                        $dynamicType = $this->{$getter}();
-                        if (is_numeric($dynamicType)) $relatedComponent = ComponentId::getComponent((int)$dynamicType);
-                        elseif ($dynamicType !== '') $relatedComponent = $dynamicType;
-                    }
-                }
-
-                $relatedSchema = Schema::get($relatedComponent);
-
-                $relatedIdColumn = $relatedSchema->getIdColumn()[0];
-                /** @var AbstractInstance $relatedClass */
-                $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
-
-                $relatedMode = false;
-                $foreignKeysMode = false;
-
-                $foreignKeysIds = [];
-
-                // Check which items must be deleted
-                if ($field instanceof RelatedField) {
-                    $relatedMode = true;
-                    $currentItems = $this->_getRelatedVal($relatedComponent, $column, true);
-
-                } elseif ($field instanceof ForeignKeysField) {
-                    $foreignKeysMode = true;
-                    $currentItems = $this->_getForeignListData($column);
-                }
-
-                $currentIds = [];
-
-                /** @var AbstractInstance[] $currentItems */
-                foreach ($currentItems as $currentItem) {
-                    $code = $relatedSchema->getInstanceCode($currentItem);
-                    if (!in_array($code, $currentIds, true)) $currentIds[] = $code;
-                }
-
-                $updatedIds = [];
-                foreach ($data as $datum) {
-                    $code = $relatedSchema->getInstanceCode($datum);
-                    if ($code) $updatedIds[] = $code;
-                }
-
-                $diff = compareArrays($currentIds, $updatedIds);
-
-                // Delete
-                if (method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
-                    foreach ($diff['deleted'] as $deletedId) {
-                        $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
-                        $ins->delete();
-                    }
-                }
-
-                if ($relatedMode) {
-                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
-                    $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
-                    if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
-                        if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
-                            $relatedForeignKeyKey .= 'Id';
-                        }
-                    }
-
-                } elseif ($foreignKeysMode) {
-
-                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
-                    if ($relatedForeignKeyColumn instanceof RelatedKeysField) {
-                        $relatedForeignKeyKey = $relatedForeignKeyColumn?->getAppendForeignKeysName();
-                        if (!$relatedForeignKeyKey) $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
-
-                        if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
-                            if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
-                                $relatedForeignKeyKey .= 'Id';
-                            }
-                        }
-                    }
-                }
-
-                if (isset($this->accessPolicy) && $this->accessPolicy->name) {
-                    $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
-                }
-                if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';
-
-
-                // Update or create
-                foreach ($data as $datum) {
-                    if ($relatedMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
-                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
-                    }
-                    elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
-                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
-                    }
-
-                    if ($datum[$relatedIdColumn] > 0) {
-                        $ins = $relatedClass::getInstance($datum[$relatedIdColumn]);
-                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
-                        $ins->autoUpdate($datum);
-
-                    } else {
-                        $ins = $relatedClass::getInstance();
-                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
-                        $ins->autoCreate($datum);
-                    }
-
-                    if ($foreignKeysMode) $foreignKeysIds[] = $ins->getId();
-                }
-
-                if ($foreignKeysMode && count($foreignKeysIds) > 0) {
-                    $setter = 'set' . ucfirst($field->getName());
-                    $this->{$setter}($foreignKeysIds);
-                    $hasToReUpdate = true;
-                }
-            }
-            $this->PENDING_UPDATE_RELATED_DATA = [];
-        }
-
-        if ($hasToReUpdate) {
-            $this->save();
-        }
-
-        if (count($this->PIVOT_SORT) > 0) {
-            foreach ($this->PIVOT_SORT as $column => $ids) {
-
-                $ownField = $schema->getPivotField($column);
-
-                // Pivot table fields (intermediate table)
-                $pivotSchema = $ownField->getPivotSchema();
-
-                $pointingField = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
-
-                if ($pointingField instanceof PivotLeftIdField) {
-                    $referencedField = $pivotSchema->getPivotRightIdField();
-                } else {
-                    $referencedField = $pivotSchema->getPivotLeftIdField();
-                }
-
-                /** @var PivotPositionField $positionField */
-                $positionField = $pivotSchema->getOnePositionField();
-
-                $positionGetter = $positionField->getGetterForPrimitiveValue();
-                $positionSetter = $positionField->getSetterForPrimitiveValue();
-                $referencedGetter = $referencedField->getGetterForPrimitiveValue();
-                $referencedSetter = $referencedField->getSetterForPrimitiveValue();
-                $pointingSetter = $pointingField->getSetterForPrimitiveValue();
-
-                $results = $this->_getPivots($ownField->getName());
-
-                $checkedIds = [];
-
-                // Update existing pivots
-                foreach ($results as $result) {
-                    $id = $result->{$referencedGetter}();
-                    $updatedPosition = array_search($id, $ids);
-                    $checkedIds[] = $id;
-
-                    $position = $result->{$positionGetter}();
-
-                    if ($updatedPosition !== $position) {
-                        $result
-                            ->{$positionSetter}($updatedPosition)
-                            ->save();
-                    }
-
-                    // Unlink pivot relation
-                    if (!in_array($id, $ids, true)) {
-                        $result->delete();
-                    }
-                }
-
-                // Link new pivot relations
-                foreach ($ids as $i => $id) {
-                    if (!in_array($id, $checkedIds, true)) {
-                        $ins = $pivotSchema->getItemInstance();
-                        $ins
-                            ->{$pointingSetter}($this->getIdColumnValue())
-                            ->{$referencedSetter}($id)
-                            ->{$positionSetter}($i)
-                            ->save();
-                    }
-                }
-            }
-        }
-
-        if (count($this->PENDING_PIVOT_LINKS) > 0) {
-            foreach ($this->PENDING_PIVOT_LINKS as $field => $relatedId) {
-                $this->_addPivotRelation($field, $relatedId);
-            }
-        }
-
-        if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
-            foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
-                if (is_array($relatedId)) {
-                    foreach ($relatedId as $value) {
-                        if ($value !== null) $this->_saveAppendToParentForeignKeys($field, $value);
-                    }
-                } else {
-                    $this->_saveAppendToParentForeignKeys($field, $relatedId);
-                }
-            }
-        }
-
-        $this->_saveCompositionValues($isUpdate);
-
-        if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {
-            unset($this->accessPolicy);
-        }
-
-        if ($reload) {
-            $cacheCode = $schema->getInstanceCode($this->DATA);
-            InstanceCache::clearCode($cacheCode);
-            return Instantiator::make(static::COMPONENT, $this->getIdColumnValue(), $this->DATA);
-        }
-
-        return $this;
-    }
+//    public function save(): static
+//    {
+//        $isUpdate = !$this->isAnonymous();
+//
+//        $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
+//        $queryBuilder = $dbIntegration->query;
+//        $connection = $dbIntegration->databaseConnector;
+//        $schema = $dbIntegration->schema;
+//
+//        if (isset($this->accessPolicy) && $this->accessPolicy) {
+//            $accessPolicyExcludedFields = $schema->getAccessPolicyExcludedFields($this->accessPolicy->name);
+//
+//            foreach ($accessPolicyExcludedFields as $accessPolicyExcludedField) {
+//                $key = $accessPolicyExcludedField->getName();
+//                $hasKey = $accessPolicyExcludedField->getGetterForChecker();
+//                if (array_key_exists($key, $this->UPDATED)) unset($this->UPDATED[$key]);
+//                if (array_key_exists($hasKey, $this->UPDATED)) unset($this->UPDATED[$hasKey]);
+//            }
+//        }
+//
+//        // Update only: auto update values
+//        if ($isUpdate) {
+//            /** @var AbstractField $fieldsWithDefaultValue */
+//            $fieldsWithDefaultValue = $schema->getFieldsToUpdateOnInstanceUpdate();
+//            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
+//                $defaultValueKey = $fieldWithDefaultValue->getName();
+//                if (isset($this->UPDATED[$defaultValueKey])) continue;
+//
+//                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
+//                if (isset($this->UPDATED[$defaultValueKey])) continue;
+//
+//                $defaultValue = $fieldWithDefaultValue->getOnInstanceUpdateValue();
+//                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
+//                $this->{$setter}($defaultValue);
+//            }
+//
+//        // Create only: set default values
+//        } else {
+//            /** @var AbstractField $fieldsWithDefaultValue */
+//            $fieldsWithDefaultValue = $schema->getFieldsWithDefaultValue();
+//            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
+//                $defaultValueKey = $fieldWithDefaultValue->getName();
+//                if (isset($this->UPDATED[$defaultValueKey])) continue;
+//
+//                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
+//                if (isset($this->UPDATED[$defaultValueKey])) continue;
+//
+//                $defaultValue = $fieldWithDefaultValue->getDefaultValue();
+//                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
+//                $this->{$setter}($defaultValue);
+//            }
+//        }
+//
+//
+//        $fileFields = $schema->getFileFields();
+//
+//        $pendingUploadBase64Files = [];
+//        $pendingUploadBase64MultipleFiles = [];
+//        if (count($this->UPDATED) > 0) {
+//            // Check if it's needed to store a base64 file:
+//            foreach ($fileFields as $fileField) {
+//                if ($this->_fileValUpdatedWithBase64Data($fileField->getName())) {
+//                    $storePath = $fileField->getStorePath($this);
+//                    if ($storePath === ''){
+//                        throw UnsetFieldStorePathException::getInstance($fileField->getName(), $schema->getComponent());
+//                    }
+//
+//                    if ($fileField->isMultiple()) {
+//                        $pendingUploadBase64MultipleFiles[$fileField->getName()] = $this->UPDATED[$fileField->getName()];
+//                        $this->UPDATED[$fileField->getName()] = [];
+//
+//                    } else {
+//                        $pendingUploadBase64Files[$fileField->getName()] = $this->UPDATED[$fileField->getName()];
+//                        $this->UPDATED[$fileField->getName()] = '';
+//                    }
+//                }
+//            }
+//        }
+//
+//        foreach ($schema->getMandatoryFields() as $mandatoryField) {
+//            $checkerMethod = $mandatoryField->getGetterForChecker();
+//            if (!$this->{$checkerMethod}()) {
+//                $additionalFieldsToColumn =  array_filter($schema->getFields(), function (AbstractField $field) use ($mandatoryField) {
+//                    return $field->getName() !== $mandatoryField->getName()
+//                        && $field->getColumn() === $mandatoryField->getColumn();
+//                });
+//                $ok = false;
+//                if (count($additionalFieldsToColumn) > 0) {
+//                    foreach ($additionalFieldsToColumn as $additionalFieldToColumn) {
+//                        $additionalCheckerMethod = $additionalFieldToColumn->getGetterForChecker();
+//                        $ok = $ok || $this->{$additionalCheckerMethod}();
+//                    }
+//                }
+//
+//                if (!$ok) {
+//                    throw MissedMandatoryValueException::getInstance($schema->getComponent() . '.' .$mandatoryField->getName());
+//                }
+//            }
+//        }
+//
+//        $parsed = $connection->prepareDataToStore($schema, $this->UPDATED);
+//
+//        $origIdColumn = $schema->getIdColumn();
+//        $origIdColumn = $origIdColumn[0];
+//
+//        $id = 0;
+//
+//        if (count($this->UPDATED) > 0) {
+//
+//            // Save current instance process
+//            $queryBuilder->updateData($parsed);
+//
+//            if ($isUpdate) {
+//                $schema->applyIdentifierConstraintsToQueryFromInstance($queryBuilder, $this);
+//                $query = $connection->getUpdateQuery($queryBuilder);
+//            } else {
+//                $query = $connection->getInsertQuery($queryBuilder);
+//            }
+//
+//            $queryResponse = $connection->query($query);
+//
+//            if ($queryResponse !== false) {
+//                foreach ($this->UPDATED as $k => $v) {
+//                    $this->DATA[$k] = $v;
+//                    unset($this->UPDATED[$k]);
+//                }
+//            }
+//
+//            $id = (int)$connection->getLastInsertedId();
+//            $reload = true;
+//        }
+//
+//        // Get current instance ID (if it's been created)
+//        if ($id > 0 && (!isset($this->DATA[$origIdColumn]) || !$this->DATA[$origIdColumn])) {
+//            $this->DATA[$origIdColumn] = $id;
+//
+//        } elseif ($this->DATA[$origIdColumn] > 0) {
+//            $id = $this->DATA[$origIdColumn];
+//        }
+//
+//        $hasToReUpdate = false;
+//
+//        if (count($pendingUploadBase64Files) > 0) {
+//            foreach ($pendingUploadBase64Files as $fileFieldName => $fileFieldValue) {
+//                $this->_storeBase64DataAsFile($fileFieldName, $fileFieldValue, $id);
+//                $hasToReUpdate = true;
+//            }
+//        }
+//
+//        if (count($pendingUploadBase64MultipleFiles) > 0) {
+//            foreach ($pendingUploadBase64MultipleFiles as $fileFieldName => $fileFieldValue) {
+//                $this->_storeBase64DataAsFiles($fileFieldName, $fileFieldValue, $id);
+//                $hasToReUpdate = true;
+//            }
+//        }
+//
+//        if (count($this->UPLOADING_FILES) > 0) {
+//            // Check if it's needed to store a base64 file:
+//            foreach ($fileFields as $fileField) {
+//                $key = $fileField->getName();
+//                if (is_array($this->UPLOADING_FILES[$key])) {
+//                    $uploadData = FileUploadHelper::uploadFileField($fileField, $this->UPLOADING_FILES[$key], $this, $schema);
+//
+//                    if (is_array($uploadData)) {
+//                        $this->_setFileVal($key, $uploadData['name']);
+//                        $hasToReUpdate = true;
+//                    }
+//                    unset($this->UPLOADING_FILES[$key]);
+//                }
+//            }
+//        }
+//
+//        // Update relational data
+//        if (count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
+//            foreach ($this->PENDING_UPDATE_RELATED_DATA as $column => $data) {
+//
+//                if (!$isUpdate && count($data) === 0) continue;
+//
+//                /** @var RelatedField $field */
+//                $field = $schema->getField($column);
+//                $relatedComponent = $field->getComponent();
+//
+//                if ($field instanceof ForeignKeysField && count($data) === 0) {
+//                    $currentItems = $this->_getForeignListData($column);
+//                    if (count($currentItems) === 0) continue;
+//                }
+//
+//                if (method_exists($field, 'getDynamicComponentField')) { // Check due to RelatedField not implementing this feature yet
+//                    $dynamicComponentFieldName = $field->getDynamicComponentField();
+//                    if ($dynamicComponentFieldName !== '') {
+//                        $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
+//                        $getter = $dynamicComponentField->getGetterForPrimitiveValue();
+//                        $dynamicType = $this->{$getter}();
+//                        if (is_numeric($dynamicType)) $relatedComponent = ComponentId::getComponent((int)$dynamicType);
+//                        elseif ($dynamicType !== '') $relatedComponent = $dynamicType;
+//                    }
+//                }
+//
+//                $relatedSchema = Schema::get($relatedComponent);
+//
+//                $relatedIdColumn = $relatedSchema->getIdColumn()[0];
+//                /** @var AbstractInstance $relatedClass */
+//                $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+//
+//                $relatedMode = false;
+//                $foreignKeysMode = false;
+//
+//                $foreignKeysIds = [];
+//
+//                // Check which items must be deleted
+//                if ($field instanceof RelatedField) {
+//                    $relatedMode = true;
+//                    $currentItems = $this->_getRelatedVal($relatedComponent, $column, true);
+//
+//                } elseif ($field instanceof ForeignKeysField) {
+//                    $foreignKeysMode = true;
+//                    $currentItems = $this->_getForeignListData($column);
+//                }
+//
+//                $currentIds = [];
+//
+//                /** @var AbstractInstance[] $currentItems */
+//                foreach ($currentItems as $currentItem) {
+//                    $code = $relatedSchema->getInstanceCode($currentItem);
+//                    if (!in_array($code, $currentIds, true)) $currentIds[] = $code;
+//                }
+//
+//                $updatedIds = [];
+//                foreach ($data as $datum) {
+//                    $code = $relatedSchema->getInstanceCode($datum);
+//                    if ($code) $updatedIds[] = $code;
+//                }
+//
+//                $diff = compareArrays($currentIds, $updatedIds);
+//
+//                // Delete
+//                if (method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
+//                    foreach ($diff['deleted'] as $deletedId) {
+//                        $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
+//                        $ins->delete();
+//                    }
+//                }
+//
+//                if ($relatedMode) {
+//                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
+//                    $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
+//                    if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
+//                        if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
+//                            $relatedForeignKeyKey .= 'Id';
+//                        }
+//                    }
+//
+//                } elseif ($foreignKeysMode) {
+//
+//                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
+//                    if ($relatedForeignKeyColumn instanceof RelatedKeysField) {
+//                        $relatedForeignKeyKey = $relatedForeignKeyColumn?->getAppendForeignKeysName();
+//                        if (!$relatedForeignKeyKey) $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
+//
+//                        if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
+//                            if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
+//                                $relatedForeignKeyKey .= 'Id';
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                if (isset($this->accessPolicy) && $this->accessPolicy->name) {
+//                    $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+//                }
+//                if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';
+//
+//
+//                // Update or create
+//                foreach ($data as $datum) {
+//                    if ($relatedMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
+//                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
+//                    }
+//                    elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
+//                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
+//                    }
+//
+//                    if ($datum[$relatedIdColumn] > 0) {
+//                        $ins = $relatedClass::getInstance($datum[$relatedIdColumn]);
+//                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
+//                        $ins->autoUpdate($datum);
+//
+//                    } else {
+//                        $ins = $relatedClass::getInstance();
+//                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
+//                        $ins->autoCreate($datum);
+//                    }
+//
+//                    if ($foreignKeysMode) $foreignKeysIds[] = $ins->getId();
+//                }
+//
+//                if ($foreignKeysMode && count($foreignKeysIds) > 0) {
+//                    $setter = 'set' . ucfirst($field->getName());
+//                    $this->{$setter}($foreignKeysIds);
+//                    $hasToReUpdate = true;
+//                }
+//            }
+//            $this->PENDING_UPDATE_RELATED_DATA = [];
+//        }
+//
+//        if ($hasToReUpdate) {
+//            $this->save();
+//        }
+//
+//        if (count($this->PIVOT_SORT) > 0) {
+//            foreach ($this->PIVOT_SORT as $column => $ids) {
+//
+//                $ownField = $schema->getPivotField($column);
+//
+//                // Pivot table fields (intermediate table)
+//                $pivotSchema = $ownField->getPivotSchema();
+//
+//                $pointingField = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
+//
+//                if ($pointingField instanceof PivotLeftIdField) {
+//                    $referencedField = $pivotSchema->getPivotRightIdField();
+//                } else {
+//                    $referencedField = $pivotSchema->getPivotLeftIdField();
+//                }
+//
+//                /** @var PivotPositionField $positionField */
+//                $positionField = $pivotSchema->getOnePositionField();
+//
+//                $positionGetter = $positionField->getGetterForPrimitiveValue();
+//                $positionSetter = $positionField->getSetterForPrimitiveValue();
+//                $referencedGetter = $referencedField->getGetterForPrimitiveValue();
+//                $referencedSetter = $referencedField->getSetterForPrimitiveValue();
+//                $pointingSetter = $pointingField->getSetterForPrimitiveValue();
+//
+//                $results = $this->_getPivots($ownField->getName());
+//
+//                $checkedIds = [];
+//
+//                // Update existing pivots
+//                foreach ($results as $result) {
+//                    $id = $result->{$referencedGetter}();
+//                    $updatedPosition = array_search($id, $ids);
+//                    $checkedIds[] = $id;
+//
+//                    $position = $result->{$positionGetter}();
+//
+//                    if ($updatedPosition !== $position) {
+//                        $result
+//                            ->{$positionSetter}($updatedPosition)
+//                            ->save();
+//                    }
+//
+//                    // Unlink pivot relation
+//                    if (!in_array($id, $ids, true)) {
+//                        $result->delete();
+//                    }
+//                }
+//
+//                // Link new pivot relations
+//                foreach ($ids as $i => $id) {
+//                    if (!in_array($id, $checkedIds, true)) {
+//                        $ins = $pivotSchema->getItemInstance();
+//                        $ins
+//                            ->{$pointingSetter}($this->getIdColumnValue())
+//                            ->{$referencedSetter}($id)
+//                            ->{$positionSetter}($i)
+//                            ->save();
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (count($this->PENDING_PIVOT_LINKS) > 0) {
+//            foreach ($this->PENDING_PIVOT_LINKS as $field => $relatedId) {
+//                $this->_addPivotRelation($field, $relatedId);
+//            }
+//        }
+//
+//        if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
+//            foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
+//                if (is_array($relatedId)) {
+//                    foreach ($relatedId as $value) {
+//                        if ($value !== null) $this->_saveAppendToParentForeignKeys($field, $value);
+//                    }
+//                } else {
+//                    $this->_saveAppendToParentForeignKeys($field, $relatedId);
+//                }
+//            }
+//        }
+//
+//        $this->_saveCompositionValues($isUpdate);
+//
+//        if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {
+//            unset($this->accessPolicy);
+//        }
+//
+//        if ($reload) {
+//            $cacheCode = $schema->getInstanceCode($this->DATA);
+//            InstanceCache::clearCode($cacheCode);
+//            return Instantiator::make(static::COMPONENT, $this->getIdColumnValue(), $this->DATA);
+//        }
+//
+//        return $this;
+//    }
 
     public function delete(): static
     {
@@ -1027,12 +1046,30 @@ abstract class AbstractInstance implements Item
         return $r;
     }
 
+    /**
+     * @deprecated by feedAndSave (which automatically checks is has to create or not)
+     *
+     * @param array $data
+     * @param array $internalMethodsArguments
+     * @return $this
+     * @throws MissedMandatoryValueException
+     * @throws UnsetFieldStorePathException
+     */
     public function autoCreate(array $data, array $internalMethodsArguments = []): static
     {
         static::feedInstance($this, $this->prepareCrudData($data, CrudOperation::Create), $internalMethodsArguments);
         return $this->save();
     }
 
+    /**
+     * @deprecated by feedAndSave (which automatically checks is has to create or not)
+     *
+     * @param array $data
+     * @param array $internalMethodsArguments
+     * @return $this
+     * @throws MissedMandatoryValueException
+     * @throws UnsetFieldStorePathException
+     */
     public function autoUpdate(array $data, array $internalMethodsArguments = []): static
     {
         static::feedInstance($this, $this->prepareCrudData($data, CrudOperation::Update), $internalMethodsArguments);
@@ -1051,6 +1088,8 @@ abstract class AbstractInstance implements Item
 
     public static function feedInstance(AbstractInstance $instance, array $params, array $internalMethodsArguments = []): static
     {
+        return $instance->feed($params, $internalMethodsArguments);
+
         $schema = Schema::get(static::COMPONENT);
 
         $accessPolicy = null;
@@ -1613,44 +1652,6 @@ abstract class AbstractInstance implements Item
         return $this;
     }
 
-    protected function prepareOwnMethodCallArguments(string $method, array $args, string $fieldName): array
-    {
-        $reflectionMethod = new \ReflectionMethod($this, $method);
-
-        $params = $reflectionMethod->getParameters();
-
-        $paramsKeys = array_map(function (\ReflectionParameter $param){ return $param->getName();}, $params);
-
-        foreach (array_keys($args) as $key) {
-            if (!in_array($key, $paramsKeys)) unset($args[$key]);
-        }
-
-        return $args;
-    }
-
-    protected function satisfiedOwnMethodCallArguments(string $method, array $args): bool
-    {
-        $reflectionMethod = new \ReflectionMethod($this, $method);
-
-        $params = $reflectionMethod->getParameters();
-
-//        if (count($args) < count($params)) return false;
-
-        foreach ($params as $param) {
-            // Use array_key_exists over isset because if value is null, isset returns a false positive
-            if (!$param->isOptional() && !array_key_exists($param->getName(), $args)) return false;
-        }
-        return true;
-    }
-
-    protected function callOwnMethod(string $method, array $args): mixed
-    {
-        if (count($args) > 0) {
-            return call_user_func_array([$this, $method], $args);
-        }
-        return $this->{$method}();
-    }
-
     public function duplicate(): static
     {
         $clone = static::getInstance()->setAccessPolicy('duplicate');
@@ -1847,6 +1848,33 @@ abstract class AbstractInstance implements Item
         foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->foreignKeyData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->foreignKeysData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->jsonData->getPayload() as $k => $v) $r[$k] = $v;
+        foreach ($this->fileData->getPayload() as $k => $v) $r[$k] = $v;
+
+        return $r;
+    }
+
+    public function getOriginalData(): array
+    {
+        $r = [];
+        foreach ($this->UPDATED as $k => $v) $r[$k] = $v;
+
+        foreach ($this->stringData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->integerData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->multipleIntegerData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->floatData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->multipleFloatData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->booleanData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->emailData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->dateData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->unixTimeStampData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->colorData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->encryptData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->foreignKeyData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->foreignKeysData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->jsonData->getOriginalData() as $k => $v) $r[$k] = $v;
+        foreach ($this->fileData->getOriginalData() as $k => $v) $r[$k] = $v;
 
         return $r;
     }

@@ -2,14 +2,19 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Encrypt\EncryptFieldHelper;
 use Lkt\Factory\Schemas\Schema;
 
 trait ColumnEncryptTrait
 {
+    use ItemWithEncryptDataTrait;
+
     protected function _getEncryptVal(string $fieldName): string
     {
+        return $this->encryptData->get($fieldName);
+
         if (isset($this->UPDATED[$fieldName])) {
             return $this->UPDATED[$fieldName];
         }
@@ -18,6 +23,8 @@ trait ColumnEncryptTrait
 
     protected function _getDecryptedVal(string $fieldName): string
     {
+        return $this->encryptData->decrypt($fieldName);
+
         if (isset($this->DECRYPT_UPDATED[$fieldName])) {
             return $this->DECRYPT_UPDATED[$fieldName];
         }
@@ -43,6 +50,7 @@ trait ColumnEncryptTrait
 
     protected function _hasEncryptVal(string $fieldName): bool
     {
+        return $this->encryptData->has($fieldName);
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -52,6 +60,9 @@ trait ColumnEncryptTrait
 
     protected function _setEncryptVal(string $fieldName, string $value = null): static
     {
+        $this->encryptData->set($fieldName, $value);
+        return $this;
+
         $schema = Schema::get(static::COMPONENT);
         $field = $schema->getField($fieldName);
 

@@ -9,6 +9,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
+use function Lkt\Tools\Color\decToHex;
 
 final class ColorDataController
 {
@@ -71,6 +72,10 @@ final class ColorDataController
         if ($value === null) return null;
 
         $f = $this->schema->getColorField($key);
+
+        if (is_array($value)) {
+            $value = decToHex($value);
+        }
 
         if (is_string($value)) {
             return $this->trim($value, TrimMode::Full);

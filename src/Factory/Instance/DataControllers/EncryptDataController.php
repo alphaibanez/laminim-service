@@ -6,6 +6,7 @@ use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
 use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\Encrypt\EncryptFieldHelper;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
@@ -32,6 +33,20 @@ final class EncryptDataController
 
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
+        }
+
+        return null;
+    }
+
+    public function decrypt(string $key): string|null
+    {
+        $value = $this->get($key);
+        if ($value === null) return null;
+
+        $field = $this->schema->getEncryptField($key);
+        if ($field->hasAlgorithmSHA256()) {
+            $secureSeed = $field->getSecureSeed();
+            return EncryptFieldHelper::encryptSHA256($value, $secureSeed);
         }
 
         return null;

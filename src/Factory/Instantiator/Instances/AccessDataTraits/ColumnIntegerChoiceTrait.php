@@ -11,6 +11,8 @@ trait ColumnIntegerChoiceTrait
 {
     protected function _getIntegerChoiceVal(string $fieldName): int|array
     {
+        return $this->integerData->get($fieldName);
+
         $schema = Schema::get(static::COMPONENT);
         /** @var IntegerField $field */
         $field = $schema->getField($fieldName);

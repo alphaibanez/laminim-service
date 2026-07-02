@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Traits\ItemWithJSONDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
@@ -11,6 +12,8 @@ use StdClass;
 
 trait ColumnJsonTrait
 {
+    use ItemWithJSONDataTrait;
+
     /**
      * @param string $fieldName
      * @return array|StdClass
@@ -19,6 +22,8 @@ trait ColumnJsonTrait
      */
     protected function _getJsonVal(string $fieldName)
     {
+        return $this->jsonData->get($fieldName);
+
         if (isset($this->UPDATED[$fieldName])) {
             $r = $this->UPDATED[$fieldName];
         } else {
@@ -54,6 +59,8 @@ trait ColumnJsonTrait
      */
     protected function _hasJsonVal(string $fieldName): bool
     {
+        return $this->jsonData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -69,6 +76,9 @@ trait ColumnJsonTrait
      */
     protected function _setJsonVal(string $fieldName, $value = null): static
     {
+        $this->jsonData->set($fieldName, $value);
+        return $this;
+
         if (is_object($value)) {
             $value = json_decode(json_encode($value), true);
 

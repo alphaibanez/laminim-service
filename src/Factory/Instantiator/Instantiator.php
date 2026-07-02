@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator;
 
 use Lkt\Connectors\DatabaseConnections;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -62,8 +63,9 @@ class Instantiator
                 $converter = new RawResultsToInstanceConverter($component, $item);
                 $itemData = $converter->parse();
 
+                /** @var Item $r */
                 $r = new $appClass($itemData);
-                $r->setData($itemData);
+                $r->initialFeed($itemData);
                 InstanceCache::store($code, $r);
                 $response[] = $r;
             }

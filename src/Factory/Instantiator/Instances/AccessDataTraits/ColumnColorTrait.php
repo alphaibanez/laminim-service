@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
@@ -10,12 +11,16 @@ use function Lkt\Tools\Color\hexToDec;
 
 trait ColumnColorTrait
 {
+    use ItemWithColorDataTrait;
+
     /**
      * @param string $fieldName
      * @return string
      */
     protected function _getColorVal(string $fieldName): string
     {
+        return $this->colorData->get($fieldName);
+
         if (isset($this->UPDATED[$fieldName])) {
             return $this->UPDATED[$fieldName];
         }
@@ -29,10 +34,12 @@ trait ColumnColorTrait
      */
     protected function _getColorRgbVal(string $fieldName, float $opacity = null): array
     {
-        $r = trim($this->DATA[$fieldName]);
-        if (isset($this->UPDATED[$fieldName])) {
-            $r = trim($this->UPDATED[$fieldName]);
-        }
+        $r = $this->colorData->get($fieldName);
+
+//        $r = trim($this->DATA[$fieldName]);
+//        if (isset($this->UPDATED[$fieldName])) {
+//            $r = trim($this->UPDATED[$fieldName]);
+//        }
 
         $r = hexToDec($r);
         if ($opacity !== null) {
@@ -66,6 +73,8 @@ trait ColumnColorTrait
      */
     protected function _hasColorVal(string $fieldName): bool
     {
+        return $this->colorData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -81,6 +90,8 @@ trait ColumnColorTrait
      */
     protected function _setColorVal(string $fieldName, $value = null): static
     {
+        $this->colorData->set($fieldName, $value);
+        return $this;
         $v = $value;
         if (is_array($v)) {
             $v = decToHex($v);

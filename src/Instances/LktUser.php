@@ -136,6 +136,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     public static function getSignedInUser(): ?static
     {
         $instance = static::getInstance(static::getSignedInUserId());
+//        VarDumper::die($instance);
         if ($instance->isAnonymous()) return null;
         return $instance;
     }

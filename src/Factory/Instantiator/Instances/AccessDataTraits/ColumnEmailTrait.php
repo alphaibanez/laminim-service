@@ -8,6 +8,7 @@ trait ColumnEmailTrait
 {
     protected function _getEmailVal(string $fieldName): string
     {
+        return $this->emailData->get($fieldName);
         if (isset($this->UPDATED[$fieldName])) {
             return $this->UPDATED[$fieldName];
         }
@@ -16,6 +17,7 @@ trait ColumnEmailTrait
 
     protected function _hasEmailVal(string $fieldName): bool
     {
+        return $this->emailData->has($fieldName);
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -25,6 +27,8 @@ trait ColumnEmailTrait
 
     protected function _setEmailVal(string $fieldName, string $value = null): static
     {
+        $this->emailData->set($fieldName, $value);
+        return $this;
         $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
             $fieldName => $value,
         ], false);

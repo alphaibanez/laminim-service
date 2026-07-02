@@ -5,16 +5,21 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 use Carbon\Carbon;
 use DateTime;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 
 trait ColumnDateTimeTrait
 {
+    use ItemWithDateDataTrait;
+
     /**
      * @param string $fieldName
      * @return Carbon|null
      */
     protected function _getDateTimeVal(string $fieldName): ?Carbon
     {
+        return $this->dateData->get($fieldName);
+
         if (isset($this->UPDATED[$fieldName]) && $this->UPDATED[$fieldName] instanceof Carbon) {
             return $this->UPDATED[$fieldName];
         }
@@ -58,6 +63,7 @@ trait ColumnDateTimeTrait
      */
     protected function _hasDateTimeVal(string $fieldName): bool
     {
+        return $this->dateData->has($fieldName);
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -71,6 +77,9 @@ trait ColumnDateTimeTrait
      */
     protected function _setDateTimeVal(string $fieldName, Carbon|DateTime|int|string|null $value = null): static
     {
+        $this->dateData->set($fieldName, $value);
+        return $this;
+
         $rawValueToConvert = null;
         if ($value instanceof Carbon) {
             $rawValueToConvert = $value->format('Y-m-d H:i:s');

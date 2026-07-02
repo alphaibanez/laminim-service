@@ -794,6 +794,13 @@ final class Schema
         return null;
     }
 
+    public function getDateTimeField(string $field): ?DateTimeField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof DateTimeField) return $r;
+        return null;
+    }
+
     public function getColorField(string $field): ?ColorField
     {
         $r = $this->getField($field);

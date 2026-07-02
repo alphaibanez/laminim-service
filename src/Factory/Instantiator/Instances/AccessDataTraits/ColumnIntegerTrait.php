@@ -13,7 +13,11 @@ trait ColumnIntegerTrait
 
     protected function _getIntegerVal(string $fieldName): int|array|null
     {
-//        return (int)$this->integerData->get($fieldName);
+        $field = $this->getSchema()->getField($fieldName);
+        if ($field->isMultiple()) {
+            return $this->multipleIntegerData->get($fieldName);
+        }
+        return (int)$this->integerData->get($fieldName);
 
 
         $schema = Schema::get(static::COMPONENT);
@@ -28,6 +32,12 @@ trait ColumnIntegerTrait
 
     protected function _hasIntegerVal(string $fieldName): bool
     {
+        $field = $this->getSchema()->getField($fieldName);
+        if ($field->isMultiple()) {
+            return $this->multipleIntegerData->has($fieldName);
+        }
+        return $this->integerData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) return $this->UPDATED[$checkField];
         if (isset($this->DATA[$checkField])) return $this->DATA[$checkField] === true;
@@ -36,6 +46,14 @@ trait ColumnIntegerTrait
 
     protected function _setIntegerVal(string $fieldName, int|array $value = null): static
     {
+        $field = $this->getSchema()->getField($fieldName);
+        if ($field->isMultiple()) {
+            $this->multipleIntegerData->set($fieldName, $value);
+        } else {
+            $this->integerData->set($fieldName, $value);
+        }
+        return $this;
+
         $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
             $fieldName => $value,
         ], false);

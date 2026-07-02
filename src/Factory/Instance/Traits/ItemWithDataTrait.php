@@ -360,7 +360,7 @@ trait ItemWithDataTrait
             //
             if ($queryResponse !== false) {
                 foreach ($payload as $k => $v) {
-                    $this->DATA[$k] = $v;
+                    $original[$k] = $v;
                     unset($payload[$k]);
                 }
             }
@@ -371,11 +371,11 @@ trait ItemWithDataTrait
 
         // Get current instance ID (if it's been created)
         // @todo refactor for data controllers
-        if ($id > 0 && (!isset($this->DATA[$origIdColumn]) || !$this->DATA[$origIdColumn])) {
-            $this->DATA[$origIdColumn] = $id;
+        if ($id > 0 && (!isset($original[$origIdColumn]) || !$original[$origIdColumn])) {
+            $original[$origIdColumn] = $id;
 
-        } elseif ($this->DATA[$origIdColumn] > 0) {
-            $id = $this->DATA[$origIdColumn];
+        } elseif ($original[$origIdColumn] > 0) {
+            $id = $original[$origIdColumn];
         }
 
         $hasToReUpdate = false;
@@ -635,9 +635,9 @@ trait ItemWithDataTrait
         }
 
         if ($reload) {
-            $cacheCode = $schema->getInstanceCode($this->DATA);
+            $cacheCode = $schema->getInstanceCode($original);
             InstanceCache::clearCode($cacheCode);
-            return Instantiator::make(static::COMPONENT, $this->getIdColumnValue(), $this->DATA);
+            return Instantiator::make(static::COMPONENT, $this->getIdColumnValue(), $original);
         }
 
         return $this;

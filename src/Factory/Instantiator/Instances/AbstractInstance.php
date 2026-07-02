@@ -174,32 +174,39 @@ abstract class AbstractInstance implements Item
      */
     public function __construct(array $initialData = [])
     {
-        $this->DATA = $initialData;
+//        $this->DATA = $initialData;
+        $this->initialFeed($initialData);
+    }
 
-//        $schema = Schema::get(static::COMPONENT);
-//        $groupedData = new GroupedData($schema, $initialData);
-//
-//        $this
-//            ->initStringData($schema, $this, $groupedData->stringData)
-//            ->initEmailData($schema, $this, $groupedData->emailData)
-//            ->initBooleanData($schema, $this, $groupedData->booleanData)
-//            ->initIntegerData($schema, $this, $groupedData->integerData)
-//            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
-//            ->initFloatData($schema, $this, $groupedData->floatData)
-//            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
-//            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
-//            ->initDateData($schema, $this, $groupedData->dateData)
-//            ->initColorData($schema, $this, $groupedData->colorData)
-//            ->initEncryptData($schema, $this, $groupedData->encryptData)
-//            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
-//            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
-//            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
-//            ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData)
-//            ->initJSONData($schema, $this, $groupedData->jsonData)
-//            ->initFileData($schema, $this, $groupedData->fileData)
-//
-//            ->initConstantData($schema, $this)
-//        ;
+    public function initialFeed(array $initialData = []): static
+    {
+//        VarDumper::dump(['initialFeed', static::COMPONENT, $initialData]);
+        $schema = Schema::get(static::COMPONENT);
+        $groupedData = new GroupedData($schema, $initialData);
+
+        $this
+            ->initStringData($schema, $this, $groupedData->stringData)
+            ->initEmailData($schema, $this, $groupedData->emailData)
+            ->initBooleanData($schema, $this, $groupedData->booleanData)
+            ->initIntegerData($schema, $this, $groupedData->integerData)
+            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
+            ->initFloatData($schema, $this, $groupedData->floatData)
+            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
+            ->initUnixTimeStampData($schema, $this, $groupedData->unixTimeStampData)
+            ->initDateData($schema, $this, $groupedData->dateData)
+            ->initColorData($schema, $this, $groupedData->colorData)
+            ->initEncryptData($schema, $this, $groupedData->encryptData)
+            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
+            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
+            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
+            ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData)
+            ->initJSONData($schema, $this, $groupedData->jsonData)
+            ->initFileData($schema, $this, $groupedData->fileData)
+
+            ->initConstantData($schema, $this)
+        ;
+
+        return $this;
     }
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static
@@ -239,7 +246,8 @@ abstract class AbstractInstance implements Item
             }
         }
 
-        $this->DATA = $initialData;
+        $this->initialFeed($initialData);
+//        $this->DATA = $initialData;
         return $this;
     }
 
@@ -303,7 +311,7 @@ abstract class AbstractInstance implements Item
 
         if (count($initialData) > 0) {
             $r = new static($initialData);
-            $r->setData($initialData);
+            $r->initialFeed($initialData);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
         }
@@ -320,7 +328,7 @@ abstract class AbstractInstance implements Item
             $itemData = $converter->parse();
 
             $r = new static($itemData);
-            $r->setData($itemData);
+            $r->initialFeed($itemData);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
         }
@@ -348,16 +356,17 @@ abstract class AbstractInstance implements Item
      */
     public function getIdColumnValue(): mixed
     {
+        $data = $this->getOriginalData();
         $schema = Schema::get(static::COMPONENT);
         $identifiers = $schema->getIdentifiers();
         if (count($identifiers) === 1) {
-            return $this->DATA[$schema->getIdString()];
+            return $data[$schema->getIdString()];
         }
 
         $r = [];
         foreach ($identifiers as $identifier) {
             $k = $identifier->getName();
-            $r[$k] = $this->DATA[$k];
+            $r[$k] = $data[$k];
         }
 
         return $r;
@@ -823,7 +832,7 @@ abstract class AbstractInstance implements Item
             }
         }
 
-        $cacheCode = $schema->getInstanceCode($this->DATA);
+        $cacheCode = $schema->getInstanceCode($this->getOriginalData());
         InstanceCache::clearCode($cacheCode);
         $query = $connection->getSelectQuery($caller);
         QueryCache::set($connector, $query, []);

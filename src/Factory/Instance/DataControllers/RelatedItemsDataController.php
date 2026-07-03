@@ -72,6 +72,8 @@ final class RelatedItemsDataController
         bool       $forceRefresh = false
     ): array|null
     {
+        if ($this->item->isAnonymous()) return null;
+
         $cacheKey = [$key];
         if ($page !== null) $cacheKey[] = $page;
         $cacheKey = implode('-', $cacheKey);

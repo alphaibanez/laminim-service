@@ -12,6 +12,9 @@ use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 
+/**
+ * @deprecated
+ */
 final class RawResultsToInstanceConverter
 {
     protected $component;

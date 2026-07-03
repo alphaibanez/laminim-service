@@ -35,6 +35,23 @@ final class DateDataController
         return null;
     }
 
+    public function format(string $key, string|null $format = null): string|null
+    {
+        if (!$this->has($key)) return null;
+
+        if (!$format) $format = 'Y-m-d';
+
+        $r = $this->get($key)?->format($format);
+        if (!$r || str_starts_with($r, '-')) return '';
+        return $r;
+    }
+
+    public function intlFormat(string $key, string|null $format = null): string|null
+    {
+        if (!$this->has($key)) return null;
+        return \IntlDateFormatter::formatObject($this->get($key), $format);
+    }
+
     public function has(string $key): bool
     {
         $v = $this->get($key);

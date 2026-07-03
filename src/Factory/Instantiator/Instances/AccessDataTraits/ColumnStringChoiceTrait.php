@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Exceptions\InvalidStringChoiceValueException;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
@@ -9,8 +10,12 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ColumnStringChoiceTrait
 {
+    use ItemWithStringDataTrait;
+
     protected function _getStringChoiceVal(string $fieldName): string
     {
+        return $this->stringData->get($fieldName);
+
         if (isset($this->UPDATED[$fieldName])) {
             return $this->UPDATED[$fieldName];
         }
@@ -19,6 +24,8 @@ trait ColumnStringChoiceTrait
 
     protected function _hasStringChoiceVal(string $fieldName): bool
     {
+        return $this->stringData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -28,12 +35,16 @@ trait ColumnStringChoiceTrait
 
     protected function _stringChoiceIn(string $fieldName, array $values): bool
     {
+        return $this->stringData->in($fieldName, $values);
+
         $value = $this->_getStringChoiceVal($fieldName);
         return in_array($value, $values, true);
     }
 
     protected function _stringChoiceEqual(string $fieldName, string|object $compared): bool
     {
+        return $this->stringData->equal($fieldName, $compared);
+
         $c = $compared;
         if (is_object($compared) && property_exists($compared, 'value') && isset($compared->value)) {
             $c = $compared->value;
@@ -48,6 +59,9 @@ trait ColumnStringChoiceTrait
      */
     protected function _setStringChoiceVal(string $fieldName, string|array|object $value = null): static
     {
+        $this->stringData->set($fieldName, $value);
+        return $this;
+
         $schema = Schema::get(static::COMPONENT);
         /** @var StringChoiceField $field */
         $field = $schema->getField($fieldName);

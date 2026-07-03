@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
@@ -20,9 +21,9 @@ trait ColumnStringTrait
         $field = $schema->getField($fieldName);
 
         if ($field instanceof EmailField) {
-            return $this->emailData->get($fieldName);
+            return (string)$this->emailData->get($fieldName);
         }
-        return $this->stringData->get($fieldName);
+        return (string)$this->stringData->get($fieldName);
 
 
         if (isset($this->UPDATED[$fieldName])) {
@@ -41,6 +42,15 @@ trait ColumnStringTrait
         }
         return $this->stringData->has($fieldName);
 
+
+        $schema = $this->getSchema();
+        $field = $schema->getField($fieldName);
+
+        if ($field instanceof EmailField) {
+            return $this->emailData->has($fieldName);
+        }
+        return $this->stringData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -50,6 +60,18 @@ trait ColumnStringTrait
 
     protected function _setStringVal(string $fieldName, string $value = null): static
     {
+        $schema = $this->getSchema();
+        $field = $schema->getField($fieldName);
+
+        if ($field instanceof EmailField) {
+            $this->emailData->has($fieldName);
+        } else {
+            $this->stringData->has($fieldName);
+        }
+
+        return $this;
+
+
         $schema = $this->getSchema();
         $field = $schema->getField($fieldName);
 

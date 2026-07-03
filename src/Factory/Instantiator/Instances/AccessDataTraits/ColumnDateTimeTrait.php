@@ -36,6 +36,8 @@ trait ColumnDateTimeTrait
      */
     protected function _getDateTimeFormattedVal(string $fieldName, string $format = null): string
     {
+        return $this->dateData->format($fieldName, $format);
+
         if (!$this->_hasDateTimeVal($fieldName)) {
             return '';
         }
@@ -51,6 +53,8 @@ trait ColumnDateTimeTrait
      */
     protected function _getDateTimeFormattedIntlVal(string $fieldName, string $format = null): string
     {
+        return $this->dateData->intlFormat($fieldName, $format);
+
         if (!$this->_hasDateTimeVal($fieldName)) {
             return '';
         }

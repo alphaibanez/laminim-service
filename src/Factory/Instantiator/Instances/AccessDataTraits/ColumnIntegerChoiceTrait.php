@@ -11,7 +11,11 @@ trait ColumnIntegerChoiceTrait
 {
     protected function _getIntegerChoiceVal(string $fieldName): int|array
     {
-        return $this->integerData->get($fieldName);
+        $field = $this->getSchema()->getField($fieldName);
+        if ($field->isMultiple()) {
+            return $this->multipleIntegerData->get($fieldName) ?? [];
+        }
+        return (int)$this->integerData->get($fieldName);
 
         $schema = Schema::get(static::COMPONENT);
         /** @var IntegerField $field */
@@ -25,6 +29,12 @@ trait ColumnIntegerChoiceTrait
 
     protected function _hasIntegerChoiceVal(string $fieldName): bool
     {
+        $field = $this->getSchema()->getField($fieldName);
+        if ($field->isMultiple()) {
+            return $this->multipleIntegerData->has($fieldName);
+        }
+        return $this->integerData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -101,6 +111,14 @@ trait ColumnIntegerChoiceTrait
      */
     protected function _setIntegerChoiceVal(string $fieldName, int|array|object $value = null): static
     {
+        $field = $this->getSchema()->getField($fieldName);
+        if ($field->isMultiple()) {
+            $this->multipleIntegerData->set($fieldName, $value);
+        } else {
+            $this->integerData->set($fieldName, $value);
+        }
+        return $this;
+
         $schema = Schema::get(static::COMPONENT);
         /** @var IntegerChoiceField $field */
         $field = $schema->getField($fieldName);

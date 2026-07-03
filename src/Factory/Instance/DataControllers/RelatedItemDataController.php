@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instantiator;
@@ -23,6 +24,7 @@ final class RelatedItemDataController
 
     public function getItem(string $key): Item|null
     {
+        if ($this->item->isAnonymous()) return null;
         if (array_key_exists($key, $this->data)) return $this->data[$key];
 
         $field = $this->schema->getRelatedField($key);

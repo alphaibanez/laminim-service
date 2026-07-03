@@ -17,7 +17,7 @@ trait ColumnBooleanTrait
      */
     protected function _getBooleanVal(string $fieldName): bool
     {
-        return $this->booleanData->get($fieldName);
+        return (bool)$this->booleanData->get($fieldName);
 
         if (isset($this->UPDATED[$fieldName])) {
             return $this->UPDATED[$fieldName];

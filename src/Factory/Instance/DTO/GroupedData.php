@@ -30,7 +30,6 @@ final readonly class GroupedData
     public array $multipleIntegerData;
     public array $floatData;
     public array $multipleFloatData;
-    public array $unixTimeStampData;
     public array $dateData;
     public array $colorData;
     public array $encryptData;
@@ -51,7 +50,6 @@ final readonly class GroupedData
         $multipleIntegerData = [];
         $floatData = [];
         $multipleFloatData = [];
-        $unixTimeStampData = [];
         $dateData = [];
         $colorData = [];
         $encryptData = [];
@@ -65,6 +63,16 @@ final readonly class GroupedData
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
+            if ($field instanceof ForeignKeyField) {
+                $k = "{$k}Id";
+            } elseif ($field instanceof ForeignKeysField) {
+                $k = "{$k}Ids";
+            }
+
+            $propIsDefined = array_key_exists($k, $data);
+//            if (!$propIsDefined) {
+//                continue;
+//            }
 
             if ($field instanceof EmailField) {
                 $emailData[$k] = $data[$k];
@@ -73,12 +81,10 @@ final readonly class GroupedData
                 $stringData[$k] = $data[$k];
             }
             elseif ($field instanceof ForeignKeyField) {
-                $k1 = "{$k}Id";
-                $foreignKeyData[$k] = $data[$k1];
+                $foreignKeyData[$k] = $data[$k];
             }
             elseif ($field instanceof ForeignKeysField) {
-                $k1 = "{$k}Ids";
-                $foreignKeysData[$k] = $data[$k1];
+                $foreignKeysData[$k] = $data[$k];
             }
             elseif ($field instanceof IntegerField) {
                 if ($field->isMultiple()) {
@@ -97,10 +103,7 @@ final readonly class GroupedData
             elseif ($field instanceof BooleanField) {
                 $booleanData[$k] = $data[$k];
             }
-            elseif ($field instanceof UnixTimeStampField) {
-                $unixTimeStampData[$k] = $data[$k];
-            }
-            elseif ($field instanceof DateTimeField) {
+            elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
                 $dateData[$k] = $data[$k];
             }
             elseif ($field instanceof ColorField) {
@@ -145,7 +148,6 @@ final readonly class GroupedData
         $this->multipleIntegerData = $multipleIntegerData;
         $this->floatData = $floatData;
         $this->multipleFloatData = $multipleFloatData;
-        $this->unixTimeStampData = $unixTimeStampData;
         $this->dateData = $dateData;
         $this->colorData = $colorData;
         $this->encryptData = $encryptData;

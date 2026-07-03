@@ -7,8 +7,10 @@ use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
 use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
 final class StringDataController
@@ -83,8 +85,20 @@ final class StringDataController
         $f = $this->schema->getStringField($key);
         $trimMode = $f->getTrimMode();
 
+        if (is_object($value) && property_exists($value, 'value') && isset($value->value)) {
+            $value = $value->value;
+        }
+
         if (is_string($value)) {
             return $this->trim($value, $trimMode);
+        }
+
+        if ($f instanceof StringChoiceField) {
+            $availableOptions = $f->getAllowedOptions();
+
+            if (!in_array($value, $availableOptions, true)) {
+                throw InvalidIntegerChoiceValueException::getInstance($value, $key, $this->schema->getComponent());
+            }
         }
 
         $mode = $f->getInvalidDataMode();
@@ -104,6 +118,21 @@ final class StringDataController
             TrimMode::End => rtrim($value),
             default => $value,
         };
+    }
+
+    public function in(string $key, array $values): bool
+    {
+        return in_array($this->get($key), $values, true);
+    }
+
+    public function equal(string $key, string|object $compared): bool
+    {
+        $c = $compared;
+        if (is_object($compared) && property_exists($compared, 'value') && isset($compared->value)) {
+            $c = $compared->value;
+        }
+
+        return $this->get($key) === $compared;
     }
 
     public function getOriginal(string $key): string|null

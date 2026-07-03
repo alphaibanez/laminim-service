@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
@@ -75,12 +76,13 @@ class QueryBuilderHelper
 
             } else {
                 if (!$item->isAnonymous()) {
+                    $identifiers = $relatedSchema->getIdentifiers();
                     $relatedField = $relatedSchema->getField($field->getColumn());
                     if ($relatedField instanceof IntegerField) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andIntegerEqual($relatedField->getColumn(), $identifierValue[$identifiers[0]->getName()]);
 
                     } elseif ($relatedField instanceof StringField) {
-                        $query->andStringEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andStringEqual($relatedField->getColumn(), $identifierValue[$identifiers[0]->getName()]);
                     }
                 }
             }

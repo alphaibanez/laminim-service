@@ -80,6 +80,7 @@ trait ColumnCompositionTrait
         $schema = Schema::get(static::COMPONENT);
         $compositionField = $schema->getCompositionField($composedComponent);
         $composedSchema = Schema::get($compositionField->getComponent());
+        $identifierValue = $this->getIdentifierValue();
 
         if ($compositionField instanceof ForeignKeyField) {
             $getter = $compositionField->getGetterForData();
@@ -127,8 +128,11 @@ trait ColumnCompositionTrait
                         $emptyInstance->{$setter}($additionalData[$identifier->getName()]);
                     }
                 } elseif (method_exists($identifier, 'getComponent') && $identifier?->getComponent() === static::COMPONENT) {
-                    $setter = $identifier->getSetterForPrimitiveValue();
-                    $emptyInstance->{$setter}((int)$this->getIdColumnValue());
+//                    $setter = $identifier->getSetterForPrimitiveValue();
+                    foreach ($identifierValue as $k => $v) {
+                        $emptyInstance->assignValue($identifier->getName(), $v);
+                    }
+//                    $emptyInstance->{$setter}((int)$this->getIdColumnValue());
                 }
             }
 
@@ -138,7 +142,9 @@ trait ColumnCompositionTrait
                 if ($feedField) {
                     $setter = $feedField->getSetterForPrimitiveValue();
                     if (method_exists($emptyInstance, $setter)) {
-                        $emptyInstance->{$setter}($this->getIdColumnValue());
+                        foreach ($identifierValue as $k => $v) {
+                            $emptyInstance->assignValue($feedField->getName(), $v);
+                        }
                     }
                 }
             }

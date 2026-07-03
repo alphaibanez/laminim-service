@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithIdentifierValueTrait
@@ -21,9 +22,10 @@ trait ItemWithIdentifierValueTrait
         $schema = Schema::get(static::COMPONENT);
         $identifiers = $schema->getIdentifiers();
         $r = [];
+        $data = $this->getOriginalData();
         foreach ($identifiers as $identifier) {
             $k = $identifier->getName();
-            $r[$k] = $this->DATA[$k];
+            $r[$k] = $data[$k];
         }
 
         ksort($r);
@@ -40,6 +42,6 @@ trait ItemWithIdentifierValueTrait
 
     public function isAnonymous(): bool
     {
-        return count($this->DATA) === 0;
+        return count($this->getOriginalData()) === 0;
     }
 }

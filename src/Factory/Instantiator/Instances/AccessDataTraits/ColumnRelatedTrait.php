@@ -4,6 +4,8 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Connectors\DatabaseConnector;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Helpers\UpdatedRelatedDataProcessor;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -22,6 +24,9 @@ use function Lkt\Tools\Pagination\getTotalPages;
 
 trait ColumnRelatedTrait
 {
+    use ItemWithRelatedItemDataTrait,
+        ItemWithRelatedItemsDataTrait;
+
     /**
      * @param string $type
      * @param $column
@@ -32,6 +37,8 @@ trait ColumnRelatedTrait
      */
     protected function _getRelatedVal(string $type = '', $column = '', $forceRefresh = false, array $additionalData = []): array
     {
+        return $this->relatedItemsData->getItems($column, null, null, null, $additionalData, $forceRefresh) ?? [];
+
         if (!$forceRefresh && isset($this->UPDATED_RELATED_DATA[$column])) {
             return $this->UPDATED_RELATED_DATA[$column];
         }
@@ -71,6 +78,8 @@ trait ColumnRelatedTrait
      */
     protected function _getRelatedValSingle(string $type = '', $column = '', $forceRefresh = false, array $additionalData = [])
     {
+        return $this->relatedItemData->getItem($column);
+
         if (!$forceRefresh && isset($this->UPDATED_RELATED_DATA[$column])) {
             return $this->UPDATED_RELATED_DATA[$column];
         }

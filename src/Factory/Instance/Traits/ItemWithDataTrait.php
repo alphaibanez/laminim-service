@@ -239,8 +239,8 @@ trait ItemWithDataTrait
         $connection = $dbIntegration->databaseConnector;
         $schema = $dbIntegration->schema;
 
-        $original = $this->DATA;
-        $payload = $this->UPDATED;
+        $original = $this->getOriginalData();
+        $payload = $this->getUpdatePayload();
 
         $accessPolicyUsage = $this->getAccessPolicyUsage();
 

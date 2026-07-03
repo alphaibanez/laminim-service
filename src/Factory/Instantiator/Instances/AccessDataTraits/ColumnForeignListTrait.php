@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Traits\ItemWithForeignKeysDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Helpers\UpdatedRelatedDataProcessor;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -15,6 +16,8 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ColumnForeignListTrait
 {
+    use ItemWithForeignKeysDataTrait;
+
     /**
      * @param string $fieldName
      * @return array
@@ -23,6 +26,8 @@ trait ColumnForeignListTrait
      */
     protected function _getForeignListIds(string $fieldName): array
     {
+        return $this->foreignKeysData->getIds($fieldName) ?? [];
+
         $schema = Schema::get(static::COMPONENT);
 
         /** @var ForeignKeysField $field */
@@ -53,6 +58,8 @@ trait ColumnForeignListTrait
      */
     protected function _getForeignListData(string $fieldName): array
     {
+        return $this->foreignKeysData->getItems($fieldName) ?? [];
+
         $schema = Schema::get(static::COMPONENT);
 
         /** @var ForeignKeysField $field */
@@ -114,6 +121,8 @@ trait ColumnForeignListTrait
      */
     protected function _getForeignListVal(string $fieldName): string
     {
+        return $this->foreignKeysData->get($fieldName);
+
         if (isset($this->UPDATED[$fieldName])) {
             return $this->UPDATED[$fieldName];
         }
@@ -126,6 +135,7 @@ trait ColumnForeignListTrait
      */
     protected function _hasForeignListVal(string $fieldName): bool
     {
+        return $this->foreignKeysData->has($fieldName);
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -141,6 +151,8 @@ trait ColumnForeignListTrait
      */
     protected function _setForeignListVal(string $fieldName, $value = null): static
     {
+        $this->foreignKeysData->set($fieldName, $value);
+        return $this;
         if (is_array($value)) {
             $value = implode(';', $value);
         } elseif (!is_string($value)) {

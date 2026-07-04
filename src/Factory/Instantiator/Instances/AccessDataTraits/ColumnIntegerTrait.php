@@ -2,18 +2,24 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
+use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 
 trait ColumnIntegerTrait
 {
-    use ItemWithIntegerDataTrait;
+    use ItemWithIntegerDataTrait,
+        ItemWithForeignKeyDataTrait;
 
     protected function _getIntegerVal(string $fieldName): int|array|null
     {
         $field = $this->getSchema()->getField($fieldName);
+        if ($field instanceof ForeignKeyField) {
+            return (int)$this->foreignKeyData->get($field->getName());
+        }
         if ($field->isMultiple()) {
             return $this->multipleIntegerData->get($fieldName);
         }

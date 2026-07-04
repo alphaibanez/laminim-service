@@ -62,7 +62,14 @@ final class MultipleIntegerDataController
         $currentValue = $this->get($key);
         $parsedValue = $this->parse($key, $value);
 
-        $diff = array_diff($currentValue, $parsedValue);
+        if ($parsedValue === null) {
+            if ($parsedValue !== $currentValue) {
+                $this->payload[$key] = $parsedValue;
+            }
+            return $this;
+        }
+
+        $diff = array_diff($currentValue ?? [], $parsedValue);
         if (count($diff) === 0) {
             $this->payload[$key] = $parsedValue;
         }

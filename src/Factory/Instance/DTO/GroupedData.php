@@ -61,75 +61,76 @@ final readonly class GroupedData
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
+            $dataKey = $k;
             if ($field instanceof ForeignKeyField) {
-                $k = "{$k}Id";
+                $dataKey = "{$k}Id";
             } elseif ($field instanceof ForeignKeysField) {
-                $k = "{$k}Ids";
+                $dataKey = "{$k}Ids";
             }
 
-            $propIsDefined = array_key_exists($k, $data);
+            $propIsDefined = array_key_exists($dataKey, $data);
             if (!$propIsDefined) continue;
 
             if ($field instanceof StringField || $field instanceof EmailField) {
-                $stringData[$k] = $data[$k];
+                $stringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ForeignKeyField) {
-                $foreignKeyData[$k] = $data[$k];
+                $foreignKeyData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ForeignKeysField) {
-                $foreignKeysData[$k] = $data[$k];
+                $foreignKeysData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof IntegerField) {
                 if ($field->isMultiple()) {
-                    $multipleIntegerData[$k] = $data[$k];
+                    $multipleIntegerData[$k] = $data[$dataKey];
                 } else {
-                    $integerData[$k] = $data[$k];
+                    $integerData[$k] = $data[$dataKey];
                 }
             }
             elseif ($field instanceof FloatField) {
                 if ($field->isMultiple()) {
-                    $multipleFloatData[$k] = $data[$k];
+                    $multipleFloatData[$k] = $data[$dataKey];
                 } else {
-                    $floatData[$k] = $data[$k];
+                    $floatData[$k] = $data[$dataKey];
                 }
             }
             elseif ($field instanceof BooleanField) {
-                $booleanData[$k] = $data[$k];
+                $booleanData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
-                $dateData[$k] = $data[$k];
+                $dateData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ColorField) {
-                $colorData[$k] = $data[$k];
+                $colorData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof EncryptField) {
-                $encryptData[$k] = $data[$k];
+                $encryptData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof JSONField) {
-                $jsonData[$k] = $data[$k];
+                $jsonData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof FileField) {
                 if ($field->isMultiple()) {
-                    $multipleFileData[$k] = $data[$k];
+                    $multipleFileData[$k] = $data[$dataKey];
                 } else {
-                    $fileData[$k] = $data[$k];
+                    $fileData[$k] = $data[$dataKey];
                 }
             }
 
             elseif ($field instanceof RelatedKeysField) {
-                $relatedItemsData[$k] = $data[$k];
+                $relatedItemsData[$k] = $data[$dataKey];
             }
 
             elseif ($field instanceof RelatedKeysMergeField) {
-                $relatedItemsData[$k] = $data[$k];
+                $relatedItemsData[$k] = $data[$dataKey];
             }
 
             // This should never occur since it's remote data
             elseif ($field instanceof RelatedField) {
                 if ($field->isSingleMode()) {
-                    $relatedItemData[$k] = $data[$k];
+                    $relatedItemData[$k] = $data[$dataKey];
                 } else {
-                    $relatedItemsData[$k] = $data[$k];
+                    $relatedItemsData[$k] = $data[$dataKey];
                 }
             }
         }

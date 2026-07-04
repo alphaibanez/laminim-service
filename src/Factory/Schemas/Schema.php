@@ -1081,6 +1081,16 @@ final class Schema
         return $this->idFields;
     }
 
+    public function getIdentifier(string $name): AbstractField|null
+    {
+        $haystack = $this->getIdentifiers();
+        foreach ($haystack as $field) {
+            if ($field->getName() === $name) return $field;
+        }
+
+        return null;
+    }
+
     public function getIdentifiersNames(): array
     {
         return array_map(function (AbstractField $field) { return $field->getName();}, $this->getIdentifiers());

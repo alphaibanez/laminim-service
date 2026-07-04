@@ -1542,4 +1542,55 @@ abstract class AbstractInstance implements Item
 
         return $this;
     }
+
+
+    public function retrieveValue(string $key, array $additionalData): static
+    {
+        $field = $this->getSchema()->getField($key);
+        if (!$field) throw InvalidItemDataAssignException::missingField($key);
+
+        if ($field instanceof StringField || $field instanceof EmailField) {
+            $this->stringData->get($key);
+
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isMultiple()) {
+                $this->multipleIntegerData->get($key);
+            } else {
+                $this->integerData->get($key);
+            }
+
+        } elseif ($field instanceof FloatField) {
+            if ($field->isMultiple()) {
+                $this->multipleFloatData->get($key);
+            } else {
+                $this->floatData->get($key);
+            }
+
+        } elseif ($field instanceof BooleanField) {
+            $this->booleanData->get($key);
+
+        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+            $this->dateData->get($key);
+
+        } elseif ($field instanceof JSONField) {
+            $this->jsonData->get($key);
+
+        } elseif ($field instanceof EncryptField) {
+            $this->encryptData->get($key);
+
+        } elseif ($field instanceof ColorField) {
+            $this->colorData->get($key);
+
+        } elseif ($field instanceof FileField) {
+            $this->fileData->get($key);
+
+        } elseif ($field instanceof ForeignKeyField) {
+            $this->foreignKeyData->get($key);
+
+        } elseif ($field instanceof ForeignKeysField) {
+            $this->foreignKeysData->get($key);
+        }
+
+        return $this;
+    }
 }

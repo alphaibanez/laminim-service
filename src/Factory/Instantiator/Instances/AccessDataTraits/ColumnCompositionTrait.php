@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
@@ -98,8 +99,17 @@ trait ColumnCompositionTrait
         if (count($additionalData) > 0) {
             $composedInstance = call_user_func_array([$this, $getter], $additionalData);
         } else {
-            $composedInstance = $this->{$getter}();
+//            $composedInstance = $this->{$getter}();
+
+            if ($compositionField instanceof ForeignKeyField) {
+                $composedInstance = $this->foreignKeyData->getItem($compositionField->getName());
+            } else {
+                $composedInstance = $this->relatedItemData->getItem($compositionField->getName());
+            }
+
+//            VarDumper::die($compositionField->getName());
         }
+
 
         if (is_array($composedInstance)) {
             if (count($composedInstance) > 0) $composedInstance = $composedInstance[0];

@@ -22,12 +22,12 @@ class QueryBuilderHelper
 
     public static function prepareRelatedQuery(Item $item, Query $query, Schema $schema, RelatedField $field, $forceRefresh = false, array $additionalData = []): Query
     {
-        $idColumn = $schema->getIdString();
         $relatedSchema = Schema::get($field->getComponent());
 
         $where = (array)$field?->getWhere();
 
         $identifierValue = $item->getIdentifierValue();
+        $idColumnValue = $identifierValue[array_keys($identifierValue)[0]];
 
         if ($relatedSchema->hasComplexPrimaryKey()) {
             $identifiers = $relatedSchema->getIdentifiers();
@@ -38,7 +38,7 @@ class QueryBuilderHelper
                 if ($identifier instanceof ForeignKeyField && $additionalData[$identifierName] instanceof AbstractInstance) {
 
                     if ($relatedField->getColumn() === $identifier->getColumn()) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andIntegerEqual($relatedField->getColumn(), $idColumnValue);
                     } else {
                         $query->andIntegerEqual($identifier->getColumn(), (int)$additionalData[$identifierName]?->getIdColumnValue());
                     }
@@ -47,7 +47,7 @@ class QueryBuilderHelper
                 }elseif ($identifier instanceof IntegerField) {
 
                     if ($relatedField->getColumn() === $identifier->getColumn()) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andIntegerEqual($relatedField->getColumn(), $idColumnValue);
                     } else {
                         $query->andIntegerEqual($identifier->getColumn(), $additionalData[$identifierName]);
                     }
@@ -55,7 +55,7 @@ class QueryBuilderHelper
                 } elseif ($identifier instanceof StringField) {
 
                     if ($relatedField->getColumn() === $identifier->getColumn()) {
-                        $query->andStringEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andStringEqual($relatedField->getColumn(), $idColumnValue);
                     } else {
                         $query->andStringEqual($identifier->getColumn(), $additionalData[$identifierName]);
                     }
@@ -67,22 +67,21 @@ class QueryBuilderHelper
                 foreach ($field->getMultipleReferences() as $reference) {
                     $relatedField = $relatedSchema->getField($reference);
                     if ($relatedField instanceof IntegerField) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andIntegerEqual($relatedField->getColumn(), $idColumnValue);
 
                     } elseif ($relatedField instanceof StringField) {
-                        $query->andStringEqual($relatedField->getColumn(), $identifierValue[$relatedField->getName()]);
+                        $query->andStringEqual($relatedField->getColumn(), $idColumnValue);
                     }
                 }
 
             } else {
                 if (!$item->isAnonymous()) {
-                    $identifiers = $relatedSchema->getIdentifiers();
                     $relatedField = $relatedSchema->getField($field->getColumn());
                     if ($relatedField instanceof IntegerField) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $identifierValue[$identifiers[0]->getName()]);
+                        $query->andIntegerEqual($relatedField->getColumn(), $idColumnValue);
 
                     } elseif ($relatedField instanceof StringField) {
-                        $query->andStringEqual($relatedField->getColumn(), $identifierValue[$identifiers[0]->getName()]);
+                        $query->andStringEqual($relatedField->getColumn(), $idColumnValue);
                     }
                 }
             }

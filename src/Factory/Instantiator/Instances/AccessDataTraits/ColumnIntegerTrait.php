@@ -21,7 +21,7 @@ trait ColumnIntegerTrait
             return (int)$this->foreignKeyData->get($field->getName());
         }
         if ($field->isMultiple()) {
-            return $this->multipleIntegerData->get($fieldName);
+            return (array)$this->multipleIntegerData->get($fieldName);
         }
         return (int)$this->integerData->get($fieldName);
 

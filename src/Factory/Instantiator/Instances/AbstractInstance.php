@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Exception;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
@@ -351,10 +352,13 @@ abstract class AbstractInstance implements Item
      */
     public function getIdColumnValue(): mixed
     {
+
         $data = $this->getOriginalData();
         $schema = Schema::get(static::COMPONENT);
         $identifiers = $schema->getIdentifiers();
         if (count($identifiers) === 1) {
+            $identifierValue = $this->getIdentifierValue();
+            return $identifierValue[array_keys($identifierValue)[0]];
             return $data[$schema->getIdString()];
         }
 
@@ -910,6 +914,26 @@ abstract class AbstractInstance implements Item
 //                    $responseKey = $responseKeyAux;
 //                }
 //            }
+
+            $composedDatum = !$schema->hasFieldDefined($field->getName());
+
+            // Composed related data
+            if ($composedDatum) {
+
+                $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
+                if (!$fieldComposingThisField) continue;
+
+                if ($fieldComposingThisField instanceof RelatedField) {
+                    $composedInstance = $this->relatedItemData->getItem($fieldComposingThisField->getName());
+                } elseif ($fieldComposingThisField instanceof ForeignKeyField) {
+                    $composedInstance = $this->foreignKeyData->getItem($fieldComposingThisField->getName());
+                }
+
+                if (!$composedInstance) continue;
+                $dataToAdd = $composedInstance->readValue($field->getName(), $responseKey);
+                foreach ($dataToAdd as $z => $y) $r[$z] = $y;
+                continue;
+            }
 
             if ($field instanceof RelatedField) {
                 $additionalData = $internalMethodsArguments;
@@ -1544,53 +1568,103 @@ abstract class AbstractInstance implements Item
     }
 
 
-    public function retrieveValue(string $key, array $additionalData): static
+    public function retrieveValue(string $key, array $additionalData = []): mixed
     {
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField || $field instanceof EmailField) {
-            $this->stringData->get($key);
+            return $this->stringData->get($key);
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isMultiple()) {
-                $this->multipleIntegerData->get($key);
+                return $this->multipleIntegerData->get($key);
             } else {
-                $this->integerData->get($key);
+                return $this->integerData->get($key);
             }
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
-                $this->multipleFloatData->get($key);
+                return $this->multipleFloatData->get($key);
             } else {
-                $this->floatData->get($key);
+                return $this->floatData->get($key);
             }
 
         } elseif ($field instanceof BooleanField) {
-            $this->booleanData->get($key);
+            return $this->booleanData->get($key);
 
         } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
-            $this->dateData->get($key);
+            return $this->dateData->get($key);
 
         } elseif ($field instanceof JSONField) {
-            $this->jsonData->get($key);
+            return $this->jsonData->get($key);
 
         } elseif ($field instanceof EncryptField) {
-            $this->encryptData->get($key);
+            return $this->encryptData->get($key);
 
         } elseif ($field instanceof ColorField) {
-            $this->colorData->get($key);
+            return $this->colorData->get($key);
 
         } elseif ($field instanceof FileField) {
-            $this->fileData->get($key);
+            return $this->fileData->get($key);
 
         } elseif ($field instanceof ForeignKeyField) {
-            $this->foreignKeyData->get($key);
+            return $this->foreignKeyData->get($key);
 
         } elseif ($field instanceof ForeignKeysField) {
-            $this->foreignKeysData->get($key);
+            return $this->foreignKeysData->get($key);
         }
 
-        return $this;
+        return null;
+    }
+
+    public function readValue(string $key, string $responseKey, array $additionalData = []): array|null
+    {
+        $field = $this->getSchema()->getField($key);
+        if (!$field) throw InvalidItemDataAssignException::missingField($key);
+
+        if ($field instanceof StringField || $field instanceof EmailField) {
+            return [$responseKey => $this->stringData->get($key)];
+
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isMultiple()) {
+                return [$responseKey => $this->multipleIntegerData->get($key)];
+            } else {
+                return [$responseKey => $this->integerData->get($key)];
+            }
+
+        } elseif ($field instanceof FloatField) {
+            if ($field->isMultiple()) {
+                return [$responseKey => $this->multipleFloatData->get($key)];
+            } else {
+                return [$responseKey => $this->floatData->get($key)];
+            }
+
+        } elseif ($field instanceof BooleanField) {
+            return [$responseKey => $this->booleanData->get($key)];
+
+        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+            return [$responseKey => $this->dateData->get($key)];
+
+        } elseif ($field instanceof JSONField) {
+            return [$responseKey => $this->jsonData->get($key)];
+
+        } elseif ($field instanceof EncryptField) {
+            return [$responseKey => $this->encryptData->get($key)];
+
+        } elseif ($field instanceof ColorField) {
+            return [$responseKey => $this->colorData->get($key)];
+
+        } elseif ($field instanceof FileField) {
+            return [$responseKey => $this->fileData->getPublicPath($key)];
+
+        } elseif ($field instanceof ForeignKeyField) {
+            return [$responseKey => $this->foreignKeyData->get($key)];
+
+        } elseif ($field instanceof ForeignKeysField) {
+            return [$responseKey => $this->foreignKeysData->get($key)];
+        }
+
+        return null;
     }
 }

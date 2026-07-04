@@ -2,11 +2,13 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
 use Lkt\Factory\Instantiator\SystemConnections\FileSystemConnection;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileReader\Directory;
 use Lkt\FileReader\File;
@@ -39,6 +41,37 @@ final class FileDataController
         }
 
         return null;
+    }
+
+    public function getPublicPath(string $key): string|array
+    {
+        $field = $this->schema->getFileField($key);
+
+        if (!$field->hasPublicPath()) return '';
+
+        if ($field->isMultiple()) {
+            $r = [];
+            $path = $field->getPublicPath($this);
+            foreach ($this->get($key) as $i => $item) {
+                $r[] = $this->parseFileName($path, $field, $i + 1);
+            }
+            return $r;
+        }
+
+        return $this->parseFileName($field->getPublicPath($this), $field);
+    }
+
+    protected function getFileName(string $key, int $index = 0): string
+    {
+        $field = $this->schema->getFileField($key);
+
+        if ($field->isMultiple()) {
+            $items = $this->get($key);
+            return trim($items[$index]->name);
+        }
+
+        $file = $this->get($key);
+        return trim($file->name);
     }
 
     public function has(string $key): bool
@@ -175,5 +208,16 @@ final class FileDataController
         }
         unset($this->httpUpload[$key]);
         return $this;
+    }
+
+    protected function parseFileName(string $name, FileField $field, int|null $index = null): string
+    {
+        $fieldName = $field->getName();
+        $r = str_replace(':component', $this->item::COMPONENT, $name);
+        $r = str_replace(':field', $fieldName, $r);
+        $r = str_replace(':id', $this->item->getIdColumnValue(), $r);
+        $r = str_replace(':value', $this->getFileName($fieldName, $index - 1), $r);
+        if (is_numeric($index)) $r = str_replace(':index', $index, $r);
+        return $r;
     }
 }

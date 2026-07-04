@@ -10,6 +10,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -82,7 +83,7 @@ final class StringDataController
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getStringField($key);
+        $f = $this->schema->getKindOfStringField($key);
         $trimMode = $f->getTrimMode();
 
         if (is_object($value) && property_exists($value, 'value') && isset($value->value)) {
@@ -90,7 +91,7 @@ final class StringDataController
         }
 
         if (is_string($value)) {
-            return $this->trim($value, $trimMode);
+            $value = $this->trim($value, $trimMode);
         }
 
         if ($f instanceof StringChoiceField) {
@@ -98,6 +99,13 @@ final class StringDataController
 
             if (!in_array($value, $availableOptions, true)) {
                 throw InvalidIntegerChoiceValueException::getInstance($value, $key, $this->schema->getComponent());
+            }
+
+            return $value;
+
+        } elseif ($f instanceof EmailField) {
+            if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                return $value;
             }
         }
 

@@ -2,8 +2,6 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
-use Lkt\Debug\VarDumper;
-use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
@@ -12,17 +10,10 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ColumnStringTrait
 {
-    use ItemWithStringDataTrait,
-        ItemWithEmailDataTrait;
+    use ItemWithStringDataTrait;
 
     protected function _getStringVal(string $fieldName): string
     {
-        $schema = $this->getSchema();
-        $field = $schema->getField($fieldName);
-
-        if ($field instanceof EmailField) {
-            return (string)$this->emailData->get($fieldName);
-        }
         return (string)$this->stringData->get($fieldName);
 
 
@@ -34,12 +25,6 @@ trait ColumnStringTrait
 
     protected function _hasStringVal(string $fieldName): bool
     {
-        $schema = $this->getSchema();
-        $field = $schema->getField($fieldName);
-
-        if ($field instanceof EmailField) {
-            return $this->emailData->has($fieldName);
-        }
         return $this->stringData->has($fieldName);
 
 
@@ -60,15 +45,7 @@ trait ColumnStringTrait
 
     protected function _setStringVal(string $fieldName, string $value = null): static
     {
-        $schema = $this->getSchema();
-        $field = $schema->getField($fieldName);
-
-        if ($field instanceof EmailField) {
-            $this->emailData->has($fieldName);
-        } else {
-            $this->stringData->has($fieldName);
-        }
-
+        $this->stringData->has($fieldName);
         return $this;
 
 

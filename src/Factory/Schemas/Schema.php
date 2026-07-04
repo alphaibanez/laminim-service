@@ -766,6 +766,13 @@ final class Schema
         return null;
     }
 
+    public function getKindOfStringField(string $field): null|StringField|EmailField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof StringField || $r instanceof EmailField) return $r;
+        return null;
+    }
+
     public function getIntegerField(string $field): ?IntegerField
     {
         $r = $this->getField($field);

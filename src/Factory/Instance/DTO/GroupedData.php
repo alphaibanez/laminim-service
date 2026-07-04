@@ -24,7 +24,6 @@ use Lkt\Factory\Schemas\Schema;
 final readonly class GroupedData
 {
     public array $booleanData;
-    public array $emailData;
     public array $stringData;
     public array $integerData;
     public array $multipleIntegerData;
@@ -45,7 +44,6 @@ final readonly class GroupedData
     {
         $booleanData = [];
         $stringData = [];
-        $emailData = [];
         $integerData = [];
         $multipleIntegerData = [];
         $floatData = [];
@@ -70,14 +68,9 @@ final readonly class GroupedData
             }
 
             $propIsDefined = array_key_exists($k, $data);
-//            if (!$propIsDefined) {
-//                continue;
-//            }
+            if (!$propIsDefined) continue;
 
-            if ($field instanceof EmailField) {
-                $emailData[$k] = $data[$k];
-            }
-            elseif ($field instanceof StringField) {
+            if ($field instanceof StringField || $field instanceof EmailField) {
                 $stringData[$k] = $data[$k];
             }
             elseif ($field instanceof ForeignKeyField) {
@@ -142,7 +135,6 @@ final readonly class GroupedData
         }
 
         $this->booleanData = $booleanData;
-        $this->emailData = $emailData;
         $this->stringData = $stringData;
         $this->integerData = $integerData;
         $this->multipleIntegerData = $multipleIntegerData;

@@ -4,8 +4,6 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Exception;
 use Lkt\Connectors\Cache\QueryCache;
-use Lkt\Debug\VarDumper;
-use Lkt\Factory\Instance\DataControllers\StringDataController;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
@@ -13,7 +11,6 @@ use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
-use Lkt\Factory\Instance\Traits\ItemWithEmailDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithFileDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
@@ -27,15 +24,11 @@ use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
-use Lkt\Factory\Instance\Traits\ItemWithUnixTimestampDataTrait;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
-use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
-use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
-use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnBooleanTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnColorTrait;
@@ -104,7 +97,6 @@ use Lkt\QueryBuilding\Query;
 use Lkt\QueryBuilding\SelectBuilder;
 use Lkt\QueryBuilding\Where;
 use Lkt\Translations\Translations;
-use function Lkt\Tools\Arrays\compareArrays;
 use function Lkt\Tools\Pagination\getTotalPages;
 use function Lkt\Tools\Parse\clearInput;
 
@@ -115,7 +107,6 @@ abstract class AbstractInstance implements Item
         ItemWithMultipleIntegerDataTrait,
         ItemWithFloatDataTrait,
         ItemWithMultipleFloatDataTrait,
-        ItemWithEmailDataTrait,
         ItemWithBooleanDataTrait,
         ItemWithDateDataTrait,
         ItemWithColorDataTrait,
@@ -190,7 +181,6 @@ abstract class AbstractInstance implements Item
 
         $this
             ->initStringData($schema, $this, $groupedData->stringData)
-            ->initEmailData($schema, $this, $groupedData->emailData)
             ->initBooleanData($schema, $this, $groupedData->booleanData)
             ->initIntegerData($schema, $this, $groupedData->integerData)
             ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
@@ -331,7 +321,7 @@ abstract class AbstractInstance implements Item
 //            $converter = new RawResultsToInstanceConverter(static::COMPONENT, $data[0]);
 //            $itemData = $converter->parse();
 
-            $r = new static($data);
+            $r = new static($data[0]);
 //            $r->initialFeed($data);
 //            VarDumper::die($data, static::class, $r);
             InstanceCache::store($code, $r);
@@ -1454,7 +1444,6 @@ abstract class AbstractInstance implements Item
         foreach ($this->floatData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->multipleFloatData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->booleanData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->emailData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->dateData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
         foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
@@ -1477,7 +1466,6 @@ abstract class AbstractInstance implements Item
         foreach ($this->floatData->getOriginalData() as $k => $v) $r[$k] = $v;
         foreach ($this->multipleFloatData->getOriginalData() as $k => $v) $r[$k] = $v;
         foreach ($this->booleanData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->emailData->getOriginalData() as $k => $v) $r[$k] = $v;
         foreach ($this->dateData->getOriginalData() as $k => $v) $r[$k] = $v;
         foreach ($this->colorData->getOriginalData() as $k => $v) $r[$k] = $v;
         foreach ($this->encryptData->getOriginalData() as $k => $v) $r[$k] = $v;
@@ -1510,10 +1498,7 @@ abstract class AbstractInstance implements Item
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof EmailField) {
-            $this->emailData->set($key, $value);
-
-        } elseif ($field instanceof StringField) {
+        if ($field instanceof StringField || $field instanceof EmailField) {
             $this->stringData->set($key, $value);
 
         } elseif ($field instanceof IntegerField) {

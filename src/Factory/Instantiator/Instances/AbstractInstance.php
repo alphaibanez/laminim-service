@@ -1626,20 +1626,6 @@ abstract class AbstractInstance implements Item
         if ($field instanceof StringField || $field instanceof EmailField) {
             return [$responseKey => $this->stringData->get($key)];
 
-        } elseif ($field instanceof IntegerField) {
-            if ($field->isMultiple()) {
-                return [$responseKey => $this->multipleIntegerData->get($key)];
-            } else {
-                return [$responseKey => $this->integerData->get($key)];
-            }
-
-        } elseif ($field instanceof FloatField) {
-            if ($field->isMultiple()) {
-                return [$responseKey => $this->multipleFloatData->get($key)];
-            } else {
-                return [$responseKey => $this->floatData->get($key)];
-            }
-
         } elseif ($field instanceof BooleanField) {
             return [$responseKey => $this->booleanData->get($key)];
 
@@ -1659,10 +1645,51 @@ abstract class AbstractInstance implements Item
             return [$responseKey => $this->fileData->getPublicPath($key)];
 
         } elseif ($field instanceof ForeignKeyField) {
-            return [$responseKey => $this->foreignKeyData->get($key)];
+
+            $relatedAccessPolicy = null;
+            $accessPolicyUsage = $this->getAccessPolicyUsage();
+            $schema = $this->getSchema();
+
+            if ($accessPolicyUsage) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+            $item = $this->foreignKeyData->getItem($key);
+            if ($item instanceof AbstractInstance) {
+                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                $item = $item->autoRead();
+            }
+
+            $r = [];
+            if (!is_array($item)) $item = [];
+            $r[$responseKey] = $item;
+            $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
+            if ($field->hasOnReadIncludeOptions()) {
+                $r[$responseKey . 'Opts'] = [$item];
+            }
+
+            return $r;
 
         } elseif ($field instanceof ForeignKeysField) {
             return [$responseKey => $this->foreignKeysData->get($key)];
+
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isMultiple()) {
+                return [$responseKey => $this->multipleIntegerData->get($key)];
+            } else {
+                return [$responseKey => $this->integerData->get($key)];
+            }
+
+        } elseif ($field instanceof FloatField) {
+            if ($field->isMultiple()) {
+                return [$responseKey => $this->multipleFloatData->get($key)];
+            } else {
+                return [$responseKey => $this->floatData->get($key)];
+            }
         }
 
         return null;

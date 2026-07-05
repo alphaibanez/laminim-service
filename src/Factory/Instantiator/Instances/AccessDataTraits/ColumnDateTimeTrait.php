@@ -4,9 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Carbon\Carbon;
 use DateTime;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
-use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 
 trait ColumnDateTimeTrait
 {
@@ -19,14 +17,6 @@ trait ColumnDateTimeTrait
     protected function _getDateTimeVal(string $fieldName): ?Carbon
     {
         return $this->dateData->get($fieldName);
-
-        if (isset($this->UPDATED[$fieldName]) && $this->UPDATED[$fieldName] instanceof Carbon) {
-            return $this->UPDATED[$fieldName];
-        }
-        if ($this->DATA[$fieldName] instanceof Carbon) {
-            return $this->DATA[$fieldName];
-        }
-        return null;
     }
 
     /**
@@ -37,13 +27,6 @@ trait ColumnDateTimeTrait
     protected function _getDateTimeFormattedVal(string $fieldName, string $format = null): string
     {
         return $this->dateData->format($fieldName, $format);
-
-        if (!$this->_hasDateTimeVal($fieldName)) {
-            return '';
-        }
-        $r = $this->_getDateTimeVal($fieldName)->format($format);
-        if (str_starts_with($r, '-')) return '';
-        return $r;
     }
 
     /**
@@ -54,11 +37,6 @@ trait ColumnDateTimeTrait
     protected function _getDateTimeFormattedIntlVal(string $fieldName, string $format = null): string
     {
         return $this->dateData->intlFormat($fieldName, $format);
-
-        if (!$this->_hasDateTimeVal($fieldName)) {
-            return '';
-        }
-        return \IntlDateFormatter::formatObject($this->_getDateTimeVal($fieldName), $format);
     }
 
     /**
@@ -68,11 +46,6 @@ trait ColumnDateTimeTrait
     protected function _hasDateTimeVal(string $fieldName): bool
     {
         return $this->dateData->has($fieldName);
-        $checkField = 'has' . ucfirst($fieldName);
-        if (isset($this->UPDATED[$checkField])) {
-            return $this->UPDATED[$checkField];
-        }
-        return $this->DATA[$checkField] === true;
     }
 
     /**
@@ -82,29 +55,6 @@ trait ColumnDateTimeTrait
     protected function _setDateTimeVal(string $fieldName, Carbon|DateTime|int|string|null $value = null): static
     {
         $this->dateData->set($fieldName, $value);
-        return $this;
-
-        $rawValueToConvert = null;
-        if ($value instanceof Carbon) {
-            $rawValueToConvert = $value->format('Y-m-d H:i:s');
-
-        } elseif ($value instanceof DateTime) {
-            $rawValueToConvert = $value->format('Y-m-d H:i:s');
-
-        } elseif (is_string($value)) {
-            $rawValueToConvert = $value;
-
-        } elseif (is_int($value)) {
-            $rawValueToConvert = date('Y-m-d H:i:s', $value);
-        }
-
-        $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-            $fieldName => $rawValueToConvert,
-        ], false);
-
-        foreach ($converter->parse() as $key => $value) {
-            $this->UPDATED[$key] = $value;
-        }
         return $this;
     }
 }

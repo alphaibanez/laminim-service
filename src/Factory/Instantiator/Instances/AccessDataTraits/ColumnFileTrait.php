@@ -14,7 +14,7 @@ use Lkt\MIME;
 
 trait ColumnFileTrait
 {
-//    use ItemWithFileDataTrait;
+    use ItemWithFileDataTrait;
 
     /**
      * @param string $fieldName
@@ -22,6 +22,8 @@ trait ColumnFileTrait
      */
     protected function _getFileVal(string $fieldName): File|array|null
     {
+        return $this->fileData->get($fieldName);
+
         $schema = Schema::get(static::COMPONENT);
         /** @var FileField $field */
         $field = $schema->getField($fieldName);
@@ -50,6 +52,8 @@ trait ColumnFileTrait
      */
     protected function _hasFileVal(string $fieldName): bool
     {
+        return $this->fileData->has($fieldName);
+
         $checkField = 'has' . ucfirst($fieldName);
         if (isset($this->UPDATED[$checkField])) {
             return $this->UPDATED[$checkField];
@@ -65,6 +69,8 @@ trait ColumnFileTrait
      */
     protected function _setFileVal(string $fieldName, string|array $value = null): static
     {
+        $this->fileData->set($fieldName, $value);
+        return $this;
         $schema = Schema::get(static::COMPONENT);
         /** @var FileField $field */
         $field = $schema->getField($fieldName);

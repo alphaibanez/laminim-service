@@ -134,6 +134,36 @@ final class MultipleIntegerDataController
         return $r;
     }
 
+    public function in(string $key, array $values): bool
+    {
+        $value = $this->get($key);
+        if (count($value) === 0) return false;
+
+        $r = true;
+        foreach ($value as $val) {
+            $r = $r && in_array($val, $values, true);
+        }
+
+        return $r;
+    }
+
+    public function equal(string $key, array $compared): bool
+    {
+        $value = $this->get($key);
+
+        $comparedValues = array_map(function ($v){
+            $c = $v;
+            if (is_object($v) && property_exists($v, 'value') && isset($v->value)) {
+                $c = $v->value;
+            }
+            return $c;
+
+        }, $compared);
+
+        return count($value) === count($comparedValues)
+            && count(array_intersect($value, $comparedValues)) === 0;
+    }
+
     public function getOriginal(string $key): array|null
     {
         if (array_key_exists($key, $this->data)) {

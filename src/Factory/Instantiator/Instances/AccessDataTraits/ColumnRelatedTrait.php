@@ -38,33 +38,6 @@ trait ColumnRelatedTrait
     protected function _getRelatedVal(string $type = '', $column = '', $forceRefresh = false, array $additionalData = []): array
     {
         return $this->relatedItemsData->getItems($column, null, null, null, $additionalData, $forceRefresh) ?? [];
-
-        if (!$forceRefresh && isset($this->UPDATED_RELATED_DATA[$column])) {
-            return $this->UPDATED_RELATED_DATA[$column];
-        }
-
-        if (!$forceRefresh && isset($this->RELATED_DATA[$column])) {
-            return $this->RELATED_DATA[$column];
-        }
-
-        $schema = Schema::get(static::COMPONENT);
-        /** @var RelatedField $field */
-        $field = $schema->getField($column);
-
-        $idColumn = $schema->getIdString();
-        if (!$this->DATA[$idColumn]) {
-            return [];
-        }
-
-        $caller = $this->_getRelatedQueryCaller($type, $column, $forceRefresh, $additionalData);
-
-        $data = $caller->select();
-        $relatedSchema = Schema::get($field->getComponent());
-
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
-
-        $this->RELATED_DATA[$column] = $results;
-        return $this->RELATED_DATA[$column];
     }
 
     /**
@@ -79,34 +52,6 @@ trait ColumnRelatedTrait
     protected function _getRelatedValSingle(string $type = '', $column = '', $forceRefresh = false, array $additionalData = [])
     {
         return $this->relatedItemData->getItem($column);
-
-        if (!$forceRefresh && isset($this->UPDATED_RELATED_DATA[$column])) {
-            return $this->UPDATED_RELATED_DATA[$column];
-        }
-
-        if (!$forceRefresh && isset($this->RELATED_DATA[$column])) {
-            if (is_array($this->RELATED_DATA[$column])) return $this->RELATED_DATA[$column][0];
-            return $this->RELATED_DATA[$column];
-        }
-
-        $schema = Schema::get(static::COMPONENT);
-        /** @var RelatedField $field */
-        $field = $schema->getField($column);
-
-        $idColumn = $schema->getIdString();
-        if (!$this->DATA[$idColumn]) {
-            return null;
-        }
-
-        $caller = $this->_getRelatedQueryCaller($type, $column, $forceRefresh, $additionalData);
-
-        $data = $caller->select();
-        $relatedSchema = Schema::get($field->getComponent());
-
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
-
-        $this->RELATED_DATA[$column] = $results[0];
-        return $this->RELATED_DATA[$column];
     }
 
     /**

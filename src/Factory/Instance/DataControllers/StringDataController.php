@@ -140,7 +140,7 @@ final class StringDataController
             $c = $compared->value;
         }
 
-        return $this->get($key) === $compared;
+        return $this->get($key) === $c;
     }
 
     public function getOriginal(string $key): string|null

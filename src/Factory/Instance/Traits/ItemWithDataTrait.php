@@ -242,6 +242,8 @@ trait ItemWithDataTrait
         $original = $this->getOriginalData();
         $payload = $this->getUpdatePayload();
 
+        VarDumper::die($payload);
+
         $accessPolicyUsage = $this->getAccessPolicyUsage();
 
         if ($accessPolicyUsage) {

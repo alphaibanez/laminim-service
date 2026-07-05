@@ -1807,14 +1807,7 @@ abstract class AbstractInstance implements Item
             }
             $r[$responseKey] = $t;
             if ($key !== $field->getAppendForeignKeysName()) {
-                $ids = $this->relatedItemsData->getItemsIdentifiers($key);
-                if (count($ids[0]) === 0) {
-                    $k = array_keys($ids[0])[0];
-                    $ids = array_map(function (array $id) use ($k) {
-                        return $id[$k];
-                    }, $ids);
-                }
-                $r[$responseKey . 'Ids'] = $ids;
+                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);;
             }
 
 

@@ -27,26 +27,6 @@ trait ColumnForeignListTrait
     protected function _getForeignListIds(string $fieldName): array
     {
         return $this->foreignKeysData->getIds($fieldName) ?? [];
-
-        $schema = Schema::get(static::COMPONENT);
-
-        /** @var ForeignKeysField $field */
-        $field = $schema->getField($fieldName);
-        $allowAnonymous = $field->anonymousAllowed();
-
-        $items = explode(';', trim($this->_getForeignListVal($fieldName)));
-        $items = array_filter($items, function ($item) use ($allowAnonymous) {
-            $t = trim($item);
-            if ($t === '') {
-                return false;
-            }
-            if ($allowAnonymous) {
-                return true;
-            }
-            return (int)$t > 0;
-        });
-
-        return array_values($items);
     }
 
     /**
@@ -59,60 +39,6 @@ trait ColumnForeignListTrait
     protected function _getForeignListData(string $fieldName): array
     {
         return $this->foreignKeysData->getItems($fieldName) ?? [];
-
-        $schema = Schema::get(static::COMPONENT);
-
-        /** @var ForeignKeysField $field */
-        $field = $schema->getField($fieldName);
-
-
-        $ids = $this->_getForeignListIds($fieldName);
-
-        $r = [];
-
-        $idColumn = $schema->getIdColumn();
-        $idColumn = reset($idColumn);
-
-
-        $type = $field->getComponent();
-        $dynamicComponentFieldName = $field->getDynamicComponentField();
-        if ($dynamicComponentFieldName !== '') {
-            $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
-            $getter = $dynamicComponentField->getGetterForPrimitiveValue();
-            $dynamicType = $this->{$getter}();
-            if ($dynamicType !== '') $type = $dynamicType;
-        }
-
-        if ($type === '') return [];
-
-        $relatedSchema = Schema::get($type);
-        $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
-
-        foreach ($ids as $id) {
-            if (is_numeric($id)) {
-                if ($relatedClass) {
-                    $instance = call_user_func_array([$relatedClass, 'getInstance'], ['id' => $id]);
-                    if ($instance instanceof AbstractInstance && !$instance->isAnonymous()) {
-                        $r[] = $instance;
-                    }
-
-                } else {
-                    $t = Instantiator::make($type, $id);
-                    if ($t instanceof AbstractInstance && !$t->isAnonymous()) {
-                        $r[] = $t;
-                    }
-                }
-
-            } else {
-                $t = Instantiator::make($type, null);
-                $t->setData([
-                    $idColumn => $id,
-                ]);
-                $r[] = $t;
-            }
-        }
-
-        return $r;
     }
 
     /**
@@ -122,11 +48,6 @@ trait ColumnForeignListTrait
     protected function _getForeignListVal(string $fieldName): string
     {
         return $this->foreignKeysData->get($fieldName);
-
-        if (isset($this->UPDATED[$fieldName])) {
-            return $this->UPDATED[$fieldName];
-        }
-        return trim($this->DATA[$fieldName]);
     }
 
     /**
@@ -136,11 +57,6 @@ trait ColumnForeignListTrait
     protected function _hasForeignListVal(string $fieldName): bool
     {
         return $this->foreignKeysData->has($fieldName);
-        $checkField = 'has' . ucfirst($fieldName);
-        if (isset($this->UPDATED[$checkField])) {
-            return $this->UPDATED[$checkField];
-        }
-        return $this->DATA[$checkField] === true;
     }
 
     /**
@@ -152,28 +68,6 @@ trait ColumnForeignListTrait
     protected function _setForeignListVal(string $fieldName, $value = null): static
     {
         $this->foreignKeysData->set($fieldName, $value);
-        return $this;
-        if (is_array($value)) {
-            $value = implode(';', $value);
-        } elseif (!is_string($value)) {
-            $value = trim($value);
-        }
-        $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-            $fieldName => $value,
-        ], false);
-
-        $parsed = $converter->parse();
-
-        // Infinite loop avoid
-        $instanceId = $this->getIdColumnValue();
-        if (is_array($parsed[$fieldName])) {
-            $index = array_search($instanceId, $parsed[$fieldName]);
-            if ($index !== false) {
-                unset($parsed[$fieldName][$index]);
-            }
-        }
-
-        $this->UPDATED = $this->UPDATED + $parsed;
         return $this;
     }
 

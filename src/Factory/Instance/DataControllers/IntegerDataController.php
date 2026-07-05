@@ -103,6 +103,21 @@ final class IntegerDataController
         return $value;
     }
 
+    public function in(string $key, array $values): bool
+    {
+        return in_array($this->get($key), $values, true);
+    }
+
+    public function equal(string $key, int|object $compared): bool
+    {
+        $c = $compared;
+        if (is_object($compared) && property_exists($compared, 'value') && isset($compared->value)) {
+            $c = $compared->value;
+        }
+
+        return $this->get($key) === $c;
+    }
+
     public function getOriginal(string $key): int|null
     {
         if (array_key_exists($key, $this->data)) {

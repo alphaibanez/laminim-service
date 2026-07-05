@@ -26,17 +26,7 @@ trait ColumnFloatTrait
         if ($field->isMultiple()) {
             return (array)$this->multipleFloatData->get($fieldName);
         }
-        return (int)$this->floatData->get($fieldName);
-
-
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FloatField $field */
-        $fieldIns = $schema->getField($field);
-
-        if (isset($this->UPDATED[$field])) return $this->UPDATED[$field];
-        if (isset($this->DATA[$field])) return $this->DATA[$field];
-        if ($fieldIns->isMultiple()) return [];
-        return 0;
+        return (float)$this->floatData->get($fieldName);
     }
 
     /**
@@ -60,10 +50,6 @@ trait ColumnFloatTrait
             return $this->multipleFloatData->has($fieldName);
         }
         return $this->floatData->has($fieldName);
-
-        $checkField = 'has' . ucfirst($fieldName);
-        if (isset($this->UPDATED[$checkField])) return $this->UPDATED[$checkField];
-        return $this->DATA[$checkField] === true;
     }
 
     /**
@@ -80,15 +66,6 @@ trait ColumnFloatTrait
             $this->multipleFloatData->set($fieldName, $value);
         } else {
             $this->floatData->set($fieldName, $value);
-        }
-        return $this;
-
-        $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-            $fieldName => $value,
-        ], false);
-
-        foreach ($converter->parse() as $key => $value) {
-            if ($this->DATA[$key] !== $value) $this->UPDATED[$key] = $value;
         }
         return $this;
     }

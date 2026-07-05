@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
@@ -14,6 +15,8 @@ use Lkt\QueryBuilding\Query;
 
 trait ColumnRelatedKeysTrait
 {
+    use ItemWithRelatedItemsDataTrait;
+
     protected array $PENDING_PARENT_FOREIGN_KEYS = [];
 
     /**
@@ -27,39 +30,12 @@ trait ColumnRelatedKeysTrait
      */
     protected function _getRelatedKeysVal($type = '', $column = '', $forceRefresh = false): array
     {
-        if (isset($this->UPDATED_RELATED_DATA[$column])) {
-            return $this->UPDATED_RELATED_DATA[$column];
-        }
-
-        if (isset($this->RELATED_DATA[$column])) {
-            return $this->RELATED_DATA[$column];
-        }
-
-        $schema = Schema::get(static::COMPONENT);
-        /** @var RelatedKeysField $field */
-        $field = $schema->getField($column);
-        $caller = $this->_getRelatedKeysQueryBuilder($type, $column, $forceRefresh);
-
-        $data = $caller->select();
-        $relatedSchema = Schema::get($field->getComponent());
-
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
-
-        $this->RELATED_DATA[$column] = $results;
-        return $this->RELATED_DATA[$column];
+        return $this->relatedItemsData->getItems($type, null, null, null, [], $forceRefresh);
     }
 
     protected function _getRelatedKeysIds(string $fieldName): array
     {
-        $schema = Schema::get(static::COMPONENT);
-
-        /** @var RelatedKeysField $field */
-        $field = $schema->getField($fieldName);
-
-        $items = $this->_getRelatedKeysVal($fieldName, $field->getColumn());
-        return array_map(function (AbstractInstance $item) {
-            return $item->getIdColumnValue();
-        }, $items);
+        return $this->relatedItemsData->getItemsIds($fieldName, null, null, null, [], false);
     }
 
     /**
@@ -134,7 +110,7 @@ trait ColumnRelatedKeysTrait
      */
     protected function _hasRelatedKeysVal($type = '', $column = ''): bool
     {
-        return count($this->_getRelatedKeysVal($type)) > 0;
+        return $this->relatedItemsData->has($type);
     }
 
     protected function _setRelatedKeysValWithData($type = '', $column = '', $data = [])

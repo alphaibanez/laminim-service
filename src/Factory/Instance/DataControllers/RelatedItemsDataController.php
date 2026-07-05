@@ -51,6 +51,26 @@ final class RelatedItemsDataController
         }, $items);
     }
 
+    public function getItemsIds(
+        string     $key,
+        Where|null $where = null,
+        int|null   $page = null,
+        int|null   $itemsPerPage = null,
+        array      $additionalData = [],
+        bool       $forceRefresh = false
+    ): array|null
+    {
+        $ids = $this->getItemsIdentifiers($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
+        if (count($ids[0]) === 0) {
+            $k = array_keys($ids[0])[0];
+            $ids = array_map(function (array $id) use ($k) {
+                return $id[$k];
+            }, $ids);
+        }
+
+        return $ids;
+    }
+
     /**
      * @param string $key
      * @param Where|null $where

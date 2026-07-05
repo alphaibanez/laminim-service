@@ -242,8 +242,6 @@ trait ItemWithDataTrait
         $original = $this->getOriginalData();
         $payload = $this->getUpdatePayload();
 
-        VarDumper::die($payload);
-
         $accessPolicyUsage = $this->getAccessPolicyUsage();
 
         if ($accessPolicyUsage) {
@@ -358,26 +356,21 @@ trait ItemWithDataTrait
 
             $queryResponse = $connection->query($query);
 
-            // @todo refactor in order to use the data controllers properly
-            //
-            if ($queryResponse !== false) {
-                foreach ($payload as $k => $v) {
-                    $original[$k] = $v;
-                    unset($payload[$k]);
-                }
-            }
-
             $id = (int)$connection->getLastInsertedId();
             $reload = true;
-        }
 
-        // Get current instance ID (if it's been created)
-        // @todo refactor for data controllers
-        if ($id > 0 && (!isset($original[$origIdColumn]) || !$original[$origIdColumn])) {
-            $original[$origIdColumn] = $id;
+            // Get current instance ID (if it's been created)
+            if ($id > 0 && (!isset($original[$origIdColumn]) || !$original[$origIdColumn])) {
+                $original[$origIdColumn] = $id;
 
-        } elseif ($original[$origIdColumn] > 0) {
-            $id = $original[$origIdColumn];
+            } elseif ($original[$origIdColumn] > 0) {
+                $id = $original[$origIdColumn];
+            }
+
+            if ($queryResponse !== false) {
+                $updatedData = array_merge($original, $payload);
+                $this->initialFeed($updatedData);
+            }
         }
 
         $hasToReUpdate = false;

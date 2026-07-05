@@ -192,6 +192,11 @@ final class FileDataController
         return $this;
     }
 
+    public function hasPendingHttpUploads(): bool
+    {
+        return count($this->httpUpload) > 0;
+    }
+
     public function addUploadingFile(string $key, array|null $value = null): self
     {
         $this->httpUpload[$key] = $value;

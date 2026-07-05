@@ -389,19 +389,9 @@ trait ItemWithDataTrait
             }
         }
 
-        if (count($this->UPLOADING_FILES) > 0) {
-            // Check if it's needed to store a base64 file:
+        if (isset($this->fileData) && $this->fileData->hasPendingHttpUploads()) {
             foreach ($fileFields as $fileField) {
-                $key = $fileField->getName();
-                if (is_array($this->UPLOADING_FILES[$key])) {
-                    $uploadData = FileUploadHelper::uploadFileField($fileField, $this->UPLOADING_FILES[$key], $this, $schema);
-
-                    if (is_array($uploadData)) {
-                        $this->_setFileVal($key, $uploadData['name']);
-                        $hasToReUpdate = true;
-                    }
-                    unset($this->UPLOADING_FILES[$key]);
-                }
+                $this->fileData->httpUploadToFile($fileField->getName());
             }
         }
 

@@ -1568,7 +1568,7 @@ abstract class AbstractInstance implements Item
     }
 
 
-    public function retrieveValue(string $key, array $additionalData = []): mixed
+    public function retrieveValue(string $key, array $additionalData = [], string $dataMode = 'raw'): mixed
     {
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
@@ -1606,13 +1606,29 @@ abstract class AbstractInstance implements Item
             return $this->colorData->get($key);
 
         } elseif ($field instanceof FileField) {
-            return $this->fileData->get($key);
+            if ($dataMode === 'raw') {
+                return $this->fileData->get($key);
+            }
+            return $this->fileData->getPublicPath($key);
 
         } elseif ($field instanceof ForeignKeyField) {
-            return $this->foreignKeyData->get($key);
+            if ($dataMode === 'raw') {
+                return $this->foreignKeyData->get($key);
+            }
+            return $this->foreignKeyData->getItem($key);
 
         } elseif ($field instanceof ForeignKeysField) {
-            return $this->foreignKeysData->get($key);
+            if ($dataMode === 'raw') {
+                return $this->foreignKeysData->get($key);
+            }
+            return $this->foreignKeysData->getItems($key);
+
+        } elseif ($field instanceof RelatedField) {
+            if ($field->isSingleMode()) return $this->relatedItemData->getItem($key);
+            return $this->relatedItemsData->getItems($key);
+
+        } elseif ($field instanceof RelatedKeysField) {
+            return $this->relatedItemsData->getItems($key);
         }
 
         return null;
@@ -1675,7 +1691,134 @@ abstract class AbstractInstance implements Item
             return $r;
 
         } elseif ($field instanceof ForeignKeysField) {
-            return [$responseKey => $this->foreignKeysData->get($key)];
+
+            $relatedAccessPolicy = null;
+            $accessPolicyUsage = $this->getAccessPolicyUsage();
+            $schema = $this->getSchema();
+
+            if ($accessPolicyUsage) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+            $items = $this->foreignKeysData->getItems($key);
+            $r = [];
+            if (!is_array($items)) $items = [];
+            $t = [];
+
+            foreach ($items as $item) {
+                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                $t[] = $item->autoRead();
+            }
+            $r[$responseKey] = $t;
+            $r[$responseKey . 'Ids'] = $this->foreignKeysData->getIds($key);
+
+
+            return $r;
+
+        } elseif ($field instanceof RelatedField) {
+
+            $r = [];
+            $relatedSchema = Schema::get($field->getComponent());
+
+            if ($relatedSchema->hasComplexPrimaryKey()) {
+                $relatedFieldPointingToMe = $relatedSchema->getField($field->getColumn());
+
+                if ($relatedFieldPointingToMe) {
+                    $additionalData[$relatedFieldPointingToMe->getName()] = $this->getIdColumnValue();
+                }
+            }
+
+            $getter = $field->getGetterForPrimitiveValue();
+
+            $additionalData = $this->prepareOwnMethodCallArguments($getter, $additionalData, $field->getName());
+
+            // @todo replace callOwnMethod with data retrieve?
+            if ($this->satisfiedOwnMethodCallArguments($getter, $additionalData)) {
+                $items = $this->callOwnMethod($getter, $additionalData);
+            } else {
+                return null;
+            }
+
+            $relatedAccessPolicy = null;
+            $accessPolicyUsage = $this->getAccessPolicyUsage();
+            $schema = $this->getSchema();
+
+            if ($accessPolicyUsage) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+            if ($field->isSingleMode()) {
+                if (is_object($items)) {
+                    if ($relatedAccessPolicy) $items->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                    $r[$responseKey] = $items->autoRead();
+
+                } elseif ($field->hasToReturnsEmptyOneInSingleMode()) {
+                    $anonymous = Instantiator::make($field->getComponent(), 0);
+                    if ($relatedAccessPolicy) $anonymous->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                    $r[$responseKey] = $anonymous->autoRead();
+                }
+
+            } else {
+                $helperInstance = $relatedSchema->getItemInstance();
+                $batchActions = $helperInstance::getBatchActions($items);
+                $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
+            }
+
+
+            return $r;
+
+        } elseif ($field instanceof RelatedKeysField) {
+
+            $r = [];
+
+            $relatedAccessPolicy = null;
+            $accessPolicyUsage = $this->getAccessPolicyUsage();
+            $schema = $this->getSchema();
+
+            if ($accessPolicyUsage) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+
+            $items = $this->relatedItemsData->getItems($key);
+            if (!is_array($items)) $items = [];
+            $t = [];
+
+            foreach ($items as $item) {
+                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+
+                if ($key === $field->getAppendForeignKeysName()) {
+                    $t[] = $item->getIdColumnValue();
+                } else {
+                    $t[] = $item->readAsRelated();
+                }
+            }
+            $r[$responseKey] = $t;
+            if ($key !== $field->getAppendForeignKeysName()) {
+                $ids = $this->relatedItemsData->getItemsIdentifiers($key);
+                if (count($ids[0]) === 0) {
+                    $k = array_keys($ids[0])[0];
+                    $ids = array_map(function (array $id) use ($k) {
+                        return $id[$k];
+                    }, $ids);
+                }
+                $r[$responseKey . 'Ids'] = $ids;
+            }
+
+
+            return $r;
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isMultiple()) {
@@ -1690,6 +1833,65 @@ abstract class AbstractInstance implements Item
             } else {
                 return [$responseKey => $this->floatData->get($key)];
             }
+
+        } elseif ($field instanceof MethodGetterField) {
+            $getter = $field->getName();
+            return [$responseKey => $this->{$getter}()];
+
+        } elseif ($field instanceof PivotField) {
+
+            $schema = $this->getSchema();
+            $getter = $field->getGetterForPrimitiveValue();
+            /** @var static[] $items */
+            $items = $this->{$getter}();
+            if (!is_array($items)) $items = [];
+            $r = [];
+            $t = [];
+
+            $relatedAccessPolicy = null;
+            if (isset($this->accessPolicy)) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+            foreach ($items as $item) {
+                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                $t[] = $item->readAsRelated();
+
+            }
+            $r[$responseKey] = $t;
+            return $r;
+
+        } elseif ($field instanceof ValueListField) {
+            $r = [];
+            $getter = $field->getGetterForPrimitiveValue();
+
+            if ($field->readModeIsBoth()) {
+                $r[$responseKey] = $this->{$getter}();
+                $r[$responseKey.'List'] = $this->{$getter.'AsArray'}();
+
+            } elseif ($field->readModeIsString()) {
+                $r[$responseKey] = $this->{$getter}();
+
+            } elseif ($field->readModeIsArray()) {
+                $r[$responseKey] = $this->{$getter.'AsArray'}();
+            }
+            return $r;
+
+        } elseif ($field instanceof StringChoiceField) {
+            $r = [];
+            $getter = $field->getGetterForPrimitiveValue();
+            $value = $this->{$getter}();
+            $r[$responseKey] = $value;
+            $i18nOptions = $field->getI18nViewOptions();
+            if ($i18nOptions !== '') {;
+                $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
+            }
+            return $r;
         }
 
         return null;

@@ -294,8 +294,6 @@ final class RelatedItemsDataController
          */
         foreach ($this->needsUpdate as $key => $items) {
 
-            VarDumper::die($items);
-
             $field = $this->schema->getKindOfRelatedField($key);
 
             $relatedComponent = $field->getComponent($this->schema, $this->item);
@@ -306,19 +304,25 @@ final class RelatedItemsDataController
             $currentIds = $this->getItemsIds($key, null, null, null, [], true);
             $updatedIds = [];
 
+            $updatedInstances = [];
+
             foreach ($items as $item) {
                 /** @var Item $ins */
                 $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
-                $ins->save();
+                $ins->feed($item);
+                $updatedInstances[] = $ins;
                 $updatedIds[] = $ins->getIdColumnValue();
+            }
+
+            if (count($updatedInstances) > 0) {
+                $batchActions = $relatedClass::getBatchActions($updatedInstances);
+                $batchActions->update();
             }
 
             $diff = compareArrays($currentIds, $updatedIds);
 
             // Delete
             if (count($diff['deleted']) > 0 && method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
-
-
                 foreach ($diff['deleted'] as $deletedId) {
                     $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
                     $ins->delete();

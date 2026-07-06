@@ -2,12 +2,16 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Where;
+use function Lkt\Tools\Arrays\compareArrays;
 use function Lkt\Tools\Pagination\getTotalPages;
 
 final class RelatedItemsDataController
@@ -280,6 +284,51 @@ final class RelatedItemsDataController
         // @remember Changes won't be persistent until $this->item was saved!
         $this->needsUpdate[$key] = $itemsWithFedData;
         $this->payload[$key] = $items;
+    }
+
+    public function save(): self
+    {
+        /**
+         * @var string $key
+         * @var array[] $items
+         */
+        foreach ($this->needsUpdate as $key => $items) {
+
+            VarDumper::die($items);
+
+            $field = $this->schema->getKindOfRelatedField($key);
+
+            $relatedComponent = $field->getComponent($this->schema, $this->item);
+            $relatedSchema = Schema::get($relatedComponent);
+            /** @var AbstractInstance $relatedClass */
+            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+
+            $currentIds = $this->getItemsIds($key, null, null, null, [], true);
+            $updatedIds = [];
+
+            foreach ($items as $item) {
+                /** @var Item $ins */
+                $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
+                $ins->save();
+                $updatedIds[] = $ins->getIdColumnValue();
+            }
+
+            $diff = compareArrays($currentIds, $updatedIds);
+
+            // Delete
+            if (count($diff['deleted']) > 0 && method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
+
+
+                foreach ($diff['deleted'] as $deletedId) {
+                    $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
+                    $ins->delete();
+                }
+            }
+
+
+        }
+
+        return $this;
     }
 
     public function prepareToAppendItemsInParentForeignKeysField(string $key, int|array $parentIdentifierValue): self

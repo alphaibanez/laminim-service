@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -14,6 +15,7 @@ final class ForeignKeysDataController
 {
     private array $data = [];
     private array $payload = [];
+    private array $needsUpdate = [];
 
     private Schema $schema;
     private Item $item;
@@ -81,15 +83,7 @@ final class ForeignKeysDataController
         $ids = $this->getIds($key);
         if (count($ids) === 0) return [];
 
-        $relatedComponent = $field->getComponent();
-        $dynamicComponentFieldName = $field->getDynamicComponentField();
-        if ($dynamicComponentFieldName !== '') {
-            $dynamicComponentField = $this->schema->getField($dynamicComponentFieldName);
-            $getter = $dynamicComponentField->getGetterForPrimitiveValue();
-            $dynamicType = $this->item->{$getter}();
-            if ($dynamicType !== '') $relatedComponent = $dynamicType;
-        }
-
+        $relatedComponent = $field->getComponent($this->schema, $this->item);
         if ($relatedComponent === '') return [];
 
 
@@ -123,6 +117,8 @@ final class ForeignKeysDataController
                 $r[] = $t;
             }
         }
+
+        return $r;
     }
 
     public function has(string $key): bool
@@ -138,22 +134,22 @@ final class ForeignKeysDataController
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getForeignKeyField($key);
+        $f = $this->schema->getForeignKeysField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
         }
-
-        if (!is_array($value) && !is_string($value)) {
-            $value = trim($value);
-        }
-
-        $parsed = explode(';', $value);
 
         $identifiers = $this->schema->getIdentifiers();
         $instanceIdentifierValue = $this->item->getIdentifierValue();
         $itemId = null;
         if (count($identifiers) === 1) {
             $itemId = $instanceIdentifierValue[$identifiers[0]->getName()];
+        }
+
+        $parsed = $value;
+        if (!is_array($value) && !is_string($value)) {
+            $value = trim($value);
+            $parsed = explode(';', $value);
         }
 
         if (is_array($parsed)) {
@@ -163,7 +159,13 @@ final class ForeignKeysDataController
             }
         }
 
-        $value = implode(';', $parsed);
+        if (is_array($parsed)) {
+            if (is_numeric($parsed[0])) {
+                $value = implode(';', $parsed);
+            } else {
+                $this->needsUpdate[$key] = $parsed;
+            }
+        }
 
 
         $currentValue = $this->get($key);
@@ -176,26 +178,23 @@ final class ForeignKeysDataController
         return $this;
     }
 
-    public function parse(string $key, $value): int|null
+    public function parse(string $key, $value): string|null
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getForeignKeyField($key);
-
-        if (is_int($value)) {
-            return $value;
-
-        } else {
-            $mode = $f->getInvalidDataMode();
-
-            $value = match ($mode) {
-                InvalidDataMode::CastToType => (int)$value,
-                InvalidDataMode::CastToEmpty => 0,
-                default => null,
-            };
+        $f = $this->schema->getForeignKeysField($key);
+        if (!$f) {
+            throw InvalidItemDataAssignException::missingField($key);
         }
 
-        return $value;
+        if (is_int($value)) {
+            return (string)$value;
+
+        } elseif (is_string($value)) {
+            return trim($value);
+        }
+
+        return null;
     }
 
     public function getOriginal(string $key): string|null
@@ -222,6 +221,7 @@ final class ForeignKeysDataController
 
     public function getPayload(): array
     {
+        VarDumper::die($this);
         return $this->payload;
     }
 
@@ -234,6 +234,7 @@ final class ForeignKeysDataController
         return [
             'data' => $this->data,
             'payload' => $this->payload,
+            'needsUpdate' => $this->needsUpdate,
         ];
     }
 }

@@ -124,6 +124,19 @@ trait ItemWithDataTrait
             // Common primitive value fields (included composed elements thanks to generated setter detection  approach)
             $setter = $field->getSetterForPrimitiveValue();
 
+            if ($field instanceof PivotField) {
+                if ($isPivotDatumFeed) {
+                    $setter = '_setPendingPivotLink';
+                    $methodCallData = ['field' => $field->getName(), 'relatedId' => (int)$value];
+                } else {
+                    $setter = '_setPivotSort';
+                    $methodCallData = ['column' => $field->getName(), 'data' => $value];
+                }
+            } else {
+                $this->assignValue($field->getName(), $value);
+            }
+            continue;
+
             if ($field instanceof RelatedField) {
                 $setter = '_setRelatedValWithData';
                 $methodCallData = ['type' => '', 'column' => $field->getName(), 'data' => $value];
@@ -396,10 +409,10 @@ trait ItemWithDataTrait
         }
 
         // Update relational data
-        if (count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
+        if ($isUpdate && count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
             foreach ($this->PENDING_UPDATE_RELATED_DATA as $column => $data) {
 
-                if (!$isUpdate && count($data) === 0) continue;
+                if (count($data) === 0) continue;
 
                 /** @var RelatedField $field */
                 $field = $schema->getField($column);

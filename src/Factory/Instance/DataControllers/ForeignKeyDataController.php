@@ -80,7 +80,22 @@ final class ForeignKeyDataController
         }
 
         $currentValue = $this->get($key);
-        $parsedValue = $this->parse($key, $value);
+        $parsedValue = null;
+
+        if (is_array($value)) {
+            $relatedSchema = Schema::get($f->getComponent($this->schema, $this->item));
+            $relatedIdFields = $relatedSchema->getIdentifiers();
+            if (count($relatedIdFields) === 1) {
+                $relatedIdKey = $relatedIdFields[0]->getName();
+                $relatedId = isset($value[$relatedIdKey]) ? (int)$value[$relatedIdKey] : 0;
+                if ($relatedId > 0) {
+                    $parsedValue = $relatedId;
+                }
+            }
+
+        } else {
+            $parsedValue = $this->parse($key, $value);
+        }
 
         if ($parsedValue !== $currentValue) {
             $this->payload[$key] = $parsedValue;

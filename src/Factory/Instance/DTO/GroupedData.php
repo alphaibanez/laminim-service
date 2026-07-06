@@ -65,7 +65,9 @@ final readonly class GroupedData
             if ($field instanceof ForeignKeyField) {
                 $dataKey = "{$k}Id";
             } elseif ($field instanceof ForeignKeysField) {
-                $dataKey = "{$k}Ids";
+                if (!array_key_exists($dataKey, $data)) {
+                    $dataKey = "{$k}Ids";
+                }
             }
 
             $propIsDefined = array_key_exists($dataKey, $data);

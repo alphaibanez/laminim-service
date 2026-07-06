@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Carbon\Carbon;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
@@ -88,6 +89,7 @@ final class DateDataController
             $value = trim($value);
             if ($value === '') return null;
             if ($value === '0000-00-00 00:00:00') return null;
+            $value = strtotime($value);
         }
 
         $str = date('Y-m-d H:i:s', (int)$value);

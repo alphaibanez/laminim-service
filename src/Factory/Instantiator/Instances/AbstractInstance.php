@@ -935,6 +935,11 @@ abstract class AbstractInstance implements Item
                 continue;
             }
 
+            $dataToAdd = $this->readValue($field->getName(), $responseKey);
+            foreach ($dataToAdd as $z => $y) $r[$z] = $y;
+            continue;
+
+
             if ($field instanceof RelatedField) {
                 $additionalData = $internalMethodsArguments;
                 $relatedSchema = Schema::get($field->getComponent());
@@ -1562,6 +1567,9 @@ abstract class AbstractInstance implements Item
 
         } elseif ($field instanceof ForeignKeysField) {
             $this->foreignKeysData->set($key, $value);
+
+        } elseif ($field instanceof RelatedField) {
+            $this->relatedItemsData->setItems($key, (array)$value);
         }
 
         return $this;

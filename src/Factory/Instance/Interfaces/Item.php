@@ -36,6 +36,8 @@ interface Item
     public function feedAndSave(array $data, array $internalMethodsArguments = []): static;
     public function save(): static;
 
+    public function assignValue(string $key, mixed $value): static;
+
     /**
      * @laminim
      * Dynamic method calling

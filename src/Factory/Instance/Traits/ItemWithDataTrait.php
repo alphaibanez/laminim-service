@@ -422,22 +422,11 @@ trait ItemWithDataTrait
 
                 /** @var RelatedField $field */
                 $field = $schema->getField($column);
-                $relatedComponent = $field->getComponent();
+                $relatedComponent = $field->getComponent($schema, $this);
 
                 if ($field instanceof ForeignKeysField && count($data) === 0) {
                     $currentItems = $this->_getForeignListData($column);
                     if (count($currentItems) === 0) continue;
-                }
-
-                if (method_exists($field, 'getDynamicComponentField')) { // Check due to RelatedField not implementing this feature yet
-                    $dynamicComponentFieldName = $field->getDynamicComponentField();
-                    if ($dynamicComponentFieldName !== '') {
-                        $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
-                        $getter = $dynamicComponentField->getGetterForPrimitiveValue();
-                        $dynamicType = $this->{$getter}();
-                        if (is_numeric($dynamicType)) $relatedComponent = ComponentId::getComponent((int)$dynamicType);
-                        elseif ($dynamicType !== '') $relatedComponent = $dynamicType;
-                    }
                 }
 
                 $relatedSchema = Schema::get($relatedComponent);
@@ -620,6 +609,7 @@ trait ItemWithDataTrait
             }
         }
 
+        // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item
         if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
             foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
                 if (is_array($relatedId)) {

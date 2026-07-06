@@ -252,6 +252,8 @@ trait ItemWithDataTrait
         $connection = $dbIntegration->databaseConnector;
         $schema = $dbIntegration->schema;
 
+        // Update foreign keys before payload calc
+        // In order to update inner field
         if (isset($this->foreignKeysData) && $this->foreignKeysData->hasToSave()) {
             $this->foreignKeysData->save();
         }

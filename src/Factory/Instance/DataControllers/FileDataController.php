@@ -102,7 +102,7 @@ final class FileDataController
         return $this;
     }
 
-    public function parse(string $key, $value): File|string|null
+    public function parse(string $key, $value): File|string|null|array
     {
         if ($value === null) return null;
 
@@ -111,16 +111,25 @@ final class FileDataController
         if (is_string($value)) {
             $value = trim($value);
             if ($value === '') return null;
-        }
 
-        if (str_contains($value, ';base64,')) {
-            return $value;
+            if (str_contains($value, ';base64,')) {
+                return $value;
+            }
         }
 
         $field = $this->schema->getFileField($key);
 
         $storePath = $field->getStorePath($this->item);
         $directory = new Directory(FileSystemConnection::getDiskDriver(), $storePath);
+        if (is_array($value)) {
+            if (count($value) === 0) return null;
+
+            $r = [];
+            foreach ($value as $val) {
+                $r[] = new File(FileSystemConnection::getDiskDriver(), $directory, $val);
+            }
+            return $r;
+        }
         return new File(FileSystemConnection::getDiskDriver(), $directory, $value);
     }
 

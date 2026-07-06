@@ -582,7 +582,7 @@ class MariaDBConnector extends DatabaseConnector
         $values = [];
         /** @var AbstractInstance $item */
         foreach ($items as $item) {
-            $parsed = $this->prepareDataToStore($schema, $item->getUpdatedData());
+            $parsed = $this->prepareDataToStore($schema, $item->getUpdatePayload());
             $builder->updateData($parsed);
 
             $values[] = $this->makeUpdateParamsArray($builder->getData(), 'create');
@@ -625,11 +625,18 @@ class MariaDBConnector extends DatabaseConnector
         /** @var AbstractInstance $item */
         foreach ($items as $item) {
             $builder = $schema->getQueryBuilder();
-            $parsed = $this->prepareDataToStore($schema, $item->getUpdatedData());
+            $payload = $item->getUpdatePayload();
+            if (count($payload) === 0) continue;
+
+            $parsed = $this->prepareDataToStore($schema, $payload);
             $builder->updateData($parsed);
             $schema->applyIdentifierConstraintsToQueryFromInstance($builder, $item);
 
             $values[] = $this->getQuery($builder, 'update');
+        }
+
+        if (count($values) === 1) {
+            return $this;
         }
 
         $values[] = 'COMMIT';

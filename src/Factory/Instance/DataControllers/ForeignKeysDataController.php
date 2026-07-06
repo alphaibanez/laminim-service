@@ -245,11 +245,19 @@ final class ForeignKeysDataController
             $currentIds = $this->getIds($key);
             $updatedIds = [];
 
+            $updatedInstances = [];
+
             foreach ($items as $item) {
                 /** @var Item $ins */
                 $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
-                $ins->save();
+                $ins->feed($item);
+                $updatedInstances[] = $ins;
                 $updatedIds[] = $ins->getIdColumnValue();
+            }
+
+            if (count($updatedInstances) > 0) {
+                $batchActions = $relatedClass::getBatchActions($updatedInstances);
+                $batchActions->update();
             }
 
             $diff = compareArrays($currentIds, $updatedIds);

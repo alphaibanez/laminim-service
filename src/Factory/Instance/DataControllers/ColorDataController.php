@@ -10,6 +10,7 @@ use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 use function Lkt\Tools\Color\decToHex;
+use function Lkt\Tools\Color\hexToDec;
 
 final class ColorDataController
 {
@@ -37,6 +38,32 @@ final class ColorDataController
         }
 
         return null;
+    }
+
+    public function getRGBA(string $key, float $opacity = null): null|array
+    {
+        $r = $this->get($key);
+        if (!$r) return null;
+
+        $r = hexToDec($r);
+        if ($opacity !== null) {
+            $r[] = $opacity;
+        }
+
+        return $r;
+    }
+
+    public function getRGBAString(string $key, float $opacity = null): string
+    {
+        $color = $this->getRGBA($key, $opacity);
+        if ($color === null) return '';
+        $base = 'rgb';
+        if (count($color) === 4) {
+            $base .= 'a';
+        }
+
+        $r = implode(',', $color);
+        return "{$base}($r)";
     }
 
     public function has(string $key): bool

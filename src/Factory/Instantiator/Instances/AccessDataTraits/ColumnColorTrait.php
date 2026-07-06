@@ -5,7 +5,6 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
-use function Lkt\Tools\Color\hexToDec;
 
 trait ColumnColorTrait
 {
@@ -27,14 +26,7 @@ trait ColumnColorTrait
      */
     protected function _getColorRgbVal(string $fieldName, float $opacity = null): array
     {
-        $r = $this->colorData->get($fieldName);
-
-        $r = hexToDec($r);
-        if ($opacity !== null) {
-            $r[] = $opacity;
-        }
-
-        return $r;
+        return $this->colorData->getRGBA($fieldName, $opacity);
     }
 
     /**
@@ -44,15 +36,7 @@ trait ColumnColorTrait
      */
     protected function _getColorRgbStringVal(string $fieldName, float $opacity = null): string
     {
-        $color = $this->_getColorRgbVal($fieldName, $opacity);
-        $base = 'rgb';
-        if (count($color) === 4) {
-            $base .= 'a';
-        }
-
-        $r = implode(',', $color);
-
-        return "{$base}($r)";
+        return $this->colorData->getRGBAString($fieldName, $opacity);
     }
 
     /**

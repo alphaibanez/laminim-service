@@ -10,6 +10,7 @@ use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
+use function Lkt\Tools\Arrays\compareArrays;
 
 final class ForeignKeysDataController
 {
@@ -64,6 +65,9 @@ final class ForeignKeysDataController
             }
             return (int)$t > 0;
         });
+        $items = array_map(function ($item) use ($allowAnonymous) {
+            return (int)$item;
+        }, $items);
 
         return array_values($items);
     }
@@ -147,9 +151,13 @@ final class ForeignKeysDataController
         }
 
         $parsed = $value;
-        if (!is_array($value) && !is_string($value)) {
-            $value = trim($value);
-            $parsed = explode(';', $value);
+        if (!is_array($value)) {
+            if (!is_string($value)) {
+                $value = trim($value);
+                $parsed = explode(';', $value);
+            } elseif (is_string($value)) {
+                $parsed = explode(';', $value);
+            }
         }
 
         if (is_array($parsed)) {
@@ -159,20 +167,20 @@ final class ForeignKeysDataController
             }
         }
 
+
         if (is_array($parsed)) {
             if (is_numeric($parsed[0])) {
                 $value = implode(';', $parsed);
+
+                $currentValue = $this->get($key);
+                $parsedValue = $this->parse($key, $value);
+
+                if ($parsedValue !== $currentValue) {
+                    $this->payload[$key] = $parsedValue;
+                }
             } else {
                 $this->needsUpdate[$key] = $parsed;
             }
-        }
-
-
-        $currentValue = $this->get($key);
-        $parsedValue = $this->parse($key, $value);
-
-        if ($parsedValue !== $currentValue) {
-            $this->payload[$key] = $parsedValue;
         }
 
         return $this;
@@ -219,9 +227,54 @@ final class ForeignKeysDataController
         return $this;
     }
 
+    public function save(): self
+    {
+        /**
+         * @var string $key
+         * @var array[] $items
+         */
+        foreach ($this->needsUpdate as $key => $items) {
+
+            $field = $this->schema->getForeignKeysField($key);
+
+            $relatedComponent = $field->getComponent($this->schema, $this->item);
+            $relatedSchema = Schema::get($relatedComponent);
+            /** @var AbstractInstance $relatedClass */
+            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+
+            $currentIds = $this->getIds($key);
+            $updatedIds = [];
+
+            foreach ($items as $item) {
+                /** @var Item $ins */
+                $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
+                $ins->save();
+                $updatedIds[] = $ins->getIdColumnValue();
+            }
+
+            $diff = compareArrays($currentIds, $updatedIds);
+
+            // Delete
+            if (count($diff['deleted']) > 0 && method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
+                foreach ($diff['deleted'] as $deletedId) {
+                    $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
+                    $ins->delete();
+                }
+            }
+
+            $this->set($key, implode(';', $updatedIds));
+        }
+
+        return $this;
+    }
+
+    public function hasToSave(): bool
+    {
+        return count($this->needsUpdate) > 0;
+    }
+
     public function getPayload(): array
     {
-        VarDumper::die($this);
         return $this->payload;
     }
 

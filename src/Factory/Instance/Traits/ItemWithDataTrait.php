@@ -135,90 +135,90 @@ trait ItemWithDataTrait
             } else {
                 $this->assignValue($field->getName(), $value);
             }
-            continue;
-
-            if ($field instanceof RelatedField) {
-                $setter = '_setRelatedValWithData';
-                $methodCallData = ['type' => '', 'column' => $field->getName(), 'data' => $value];
-                if ($field->isSingleMode()) {
-                    $methodCallData['data'] = [$methodCallData['data']];
-                }
-
-            } elseif ($field instanceof ForeignKeyField) {
-                if ($field->keyIsId($param)) {
-                    $setter = '_setIntegerVal';
-                    $methodCallData = ['fieldName' => $field->getName() . 'Id', 'value' => $value];
-                }
-                elseif (is_numeric($value)) {
-                    $setter = '_setIntegerVal';
-                    $methodCallData = ['fieldName' => $field->getName(), 'value' => (int)$value];
-                } elseif (is_array($value)) {
-                    $relatedSchema = Schema::get($field->getComponent($schema, $this));
-                    $relatedIdFields = $relatedSchema->getIdentifiers();
-                    if (count($relatedIdFields) === 1) {
-                        $relatedIdKey = $relatedIdFields[0]->getName();
-                        $relatedId = isset($value[$relatedIdKey]) ? (int)$value[$relatedIdKey] : 0;
-                        if ($relatedId > 0) {
-                            $setter = '_setIntegerVal';
-                            $methodCallData = ['fieldName' => $field->getName(), 'value' => $relatedId];
-                        }
-                    }
-                } else {
-                    continue;
-                }
-
-            } elseif ($field instanceof ForeignKeysField) {
-                if ($field->keyIsIds($param)) {
-                    $setter = '_setForeignListVal';
-                    $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
-
-                } elseif (is_array($value) && isset($value[0]) && is_numeric($value[0])) {
-                    $setter = '_setForeignListVal';
-                    $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
-
-                } else {
-                    $setter = '_setForeignListWithData';
-                    $methodCallData = ['fieldName' => $field->getName(), 'data' => $value];
-                }
-
-            } elseif ($field instanceof RelatedKeysField) {
-                if ($param === $field->getAppendForeignKeysName() && ((is_numeric($value) && $value > 0) || is_array($value))) {
-                    $setter = '_appendToParentForeignKeys';
-                    $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
-                } else {
-                    continue;
-                }
-
-            } elseif ($field instanceof PivotField) {
-                if ($isPivotDatumFeed) {
-                    $setter = '_setPendingPivotLink';
-                    $methodCallData = ['field' => $field->getName(), 'relatedId' => (int)$value];
-                } else {
-                    $setter = '_setPivotSort';
-                    $methodCallData = ['column' => $field->getName(), 'data' => $value];
-                }
-
-            } else if ($field instanceof StringField || $field instanceof HTMLField) {
-                if ($field->isI18nJson() && is_array($value)) {
-                    $translationField = $schema->getField("{$field->getName()}Data");
-                    if ($translationField) {
-                        $setter = '_setJsonVal';
-                        $methodCallData = ['fieldName' => $translationField->getName(), 'value' => $value];
-                    }
-
-                } else {
-                    $methodCallData = [$field->getName() => clearInput($value)];
-                }
-
-            } elseif ($field instanceof IntegerField && !$field instanceof IdField && !$field->isMultiple()) {
-                $methodCallData = [$field->getName() => (int)$value];
-
-            } elseif ($field instanceof FloatField) {
-                $methodCallData = [$field->getName() => (float)$value];
-
-            } else {
-                $methodCallData = [$field->getName() => $value];
-            }
+//            continue;
+//
+//            if ($field instanceof RelatedField) {
+//                $setter = '_setRelatedValWithData';
+//                $methodCallData = ['type' => '', 'column' => $field->getName(), 'data' => $value];
+//                if ($field->isSingleMode()) {
+//                    $methodCallData['data'] = [$methodCallData['data']];
+//                }
+//
+//            } elseif ($field instanceof ForeignKeyField) {
+//                if ($field->keyIsId($param)) {
+//                    $setter = '_setIntegerVal';
+//                    $methodCallData = ['fieldName' => $field->getName() . 'Id', 'value' => $value];
+//                }
+//                elseif (is_numeric($value)) {
+//                    $setter = '_setIntegerVal';
+//                    $methodCallData = ['fieldName' => $field->getName(), 'value' => (int)$value];
+//                } elseif (is_array($value)) {
+//                    $relatedSchema = Schema::get($field->getComponent($schema, $this));
+//                    $relatedIdFields = $relatedSchema->getIdentifiers();
+//                    if (count($relatedIdFields) === 1) {
+//                        $relatedIdKey = $relatedIdFields[0]->getName();
+//                        $relatedId = isset($value[$relatedIdKey]) ? (int)$value[$relatedIdKey] : 0;
+//                        if ($relatedId > 0) {
+//                            $setter = '_setIntegerVal';
+//                            $methodCallData = ['fieldName' => $field->getName(), 'value' => $relatedId];
+//                        }
+//                    }
+//                } else {
+//                    continue;
+//                }
+//
+//            } elseif ($field instanceof ForeignKeysField) {
+//                if ($field->keyIsIds($param)) {
+//                    $setter = '_setForeignListVal';
+//                    $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
+//
+//                } elseif (is_array($value) && isset($value[0]) && is_numeric($value[0])) {
+//                    $setter = '_setForeignListVal';
+//                    $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
+//
+//                } else {
+//                    $setter = '_setForeignListWithData';
+//                    $methodCallData = ['fieldName' => $field->getName(), 'data' => $value];
+//                }
+//
+//            } elseif ($field instanceof RelatedKeysField) {
+//                if ($param === $field->getAppendForeignKeysName() && ((is_numeric($value) && $value > 0) || is_array($value))) {
+//                    $setter = '_appendToParentForeignKeys';
+//                    $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
+//                } else {
+//                    continue;
+//                }
+//
+//            } elseif ($field instanceof PivotField) {
+//                if ($isPivotDatumFeed) {
+//                    $setter = '_setPendingPivotLink';
+//                    $methodCallData = ['field' => $field->getName(), 'relatedId' => (int)$value];
+//                } else {
+//                    $setter = '_setPivotSort';
+//                    $methodCallData = ['column' => $field->getName(), 'data' => $value];
+//                }
+//
+//            } else if ($field instanceof StringField || $field instanceof HTMLField) {
+//                if ($field->isI18nJson() && is_array($value)) {
+//                    $translationField = $schema->getField("{$field->getName()}Data");
+//                    if ($translationField) {
+//                        $setter = '_setJsonVal';
+//                        $methodCallData = ['fieldName' => $translationField->getName(), 'value' => $value];
+//                    }
+//
+//                } else {
+//                    $methodCallData = [$field->getName() => clearInput($value)];
+//                }
+//
+//            } elseif ($field instanceof IntegerField && !$field instanceof IdField && !$field->isMultiple()) {
+//                $methodCallData = [$field->getName() => (int)$value];
+//
+//            } elseif ($field instanceof FloatField) {
+//                $methodCallData = [$field->getName() => (float)$value];
+//
+//            } else {
+//                $methodCallData = [$field->getName() => $value];
+//            }
 
             if (!is_array($methodCallData)) {
                 continue;
@@ -251,6 +251,10 @@ trait ItemWithDataTrait
         $queryBuilder = $dbIntegration->query;
         $connection = $dbIntegration->databaseConnector;
         $schema = $dbIntegration->schema;
+
+        if (isset($this->foreignKeysData) && $this->foreignKeysData->hasToSave()) {
+            $this->foreignKeysData->save();
+        }
 
         $original = $this->getOriginalData();
         $payload = $this->getUpdatePayload();

@@ -1017,7 +1017,7 @@ trait WhereConstraints
      * @param Where $where
      * @return $this
      */
-    final public function andWhere(Where|callable $where): self
+    final public function andWhere(Where|callable|string $where): self
     {
         $this->and[] = $where;
         return $this;
@@ -1027,7 +1027,7 @@ trait WhereConstraints
      * @param Where $where
      * @return $this
      */
-    final public function orWhere(Where|callable $where): self
+    final public function orWhere(Where|callable|string $where): self
     {
         $this->or[] = $where;
         return $this;

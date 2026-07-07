@@ -139,7 +139,15 @@ final class RelatedItemsDataController
         }
 
         $fieldConfigWhere = $field->getWhere();
-        if ($fieldConfigWhere) $builder->andWhere($fieldConfigWhere);
+        if ($fieldConfigWhere) {
+            if (is_array($fieldConfigWhere)) {
+                foreach ($fieldConfigWhere as $w) {
+                    $builder->andWhere($w);
+                }
+            } else {
+                $builder->andWhere($fieldConfigWhere);
+            }
+        }
 
         if ($where instanceof Where) {
             $builder->andWhere($where);

@@ -2,12 +2,9 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
-use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
-use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
@@ -15,22 +12,16 @@ use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
-use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
-use Lkt\Factory\Schemas\Fields\IdField;
-use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
 use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
-use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use function Lkt\Tools\Arrays\compareArrays;
-use function Lkt\Tools\Parse\clearInput;
 
 trait ItemWithDataTrait
 {

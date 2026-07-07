@@ -63,7 +63,9 @@ final readonly class GroupedData
             $k = $field->getName();
             $dataKey = $k;
             if ($field instanceof ForeignKeyField) {
-                $dataKey = "{$k}Id";
+                if (!array_key_exists($dataKey, $data)) {
+                    $dataKey = "{$k}Id";
+                }
             } elseif ($field instanceof ForeignKeysField) {
                 if (!array_key_exists($dataKey, $data)) {
                     $dataKey = "{$k}Ids";

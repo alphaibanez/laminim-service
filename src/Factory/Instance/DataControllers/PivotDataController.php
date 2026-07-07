@@ -241,13 +241,16 @@ final class PivotDataController
 
     public function save(): self
     {
+        // @todo
+        return $this;
+
         /**
          * @var string $key
          * @var array[] $items
          */
         foreach ($this->needsUpdate as $key => $items) {
 
-            $field = $this->schema->getKindOfRelatedField($key);
+            $field = $this->schema->getPivotField($key);
 
             $relatedComponent = $field->getComponent($this->schema, $this->item);
             $relatedSchema = Schema::get($relatedComponent);

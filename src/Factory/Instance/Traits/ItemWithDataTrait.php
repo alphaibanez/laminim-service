@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
@@ -54,6 +55,7 @@ trait ItemWithDataTrait
                         }
                     }
                     if (!$isPivotDatumFeed) continue;
+
                 } else {
 
                     $field = $accessPolicy->getSchemaField($schema, $param);
@@ -76,6 +78,11 @@ trait ItemWithDataTrait
             }
 
             if (!$field || $field instanceof MethodGetterField || $field instanceof ConcatField) continue;
+
+            if ($isPivotDatumFeed) {
+                $this->pivotData->prepareToLink($field->getName(), $value);
+                continue;
+            }
 
             $composedDatum = !$schema->hasFieldDefined($param) && !$isPivotDatumFeed;
 
@@ -116,13 +123,9 @@ trait ItemWithDataTrait
             $setter = $field->getSetterForPrimitiveValue();
 
             if ($field instanceof PivotField) {
-                if ($isPivotDatumFeed) {
-                    $setter = '_setPendingPivotLink';
-                    $methodCallData = ['field' => $field->getName(), 'relatedId' => (int)$value];
-                } else {
-                    $setter = '_setPivotSort';
-                    $methodCallData = ['column' => $field->getName(), 'data' => $value];
-                }
+                VarDumper::die('todo: pivot sort', $value);
+                $setter = '_setPivotSort';
+                $methodCallData = ['column' => $field->getName(), 'data' => $value];
             } else {
                 $this->assignValue($field->getName(), $value);
             }
@@ -372,6 +375,7 @@ trait ItemWithDataTrait
             // Get current instance ID (if it's been created)
             if ($id > 0 && (!isset($original[$origIdColumn]) || !$original[$origIdColumn])) {
                 $original[$origIdColumn] = $id;
+                $updatedData[$origIdColumn] = $id;
 
             } elseif ($original[$origIdColumn] > 0) {
                 $id = $original[$origIdColumn];
@@ -379,7 +383,19 @@ trait ItemWithDataTrait
 
             if ($queryResponse !== false) {
                 $updatedData = array_merge($original, $payload);
+                if ($id > 0) {
+                    $updatedData[$origIdColumn] = $id;
+                }
+
+                $pendingPivotLinks = null;
+                if (isset($this->pivotData) && $this->pivotData->hasToLink()) {
+                    $pendingPivotLinks = $this->pivotData->getPendingLinks();
+                }
                 $this->initialFeed($updatedData);
+
+                if ($pendingPivotLinks) {
+                    foreach ($pendingPivotLinks as $k => $j) $this->pivotData->prepareToLink($k, $j);
+                }
             }
         }
 
@@ -594,10 +610,8 @@ trait ItemWithDataTrait
             }
         }
 
-        if (count($this->PENDING_PIVOT_LINKS) > 0) {
-            foreach ($this->PENDING_PIVOT_LINKS as $field => $relatedId) {
-                $this->_addPivotRelation($field, $relatedId);
-            }
+        if (isset($this->pivotData) && $this->pivotData->hasToLink()) {
+            $this->pivotData->linkPendingPivots($k);
         }
 
         // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item

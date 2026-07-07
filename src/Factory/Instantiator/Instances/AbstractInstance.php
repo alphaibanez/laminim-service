@@ -9,6 +9,7 @@ use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithConcatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
@@ -22,6 +23,7 @@ use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithJSONDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithPivotDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
@@ -116,9 +118,11 @@ abstract class AbstractInstance implements Item
         ItemWithForeignKeysDataTrait,
         ItemWithRelatedItemDataTrait,
         ItemWithRelatedItemsDataTrait,
+        ItemWithPivotDataTrait,
         ItemWithFileDataTrait,
         ItemWithJSONDataTrait,
-        ItemWithConstantDataTrait;
+        ItemWithConstantDataTrait,
+        ItemWithConcatDataTrait;
 
     use ItemWithIdentifierValueTrait,
         ItemWithDataTrait;
@@ -197,7 +201,10 @@ abstract class AbstractInstance implements Item
             ->initJSONData($schema, $this, $groupedData->jsonData)
             ->initFileData($schema, $this, $groupedData->fileData)
 
+            ->initPivotData($schema, $this)
+
             ->initConstantData($schema, $this)
+            ->initConcatData($schema, $this)
         ;
 
         return $this;
@@ -1628,6 +1635,9 @@ abstract class AbstractInstance implements Item
 
         } elseif ($field instanceof RelatedKeysField) {
             return $this->relatedItemsData->getItems($key);
+
+        } elseif ($field instanceof ConcatField) {
+            return $this->concatData->get($key);
         }
 
         return null;
@@ -1884,6 +1894,9 @@ abstract class AbstractInstance implements Item
                 $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
             }
             return $r;
+
+        } elseif ($field instanceof ConcatField) {
+            return [$responseKey => $this->concatData->get($key)];
         }
 
         return null;

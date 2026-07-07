@@ -158,7 +158,7 @@ trait ColumnPivotTrait
             $connector = DatabaseConnections::$defaultConnector;
         }
         $connection = DatabaseConnections::get($connector);
-        $where[] = $connection->makeUpdateParams([$pivotedFieldColumn => $this->DATA[$idColumn]]);
+        $where[] = $connection->makeUpdateParams([$pivotedFieldColumn => $this->retrieveValue($idColumn)]);
         $builder->setColumns($connection->extractSchemaColumns($pivotedSchema));
 
         $builder->where(Where::raw(implode(' AND ', $where)));
@@ -260,7 +260,7 @@ trait ColumnPivotTrait
         $pivotFieldPointingToMe = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
 
         $query
-            ->andStringEqual($pivotFieldPointingToMe->getColumn(), $this->DATA[$ownInstanceIdentifierFieldName[0]]);
+            ->andStringEqual($pivotFieldPointingToMe->getColumn(), $this->retrieveValue($ownInstanceIdentifierFieldName[0]));
 
         $query->orderBy("{$positionField->getColumn()} ASC");
 
@@ -289,7 +289,7 @@ trait ColumnPivotTrait
         $data = [
             $positionField->getColumn() => $latestPosition + 1
         ];
-        $data[$pivotFieldPointingToMe->getColumn()] = $this->DATA[$ownInstanceIdentifierFieldName[0]];
+        $data[$pivotFieldPointingToMe->getColumn()] = $this->retrieveValue($ownInstanceIdentifierFieldName[0]);
 
         // Get related column at pivot table pointing the other schema
         $fields = array_filter($pivotSchema->getRelationalFields(), function ($field) use ($pivotFieldPointingToMe) {

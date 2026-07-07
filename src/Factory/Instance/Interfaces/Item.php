@@ -37,6 +37,7 @@ interface Item
     public function save(): static;
 
     public function assignValue(string $key, mixed $value): static;
+    public function retrieveValue(string $key, array $additionalData = [], string $dataMode = 'raw'): mixed;
 
     /**
      * @laminim

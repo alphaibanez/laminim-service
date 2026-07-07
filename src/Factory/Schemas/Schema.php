@@ -808,6 +808,13 @@ final class Schema
         return null;
     }
 
+    public function getKindOfDateTimeField(string $field): null|DateTimeField|UnixTimeStampField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof DateTimeField || $r instanceof UnixTimeStampField) return $r;
+        return null;
+    }
+
     public function getColorField(string $field): ?ColorField
     {
         $r = $this->getField($field);
@@ -833,6 +840,14 @@ final class Schema
     {
         $r = $this->getField($field);
         if ($r instanceof ConstantValueField) return $r;
+        return null;
+    }
+
+
+    public function getConcatField(string $field): ?ConcatField
+    {
+        $r = $this->getField($field);
+        if ($r instanceof ConcatField) return $r;
         return null;
     }
 

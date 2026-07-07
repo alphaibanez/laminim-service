@@ -98,21 +98,21 @@ GetRoute::onlyLoggedUsers('/api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])
     ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
-    ->setTargetAccessPolicy('admin');
+    ->setTargetAccessPolicy('app');
 
 PostRoute::onlyLoggedUsers('/api/mk/{component}', BasicHttpHandler::Create)
     ->setWebItemValueParamsExtractionKey('component')
     ->setAnonymousTarget()
     ->setRequiredPermissions(['mk'])
     ->setPayloadValueParamsExtractionKey('payload')
-    ->setTargetAccessPolicy('admin');
+    ->setTargetAccessPolicy('app');
 
 PutRoute::onlyLoggedUsers('/api/up/{component}', BasicHttpHandler::Update)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['up'])
     ->setPayloadValueParamsExtractionKey('payload')
-    ->setTargetAccessPolicy('admin');
+    ->setTargetAccessPolicy('app');
 
 PostRoute::onlyLoggedUsers('/api/dup/{component}', BasicHttpHandler::Duplicate)
     ->setWebItemValueParamsExtractionKey('component')
@@ -126,7 +126,7 @@ DeleteRoute::onlyLoggedUsers('/api/rm/{component}', BasicHttpHandler::Drop)
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setPayloadValueParamsExtractionKey('payload')
     ->setRequiredPermissions(['rm'])
-    ->setTargetAccessPolicy('admin');
+    ->setTargetAccessPolicy('app');
 
 /**
  * Public translations routes

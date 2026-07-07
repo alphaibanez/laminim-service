@@ -245,15 +245,6 @@ abstract class AbstractInstance implements Item
         return $this;
     }
 
-    /**
-     * @deprecated use getUpdatedPayload instead
-     * @return array
-     */
-    public function getUpdatedData(): array
-    {
-        return $this->UPDATED;
-    }
-
     public function getSchema(): Schema|null
     {
         return Schema::get(static::COMPONENT);

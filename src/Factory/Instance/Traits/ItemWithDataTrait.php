@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
@@ -99,28 +100,24 @@ trait ItemWithDataTrait
                 if (!$composedInstances[$composedKey]) {
                     $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
                     if (!$fieldComposingThisField) continue;
-                    /** @var AbstractInstance $composedInstance */
+                    /** @var Item $composedInstance */
                     $composedInstance = $this->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
                     $composedInstances[$composedKey] = $composedInstance;
                 }
 
-
-                if ($endsWithId) {
-                    $composedInstances[$composedKey]::feedInstance($composedInstance, [
-                        "{$composedKey}Id" => $value,
-                    ], $internalMethodsArguments);
-
-                } else {
-                    $composedInstances[$composedKey]::feedInstance($composedInstance, [
-                        $composedKey=> $value,
-                    ], $internalMethodsArguments);
-                }
+                $composedInstances[$composedKey]->feed([
+                    $composedKey => $value,
+                ], $internalMethodsArguments);
 
                 continue;
             }
 
             // Common primitive value fields (included composed elements thanks to generated setter detection  approach)
             $this->assignValue($field->getName(), $value);
+        }
+
+        if (count($composedInstances) > 0) {
+            $this->composedData->setItems($composedInstances);
         }
 
         return $this;
@@ -146,6 +143,12 @@ trait ItemWithDataTrait
         // In order to update inner field
         if (isset($this->foreignKeysData) && $this->foreignKeysData->hasToSave()) {
             $this->foreignKeysData->save();
+        }
+
+        // Update composed data before payload calc
+        // In order to update inner field
+        if (isset($this->composedData) && $this->composedData->hasToSave()) {
+            $this->composedData->save();
         }
 
         $original = $this->getOriginalData();

@@ -53,7 +53,7 @@ final class RelatedItemDataController
         if (count($additionalData) > 0) {
             $relatedSchema = Schema::get($field->getComponent($this->schema, $this->item));
             $instance = $relatedSchema->getItemInstance();
-            $instance->initialFeed($additionalData);
+            $instance->feed($additionalData);
             return $instance;
         }
 

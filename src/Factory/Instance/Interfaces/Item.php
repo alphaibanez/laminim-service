@@ -39,6 +39,7 @@ interface Item
 
     public function assignValue(string $key, mixed $value): static;
     public function retrieveValue(string $key, array $additionalData = [], RetrieveDataMode $dataMode = RetrieveDataMode::Raw): mixed;
+    public function hasAssignedValue(string $key, array $additionalData = []): bool;
 
     /**
      * @laminim

@@ -51,7 +51,7 @@ trait ColumnRelatedTrait
      */
     protected function _getRelatedValSingle(string $type = '', $column = '', $forceRefresh = false, array $additionalData = [])
     {
-        return $this->relatedItemData->getItem($column);
+        return $this->relatedItemData->getItem($column, $additionalData);
     }
 
     /**

@@ -926,7 +926,7 @@ abstract class AbstractInstance implements Item
                 if (!$fieldComposingThisField) continue;
 
                 if ($fieldComposingThisField instanceof RelatedField) {
-                    $composedInstance = $this->relatedItemData->getItem($fieldComposingThisField->getName());
+                    $composedInstance = $this->relatedItemData->getItem($fieldComposingThisField->getName(), $internalMethodsArguments);
                 } elseif ($fieldComposingThisField instanceof ForeignKeyField) {
                     $composedInstance = $this->foreignKeyData->getItem($fieldComposingThisField->getName());
                 }
@@ -1647,6 +1647,69 @@ abstract class AbstractInstance implements Item
                 return $this->multipleIntegerData->get($key);
             } else {
                 return $this->integerData->get($key);
+            }
+        }
+
+        return null;
+    }
+
+    public function hasAssignedValue(string $key, array $additionalData = []): bool
+    {
+        $field = $this->getSchema()->getField($key);
+        if (!$field) throw InvalidItemDataAssignException::missingField($key);
+
+        if ($field instanceof StringField || $field instanceof EmailField) {
+            return $this->stringData->has($key);
+
+        } elseif ($field instanceof FloatField) {
+            if ($field->isMultiple()) {
+                return $this->multipleFloatData->has($key);
+            } else {
+                return $this->floatData->has($key);
+            }
+
+        } elseif ($field instanceof BooleanField) {
+            return $this->booleanData->has($key);
+
+        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+            return $this->dateData->has($key);
+
+        } elseif ($field instanceof JSONField) {
+            return $this->jsonData->has($key);
+
+        } elseif ($field instanceof EncryptField) {
+            return $this->encryptData->has($key);
+
+        } elseif ($field instanceof ColorField) {
+            return $this->colorData->has($key);
+
+        } elseif ($field instanceof FileField) {
+            return $this->fileData->has($key);
+
+        } elseif ($field instanceof ForeignKeyField) {
+            return $this->foreignKeyData->has($key);
+
+        } elseif ($field instanceof ForeignKeysField) {
+            return $this->foreignKeysData->has($key);
+
+        } elseif ($field instanceof RelatedField) {
+            if ($field->isSingleMode()) return $this->relatedItemData->has($key);
+            return $this->relatedItemsData->has($key);
+
+        } elseif ($field instanceof RelatedKeysField) {
+            return $this->relatedItemsData->has($key);
+
+        } elseif ($field instanceof ConcatField) {
+            return $this->concatData->has($key);
+
+        } elseif ($field instanceof PivotField) {
+            return $this->pivotData->has($key);
+
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isMultiple()) {
+                return $this->multipleIntegerData->has($key);
+            } else {
+                return $this->integerData->has($key);
             }
         }
 

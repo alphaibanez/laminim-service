@@ -61,7 +61,7 @@ final class ForeignKeyDataController
 
                 if (!$instance || $instance->isAnonymous()) {
                     $instance = $relatedSchema->getItemInstance();
-                    $instance->initialFeed($additionalData, true);
+                    $instance->feed($additionalData);
                 }
 
                 return $instance;
@@ -70,7 +70,7 @@ final class ForeignKeyDataController
 
         $instance = Instantiator::make($type, $id);
         if ($instance->isAnonymous() && count($additionalData) > 0) {
-            $instance->initialFeed($additionalData, true);
+            $instance->feed($additionalData);
         }
 
         return $instance;

@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
+use Lkt\Connectors\DatabaseConnections;
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -178,6 +179,48 @@ class QueryBuilderHelper
             ->orderBy($pivotOrderField->getColumn() . ' ASC')
         ;
 
+
+        return $query;
+    }
+
+
+    public static function preparePivotsDataQuery(Item $item, PivotField $field, $forceRefresh = false): Query
+    {
+        $schema = $item->getSchema();
+        $referencedComponent = $field->getComponent($schema, $item);
+
+        $pivotSchema = $field->getPivotSchema();
+        $pivotField = $pivotSchema->getOneFieldPointingToComponent($referencedComponent);
+
+        $sameTablePivot = $pivotSchema->isSameTablePivot();
+        if ($sameTablePivot) {
+            $pivotOwnField = $pivotSchema->getField($field->getColumn());
+        } else {
+            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($item::COMPONENT);
+        }
+
+        $pivotOrderField = $pivotSchema->getOnePositionField();
+
+        $where = $field->getWhere();
+
+
+        // Prepare query builder
+        $query = QueryBuilderHelper::getComponentQuery($pivotSchema->getComponent());
+
+        $query
+            ->andIntegerEqual($pivotOwnField->getColumn(), $item->getIdColumnValue());
+
+        $query
+            ->orderBy($pivotOrderField->getColumn() . ' ASC')
+        ;
+
+        $connector = $schema->getDatabaseConnector();
+        if ($connector === '') {
+            $connector = DatabaseConnections::$defaultConnector;
+        }
+        $connection = DatabaseConnections::get($connector);
+
+        $query->setColumns($connection->extractSchemaColumns($pivotSchema));
 
         return $query;
     }

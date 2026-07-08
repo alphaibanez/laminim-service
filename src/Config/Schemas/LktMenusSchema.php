@@ -46,7 +46,7 @@ Schema::add(
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(BooleanField::define('includeAvailableAdminRoutes', 'include_available_admin_routes'))
         ->addField(MethodGetterField::define('getNavigableEntries', 'navigableEntries'))
-        ->addField(PivotField::definePivot(LktMenuEntry::COMPONENT, 'lkt_menus__entries', 'entries', 'menu_id')
+        ->addField(PivotField::definePivot(LktMenuEntry::COMPONENT, 'lkt_menus__entries', 'entries', 'menu_id', LktMenuPivotEntry::COMPONENT)
             ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktMenu::COMPONENT, 'menu', 'menu_id'))
             ->setPivotRightIdField(PivotRightIdField::defineRelation(LktMenuEntry::COMPONENT, 'entry', 'entry_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))

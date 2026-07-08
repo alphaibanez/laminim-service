@@ -178,7 +178,7 @@ abstract class AbstractInstance implements Item
         $this->initialFeed($initialData);
     }
 
-    public function initialFeed(array $initialData = []): static
+    public function initialFeed(array $initialData = [], bool $refreshing = false): static
     {
         $schema = Schema::get(static::COMPONENT);
         $groupedData = new GroupedData($schema, $initialData);
@@ -201,7 +201,7 @@ abstract class AbstractInstance implements Item
             ->initJSONData($schema, $this, $groupedData->jsonData)
             ->initFileData($schema, $this, $groupedData->fileData)
 
-            ->initPivotData($schema, $this)
+            ->initPivotData($schema, $this, $refreshing)
 
             ->initConstantData($schema, $this)
             ->initConcatData($schema, $this)
@@ -1568,6 +1568,9 @@ abstract class AbstractInstance implements Item
 
         } elseif ($field instanceof RelatedField) {
             $this->relatedItemsData->setItems($key, (array)$value);
+
+        } elseif ($field instanceof PivotField) {
+            $this->pivotData->setItems($key, (array)$value);
         }
 
         return $this;
@@ -1581,13 +1584,6 @@ abstract class AbstractInstance implements Item
 
         if ($field instanceof StringField || $field instanceof EmailField) {
             return $this->stringData->get($key);
-
-        } elseif ($field instanceof IntegerField) {
-            if ($field->isMultiple()) {
-                return $this->multipleIntegerData->get($key);
-            } else {
-                return $this->integerData->get($key);
-            }
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
@@ -1638,6 +1634,16 @@ abstract class AbstractInstance implements Item
 
         } elseif ($field instanceof ConcatField) {
             return $this->concatData->get($key);
+
+        } elseif ($field instanceof PivotField) {
+            return $this->pivotData->getItems($key);
+
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isMultiple()) {
+                return $this->multipleIntegerData->get($key);
+            } else {
+                return $this->integerData->get($key);
+            }
         }
 
         return null;

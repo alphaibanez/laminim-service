@@ -2,13 +2,16 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Connectors\DatabaseConnections;
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
+use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
@@ -26,6 +29,7 @@ final class PivotDataController
     private array $itemsAmountOfPages = [];
 
     private array $pendingLinks = [];
+    private array $pivots = [];
 
     private Schema $schema;
     private Item $item;
@@ -209,6 +213,18 @@ final class PivotDataController
         $field = $this->schema->getPivotField($key);
         if (!$field) return null;
 
+        // Referenced table
+        $referencedSchema = Schema::get($field->getComponent($this->schema, $this->item));
+
+        $idColumn = $referencedSchema->getIdColumn()[0];
+
+        $items = array_map(function ($datum) use ($idColumn) {
+            return $datum[$idColumn];
+        }, $items);
+
+        $this->needsUpdate[$key] = $items;
+        return $this;
+
         // @remember Changes won't be persistent until $this->item was saved!
 //        $this->needsUpdate[$key] = $itemsWithFedData;
 //        $this->payload[$key] = $items;
@@ -216,54 +232,93 @@ final class PivotDataController
 
     public function save(): self
     {
-        // @todo
-        return $this;
-
-        /**
-         * @var string $key
-         * @var array[] $items
-         */
-        foreach ($this->needsUpdate as $key => $items) {
+        foreach ($this->needsUpdate as $key => $ids) {
 
             $field = $this->schema->getPivotField($key);
 
-            $relatedComponent = $field->getComponent($this->schema, $this->item);
-            $relatedSchema = Schema::get($relatedComponent);
-            /** @var AbstractInstance $relatedClass */
-            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+            // Pivot table fields (intermediate table)
+            $pivotSchema = $field->getPivotSchema();
 
-            $currentIds = $this->getItemsIds($key, null, null, null, [], true);
-            $updatedIds = [];
+            $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->item::COMPONENT);
 
-            $updatedInstances = [];
-
-            foreach ($items as $item) {
-                /** @var Item $ins */
-                $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
-                $ins->feed($item);
-                $updatedInstances[] = $ins;
-                $updatedIds[] = $ins->getIdColumnValue();
+            if ($pointingField instanceof PivotLeftIdField) {
+                $referencedField = $pivotSchema->getPivotRightIdField();
+            } else {
+                $referencedField = $pivotSchema->getPivotLeftIdField();
             }
 
-            if (count($updatedInstances) > 0) {
-                $batchActions = $relatedClass::getBatchActions($updatedInstances);
-                $batchActions->update();
-            }
+            /** @var PivotPositionField $positionField */
+            $positionField = $pivotSchema->getOnePositionField();
 
-            $diff = compareArrays($currentIds, $updatedIds);
+            $positionKey = $positionField->getName();
+            $referencedKey = $referencedField->getName();
+            $pointingKey = $pointingField->getName();
 
-            // Delete
-            if (count($diff['deleted']) > 0 && method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
-                foreach ($diff['deleted'] as $deletedId) {
-                    $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
-                    $ins->delete();
+            $idColumnValue = $this->item->getIdColumnValue();
+
+            $results = $this->getPivots($field->getName());
+
+            $checkedIds = [];
+
+            $itemsToCreate = [];
+            $itemsToUpdate = [];
+            $itemsToDelete = [];
+
+            // Update existing pivots
+            /** @var Item $result */
+            foreach ($results as $result) {
+                $id = $result->retrieveValue($referencedKey);
+                $position = $result->retrieveValue($positionKey);
+
+                $updatedPosition = array_search($id, $ids);
+                $checkedIds[] = $id;
+
+                if ($updatedPosition !== $position) {
+                    $result->assignValue($positionKey, $updatedPosition);
+                    $itemsToUpdate[] = $result;
+                }
+
+                // Unlink pivot relation
+                if (!in_array($id, $ids, true)) {
+                    $itemsToDelete[] = $result;
                 }
             }
 
+            // Link new pivot relations
+            foreach ($ids as $i => $id) {
+                if (!in_array($id, $checkedIds, true)) {
+                    $ins = $pivotSchema->getItemInstance();
+                    $ins->assignValue($pointingKey, $idColumnValue)
+                        ->assignValue($referencedKey, $id)
+                        ->assignValue($positionKey, $i);
+                    $itemsToCreate[] = $ins;
+                }
+            }
 
+            $anonymous = $pivotSchema->getItemInstance();
+
+            if (count($itemsToCreate) > 0) {
+                $createBatchActions = $anonymous::getBatchActions($itemsToCreate);
+                $createBatchActions->create();
+            }
+
+            if (count($itemsToUpdate) > 0) {
+                $createBatchActions = $anonymous::getBatchActions($itemsToUpdate);
+                $createBatchActions->update();
+            }
+
+            if (count($itemsToDelete) > 0) {
+                $createBatchActions = $anonymous::getBatchActions($itemsToDelete);
+                $createBatchActions->drop();
+            }
         }
 
         return $this;
+    }
+
+    public function hasToSave(): bool
+    {
+        return count($this->needsUpdate) > 0;
     }
 
     public function prepareToLink(string $key, int|array $parentIdentifierValue): self
@@ -337,5 +392,42 @@ final class PivotDataController
         }
 
         return $this;
+    }
+
+    public function getPivots(string $key): array|null
+    {
+        /** @var PivotField $field */
+        $field = $this->schema->getPivotField($key);
+        $idColumn = $this->schema->getIdString();
+
+        /** @var Schema $pivotedSchema */
+        $pivotedSchema = $field->getPivotSchema();
+
+        /** @var AbstractField $pivotedField */
+        $pivotedField = $pivotedSchema->getOneFieldPointingToComponent($this->item::COMPONENT);
+
+        $pivotedFieldColumn = trim($pivotedField->getColumn());
+
+        $where = $field->getWhere();
+
+        $order = $field->getOrder();
+        $builder = Query::table($pivotedSchema->getTable());
+
+        $connector = $this->schema->getDatabaseConnector();
+        if ($connector === '') {
+            $connector = DatabaseConnections::$defaultConnector;
+        }
+        $connection = DatabaseConnections::get($connector);
+        $where[] = $connection->makeUpdateParams([$pivotedFieldColumn => $this->item->retrieveValue($idColumn)]);
+        $builder->setColumns($connection->extractSchemaColumns($pivotedSchema));
+
+        $builder->where(Where::raw(implode(' AND ', $where)));
+        $builder->orderBy(implode(',', $order));
+
+        $results = $builder->select();
+        $pivots = Instantiator::makeResults($pivotedSchema, $results);
+
+        $this->pivots[$key] = $pivots;
+        return $this->pivots[$key];
     }
 }

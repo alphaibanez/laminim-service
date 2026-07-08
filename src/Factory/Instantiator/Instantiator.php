@@ -49,23 +49,20 @@ class Instantiator
      * @throws SchemaNotDefinedException
      * @throws \Lkt\Factory\Schemas\Exceptions\InvalidComponentException
      */
-    public static function makeResults(string $component, array $results): array
+    public static function makeResults(string|Schema $component, array $results): array
     {
         /** @var AbstractInstance[] $response */
         $response = [];
-        $schema = Schema::get($component);
+        $schema = $component instanceof Schema ? $component : Schema::get($component);
         $appClass = $schema->getInstanceSettings()->getAppClass();
 
         if (count($results) > 0) {
             foreach ($results as $item) {
                 $code = $schema->getInstanceCode($item);
 
-                $converter = new RawResultsToInstanceConverter($component, $item);
-                $itemData = $converter->parse();
-
                 /** @var Item $r */
-                $r = new $appClass($itemData);
-                $r->initialFeed($itemData);
+                $r = new $appClass($item);
+                $r->initialFeed($item);
                 InstanceCache::store($code, $r);
                 $response[] = $r;
             }

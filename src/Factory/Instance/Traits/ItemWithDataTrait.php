@@ -120,24 +120,7 @@ trait ItemWithDataTrait
             }
 
             // Common primitive value fields (included composed elements thanks to generated setter detection  approach)
-            $setter = $field->getSetterForPrimitiveValue();
-
-            if ($field instanceof PivotField) {
-                VarDumper::die('todo: pivot sort', $value);
-                $setter = '_setPivotSort';
-                $methodCallData = ['column' => $field->getName(), 'data' => $value];
-
-                $methodCallData = [...$internalMethodsArguments, ...$methodCallData];
-
-                $methodCallData = $this->prepareOwnMethodCallArguments($setter, $methodCallData, $field->getName());
-                if (!$this->satisfiedOwnMethodCallArguments($setter, $methodCallData)) {
-                    continue;
-                }
-                $this->callOwnMethod($setter, $methodCallData);
-
-            } else {
-                $this->assignValue($field->getName(), $value);
-            }
+            $this->assignValue($field->getName(), $value);
         }
 
         return $this;
@@ -300,15 +283,15 @@ trait ItemWithDataTrait
                     $updatedData[$origIdColumn] = $id;
                 }
 
-                $pendingPivotLinks = null;
-                if (isset($this->pivotData) && $this->pivotData->hasToLink()) {
-                    $pendingPivotLinks = $this->pivotData->getPendingLinks();
-                }
-                $this->initialFeed($updatedData);
-
-                if ($pendingPivotLinks) {
-                    foreach ($pendingPivotLinks as $k => $j) $this->pivotData->prepareToLink($k, $j);
-                }
+//                $pendingPivotLinks = null;
+//                if (isset($this->pivotData) && $this->pivotData->hasToLink()) {
+//                    $pendingPivotLinks = $this->pivotData->getPendingLinks();
+//                }
+                $this->initialFeed($updatedData, true);
+                // Innecesario con el parámetro refreshing a true
+//                if ($pendingPivotLinks) {
+//                    foreach ($pendingPivotLinks as $k => $j) $this->pivotData->prepareToLink($k, $j);
+//                }
             }
         }
 
@@ -460,6 +443,16 @@ trait ItemWithDataTrait
             $this->save();
         }
 
+        if (isset($this->pivotData)) {
+            if ($this->pivotData->hasToSave()) {
+                $this->pivotData->save();
+            }
+
+            if ($this->pivotData->hasToLink()) {
+                $this->pivotData->linkPendingPivots();
+            }
+        }
+
         if (count($this->PIVOT_SORT) > 0) {
             foreach ($this->PIVOT_SORT as $column => $ids) {
 
@@ -521,10 +514,6 @@ trait ItemWithDataTrait
                     }
                 }
             }
-        }
-
-        if (isset($this->pivotData) && $this->pivotData->hasToLink()) {
-            $this->pivotData->linkPendingPivots($k);
         }
 
         // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item

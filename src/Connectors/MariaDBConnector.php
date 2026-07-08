@@ -5,6 +5,7 @@ namespace Lkt\Connectors;
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -385,9 +386,9 @@ class MariaDBConnector extends DatabaseConnector
         foreach ($fields as $column => $field) {
             $columnKey = $column;
             $nullable = method_exists($field, 'isNullable') && $field->isNullable();
-            if ($field instanceof ForeignKeyField) {
-                $columnKey .= 'Id';
-            }
+//            if ($field instanceof ForeignKeyField) {
+//                $columnKey .= 'Id';
+//            }
 
             if (array_key_exists($columnKey, $data)){
                 $value = $data[$columnKey];
@@ -415,7 +416,6 @@ class MariaDBConnector extends DatabaseConnector
                 if ($field instanceof StringField
                     || $field instanceof EmailField
                     || $field instanceof RelatedKeysField
-                    || $field instanceof ForeignKeyField
                 ) {
                     $r = trim($value);
                     if ($compress) {
@@ -582,10 +582,17 @@ class MariaDBConnector extends DatabaseConnector
         $values = [];
         /** @var AbstractInstance $item */
         foreach ($items as $item) {
-            $parsed = $this->prepareDataToStore($schema, $item->getUpdatePayload());
+            $payload = $item->getUpdatePayload();
+            if (count($payload) === 0) continue;
+
+            $parsed = $this->prepareDataToStore($schema, $payload);
             $builder->updateData($parsed);
 
             $values[] = $this->makeUpdateParamsArray($builder->getData(), 'create');
+        }
+
+        if (count($values) === 0) {
+            return $this;
         }
 
         $valuesKeys = '(' . implode(',', array_keys($values[0])) . ')';
@@ -652,12 +659,18 @@ class MariaDBConnector extends DatabaseConnector
         $values = [];
         $identifiers = $schema->getIdentifiers();
 
+        /** @var Item $item */
         foreach ($items as $item) {
             $idValues = [];
             foreach ($identifiers as $identifier) {
-                $getter = $identifier->getGetterForPrimitiveValue();
-                $idValues[$identifier->getName()] = $item->{$getter}();
+                $val = $item->retrieveValue($identifier->getName());
+                if ($val) {
+                    $idValues[$identifier->getName()] = $val;
+                }
             }
+
+            if (count($idValues) !== count($identifiers)) continue;
+
             $parsed = $this->prepareDataToStore($schema, $idValues);
             $builder->updateData($parsed);
 

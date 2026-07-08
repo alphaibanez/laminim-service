@@ -7,6 +7,8 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
+use Lkt\Factory\Schemas\Fields\PivotField;
+use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
 use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
@@ -108,61 +110,34 @@ final class PivotDataController
             if (array_key_exists($cacheKey, $this->data)) return $this->data[$cacheKey];
         }
 
-        $field = $this->schema->getKindOfRelatedField($key);
+        $field = $this->schema->getPivotField($key);
         if (!$field) return null;
 
-        $builder = QueryBuilderHelper::prepareRelatedQuery(
-            $this->item,
-            QueryBuilderHelper::getComponentQuery($field->getComponent()),
-            $this->schema,
-            $field,
-            $forceRefresh,
-            $additionalData,
-        );
+        if (isset($this->payload[$cacheKey])) return $this->payload[$cacheKey];
 
-        if ($field instanceof RelatedKeysField) {
-            $constraints = $this->item::getWhereBuilder();
-            foreach ($this->item->getIdentifierValue() as $column => $value) {
-                $constraints->andWhere(
-                    $this->item::getWhereBuilder()
-                    ->orStringLike($column, ";{$value};")
-                    ->orStringLike($column, "{$value}")
-                    ->orStringEndsLike($column, "{$value};")
-                    ->orStringBeginsLike($column, ";{$value}")
-                );
-            }
-            $builder->andWhere($constraints);
-        }
+        if (isset($this->data[$cacheKey])) return $this->data[$cacheKey];
 
-        if (is_numeric($page)) {
-            $limit = ($itemsPerPage ?? $field->getItemsPerPage()) ?? 10;
-            $builder->pagination($page, $limit);
-        }
+        /** @var Schema $pivotSchema */
+        $pivotSchema = $field->getPivotSchema();
 
-        $fieldConfigWhere = $field->getWhere();
-        if ($fieldConfigWhere) {
-            if (is_array($fieldConfigWhere)) {
-                foreach ($fieldConfigWhere as $w) {
-                    $builder->andWhere($w);
+        $pivotIdentifiers = $pivotSchema->getIdentifiers();
+        $pivotForeignColumn = null;
+        foreach ($pivotIdentifiers as $identifier) {
+            if ($identifier instanceof PivotLeftIdField || $identifier instanceof PivotRightIdField) {
+                if ($identifier->getComponent() === $field->getComponent($this->schema, $this->item)) {
+                    $pivotForeignColumn = $identifier;
+                    break;
                 }
-            } else {
-                $builder->andWhere($fieldConfigWhere);
             }
         }
 
-        if ($where instanceof Where) {
-            $builder->andWhere($where);
-        }
+        $toSchema = Schema::get($pivotForeignColumn->getComponent());
 
-        $data = $builder->select();
-        $relatedSchema = Schema::get($field->getComponent());
+        $query = QueryBuilderHelper::preparePivotQuery($this->item, $field, $forceRefresh);
+        $results = Instantiator::makeResults($toSchema->getComponent(), $query->select());
 
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
-        if (count($results) > 0) {
-            $this->data[$cacheKey] = $results;
-            return $this->data[$cacheKey];
-        }
-        return null;
+        $this->data[$cacheKey] = $results;
+        return $this->data[$cacheKey];
     }
 
     public function getItemsCount(

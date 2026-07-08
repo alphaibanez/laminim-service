@@ -144,7 +144,7 @@ class QueryBuilderHelper
     }
 
 
-    public static function preparePivotQuery(Item $item, Query $query, PivotField $field, $forceRefresh = false): Query
+    public static function preparePivotQuery(Item $item, PivotField $field, $forceRefresh = false): Query
     {
         $schema = $item->getSchema();
         $referencedComponent = $field->getComponent($schema, $item);

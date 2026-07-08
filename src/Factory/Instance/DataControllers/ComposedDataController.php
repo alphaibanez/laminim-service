@@ -12,6 +12,7 @@ use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Schema;
@@ -92,6 +93,30 @@ final class ComposedDataController
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
         return $v > 0;
+    }
+
+    public function prepareAdditionalData(string $key, array $additionalData = []): array
+    {
+        $compositionValuesFields = $key ? $this->schema->getCompositionValueFields($key) : $this->schema->getAllCompositionValueFields();
+        /**
+         * @var  $key
+         * @var AbstractField $compositionValueField
+         */
+        foreach ($compositionValuesFields as $key => $compositionValueField) {
+            if (!$additionalData[$key]) {
+                if ($compositionValueField instanceof ForeignKeyField) {
+                    $getterAux = $compositionValueField->getGetterForData();
+                } else {
+                    $getterAux = $compositionValueField->getGetterForPrimitiveValue();
+                }
+
+                if (is_callable([$this, $getterAux])) {
+                    $additionalData[$key] = $this->{$getterAux}();
+                }
+            }
+        }
+
+        return $additionalData;
     }
 
     public function __debugInfo() {

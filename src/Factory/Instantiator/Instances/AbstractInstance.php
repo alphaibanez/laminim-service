@@ -1621,6 +1621,7 @@ abstract class AbstractInstance implements Item
             if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->foreignKeyData->get($key);
             }
+            if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
             return $this->foreignKeyData->getItem($key, $additionalData);
 
         } elseif ($field instanceof ForeignKeysField) {
@@ -1630,6 +1631,7 @@ abstract class AbstractInstance implements Item
             return $this->foreignKeysData->getItems($key);
 
         } elseif ($field instanceof RelatedField) {
+            if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
             if ($field->isSingleMode()) return $this->relatedItemData->getItem($key, $additionalData);
             return $this->relatedItemsData->getItems($key);
 

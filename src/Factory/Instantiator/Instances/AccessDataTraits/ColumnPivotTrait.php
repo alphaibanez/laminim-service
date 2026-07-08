@@ -22,52 +22,6 @@ trait ColumnPivotTrait
 
     protected array $PIVOT_SORT = [];
 
-    protected array $PENDING_PIVOT_LINKS = [];
-
-    public function _setPendingPivotLink(string $field, mixed $relatedId): static
-    {
-        $this->PENDING_PIVOT_LINKS[$field] = $relatedId;
-        return $this;
-    }
-
-    public function _getPivotQueryBuilder(string $column): Query
-    {
-        // Own fields
-        $ownSchema = Schema::get(static::COMPONENT);
-        $ownField = $ownSchema->getPivotField($column);
-
-        // Pivot table fields (intermediate table)
-        $pivotSchema = $ownField->getPivotSchema();
-        $pivotField = $pivotSchema->getOneFieldPointingToComponent($ownField->getComponent());
-
-        $sameTablePivot = $pivotSchema->isSameTablePivot();
-        if ($sameTablePivot) {
-            $pivotOwnField = $pivotSchema->getField($ownField->getColumn());
-        } else {
-            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
-        }
-
-        $pivotOrderField = $pivotSchema->getOnePositionField();
-
-        // Referenced table
-        $referencedSchema = Schema::get($ownField->getComponent());
-        $referencedField = $referencedSchema->getField($referencedSchema->getIdColumn()[0]);
-
-        // Prepare query builder
-        $referencedQueryBuilder = QueryBuilderHelper::getComponentQuery($ownField->getComponent());
-        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($pivotSchema->getComponent());
-
-        $pivotQueryBuilder
-            ->andIntegerEqual($pivotOwnField->getColumn(), $this->getIdColumnValue());
-
-        $referencedQueryBuilder
-            ->leftJoin($pivotQueryBuilder, $pivotField->getColumn(), $referencedField->getColumn())
-            ->orderBy($pivotOrderField->getColumn() . ' ASC')
-        ;
-
-        return $referencedQueryBuilder;
-    }
-
     public function _getAvailablePivotQueryBuilder(string $column): Query
     {
         // Own fields
@@ -190,44 +144,6 @@ trait ColumnPivotTrait
     protected function _getPivotVal(string $column): array
     {
         return (array)$this->pivotData->getItems($column);
-//        if (!isset($this->PIVOT[$column])) {
-//            $this->_loadPivots($column);
-//        }
-
-        if (isset($this->UPDATED_PIVOT_DATA[$column])) {
-            return $this->UPDATED_PIVOT_DATA[$column];
-        }
-
-        if (isset($this->PIVOT_DATA[$column])) {
-            return $this->PIVOT_DATA[$column];
-        }
-
-        /** @var Schema $fromSchema */
-        $fromSchema = Schema::get(static::COMPONENT);
-
-        /** @var PivotField $fromField */
-        $fromField = $fromSchema->getField($column);
-
-        /** @var Schema $pivotSchema */
-        $pivotSchema = $fromField->getPivotSchema();
-
-
-        $pivotIdentifiers = $pivotSchema->getIdentifiers();
-        $pivotForeignColumn = null;
-        foreach ($pivotIdentifiers as $identifier) {
-            if ($identifier->getComponent() === $fromField->getComponent()) {
-                $pivotForeignColumn = $identifier;
-                break;
-            }
-        }
-
-        $toSchema = Schema::get($pivotForeignColumn->getComponent());
-
-        $queryBuilder = $this->_getPivotQueryBuilder($column);
-        $results = Instantiator::makeResults($toSchema->getComponent(), $queryBuilder->select());
-
-        $this->PIVOT_DATA[$column] = $results;
-        return $this->PIVOT_DATA[$column];
     }
 
     /**
@@ -239,6 +155,7 @@ trait ColumnPivotTrait
      */
     protected function _hasPivotVal(string $column = ''): bool
     {
+        return $this->pivotData->has($column);
         return count($this->_getPivotVal($column)) > 0;
     }
 

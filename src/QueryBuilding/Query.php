@@ -481,4 +481,9 @@ class Query
         $this->and[] = FieldNotInSubQueryConstraint::define($value, $query->getSelectDistinctQuery());
         return $this;
     }
+
+    public function hasConstraints(): bool
+    {
+        return count($this->and) > 0 || count($this->or) > 0;
+    }
 }

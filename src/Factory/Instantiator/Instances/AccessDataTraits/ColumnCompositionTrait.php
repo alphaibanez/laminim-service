@@ -75,6 +75,8 @@ trait ColumnCompositionTrait
 
     protected function _getCompositionInstance(string $composedComponent, array $additionalData = []): mixed
     {
+        return $this->composedData->getItem($composedComponent, $additionalData);
+
         if (isset($this->COMPOSED_DATA[$composedComponent])) return $this->COMPOSED_DATA[$composedComponent];
 
         $this->COMPOSED_DATA_ADDITIONAL_DATA[$composedComponent] = $additionalData;
@@ -99,15 +101,12 @@ trait ColumnCompositionTrait
         if (count($additionalData) > 0) {
             $composedInstance = call_user_func_array([$this, $getter], $additionalData);
         } else {
-//            $composedInstance = $this->{$getter}();
 
             if ($compositionField instanceof ForeignKeyField) {
                 $composedInstance = $this->foreignKeyData->getItem($compositionField->getName());
             } else {
                 $composedInstance = $this->relatedItemData->getItem($compositionField->getName());
             }
-
-//            VarDumper::die($compositionField->getName());
         }
 
 

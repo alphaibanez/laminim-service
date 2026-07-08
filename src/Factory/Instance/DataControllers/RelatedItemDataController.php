@@ -22,7 +22,7 @@ final class RelatedItemDataController
         $this->item = $ins;
     }
 
-    public function getItem(string $key): Item|null
+    public function getItem(string $key, array $additionalData): Item|null
     {
         if ($this->item->isAnonymous()) return null;
         if (array_key_exists($key, $this->data)) return $this->data[$key];
@@ -35,6 +35,8 @@ final class RelatedItemDataController
             QueryBuilderHelper::getComponentQuery($field->getComponent()),
             $this->schema,
             $field,
+            false,
+            $additionalData
         );
         $builder->andPageLimitIs(1);
 
@@ -46,6 +48,15 @@ final class RelatedItemDataController
             $this->data[$key] = $results[0];
             return $this->data[$key];
         }
+
+        // Related mode, should return an anonymous instance
+        if (count($additionalData) > 0) {
+            $relatedSchema = Schema::get($field->getComponent($this->schema, $this->item));
+            $instance = $relatedSchema->getItemInstance();
+            $instance->initialFeed($additionalData);
+            return $instance;
+        }
+
         return null;
     }
 

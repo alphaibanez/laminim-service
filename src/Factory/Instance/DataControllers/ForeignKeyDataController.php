@@ -39,26 +39,41 @@ final class ForeignKeyDataController
         return null;
     }
 
-    public function getItem(string $key): Item|null
+    public function getItem(string $key, array $additionalData = []): Item|null
     {
         $field = $this->schema->getForeignKeyField($key);
         if (!$field) return null;
 
-        $type = $field->getComponent();
-        $dynamicComponentFieldName = $field->getDynamicComponentField();
-        if ($dynamicComponentFieldName !== '') {
-            $dynamicComponentField = $this->schema->getField($dynamicComponentFieldName);
-            $getter = $dynamicComponentField->getGetterForPrimitiveValue();
-            $dynamicType = $this->item->{$getter}();
-            if (is_numeric($dynamicType)) $type = ComponentId::getComponent((int)$dynamicType);
-            elseif ($dynamicType !== '') $type = $dynamicType;
-        }
+        $type = $field->getComponent($this->schema, $this->item);
         $id = $this->get($key);
 
         if (!$type || $id <= 0) {
             return null;
         }
-        return Instantiator::make($type, $id);
+
+        if (count($additionalData) > 0) {
+            $relatedComponent = $field->getComponent($this->schema, $this->item);
+            $relatedSchema = Schema::get($relatedComponent);
+            $query = $relatedSchema->getQueryBuilder();
+            $relatedSchema->filterBuilder($query, $additionalData);
+            if ($query->hasConstraints()) {
+                $instance = $relatedSchema->getOne($query);
+
+                if (!$instance || $instance->isAnonymous()) {
+                    $instance = $relatedSchema->getItemInstance();
+                    $instance->initialFeed($additionalData, true);
+                }
+
+                return $instance;
+            }
+        }
+
+        $instance = Instantiator::make($type, $id);
+        if ($instance->isAnonymous() && count($additionalData) > 0) {
+            $instance->initialFeed($additionalData, true);
+        }
+
+        return $instance;
     }
 
     public function has(string $key): bool

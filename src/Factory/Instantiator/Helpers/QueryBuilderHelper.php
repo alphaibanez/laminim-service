@@ -26,7 +26,7 @@ class QueryBuilderHelper
 
     public static function prepareRelatedQuery(Item $item, Query $query, Schema $schema, RelatedField|RelatedKeysField $field, $forceRefresh = false, array $additionalData = []): Query
     {
-        $relatedSchema = Schema::get($field->getComponent());
+        $relatedSchema = Schema::get($field->getComponent($schema, $item));
 
         $where = (array)$field?->getWhere();
 

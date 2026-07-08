@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Interfaces;
 
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 
@@ -37,7 +38,7 @@ interface Item
     public function save(): static;
 
     public function assignValue(string $key, mixed $value): static;
-    public function retrieveValue(string $key, array $additionalData = [], string $dataMode = 'raw'): mixed;
+    public function retrieveValue(string $key, array $additionalData = [], RetrieveDataMode $dataMode = RetrieveDataMode::Raw): mixed;
 
     /**
      * @laminim

@@ -6,9 +6,11 @@ use Exception;
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DTO\GroupedData;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithBooleanDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithComposedDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithConcatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithDataTrait;
@@ -119,6 +121,7 @@ abstract class AbstractInstance implements Item
         ItemWithRelatedItemDataTrait,
         ItemWithRelatedItemsDataTrait,
         ItemWithPivotDataTrait,
+        ItemWithComposedDataTrait,
         ItemWithFileDataTrait,
         ItemWithJSONDataTrait,
         ItemWithConstantDataTrait,
@@ -202,6 +205,7 @@ abstract class AbstractInstance implements Item
             ->initFileData($schema, $this, $groupedData->fileData)
 
             ->initPivotData($schema, $this, $refreshing)
+            ->initComposedData($schema, $this, $refreshing)
 
             ->initConstantData($schema, $this)
             ->initConcatData($schema, $this)
@@ -1577,7 +1581,7 @@ abstract class AbstractInstance implements Item
     }
 
 
-    public function retrieveValue(string $key, array $additionalData = [], string $dataMode = 'raw'): mixed
+    public function retrieveValue(string $key, array $additionalData = [], RetrieveDataMode $dataMode = RetrieveDataMode::Raw): mixed
     {
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
@@ -1608,25 +1612,25 @@ abstract class AbstractInstance implements Item
             return $this->colorData->get($key);
 
         } elseif ($field instanceof FileField) {
-            if ($dataMode === 'raw') {
+            if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->fileData->get($key);
             }
             return $this->fileData->getPublicPath($key);
 
         } elseif ($field instanceof ForeignKeyField) {
-            if ($dataMode === 'raw') {
+            if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->foreignKeyData->get($key);
             }
-            return $this->foreignKeyData->getItem($key);
+            return $this->foreignKeyData->getItem($key, $additionalData);
 
         } elseif ($field instanceof ForeignKeysField) {
-            if ($dataMode === 'raw') {
+            if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->foreignKeysData->get($key);
             }
             return $this->foreignKeysData->getItems($key);
 
         } elseif ($field instanceof RelatedField) {
-            if ($field->isSingleMode()) return $this->relatedItemData->getItem($key);
+            if ($field->isSingleMode()) return $this->relatedItemData->getItem($key, $additionalData);
             return $this->relatedItemsData->getItems($key);
 
         } elseif ($field instanceof RelatedKeysField) {

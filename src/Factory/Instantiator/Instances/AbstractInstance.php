@@ -1713,7 +1713,7 @@ abstract class AbstractInstance implements Item
             }
         }
 
-        return null;
+        return false;
     }
 
     public function readValue(string $key, string $responseKey, array $additionalData = []): array|null
@@ -1756,7 +1756,7 @@ abstract class AbstractInstance implements Item
                 $relatedAccessPolicy = 'lkt-related';
             }
 
-            $item = $this->foreignKeyData->getItem($key);
+            $item = $this->foreignKeyData->getItem($key, $additionalData);
             if ($item instanceof AbstractInstance) {
                 if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
                 $item = $item->autoRead();
@@ -1815,6 +1815,12 @@ abstract class AbstractInstance implements Item
             }
 
             $getter = $field->getGetterForPrimitiveValue();
+
+//            if ($field->isSingleMode()) {
+//                $items = $this->relatedItemData->getItem($field->getName(), $additionalData);
+//            } else {
+//                $items = $this->relatedItemsData->getItems($field->getName());
+//            }
 
             $additionalData = $this->prepareOwnMethodCallArguments($getter, $additionalData, $field->getName());
 

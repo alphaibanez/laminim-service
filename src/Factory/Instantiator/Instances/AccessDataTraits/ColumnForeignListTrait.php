@@ -3,12 +3,9 @@
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeysDataTrait;
-use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
-use Lkt\Factory\Instantiator\Helpers\UpdatedRelatedDataProcessor;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
-use Lkt\Factory\Schemas\Schema;
 
 trait ColumnForeignListTrait
 {
@@ -69,38 +66,7 @@ trait ColumnForeignListTrait
 
     protected function _setForeignListWithData(string $fieldName, array $data = []): static
     {
-        return $this->foreignKeysData->set($fieldName, $data);
-
-        $schema = Schema::get(static::COMPONENT);
-        $accessPolicy = 'lkt-related';
-        $field = $schema->getField($fieldName);
-        if ($this->accessPolicy) {
-            $auxAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
-            if ($auxAccessPolicy) $accessPolicy = $auxAccessPolicy;
-        }
-
-        $dataProcessor = new UpdatedRelatedDataProcessor(
-            $schema,
-            $fieldName,
-            $data,
-            $this,
-            $accessPolicy
-        );
-        $dataProcessor->processRelatedField();
-
-        if (count($dataProcessor->pendingUpdateData) > 0) {
-            $this->PENDING_UPDATE_RELATED_DATA[$fieldName] = $dataProcessor->pendingUpdateData;
-        }
-        if (count($dataProcessor->updatedData) > 0) {
-            $this->UPDATED_RELATED_DATA[$fieldName] = $dataProcessor->updatedData;
-        }
-
-        if (count($dataProcessor->relatedIds) > 0) {
-            $this->_setForeignListVal($fieldName, $dataProcessor->relatedIds);
-
-        } elseif (count($data) === 0 && count($this->_getForeignListIds($fieldName)) > 0) {
-            $this->_setForeignListVal($fieldName, []);
-        }
+        $this->foreignKeysData->set($fieldName, $data);
         return $this;
     }
 
@@ -113,19 +79,7 @@ trait ColumnForeignListTrait
      */
     protected function _removeForeignListIds(string $fieldName, array $value = []): static
     {
-        return $this->foreignKeysData->removeIds($fieldName, $value);
-
-        $r = [];
-        $current = $this->_getForeignListIds($fieldName);
-        foreach ($current as $val) if (!in_array($val, $value)) $r[] = $val;
-
-        $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-            $fieldName => implode(';', $r),
-        ], false);
-
-        foreach ($converter->parse() as $key => $value) {
-            if ($this->DATA[$key] !== $value) $this->UPDATED[$key] = $value;
-        }
+        $this->foreignKeysData->removeIds($fieldName, $value);
         return $this;
     }
 }

@@ -61,6 +61,12 @@ final class FileDataController
         return $this->parseFileName($field->getPublicPath($this), $field);
     }
 
+    public function getInternalPath(string $key): string|array
+    {
+        $file = $this->get($key);
+        return $this->item::getSchemaStorePath($this) ?? $file->directory->path;
+    }
+
     protected function getFileName(string $key, int $index = 0): string
     {
         $field = $this->schema->getFileField($key);
@@ -173,9 +179,9 @@ final class FileDataController
         ];
     }
 
-    public function base64ToFile(string $key): self
+    public function base64ToFile(string $key, File|string|null $file = null): self
     {
-        $file = $this->get($key);
+        $file = $file ?? $this->get($key);
         $content = $file instanceof File ? $file->path : $file;
         $base64 = explode(';base64,', $content)[1];
         $content = base64_decode($base64);
@@ -198,6 +204,38 @@ final class FileDataController
         file_put_contents($name, $content);
 
         $this->set($key, $storeName);
+        return $this;
+    }
+
+    public function base64ToFiles(string $key, array $files): static
+    {
+        $id = $this->item->getIdColumnValue();
+        $finalValue = [];
+
+        $field = $this->schema->getFileField($key);
+        $component = $this->item::COMPONENT;
+
+        foreach ($files as $i => $file) {
+            $content = $file instanceof File ? $file->path : $file;
+            $base64 = explode(';base64,', $content)[1];
+            $content = base64_decode($base64);
+
+            $f = finfo_open();
+
+            $mime_type = finfo_buffer($f, $content, FILEINFO_MIME_TYPE);
+            finfo_close($f);
+
+            $ext = MIME::getExtensionByMime($mime_type);
+            $storePath = $field->getStorePath($this);
+            $j = $i + 1;
+            $storeName = "$component-$id-$key-$j.$ext";
+            $name = "$storePath/$storeName";
+
+            file_put_contents($name, $content);
+            $finalValue[] = $storeName;
+        }
+
+        $this->set($key, $finalValue);
         return $this;
     }
 
@@ -224,7 +262,7 @@ final class FileDataController
         return $this;
     }
 
-    protected function parseFileName(string $name, FileField $field, int|null $index = null): string
+    public function parseFileName(string $name, FileField $field, int|null $index = null): string
     {
         $fieldName = $field->getName();
         $r = str_replace(':component', $this->item::COMPONENT, $name);
@@ -233,5 +271,29 @@ final class FileDataController
         $r = str_replace(':value', $this->getFileName($fieldName, $index - 1), $r);
         if (is_numeric($index)) $r = str_replace(':index', $index, $r);
         return $r;
+    }
+
+    public function updatedWithBase64String(string $key): bool
+    {
+        $field = $this->schema->getFileField($key);
+        $data = $this->get($key);
+
+        if ($field->isMultiple()) {
+            $r = false;
+            foreach ($data as $item) {
+                $src = $item instanceof File ? $item->path : trim($item);
+                if (is_string($src) && strlen($src) > 5 && str_contains($src, ';base64,')) {
+                    $r = true;
+                    break;
+                }
+            }
+            return $r;
+        }
+
+        $src = $data instanceof File ? $data->path : trim($data);
+
+        return is_string($src)
+            && strlen($src) > 5
+            && str_contains($src, ';base64,');
     }
 }

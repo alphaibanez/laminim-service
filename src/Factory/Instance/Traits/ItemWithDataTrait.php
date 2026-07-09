@@ -145,12 +145,6 @@ trait ItemWithDataTrait
             $this->foreignKeysData->save();
         }
 
-        // Update composed data before payload calc
-        // In order to update inner field
-        if (isset($this->composedData) && $this->composedData->hasToSave()) {
-            $this->composedData->save();
-        }
-
         $original = $this->getOriginalData();
         $payload = $this->getUpdatePayload();
 
@@ -208,7 +202,7 @@ trait ItemWithDataTrait
         if (count($payload) > 0) {
             // Check if it's needed to store a base64 file:
             foreach ($fileFields as $fileField) {
-                if ($this->_fileValUpdatedWithBase64Data($fileField->getName())) {
+                if ($this->fileData->updatedWithBase64String($fileField->getName())) {
                     $storePath = $fileField->getStorePath($this);
                     if ($storePath === ''){
                         throw UnsetFieldStorePathException::getInstance($fileField->getName(), $schema->getComponent());
@@ -302,14 +296,14 @@ trait ItemWithDataTrait
 
         if (count($pendingUploadBase64Files) > 0) {
             foreach ($pendingUploadBase64Files as $fileFieldName => $fileFieldValue) {
-                $this->_storeBase64DataAsFile($fileFieldName, $fileFieldValue, $id);
+                $this->fileData->base64ToFile($fileFieldName, $fileFieldValue);
                 $hasToReUpdate = true;
             }
         }
 
         if (count($pendingUploadBase64MultipleFiles) > 0) {
             foreach ($pendingUploadBase64MultipleFiles as $fileFieldName => $fileFieldValue) {
-                $this->_storeBase64DataAsFiles($fileFieldName, $fileFieldValue, $id);
+                $this->fileData->base64ToFiles($fileFieldName, $fileFieldValue);
                 $hasToReUpdate = true;
             }
         }
@@ -470,8 +464,10 @@ trait ItemWithDataTrait
             }
         }
 
-        // @todo puede que tengamos que actualizar aquí en lugar de arriba, comprobar
-        $this->_saveCompositionValues($isUpdate);
+        // Update composed data
+        if (isset($this->composedData) && $this->composedData->hasToSave()) {
+            $this->composedData->save();
+        }
 
         if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {
             unset($this->accessPolicy);

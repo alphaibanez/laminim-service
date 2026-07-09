@@ -25,6 +25,7 @@ use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithJSONDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithMultipleStringDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithPivotDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
@@ -122,7 +123,8 @@ abstract class AbstractInstance implements Item
         ItemWithFileDataTrait,
         ItemWithJSONDataTrait,
         ItemWithConstantDataTrait,
-        ItemWithConcatDataTrait;
+        ItemWithConcatDataTrait,
+        ItemWithMultipleStringDataTrait;
 
     use ItemWithIdentifierValueTrait,
         ItemWithDataTrait;
@@ -200,6 +202,7 @@ abstract class AbstractInstance implements Item
             ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData)
             ->initJSONData($schema, $this, $groupedData->jsonData)
             ->initFileData($schema, $this, $groupedData->fileData)
+            ->initMultipleStringData($schema, $this, $groupedData->multipleStringData)
 
             ->initPivotData($schema, $this, $refreshing)
             ->initComposedData($schema, $this, $refreshing)

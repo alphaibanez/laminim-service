@@ -19,6 +19,7 @@ use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
+use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 
 final readonly class GroupedData
@@ -39,6 +40,7 @@ final readonly class GroupedData
     public array $jsonData;
     public array $fileData;
     public array $multipleFileData;
+    public array $multipleStringData;
 
     public function __construct(Schema $schema, array $data)
     {
@@ -58,6 +60,7 @@ final readonly class GroupedData
         $jsonData = [];
         $fileData = [];
         $multipleFileData = [];
+        $multipleStringData = [];
 
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
@@ -75,7 +78,10 @@ final readonly class GroupedData
             $propIsDefined = array_key_exists($dataKey, $data);
             if (!$propIsDefined) continue;
 
-            if ($field instanceof StringField || $field instanceof EmailField) {
+            if ($field instanceof ValueListField) {
+                $multipleStringData[$k] = $data[$dataKey];
+            }
+            elseif ($field instanceof StringField || $field instanceof EmailField) {
                 $stringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ForeignKeyField) {
@@ -155,5 +161,6 @@ final readonly class GroupedData
         $this->jsonData = $jsonData;
         $this->fileData = $fileData;
         $this->multipleFileData = $multipleFileData;
+        $this->multipleStringData = $multipleStringData;
     }
 }

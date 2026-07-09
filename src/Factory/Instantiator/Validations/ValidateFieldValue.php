@@ -17,6 +17,9 @@ use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 
+/**
+ * @deprecated
+ */
 class ValidateFieldValue
 {
     /**

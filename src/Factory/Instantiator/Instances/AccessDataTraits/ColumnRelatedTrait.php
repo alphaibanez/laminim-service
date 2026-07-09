@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Connectors\DatabaseConnector;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
@@ -44,7 +45,7 @@ trait ColumnRelatedTrait
      * @param string $type
      * @param $column
      * @param $forceRefresh
-     * @return null|\Lkt\Factory\Instantiator\Instances\AbstractInstance
+     * @return null|\Lkt\Factory\Instantiator\Instances\AbstractInstance|Item
      * @throws InvalidComponentException
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException

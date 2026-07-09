@@ -299,4 +299,19 @@ final class ForeignKeysDataController
             'needsUpdate' => $this->needsUpdate,
         ];
     }
+
+    public function removeIds(string $key, array $value): self
+    {
+        $field = $this->schema->getForeignKeysField($key);
+        if (!$field) return $this;
+
+
+        $r = [];
+        $current = $this->getIds($key);
+        foreach ($current as $val) if (!in_array($val, $value)) $r[] = $val;
+
+        $this->set($key, $r);
+
+        return $this;
+    }
 }

@@ -456,69 +456,6 @@ trait ItemWithDataTrait
             }
         }
 
-        if (count($this->PIVOT_SORT) > 0) {
-            foreach ($this->PIVOT_SORT as $column => $ids) {
-
-                $ownField = $schema->getPivotField($column);
-
-                // Pivot table fields (intermediate table)
-                $pivotSchema = $ownField->getPivotSchema();
-
-                $pointingField = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
-
-                if ($pointingField instanceof PivotLeftIdField) {
-                    $referencedField = $pivotSchema->getPivotRightIdField();
-                } else {
-                    $referencedField = $pivotSchema->getPivotLeftIdField();
-                }
-
-                /** @var PivotPositionField $positionField */
-                $positionField = $pivotSchema->getOnePositionField();
-
-                $positionGetter = $positionField->getGetterForPrimitiveValue();
-                $positionSetter = $positionField->getSetterForPrimitiveValue();
-                $referencedGetter = $referencedField->getGetterForPrimitiveValue();
-                $referencedSetter = $referencedField->getSetterForPrimitiveValue();
-                $pointingSetter = $pointingField->getSetterForPrimitiveValue();
-
-                $results = $this->_getPivots($ownField->getName());
-
-                $checkedIds = [];
-
-                // Update existing pivots
-                foreach ($results as $result) {
-                    $id = $result->{$referencedGetter}();
-                    $updatedPosition = array_search($id, $ids);
-                    $checkedIds[] = $id;
-
-                    $position = $result->{$positionGetter}();
-
-                    if ($updatedPosition !== $position) {
-                        $result
-                            ->{$positionSetter}($updatedPosition)
-                            ->save();
-                    }
-
-                    // Unlink pivot relation
-                    if (!in_array($id, $ids, true)) {
-                        $result->delete();
-                    }
-                }
-
-                // Link new pivot relations
-                foreach ($ids as $i => $id) {
-                    if (!in_array($id, $checkedIds, true)) {
-                        $ins = $pivotSchema->getItemInstance();
-                        $ins
-                            ->{$pointingSetter}($this->getIdColumnValue())
-                            ->{$referencedSetter}($id)
-                            ->{$positionSetter}($i)
-                            ->save();
-                    }
-                }
-            }
-        }
-
         // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item
         if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
             VarDumper::die('@todo PENDING_PARENT_FOREIGN_KEYS');
@@ -533,6 +470,7 @@ trait ItemWithDataTrait
             }
         }
 
+        // @todo puede que tengamos que actualizar aquí en lugar de arriba, comprobar
         $this->_saveCompositionValues($isUpdate);
 
         if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {

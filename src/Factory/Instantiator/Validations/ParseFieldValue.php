@@ -20,6 +20,9 @@ use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\FileReader\File;
 
+/**
+ * @deprecated
+ */
 class ParseFieldValue
 {
     /**

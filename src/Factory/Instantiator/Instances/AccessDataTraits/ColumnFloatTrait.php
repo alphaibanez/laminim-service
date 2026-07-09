@@ -4,12 +4,9 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
-use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Instantiator\SystemConnections\NumberFormatter;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
-use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Schema;
 
 trait ColumnFloatTrait
 {

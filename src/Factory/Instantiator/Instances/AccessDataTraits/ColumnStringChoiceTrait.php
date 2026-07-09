@@ -3,10 +3,6 @@
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
-use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
-use Lkt\Factory\Instantiator\Exceptions\InvalidStringChoiceValueException;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
-use Lkt\Factory\Schemas\Schema;
 
 trait ColumnStringChoiceTrait
 {

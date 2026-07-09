@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use Lkt\Controllers\LktPermissionController;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
@@ -64,7 +65,8 @@ class LktUserRole extends GeneratedLktUserRole
                         $ownershipField = $schema->getOwnershipField();
                         if (!$ownershipField) return false;
 
-                        $ownerUserId = $instance->callOwnMethod($ownershipField->getGetterForPrimitiveValue(), []);
+//                        $ownerUserId = $instance->callOwnMethod($ownershipField->getGetterForPrimitiveValue(), []);
+                        $ownerUserId = $instance->retrieveValue($ownershipField->getName(), [], RetrieveDataMode::Raw);
                         return $ownerUserId === LktUser::getSignedInUserId();
                     }
                     return true;

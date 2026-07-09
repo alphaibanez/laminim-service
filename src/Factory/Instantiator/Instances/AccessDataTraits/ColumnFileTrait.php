@@ -2,14 +2,12 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Traits\ItemWithFileDataTrait;
-use Lkt\FileReader\File;
-use Lkt\Factory\Instantiator\Conversions\RawResultsToInstanceConverter;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\FileReader\File;
 use Lkt\MIME;
 
 trait ColumnFileTrait
@@ -23,27 +21,6 @@ trait ColumnFileTrait
     protected function _getFileVal(string $fieldName): File|array|null
     {
         return $this->fileData->get($fieldName);
-
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FileField $field */
-        $field = $schema->getField($fieldName);
-        if ($field->isMultiple()) {
-            if (isset($this->UPDATED[$fieldName])) {
-                return $this->UPDATED[$fieldName];
-            }
-            if ($this->DATA[$fieldName]) {
-                return $this->DATA[$fieldName];
-            }
-            return [];
-        }
-
-        if (isset($this->UPDATED[$fieldName]) && $this->UPDATED[$fieldName] instanceof File) {
-            return $this->UPDATED[$fieldName];
-        }
-        if ($this->DATA[$fieldName] instanceof File) {
-            return $this->DATA[$fieldName];
-        }
-        return null;
     }
 
     /**
@@ -53,12 +30,6 @@ trait ColumnFileTrait
     protected function _hasFileVal(string $fieldName): bool
     {
         return $this->fileData->has($fieldName);
-
-        $checkField = 'has' . ucfirst($fieldName);
-        if (isset($this->UPDATED[$checkField])) {
-            return $this->UPDATED[$checkField];
-        }
-        return $this->DATA[$checkField] === true;
     }
 
     /**
@@ -70,48 +41,6 @@ trait ColumnFileTrait
     protected function _setFileVal(string $fieldName, string|array $value = null): static
     {
         $this->fileData->set($fieldName, $value);
-        return $this;
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FileField $field */
-        $field = $schema->getField($fieldName);
-
-        if ($field->isMultiple()) {
-
-            $raw = $this->_getFileVal($fieldName);
-            $current = $this->_getPublicPath($fieldName);
-            $parsed = [];
-            foreach ($value as $v) {
-                $p = array_search($v, $current);
-                if ($p !== false) {
-                    if ($raw[$p] instanceof File) {
-                        $parsed[] = $raw[$p]->name;
-                    } else {
-                        $parsed[] = $raw[$p];
-                    }
-                } else {
-                    $parsed[] = $v;
-                }
-            }
-
-            $this->UPDATED[$fieldName] = $parsed;
-            return $this;
-        }
-
-        if ($value === $this->_getPublicPath($fieldName)) return $this;
-        $value = trim($value);
-
-        if (str_contains($value, ';base64,')) {
-            $this->UPDATED[$fieldName] = $value;
-
-        } else {
-            $converter = new RawResultsToInstanceConverter(static::COMPONENT, [
-                $fieldName => $value,
-            ], false, $this);
-
-            foreach ($converter->parse() as $key => $value) {
-                $this->UPDATED[$key] = $value;
-            }
-        }
         return $this;
     }
 

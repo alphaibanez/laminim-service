@@ -78,8 +78,6 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
-use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
@@ -103,7 +101,6 @@ use Lkt\QueryBuilding\SelectBuilder;
 use Lkt\QueryBuilding\Where;
 use Lkt\Translations\Translations;
 use function Lkt\Tools\Pagination\getTotalPages;
-use function Lkt\Tools\Parse\clearInput;
 
 abstract class AbstractInstance implements Item
 {
@@ -694,201 +691,6 @@ abstract class AbstractInstance implements Item
     public static function feedInstance(AbstractInstance $instance, array $params, array $internalMethodsArguments = []): static
     {
         return $instance->feed($params, $internalMethodsArguments);
-
-        $schema = Schema::get(static::COMPONENT);
-
-        $accessPolicy = null;
-
-        if (isset($instance->accessPolicy) && $instance->accessPolicy) {
-            $accessPolicy = $schema->getAccessPolicy($instance->accessPolicy->name);
-        }
-        /** @var PivotField[] $pivotFields */
-        $pivotFields = $schema->getPivotFields();
-
-        $composedInstances = [];
-
-        foreach ($params as $param => $value) {
-
-            $isPivotDatumFeed = false;
-
-            if ($accessPolicy) {
-
-                if (!$accessPolicy?->includesFieldName($param) && !$accessPolicy?->includesCompositionFieldName($param)) {
-                    foreach ($pivotFields as $pivotField) {
-                        $pivotSchema = $pivotField->getPivotSchema();
-                        if ($pivotSchema->hasField($param)) {
-                            $isPivotDatumFeed = true;
-                            $field = $pivotField;
-                        }
-                    }
-                    if (!$isPivotDatumFeed) continue;
-                } else {
-
-                    $field = $accessPolicy->getSchemaField($schema, $param);
-                    if (!$field) $field = $accessPolicy->getSchemaCompositionField($schema, $param);
-                }
-
-            } else {
-                $field = $schema->getField($param);
-                if (!$field) $field = $schema->getCompositionFieldComposingThisField($param);
-            }
-
-            if (!$field) {
-                foreach ($pivotFields as $pivotField) {
-                    $pivotSchema = $pivotField->getPivotSchema();
-                    if ($pivotSchema->hasField($param)) {
-                        $isPivotDatumFeed = true;
-                        $field = $pivotField;
-                    }
-                }
-            }
-
-            if (!$field || $field instanceof MethodGetterField || $field instanceof ConcatField) continue;
-
-            $composedDatum = !$schema->hasFieldDefined($param) && !$isPivotDatumFeed;
-
-            // Composed related data
-            if ($composedDatum) {
-
-                $composedKey = $param;
-                $l = strlen($param);
-                $endsWithId = substr($param, $l - 2, 2) === 'Id';
-                if ($endsWithId) {
-                    $composedKey = substr($param, 0, $l - 2);
-                }
-
-                if (!$composedInstances[$composedKey]) {
-//                    if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
-//                        /** @var AbstractInstance $composedInstance */
-//                        $composedInstance = $instance->_getCompositionInstance($field->getName(), $internalMethodsArguments);
-//                    } else {
-                        $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
-                        if (!$fieldComposingThisField) continue;
-                        /** @var AbstractInstance $composedInstance */
-                        $composedInstance = $instance->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
-//                    }
-                    $composedInstances[$composedKey] = $composedInstance;
-                }
-
-
-                if ($endsWithId) {
-                    $composedInstances[$composedKey]::feedInstance($composedInstance, [
-                        "{$composedKey}Id" => $value,
-                    ], $internalMethodsArguments);
-
-                } else {
-                    $composedInstances[$composedKey]::feedInstance($composedInstance, [
-                        $composedKey=> $value,
-                    ], $internalMethodsArguments);
-                }
-
-                continue;
-            }
-
-            // Common primitive value fields (included composed elements thanks to generated setter detection  approach)
-            $setter = $field->getSetterForPrimitiveValue();
-
-            if ($field instanceof RelatedField) {
-                $setter = '_setRelatedValWithData';
-                $methodCallData = ['type' => '', 'column' => $field->getName(), 'data' => $value];
-                if ($field->isSingleMode()) {
-                    $methodCallData['data'] = [$methodCallData['data']];
-                }
-
-            } elseif ($field instanceof ForeignKeyField) {
-                if ($field->keyIsId($param)) {
-                    $setter = '_setIntegerVal';
-                    $methodCallData = ['fieldName' => $field->getName() . 'Id', 'value' => $value];
-                }
-                elseif (is_numeric($value)) {
-                    $setter = '_setIntegerVal';
-                    $methodCallData = ['fieldName' => $field->getName(), 'value' => (int)$value];
-                } elseif (is_array($value)) {
-                    $relatedSchema = Schema::get($field->getComponent($schema, $instance));
-                    $relatedIdFields = $relatedSchema->getIdentifiers();
-                    if (count($relatedIdFields) === 1) {
-                        $relatedIdKey = $relatedIdFields[0]->getName();
-                        $relatedId = isset($value[$relatedIdKey]) ? (int)$value[$relatedIdKey] : 0;
-                        if ($relatedId > 0) {
-                            $setter = '_setIntegerVal';
-                            $methodCallData = ['fieldName' => $field->getName(), 'value' => $relatedId];
-                        }
-                    }
-                } else {
-                    continue;
-                }
-
-            } elseif ($field instanceof ForeignKeysField) {
-                if ($field->keyIsIds($param)) {
-                    $setter = '_setForeignListVal';
-                    $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
-
-                } elseif (is_array($value) && isset($value[0]) && is_numeric($value[0])) {
-                    $setter = '_setForeignListVal';
-                    $methodCallData = ['fieldName' => $field->getName(), 'value' => $value];
-
-                } else {
-                    $setter = '_setForeignListWithData';
-                    $methodCallData = ['fieldName' => $field->getName(), 'data' => $value];
-                }
-
-            } elseif ($field instanceof RelatedKeysField) {
-                if ($param === $field->getAppendForeignKeysName() && ((is_numeric($value) && $value > 0) || is_array($value))) {
-                    $setter = '_appendToParentForeignKeys';
-                    $methodCallData = ['field' => $field->getName(), 'parentValue' => $value];
-                } else {
-                    continue;
-                }
-
-            } elseif ($field instanceof PivotField) {
-                if ($isPivotDatumFeed) {
-                    $setter = '_setPendingPivotLink';
-                    $methodCallData = ['field' => $field->getName(), 'relatedId' => (int)$value];
-                } else {
-                    $setter = '_setPivotSort';
-                    $methodCallData = ['column' => $field->getName(), 'data' => $value];
-                }
-
-            } else if ($field instanceof StringField || $field instanceof HTMLField) {
-                if ($field->isI18nJson() && is_array($value)) {
-                    $translationField = $schema->getField("{$field->getName()}Data");
-                    if ($translationField) {
-                        $setter = '_setJsonVal';
-                        $methodCallData = ['fieldName' => $translationField->getName(), 'value' => $value];
-                    }
-
-                } else {
-                    $methodCallData = [$field->getName() => clearInput($value)];
-                }
-
-            } elseif ($field instanceof IntegerField && !$field instanceof IdField && !$field->isMultiple()) {
-                $methodCallData = [$field->getName() => (int)$value];
-
-            } elseif ($field instanceof FloatField) {
-                $methodCallData = [$field->getName() => (float)$value];
-
-            } else {
-                $methodCallData = [$field->getName() => $value];
-            }
-
-            if (!is_array($methodCallData)) {
-                continue;
-            }
-
-            $methodCallData = [...$internalMethodsArguments, ...$methodCallData];
-
-            $methodCallData = $instance->prepareOwnMethodCallArguments($setter, $methodCallData, $field->getName());
-            if (!$instance->satisfiedOwnMethodCallArguments($setter, $methodCallData)) {
-                continue;
-            }
-            $instance->callOwnMethod($setter, $methodCallData);
-        }
-
-//        foreach ($composedInstances as $param => $instance) {
-//            $instance->save();
-//        }
-
-        return $instance;
     }
 
     /**
@@ -1588,22 +1390,7 @@ abstract class AbstractInstance implements Item
                 }
             }
 
-            $getter = $field->getGetterForPrimitiveValue();
-
-//            if ($field->isSingleMode()) {
-//                $items = $this->relatedItemData->getItem($field->getName(), $additionalData);
-//            } else {
-//                $items = $this->relatedItemsData->getItems($field->getName());
-//            }
-
-            $additionalData = $this->prepareOwnMethodCallArguments($getter, $additionalData, $field->getName());
-
-            // @todo replace callOwnMethod with data retrieve?
-            if ($this->satisfiedOwnMethodCallArguments($getter, $additionalData)) {
-                $items = $this->callOwnMethod($getter, $additionalData);
-            } else {
-                return null;
-            }
+            $items = $this->retrieveValue($key, $additionalData, RetrieveDataMode::Item);
 
             $relatedAccessPolicy = null;
             $accessPolicyUsage = $this->getAccessPolicyUsage();
@@ -1630,7 +1417,7 @@ abstract class AbstractInstance implements Item
 
             } else {
                 $helperInstance = $relatedSchema->getItemInstance();
-                $batchActions = $helperInstance::getBatchActions($items);
+                $batchActions = $helperInstance::getBatchActions((array)$items);
                 $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
             }
 
@@ -1706,7 +1493,6 @@ abstract class AbstractInstance implements Item
             $relatedAccessPolicy = null;
             if (isset($this->accessPolicy)) {
                 $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-
             }
 
             if (!$relatedAccessPolicy && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {

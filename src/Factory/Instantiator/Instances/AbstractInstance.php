@@ -897,25 +897,10 @@ abstract class AbstractInstance implements Item
      */
     public function readFields(array $fields = [], array $internalMethodsArguments = []): array
     {
-//        $recursiveReadController = RecursiveReadController::getInstance();
-
-        $accessPolicyName = isset($this->accessPolicy) ? $this->accessPolicy->name : '';
-
-//        if (!$recursiveReadController->log(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue())) {
-//            return [];
-//        }
-
         $schema = Schema::get(static::COMPONENT);
         $r = [];
         foreach ($fields as $key => $field) {
             $responseKey = $key ?? $field->getName();
-//            if (isset($this->accessPolicy)) {
-//                $accessPolicy = $schema->getAccessPolicy($this->accessPolicy->name);
-//                $responseKeyAux = $accessPolicy->getFieldPublicName($field);
-//                if ($responseKeyAux) {
-//                    $responseKey = $responseKeyAux;
-//                }
-//            }
 
             $composedDatum = !$schema->hasFieldDefined($field->getName());
 
@@ -925,11 +910,7 @@ abstract class AbstractInstance implements Item
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
                 if (!$fieldComposingThisField) continue;
 
-                if ($fieldComposingThisField instanceof RelatedField) {
-                    $composedInstance = $this->relatedItemData->getItem($fieldComposingThisField->getName(), $internalMethodsArguments);
-                } elseif ($fieldComposingThisField instanceof ForeignKeyField) {
-                    $composedInstance = $this->foreignKeyData->getItem($fieldComposingThisField->getName());
-                }
+                $composedInstance = $this->composedData->getItem($fieldComposingThisField->getName(), $internalMethodsArguments);
 
                 if (!$composedInstance) continue;
                 $dataToAdd = $composedInstance->readValue($field->getName(), $responseKey);
@@ -939,248 +920,7 @@ abstract class AbstractInstance implements Item
 
             $dataToAdd = $this->readValue($field->getName(), $responseKey);
             foreach ($dataToAdd as $z => $y) $r[$z] = $y;
-            continue;
-
-
-            if ($field instanceof RelatedField) {
-                $additionalData = $internalMethodsArguments;
-                $relatedSchema = Schema::get($field->getComponent());
-
-                if ($relatedSchema->hasComplexPrimaryKey()) {
-                    $relatedFieldPointingToMe = $relatedSchema->getField($field->getColumn());
-
-                    if ($relatedFieldPointingToMe) {
-                        $additionalData[$relatedFieldPointingToMe->getName()] = $this->getIdColumnValue();
-                    }
-                }
-
-                $getter = $field->getGetterForPrimitiveValue();
-
-                $additionalData = $this->prepareOwnMethodCallArguments($getter, $additionalData, $field->getName());
-
-                if ($this->satisfiedOwnMethodCallArguments($getter, $additionalData)) {
-                    $items = $this->callOwnMethod($getter, $additionalData);
-                } else {
-                    continue;
-                }
-
-                $relatedAccessPolicy = null;
-                if (isset($this->accessPolicy)) {
-                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-                }
-
-                if (!$relatedAccessPolicy && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
-                    $relatedAccessPolicy = 'lkt-related';
-                }
-
-                if ($field->isSingleMode()) {
-                    if (is_object($items)) {
-                        if ($relatedAccessPolicy) $items->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                        $r[$responseKey] = $items->readAsRelated();
-
-                    } elseif ($field->hasToReturnsEmptyOneInSingleMode()) {
-                        $anonymous = Instantiator::make($field->getComponent(), 0);
-                        if ($relatedAccessPolicy) $anonymous->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                        $r[$responseKey] = $anonymous->readAsRelated();
-                    }
-
-                } else {
-//                    $t = [];
-                    $helperInstance = $relatedSchema->getItemInstance();
-                    $batchActions = $helperInstance::getBatchActions($items);
-//                    foreach ($items as $item) {
-//                        if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-//                        $t[] = $item->readAsRelated();
-//                    }
-                    $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
-                }
-
-            } elseif ($field instanceof ForeignKeysField) {
-                $getter = $field->getGetterForData();
-                $getterIds = $field->getGetterForPrimitiveValue();
-                $items = $this->{$getter}();
-                if (!is_array($items)) $items = [];
-                $t = [];
-
-                $relatedAccessPolicy = null;
-                if (isset($this->accessPolicy)) {
-                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-                }
-
-                if (!$relatedAccessPolicy && $field->getComponent() && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
-                    $relatedAccessPolicy = 'lkt-related';
-                }
-
-                foreach ($items as $item) {
-                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                    $t[] = $item->readAsRelated();
-                }
-                $r[$responseKey] = $t;
-                $r[$responseKey . 'Ids'] = $this->{$getterIds}();
-
-            } elseif ($field instanceof ForeignKeyField) {
-                $getter = $field->getGetterForData();
-                $getterIds = $field->getGetterForPrimitiveValue();
-                $item = $this->{$getter}();
-
-                $relatedAccessPolicy = null;
-                if (isset($this->accessPolicy)) {
-                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-
-                }
-
-                if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
-                    $relatedAccessPolicy = 'lkt-related';
-                }
-
-                if ($item instanceof AbstractInstance) {
-                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                    $item = $item->autoRead();
-                }
-                if (!is_array($item)) $item = [];
-                $r[$responseKey] = $item;
-                if (method_exists($this, $getterIds)) {
-                    $r[$responseKey . 'Id'] = $this->{$getterIds}();
-                }
-
-                if ($field->hasOnReadIncludeOptions()) {
-                    $r[$responseKey . 'Opts'] = [$item];
-                }
-
-            } elseif ($field instanceof RelatedKeysField) {
-                $getter = $field->getGetterForData();
-                $getterIds = $field->getGetterForPrimitiveValue();
-                $items = $this->{$getter}();
-                if (!is_array($items)) $items = [];
-                $t = [];
-
-                $relatedAccessPolicy = null;
-                if (isset($this->accessPolicy)) {
-                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-                }
-
-                if (!$relatedAccessPolicy && $field->getComponent() && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
-                    $relatedAccessPolicy = 'lkt-related';
-                }
-
-//                if ($key === $field->getAppendForeignKeysName()) {
-//                    $t = array_map(function (AbstractInstance $item) { return $item->getIdColumnValue();}, $items);
-//
-//                } else {
-//                    $relatedSchema = Schema::get($field->getComponent());
-//                    $helperInstance = $relatedSchema->getItemInstance();
-//                    $batchActions = $helperInstance::getBatchActions($items);
-//                    $t = $batchActions->read($relatedAccessPolicy, 'related');
-//                }
-
-                foreach ($items as $item) {
-                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-
-                    if ($key === $field->getAppendForeignKeysName()) {
-                        $t[] = $item->getIdColumnValue();
-                    } else {
-                        $t[] = $item->readAsRelated();
-                    }
-                }
-                $r[$responseKey] = $t;
-                if ($key !== $field->getAppendForeignKeysName()) {
-                    $r[$responseKey . 'Ids'] = $this->{$getterIds}();
-                }
-
-            } elseif ($field instanceof MethodGetterField) {
-                $getter = $field->getName();
-
-                $key = $responseKey;
-                if (!$key) $key = $field->getColumn();
-
-                $r[$key] = $this->{$getter}();
-
-            } elseif ($field instanceof FileField) {
-                $val = '';
-                if (!$this->isAnonymous()) {
-                    $getter = $field->getGetterForPrimitiveValue().'PublicPath';
-                    $val = $this->{$getter}();
-                }
-                $r[$responseKey] = $val;
-
-            } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
-                $getter = $field->getGetterForPrimitiveValue();
-
-                $format = $field->getLangDefaultReadFormat(Locale::getLangCode());
-                if (!$format) $format = $field->getDefaultReadFormat();
-
-                if ($format !== '') {
-                    $r[$responseKey] = $this->dateData->format($field->getName(), $format);
-//                    $r[$responseKey] = $this->{$getter . 'Formatted'}($format);
-
-                } else {
-                    $r[$responseKey] = $this->dateData->get($field->getName());
-//                    $r[$responseKey] = $this->{$getter}();
-                }
-
-            } elseif ($field instanceof PivotField) {
-
-                $getter = $field->getGetterForPrimitiveValue();
-                /** @var static[] $items */
-                $items = $this->{$getter}();
-                if (!is_array($items)) $items = [];
-                $t = [];
-
-                $relatedAccessPolicy = null;
-                if (isset($this->accessPolicy)) {
-                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-
-                }
-
-                if (!$relatedAccessPolicy && Schema::get($field->getComponent())->hasRelatedAccessPolicy()) {
-                    $relatedAccessPolicy = 'lkt-related';
-                }
-
-                foreach ($items as $item) {
-                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                    $t[] = $item->readAsRelated();
-
-                }
-                $r[$responseKey] = $t;
-
-            } elseif ($field instanceof ValueListField) {
-                $getter = $field->getGetterForPrimitiveValue();
-
-                if ($field->readModeIsBoth()) {
-                    $r[$responseKey] = $this->{$getter}();
-                    $r[$responseKey.'List'] = $this->{$getter.'AsArray'}();
-
-                } elseif ($field->readModeIsString()) {
-                    $r[$responseKey] = $this->{$getter}();
-
-                } elseif ($field->readModeIsArray()) {
-                    $r[$responseKey] = $this->{$getter.'AsArray'}();
-                }
-
-            } elseif ($field instanceof StringChoiceField) {
-                $getter = $field->getGetterForPrimitiveValue();
-                $value = $this->{$getter}();
-                $r[$responseKey] = $value;
-                $i18nOptions = $field->getI18nViewOptions();
-                if ($i18nOptions !== '') {;
-                    $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
-                }
-
-            } elseif ($field instanceof AbstractField) {
-
-                $additionalData = $internalMethodsArguments;
-
-                $getter = $field->getGetterForPrimitiveValue();
-
-                $additionalData = $this->prepareOwnMethodCallArguments($getter, $additionalData, $field->getName());
-
-                if ($this->satisfiedOwnMethodCallArguments($getter, $additionalData)) {
-                    $r[$responseKey] = $this->callOwnMethod($getter, $additionalData);
-                }
-            }
         }
-
-//        RecursiveReadController::endStack(static::COMPONENT, $accessPolicyName, $this->getIdColumnValue());
 
         if (method_exists($this, 'postProcessRead')) return $this->postProcessRead($r);
         ksort($r);
@@ -1583,6 +1323,23 @@ abstract class AbstractInstance implements Item
 
     public function retrieveValue(string $key, array $additionalData = [], RetrieveDataMode $dataMode = RetrieveDataMode::Raw): mixed
     {
+
+        $schema = $this->getSchema();
+        $composedDatum = !$schema->hasFieldDefined($key);
+        if ($composedDatum) {
+            if (!$this->composedData->hasComposedInstance($key)) {
+                $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($key);
+                if (!$fieldComposingThisField) return null;
+                /** @var Item $composedInstance */
+                $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
+                $this->composedData->setComposedInstance($key, $composedInstance);
+            }
+
+            $composedInstance = $this->composedData->getComposedInstance($key);
+
+            return $composedInstance->retrieveValue($key, $additionalData);
+        }
+
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
@@ -1651,7 +1408,6 @@ abstract class AbstractInstance implements Item
                 return $this->integerData->get($key);
             }
         }
-
         return null;
     }
 
@@ -1720,6 +1476,22 @@ abstract class AbstractInstance implements Item
 
     public function readValue(string $key, string $responseKey, array $additionalData = []): array|null
     {
+        $schema = $this->getSchema();
+        $composedDatum = !$schema->hasFieldDefined($key);
+        if ($composedDatum) {
+            if (!$this->composedData->hasComposedInstance($key)) {
+                $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($key);
+                if (!$fieldComposingThisField) return null;
+                /** @var Item $composedInstance */
+                $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
+                $this->composedData->setComposedInstance($key, $composedInstance);
+            }
+
+            $composedInstance = $this->composedData->getComposedInstance($key);
+
+            return $composedInstance->readValue($key, $responseKey, $additionalData);
+        }
+
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 

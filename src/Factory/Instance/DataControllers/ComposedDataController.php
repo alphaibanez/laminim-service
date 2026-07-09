@@ -51,6 +51,22 @@ final class ComposedDataController
         return count($this->needsUpdate) > 0;
     }
 
+    public function hasComposedInstance(string $key): bool
+    {
+        return isset($this->needsUpdate[$key]);
+    }
+
+    public function setComposedInstance(string $key, Item $item): self
+    {
+        $this->needsUpdate[$key] = $item;
+        return $this;
+    }
+
+    public function getComposedInstance(string $key): Item
+    {
+        return $this->needsUpdate[$key];
+    }
+
     public function save(): self
     {
         /**

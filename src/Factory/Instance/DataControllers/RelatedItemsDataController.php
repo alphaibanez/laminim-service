@@ -49,6 +49,7 @@ final class RelatedItemsDataController
     ): array|null
     {
         $items = $this->getItems($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
+        if (!$items) return [];
 
         return array_map(function (Item $item){
             return $item->getIdentifierValue();
@@ -65,7 +66,9 @@ final class RelatedItemsDataController
     ): array|null
     {
         $ids = $this->getItemsIdentifiers($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
-        if (count($ids[0]) === 0) {
+        if (!$ids) return [];
+
+        if (count($ids[0]) === 1) {
             $k = array_keys($ids[0])[0];
             $ids = array_map(function (array $id) use ($k) {
                 return $id[$k];

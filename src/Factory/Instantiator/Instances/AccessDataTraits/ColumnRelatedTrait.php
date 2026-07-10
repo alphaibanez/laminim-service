@@ -201,6 +201,7 @@ trait ColumnRelatedTrait
      */
     protected function _setRelatedValWithData($type = '', $column = '', $data = [])
     {
+        VarDumper::die('toca hacer esto');
         $schema = Schema::get(static::COMPONENT);
         $accessPolicy = 'lkt-related';
         $field = $schema->getField($column);

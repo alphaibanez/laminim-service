@@ -1422,6 +1422,7 @@ abstract class AbstractInstance implements Item
                 $helperInstance = $relatedSchema->getItemInstance();
                 $batchActions = $helperInstance::getBatchActions((array)$items);
                 $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
+//                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);
             }
 
 

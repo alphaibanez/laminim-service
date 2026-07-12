@@ -2,9 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
@@ -51,7 +49,7 @@ final class RelatedItemsDataController
         $items = $this->getItems($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
         if (!$items) return [];
 
-        return array_map(function (Item $item){
+        return array_map(function (Item $item) {
             return $item->getIdentifierValue();
         }, $items);
     }
@@ -113,48 +111,7 @@ final class RelatedItemsDataController
         $field = $this->schema->getKindOfRelatedField($key);
         if (!$field) return null;
 
-        $builder = QueryBuilderHelper::prepareRelatedQuery(
-            $this->item,
-            QueryBuilderHelper::getComponentQuery($field->getComponent()),
-            $this->schema,
-            $field,
-            $forceRefresh,
-            $additionalData,
-        );
-
-        if ($field instanceof RelatedKeysField) {
-            $constraints = $this->item::getWhereBuilder();
-            foreach ($this->item->getIdentifierValue() as $column => $value) {
-                $constraints->andWhere(
-                    $this->item::getWhereBuilder()
-                    ->orStringLike($column, ";{$value};")
-                    ->orStringLike($column, "{$value}")
-                    ->orStringEndsLike($column, "{$value};")
-                    ->orStringBeginsLike($column, ";{$value}")
-                );
-            }
-            $builder->andWhere($constraints);
-        }
-
-        if (is_numeric($page)) {
-            $limit = ($itemsPerPage ?? $field->getItemsPerPage()) ?? 10;
-            $builder->pagination($page, $limit);
-        }
-
-        $fieldConfigWhere = $field->getWhere();
-        if ($fieldConfigWhere) {
-            if (is_array($fieldConfigWhere)) {
-                foreach ($fieldConfigWhere as $w) {
-                    $builder->andWhere($w);
-                }
-            } else {
-                $builder->andWhere($fieldConfigWhere);
-            }
-        }
-
-        if ($where instanceof Where) {
-            $builder->andWhere($where);
-        }
+        $builder = $this->getQuery($key, $where, $page, $itemsPerPage, $additionalData);
 
         $data = $builder->select();
         $relatedSchema = Schema::get($field->getComponent());
@@ -190,16 +147,7 @@ final class RelatedItemsDataController
             }
         }
 
-        $builder = QueryBuilderHelper::prepareRelatedQuery(
-            $this->item,
-            QueryBuilderHelper::getComponentQuery($field->getComponent()),
-            $this->schema,
-            $field,
-        );
-
-        if ($where instanceof Where) {
-            $builder->andWhere($where);
-        }
+        $builder = $this->getQuery($key, $where);
 
         $this->itemsCount[$key] = $builder->count($countableField);
         return $this->itemsCount[$key];
@@ -262,7 +210,7 @@ final class RelatedItemsDataController
                     // and change the name var in order of avoid missing refs
                     // in case a field name was overwritten
                     if (!$datum[$name]) {
-                        if (method_exists($field, 'getRelatedComponentFeeds')){
+                        if (method_exists($field, 'getRelatedComponentFeeds')) {
                             foreach ($field->getRelatedComponentFeeds() as $relatedColumnKey => $relatedColumnValue) {
                                 if (is_callable($relatedColumnValue)) {
                                     $relatedColumnValue = call_user_func_array($relatedColumnValue, [
@@ -366,5 +314,63 @@ final class RelatedItemsDataController
         // @todo
 
         return $this;
+    }
+
+    public function getQuery(
+        string     $key,
+        Where|null $where = null,
+        int|null   $page = null,
+        int|null   $itemsPerPage = null,
+        array      $additionalData = [],
+        bool       $forceRefresh = false
+    )
+    {
+        $field = $this->schema->getKindOfRelatedField($key);
+        if (!$field) return null;
+
+        $builder = QueryBuilderHelper::prepareRelatedQuery(
+            $this->item,
+            QueryBuilderHelper::getComponentQuery($field->getComponent()),
+            $this->schema,
+            $field,
+            $forceRefresh,
+            $additionalData,
+        );
+
+        if ($field instanceof RelatedKeysField) {
+            $constraints = $this->item::getWhereBuilder();
+            foreach ($this->item->getIdentifierValue() as $column => $value) {
+                $constraints->andWhere(
+                    $this->item::getWhereBuilder()
+                        ->orStringLike($column, ";{$value};")
+                        ->orStringLike($column, "{$value}")
+                        ->orStringEndsLike($column, "{$value};")
+                        ->orStringBeginsLike($column, ";{$value}")
+                );
+            }
+            $builder->andWhere($constraints);
+        }
+
+        if (is_numeric($page)) {
+            $limit = ($itemsPerPage ?? $field->getItemsPerPage()) ?? 10;
+            $builder->pagination($page, $limit);
+        }
+
+        $fieldConfigWhere = $field->getWhere();
+        if ($fieldConfigWhere) {
+            if (is_array($fieldConfigWhere)) {
+                foreach ($fieldConfigWhere as $w) {
+                    $builder->andWhere($w);
+                }
+            } else {
+                $builder->andWhere($fieldConfigWhere);
+            }
+        }
+
+        if ($where instanceof Where) {
+            $builder->andWhere($where);
+        }
+
+        return $builder;
     }
 }

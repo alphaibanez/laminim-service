@@ -47,6 +47,8 @@ trait ColumnRelatedKeysTrait
      */
     protected function _getRelatedKeysQueryBuilder($type = '', $column = '', $forceRefresh = false)
     {
+        return $this->relatedItemsData->getQuery($column, null, null, null, [], $forceRefresh);
+
         if (!$type) return null;
 
         $schema = Schema::get(static::COMPONENT);

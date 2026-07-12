@@ -226,68 +226,73 @@ trait ColumnRelatedTrait
 
     protected function _getRelatedPage(string $type, string $fieldName, int $page = 1, Where $where = null)
     {
-        if ($this->hasPageLoaded($fieldName, $page)) {
-            return $this->PAGES[$fieldName][$page];
-        }
-
-        $schema = Schema::get(static::COMPONENT);
-
-        /** @var RelatedField $field */
-        $field = $schema->getField($fieldName);
-
-        $caller = $this->_getRelatedQueryCaller($type, $fieldName);
-        $caller->pagination($page, $field->getItemsPerPage());
-
-        if ($where instanceof Where) {
-            $caller->andWhere($where);
-        }
-
-        $data = $caller->select();
-        $relatedSchema = Schema::get($field->getComponent());
-
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
-
-        $this->PAGES[$fieldName][$page] = $results;
-        return $this->PAGES[$fieldName][$page];
+        return $this->relatedItemsData->getItems($fieldName, $where, $page);
+//        if ($this->hasPageLoaded($fieldName, $page)) {
+//            return $this->PAGES[$fieldName][$page];
+//        }
+//
+//        $schema = Schema::get(static::COMPONENT);
+//
+//        /** @var RelatedField $field */
+//        $field = $schema->getField($fieldName);
+//
+//        $caller = $this->_getRelatedQueryCaller($type, $fieldName);
+//        $caller->pagination($page, $field->getItemsPerPage());
+//
+//        if ($where instanceof Where) {
+//            $caller->andWhere($where);
+//        }
+//
+//        $data = $caller->select();
+//        $relatedSchema = Schema::get($field->getComponent());
+//
+//        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
+//
+//        $this->PAGES[$fieldName][$page] = $results;
+//        return $this->PAGES[$fieldName][$page];
     }
 
     protected function _getRelatedCount(string $type, string $fieldName, string $countableField = '', Where $where = null)
     {
-        if ($this->hasPageTotal($fieldName)) {
-            return $this->PAGES_TOTAL[$fieldName];
-        }
-
-        $schema = Schema::get(static::COMPONENT);
-
-        /** @var RelatedField $field */
-        $field = $schema->getField($fieldName);
-
-        if (!$countableField) {
-            $countableField = $field->getCountableField();
-        }
-
-        if (!$countableField) {
-            $relatedSchema = Schema::get($type);
-            $countableField = $relatedSchema->getIdString();
-        }
-
-        $caller = $this->_getRelatedQueryCaller($type, $fieldName);
-
-        if ($where instanceof Where) {
-            $caller->andWhere($where);
-        }
-
-        $this->PAGES_TOTAL[$fieldName] = $caller->count($countableField);
-        return $this->PAGES_TOTAL[$fieldName];
+        return $this->relatedItemsData->getItemsCount($fieldName, $where, $countableField);
+//
+//        if ($this->hasPageTotal($fieldName)) {
+//            return $this->PAGES_TOTAL[$fieldName];
+//        }
+//
+//        $schema = Schema::get(static::COMPONENT);
+//
+//        /** @var RelatedField $field */
+//        $field = $schema->getField($fieldName);
+//
+//        if (!$countableField) {
+//            $countableField = $field->getCountableField();
+//        }
+//
+//        if (!$countableField) {
+//            $relatedSchema = Schema::get($type);
+//            $countableField = $relatedSchema->getIdString();
+//        }
+//
+//        $caller = $this->_getRelatedQueryCaller($type, $fieldName);
+//
+//        if ($where instanceof Where) {
+//            $caller->andWhere($where);
+//        }
+//
+//        $this->PAGES_TOTAL[$fieldName] = $caller->count($countableField);
+//        return $this->PAGES_TOTAL[$fieldName];
     }
 
     protected function _getRelatedAmountOfPages(string $type, string $fieldName, string $countableField = '', Where $where = null)
     {
-        $schema = Schema::get(static::COMPONENT);
+        return $this->relatedItemsData->getItemsAmountOfPages($fieldName, $where, $countableField);
 
-        /** @var RelatedField $field */
-        $field = $schema->getField($fieldName);
-
-        return getTotalPages($this->_getRelatedCount($type, $fieldName, $countableField, $where), $field->getItemsPerPage());
+//        $schema = Schema::get(static::COMPONENT);
+//
+//        /** @var RelatedField $field */
+//        $field = $schema->getField($fieldName);
+//
+//        return getTotalPages($this->_getRelatedCount($type, $fieldName, $countableField, $where), $field->getItemsPerPage());
     }
 }

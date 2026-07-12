@@ -48,44 +48,44 @@ trait ColumnRelatedKeysTrait
     protected function _getRelatedKeysQueryBuilder($type = '', $column = '', $forceRefresh = false)
     {
         return $this->relatedItemsData->getQuery($column, null, null, null, [], $forceRefresh);
-
-        if (!$type) return null;
-
-        $schema = Schema::get(static::COMPONENT);
-
-        /** @var RelatedKeysField $field */
-        $field = $schema->getField($column);
-        $column = $field->getColumn();
-        $fieldWhere = $field->getWhere();
-        $idColumnValue = $this->getIdColumnValue();
-
-        $relatedSchema = Schema::get($field->getComponent());
-        $builder = Query::table($relatedSchema->getTable());
-
-        if ($fieldWhere) $builder->andRaw($fieldWhere);
-
-        $anonymous = Instantiator::make($field->getComponent(), 0);
-        $where = $anonymous::getWhereBuilder()
-            ->orStringLike($column, ";{$idColumnValue};")
-            ->orStringLike($column, "{$idColumnValue}")
-            ->orStringEndsLike($column, "{$idColumnValue};")
-            ->orStringBeginsLike($column, ";{$idColumnValue}");
-
-        $builder->andWhere($where);
-
-        $order = $field->getOrder();
-
-        $connector = $schema->getDatabaseConnector();
-        if ($connector === '') {
-            $connector = DatabaseConnections::$defaultConnector;
-        }
-        $connection = DatabaseConnections::get($connector);
-        $builder->setColumns($connection->extractSchemaColumns($relatedSchema));
-
-        $builder->orderBy(implode(',', $order));
-        $builder->setForceRefresh($forceRefresh);
-
-        return $builder;
+//
+//        if (!$type) return null;
+//
+//        $schema = Schema::get(static::COMPONENT);
+//
+//        /** @var RelatedKeysField $field */
+//        $field = $schema->getField($column);
+//        $column = $field->getColumn();
+//        $fieldWhere = $field->getWhere();
+//        $idColumnValue = $this->getIdColumnValue();
+//
+//        $relatedSchema = Schema::get($field->getComponent());
+//        $builder = Query::table($relatedSchema->getTable());
+//
+//        if ($fieldWhere) $builder->andRaw($fieldWhere);
+//
+//        $anonymous = Instantiator::make($field->getComponent(), 0);
+//        $where = $anonymous::getWhereBuilder()
+//            ->orStringLike($column, ";{$idColumnValue};")
+//            ->orStringLike($column, "{$idColumnValue}")
+//            ->orStringEndsLike($column, "{$idColumnValue};")
+//            ->orStringBeginsLike($column, ";{$idColumnValue}");
+//
+//        $builder->andWhere($where);
+//
+//        $order = $field->getOrder();
+//
+//        $connector = $schema->getDatabaseConnector();
+//        if ($connector === '') {
+//            $connector = DatabaseConnections::$defaultConnector;
+//        }
+//        $connection = DatabaseConnections::get($connector);
+//        $builder->setColumns($connection->extractSchemaColumns($relatedSchema));
+//
+//        $builder->orderBy(implode(',', $order));
+//        $builder->setForceRefresh($forceRefresh);
+//
+//        return $builder;
     }
 
     /**
@@ -98,7 +98,8 @@ trait ColumnRelatedKeysTrait
      */
     protected function _getRelatedKeysQueryCaller($type = '', $column = '', $forceRefresh = false)
     {
-        return $this->_getRelatedKeysQueryBuilder($type, $column, $forceRefresh);
+        return $this->relatedItemsData->getQuery($column, null, null, null, [], $forceRefresh);
+//        return $this->_getRelatedKeysQueryBuilder($type, $column, $forceRefresh);
     }
 
     /**

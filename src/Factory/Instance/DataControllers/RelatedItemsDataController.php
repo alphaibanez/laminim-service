@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Connectors\DatabaseConnections;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -17,6 +18,7 @@ use function Lkt\Tools\Pagination\getTotalPages;
 final class RelatedItemsDataController
 {
     private array $data = [];
+    private array $rawData = [];
     private array $payload = [];
     private array $needsUpdate = [];
     private array $itemsCount = [];
@@ -103,6 +105,7 @@ final class RelatedItemsDataController
         if ($this->item->isAnonymous()) return null;
 
         $cacheKey = [$key];
+        if ($returnRawResults) $cacheKey[] = 'raw';
         if ($page !== null) $cacheKey[] = $page;
         $cacheKey = implode('-', $cacheKey);
 
@@ -119,7 +122,9 @@ final class RelatedItemsDataController
 
         if ($field instanceof RelatedKeysMergeField) {
             $data = RelatedKeysMergeHelper::getRawResultsFromQueryUnion($this->schema->getComponent(), $key, $builder);
-            if (!$returnRawResults) {
+            if ($returnRawResults) {
+                $results = $data;
+            } else {
                 $results = RelatedKeysMergeHelper::convertRawResults($data);
             }
 
@@ -159,9 +164,23 @@ final class RelatedItemsDataController
             }
         }
 
-        $builder = $this->getQuery($key, $where);
+        if ($field instanceof RelatedKeysMergeField) {
+            $builder = $this->getQuery($key, $where);
+            $builder->countMode();
+            $query = $builder->toString();
 
-        $this->itemsCount[$key] = $builder->count($countableField);
+            $connector = $this->schema->getDatabaseConnector();
+            if ($connector === '') $connector = DatabaseConnections::$defaultConnector;
+            $connection = DatabaseConnections::get($connector);
+            $response = $connection->query($query);
+            return (int)$response[0]['Total'];
+
+        } else {
+            $builder = $this->getQuery($key, $where);
+            $c = $builder->count($countableField);
+        }
+
+        $this->itemsCount[$key] = $c;
         return $this->itemsCount[$key];
     }
 

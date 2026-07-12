@@ -6,7 +6,9 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
+use Lkt\Factory\Instantiator\Relations\RelatedKeysMergeHelper;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
+use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Where;
 use function Lkt\Tools\Arrays\compareArrays;
@@ -94,7 +96,8 @@ final class RelatedItemsDataController
         int|null   $page = null,
         int|null   $itemsPerPage = null,
         array      $additionalData = [],
-        bool       $forceRefresh = false
+        bool       $forceRefresh = false,
+        bool       $returnRawResults = false
     ): array|null
     {
         if ($this->item->isAnonymous()) return null;
@@ -113,10 +116,19 @@ final class RelatedItemsDataController
 
         $builder = $this->getQuery($key, $where, $page, $itemsPerPage, $additionalData);
 
-        $data = $builder->select();
-        $relatedSchema = Schema::get($field->getComponent());
 
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
+        if ($field instanceof RelatedKeysMergeField) {
+            $data = RelatedKeysMergeHelper::getRawResultsFromQueryUnion($this->schema->getComponent(), $key, $builder);
+            if (!$returnRawResults) {
+                $results = RelatedKeysMergeHelper::convertRawResults($data);
+            }
+
+        } else {
+            $data = $builder->select();
+            $relatedSchema = Schema::get($field->getComponent());
+            $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
+        }
+
         if (count($results) > 0) {
             $this->data[$cacheKey] = $results;
             return $this->data[$cacheKey];
@@ -328,14 +340,23 @@ final class RelatedItemsDataController
         $field = $this->schema->getKindOfRelatedField($key);
         if (!$field) return null;
 
-        $builder = QueryBuilderHelper::prepareRelatedQuery(
-            $this->item,
-            QueryBuilderHelper::getComponentQuery($field->getComponent()),
-            $this->schema,
-            $field,
-            $forceRefresh,
-            $additionalData,
-        );
+        if ($field instanceof RelatedKeysMergeField) {
+            $builder = RelatedKeysMergeHelper::getQueryUnion(
+                $this->schema->getComponent(),
+                $key,
+                $this->item->getIdColumnValue()
+            );
+
+        } else {
+            $builder = QueryBuilderHelper::prepareRelatedQuery(
+                $this->item,
+                QueryBuilderHelper::getComponentQuery($field->getComponent()),
+                $this->schema,
+                $field,
+                $forceRefresh,
+                $additionalData,
+            );
+        }
 
         if ($field instanceof RelatedKeysField) {
             $constraints = $this->item::getWhereBuilder();

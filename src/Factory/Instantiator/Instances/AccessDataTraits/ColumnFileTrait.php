@@ -96,11 +96,11 @@ trait ColumnFileTrait
      */
     protected function _setInternalPath(string $fieldName, string $src)
     {
-        $file = $this->_getFileVal($fieldName);
-        $file->directory->change($src);
+        $this->fileData->setInternalPath($fieldName, $src);
     }
 
     /**
+     *  @deprecated
      * @param string $fieldName
      * @return FileField|null
      * @throws SchemaNotDefinedException
@@ -118,17 +118,18 @@ trait ColumnFileTrait
      */
     protected function _getFileContent(string $fieldName, int $index = 0): ?string
     {
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FileField $field */
-        $field = $schema->getField($fieldName);
-
-//        if ($field->isMultiple()) {
-//            $items = $this->_getFileVal($fieldName);
+        return $this->fileData->getFileContent($fieldName, $index);
+//        $schema = Schema::get(static::COMPONENT);
+//        /** @var FileField $field */
+//        $field = $schema->getField($fieldName);
 //
-//        }
-
-        $name = $this->_getFileName($fieldName, $index);
-        return file_get_contents($field->getStorePath().'/'.$name);
+////        if ($field->isMultiple()) {
+////            $items = $this->_getFileVal($fieldName);
+////
+////        }
+//
+//        $name = $this->_getFileName($fieldName, $index);
+//        return file_get_contents($field->getStorePath().'/'.$name);
     }
 
     /**
@@ -138,13 +139,14 @@ trait ColumnFileTrait
      */
     protected function _getFileExtension(string $fieldName, int $index = 0): ?string
     {
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FileField $field */
-        $field = $schema->getField($fieldName);
-
-        $name = $this->_getFileName($fieldName, $index);
-
-        return pathinfo($name, PATHINFO_EXTENSION);
+        return $this->fileData->getFileExtension($fieldName, $index);
+//        $schema = Schema::get(static::COMPONENT);
+//        /** @var FileField $field */
+//        $field = $schema->getField($fieldName);
+//
+//        $name = $this->_getFileName($fieldName, $index);
+//
+//        return pathinfo($name, PATHINFO_EXTENSION);
     }
 
     /**
@@ -154,12 +156,13 @@ trait ColumnFileTrait
      */
     protected function _getFileLastModified(string $fieldName, int $index = 0): false|int
     {
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FileField $field */
-        $field = $schema->getField($fieldName);
-
-        $name = $this->_getFileName($fieldName, $index);
-        return filemtime($field->getStorePath().'/'.$name);
+        return $this->fileData->getFileLastModified($fieldName, $index);
+//        $schema = Schema::get(static::COMPONENT);
+//        /** @var FileField $field */
+//        $field = $schema->getField($fieldName);
+//
+//        $name = $this->_getFileName($fieldName, $index);
+//        return filemtime($field->getStorePath().'/'.$name);
     }
 
     /**
@@ -169,11 +172,12 @@ trait ColumnFileTrait
      */
     protected function _getFileSize(string $fieldName, int $index = 0): false|int
     {
-        $schema = Schema::get(static::COMPONENT);
-        /** @var FileField $field */
-        $field = $schema->getField($fieldName);
-
-        $name = $this->_getFileName($fieldName, $index);
-        return filesize($field->getStorePath().'/'.$name);
+        return $this->fileData->getFileSize($fieldName, $index);
+//        $schema = Schema::get(static::COMPONENT);
+//        /** @var FileField $field */
+//        $field = $schema->getField($fieldName);
+//
+//        $name = $this->_getFileName($fieldName, $index);
+//        return filesize($field->getStorePath().'/'.$name);
     }
 }

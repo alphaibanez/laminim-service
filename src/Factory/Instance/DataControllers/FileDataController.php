@@ -296,4 +296,40 @@ final class FileDataController
             && strlen($src) > 5
             && str_contains($src, ';base64,');
     }
+
+    public function setInternalPath(string $key, string $src): self
+    {
+        $file = $this->get($key);
+        if (!$file instanceof File) return $this;
+        $file->directory->change($src);
+        return $this;
+    }
+
+    public function getFileContent(string $key, int $index = 0): string|null
+    {
+        $field = $this->schema->getFileField($key);
+        $name = $this->getFileName($key, $index);
+        return file_get_contents($field->getStorePath().'/'.$name);
+    }
+
+    public function getFileExtension(string $key, int $index = 0): string|null
+    {
+        $field = $this->schema->getFileField($key);
+        $name = $this->getFileName($key, $index);
+        return pathinfo($field->getStorePath().'/'.$name, PATHINFO_EXTENSION);
+    }
+
+    public function getFileLastModified(string $key, int $index = 0): false|int
+    {
+        $field = $this->schema->getFileField($key);
+        $name = $this->getFileName($key, $index);
+        return filemtime($field->getStorePath().'/'.$name);
+    }
+
+    public function getFileSize(string $key, int $index = 0): false|int
+    {
+        $field = $this->schema->getFileField($key);
+        $name = $this->getFileName($key, $index);
+        return filesize($field->getStorePath().'/'.$name);
+    }
 }

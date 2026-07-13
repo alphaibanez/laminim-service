@@ -60,14 +60,7 @@ trait ColumnRelatedTrait
      */
     protected function _getRelatedQueryBuilder($type = '', $column = '', $forceRefresh = false, array $additionalData = [])
     {
-        if (!$type) return null;
-
-        $schema = Schema::get(static::COMPONENT);
-        $field = $schema->getRelatedField($column);
-
-        $builder = QueryBuilderHelper::getComponentQuery($field->getComponent());
-
-        return $this->_prepareQuery($builder, $schema, $field, $forceRefresh, $additionalData);
+        return $this->relatedItemsData->getQuery($column, null, null, null, $additionalData, $forceRefresh);
     }
 
     /**
@@ -75,7 +68,7 @@ trait ColumnRelatedTrait
      */
     protected function _getRelatedQueryCaller($type = '', $column = '', $forceRefresh = false, array $additionalData = [])
     {
-        return $this->_getRelatedQueryBuilder($type, $column, $forceRefresh, $additionalData);
+        return $this->relatedItemsData->getQuery($column, null, null, null, $additionalData, $forceRefresh);
     }
 
     /**
@@ -83,97 +76,99 @@ trait ColumnRelatedTrait
      */
     protected function _getRelatedCustomQueryBuilder($type = '', $column = '', $forceRefresh = false, array $additionalData = [])
     {
-        $schema = Schema::get(static::COMPONENT);
-        $field = $schema->getRelatedField($column);
-
-        /**
-         * @var Query $builder
-         * @var DatabaseConnector $connection
-         */
-        list($builder) = Instantiator::getCustomQueryCaller($field->getComponent());
-
-        return $this->_prepareQuery($builder, $schema, $field, $forceRefresh);
+        return $this->relatedItemsData->getQuery($column, null, null, null, $additionalData, $forceRefresh);
+//
+//        $schema = Schema::get(static::COMPONENT);
+//        $field = $schema->getRelatedField($column);
+//
+//        /**
+//         * @var Query $builder
+//         * @var DatabaseConnector $connection
+//         */
+//        list($builder) = Instantiator::getCustomQueryCaller($field->getComponent());
+//
+//        return $this->_prepareQuery($builder, $schema, $field, $forceRefresh);
     }
 
-    protected function _prepareQuery(Query $query, Schema $schema, RelatedField $field, $forceRefresh = false, array $additionalData = [])
-    {
-        $idColumn = $schema->getIdString();
-        $relatedSchema = Schema::get($field->getComponent());
-
-        $where = (array)$field?->getWhere();
-
-        if ($relatedSchema->hasComplexPrimaryKey()) {
-            $identifiers = $relatedSchema->getIdentifiers();
-            $relatedField = $relatedSchema->getField($field->getColumn());
-            foreach ($identifiers as $identifier) {
-                $identifierName = $identifier->getName();
-
-                if ($identifier instanceof ForeignKeyField && $additionalData[$identifierName] instanceof AbstractInstance) {
-
-                    if ($relatedField->getColumn() === $identifier->getColumn()) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-                    } else {
-                        $query->andIntegerEqual($identifier->getColumn(), (int)$additionalData[$identifierName]?->getIdColumnValue());
-                    }
-
-
-                }elseif ($identifier instanceof IntegerField) {
-
-                    if ($relatedField->getColumn() === $identifier->getColumn()) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-                    } else {
-                        $query->andIntegerEqual($identifier->getColumn(), $additionalData[$identifierName]);
-                    }
-
-                } elseif ($identifier instanceof StringField) {
-
-                    if ($relatedField->getColumn() === $identifier->getColumn()) {
-                        $query->andStringEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-                    } else {
-                        $query->andStringEqual($identifier->getColumn(), $additionalData[$identifierName]);
-                    }
-                }
-            }
-
-        } else {
-            if ($field->hasMultipleReferences()) {
-                foreach ($field->getMultipleReferences() as $reference) {
-                    $relatedField = $relatedSchema->getField($reference);
-                    if ($relatedField instanceof IntegerField) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-
-                    } elseif ($relatedField instanceof StringField) {
-                        $query->andStringEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-                    }
-                }
-
-            } else {
-                if ($this->DATA[$idColumn]) {
-                    $relatedField = $relatedSchema->getField($field->getColumn());
-                    if ($relatedField instanceof IntegerField) {
-                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-
-                    } elseif ($relatedField instanceof StringField) {
-                        $query->andStringEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
-                    }
-                }
-            }
-        }
-
-        $order = $field->getOrder();
-        if (!is_array($order)) $order = [];
-
-        if (count($where) > 0){
-            $query->andRaw(implode(' AND ', $where));
-        }
-
-        $query->orderBy(implode(',', $order));
-        $query->setForceRefresh($forceRefresh);
-
-        if ($field->isSingleMode()) $query->pagination(1, 1);
-
-        return $query;
-    }
+//    protected function _prepareQuery(Query $query, Schema $schema, RelatedField $field, $forceRefresh = false, array $additionalData = [])
+//    {
+//        $idColumn = $schema->getIdString();
+//        $relatedSchema = Schema::get($field->getComponent());
+//
+//        $where = (array)$field?->getWhere();
+//
+//        if ($relatedSchema->hasComplexPrimaryKey()) {
+//            $identifiers = $relatedSchema->getIdentifiers();
+//            $relatedField = $relatedSchema->getField($field->getColumn());
+//            foreach ($identifiers as $identifier) {
+//                $identifierName = $identifier->getName();
+//
+//                if ($identifier instanceof ForeignKeyField && $additionalData[$identifierName] instanceof AbstractInstance) {
+//
+//                    if ($relatedField->getColumn() === $identifier->getColumn()) {
+//                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//                    } else {
+//                        $query->andIntegerEqual($identifier->getColumn(), (int)$additionalData[$identifierName]?->getIdColumnValue());
+//                    }
+//
+//
+//                }elseif ($identifier instanceof IntegerField) {
+//
+//                    if ($relatedField->getColumn() === $identifier->getColumn()) {
+//                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//                    } else {
+//                        $query->andIntegerEqual($identifier->getColumn(), $additionalData[$identifierName]);
+//                    }
+//
+//                } elseif ($identifier instanceof StringField) {
+//
+//                    if ($relatedField->getColumn() === $identifier->getColumn()) {
+//                        $query->andStringEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//                    } else {
+//                        $query->andStringEqual($identifier->getColumn(), $additionalData[$identifierName]);
+//                    }
+//                }
+//            }
+//
+//        } else {
+//            if ($field->hasMultipleReferences()) {
+//                foreach ($field->getMultipleReferences() as $reference) {
+//                    $relatedField = $relatedSchema->getField($reference);
+//                    if ($relatedField instanceof IntegerField) {
+//                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//
+//                    } elseif ($relatedField instanceof StringField) {
+//                        $query->andStringEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//                    }
+//                }
+//
+//            } else {
+//                if ($this->DATA[$idColumn]) {
+//                    $relatedField = $relatedSchema->getField($field->getColumn());
+//                    if ($relatedField instanceof IntegerField) {
+//                        $query->andIntegerEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//
+//                    } elseif ($relatedField instanceof StringField) {
+//                        $query->andStringEqual($relatedField->getColumn(), $this->DATA[$idColumn]);
+//                    }
+//                }
+//            }
+//        }
+//
+//        $order = $field->getOrder();
+//        if (!is_array($order)) $order = [];
+//
+//        if (count($where) > 0){
+//            $query->andRaw(implode(' AND ', $where));
+//        }
+//
+//        $query->orderBy(implode(',', $order));
+//        $query->setForceRefresh($forceRefresh);
+//
+//        if ($field->isSingleMode()) $query->pagination(1, 1);
+//
+//        return $query;
+//    }
 
     /**
      * @throws InvalidComponentException
@@ -227,72 +222,15 @@ trait ColumnRelatedTrait
     protected function _getRelatedPage(string $type, string $fieldName, int $page = 1, Where $where = null)
     {
         return $this->relatedItemsData->getItems($fieldName, $where, $page);
-//        if ($this->hasPageLoaded($fieldName, $page)) {
-//            return $this->PAGES[$fieldName][$page];
-//        }
-//
-//        $schema = Schema::get(static::COMPONENT);
-//
-//        /** @var RelatedField $field */
-//        $field = $schema->getField($fieldName);
-//
-//        $caller = $this->_getRelatedQueryCaller($type, $fieldName);
-//        $caller->pagination($page, $field->getItemsPerPage());
-//
-//        if ($where instanceof Where) {
-//            $caller->andWhere($where);
-//        }
-//
-//        $data = $caller->select();
-//        $relatedSchema = Schema::get($field->getComponent());
-//
-//        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
-//
-//        $this->PAGES[$fieldName][$page] = $results;
-//        return $this->PAGES[$fieldName][$page];
     }
 
     protected function _getRelatedCount(string $type, string $fieldName, string $countableField = '', Where $where = null)
     {
         return $this->relatedItemsData->getItemsCount($fieldName, $where, $countableField);
-//
-//        if ($this->hasPageTotal($fieldName)) {
-//            return $this->PAGES_TOTAL[$fieldName];
-//        }
-//
-//        $schema = Schema::get(static::COMPONENT);
-//
-//        /** @var RelatedField $field */
-//        $field = $schema->getField($fieldName);
-//
-//        if (!$countableField) {
-//            $countableField = $field->getCountableField();
-//        }
-//
-//        if (!$countableField) {
-//            $relatedSchema = Schema::get($type);
-//            $countableField = $relatedSchema->getIdString();
-//        }
-//
-//        $caller = $this->_getRelatedQueryCaller($type, $fieldName);
-//
-//        if ($where instanceof Where) {
-//            $caller->andWhere($where);
-//        }
-//
-//        $this->PAGES_TOTAL[$fieldName] = $caller->count($countableField);
-//        return $this->PAGES_TOTAL[$fieldName];
     }
 
     protected function _getRelatedAmountOfPages(string $type, string $fieldName, string $countableField = '', Where $where = null)
     {
         return $this->relatedItemsData->getItemsAmountOfPages($fieldName, $where, $countableField);
-
-//        $schema = Schema::get(static::COMPONENT);
-//
-//        /** @var RelatedField $field */
-//        $field = $schema->getField($fieldName);
-//
-//        return getTotalPages($this->_getRelatedCount($type, $fieldName, $countableField, $where), $field->getItemsPerPage());
     }
 }

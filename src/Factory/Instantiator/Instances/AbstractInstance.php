@@ -1482,6 +1482,12 @@ abstract class AbstractInstance implements Item
 
         } elseif ($field instanceof MethodGetterField) {
             $getter = $field->getName();
+            if ($responseKey === $field->getName()) {
+                $defaultName = $field->getColumn();
+                if ($defaultName) {
+                    $responseKey = $defaultName;
+                }
+            }
             return [$responseKey => $this->{$getter}()];
 
         } elseif ($field instanceof PivotField) {

@@ -213,7 +213,7 @@ final class FileDataController
         $finalValue = [];
 
         $field = $this->schema->getFileField($key);
-        $component = $this->item::COMPONENT;
+        $component = $this->schema->getComponent();
 
         foreach ($files as $i => $file) {
             $content = $file instanceof File ? $file->path : $file;
@@ -265,7 +265,7 @@ final class FileDataController
     public function parseFileName(string $name, FileField $field, int|null $index = null): string
     {
         $fieldName = $field->getName();
-        $r = str_replace(':component', $this->item::COMPONENT, $name);
+        $r = str_replace(':component', $this->schema->getComponent(), $name);
         $r = str_replace(':field', $fieldName, $r);
         $r = str_replace(':id', $this->item->getIdColumnValue(), $r);
         $r = str_replace(':value', $this->getFileName($fieldName, $index - 1), $r);

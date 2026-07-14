@@ -21,6 +21,18 @@ use Lkt\Translations\Translations;
 
 trait ItemWithCrudTrait
 {
+
+    protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array
+    {
+        return $data;
+    }
+
+    protected function patchReadData(array $data): array
+    {
+        return $data;
+    }
+
+
     public function autoRead(array $internalMethodsArguments = []): array
     {
         $schema = Schema::get(static::COMPONENT);

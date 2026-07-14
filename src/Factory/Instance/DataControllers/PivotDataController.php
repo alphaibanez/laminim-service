@@ -239,7 +239,7 @@ final class PivotDataController
             // Pivot table fields (intermediate table)
             $pivotSchema = $field->getPivotSchema();
 
-            $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->item::COMPONENT);
+            $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent());
 
             if ($pointingField instanceof PivotLeftIdField) {
                 $referencedField = $pivotSchema->getPivotRightIdField();
@@ -355,7 +355,7 @@ final class PivotDataController
             $positionQuery->setColumns(["MAX({$positionField->getColumn()}) as lkt_position"]);
 
             // Get related column at pivot table pointing to this schema
-            $pivotFieldPointingToMe = $pivotSchema->getOneFieldPointingToComponent($this->item::COMPONENT);
+            $pivotFieldPointingToMe = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent());
 
             $positionQuery
                 ->andStringEqual($pivotFieldPointingToMe->getColumn(), $idColumnValue);
@@ -367,9 +367,6 @@ final class PivotDataController
 
             // Position detection
             $insertQuery = Query::table($pivotSchema->getTable());
-
-            // Get related column at pivot table pointing to this schema
-            $pivotFieldPointingToMe = $pivotSchema->getOneFieldPointingToComponent($this->item::COMPONENT);
 
             // Prepare data
             $data = [
@@ -403,7 +400,7 @@ final class PivotDataController
         $pivotedSchema = $field->getPivotSchema();
 
         /** @var AbstractField $pivotedField */
-        $pivotedField = $pivotedSchema->getOneFieldPointingToComponent($this->item::COMPONENT);
+        $pivotedField = $pivotedSchema->getOneFieldPointingToComponent($this->schema->getComponent());
 
         $pivotedFieldColumn = trim($pivotedField->getColumn());
 

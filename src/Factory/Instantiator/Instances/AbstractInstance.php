@@ -227,16 +227,6 @@ abstract class AbstractInstance implements Item
         return static::COMPONENT;
     }
 
-    protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array
-    {
-        return $data;
-    }
-
-    protected function patchReadData(array $data): array
-    {
-        return $data;
-    }
-
     /**
      * @deprecated by feedAndSave (which automatically checks is has to create or not)
      *

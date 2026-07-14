@@ -126,8 +126,6 @@ abstract class AbstractInstance implements Item
 
     protected array $UPDATED_RELATED_DATA = [];
     protected array $PENDING_UPDATE_RELATED_DATA = [];
-    protected array $PAGES = [];
-    protected array $PAGES_TOTAL = [];
 
     const COMPONENT = '';
 
@@ -233,17 +231,6 @@ abstract class AbstractInstance implements Item
     public function toArray(): array
     {
         return InstanceToArray::convert($this);
-    }
-
-    protected function hasPageLoaded(string $fieldName, int $page): bool
-    {
-        return isset($this->PAGES[$fieldName][$page])
-            && is_array($this->PAGES[$fieldName][$page]);
-    }
-
-    protected function hasPageTotal(string $fieldName): bool
-    {
-        return isset($this->PAGES_TOTAL[$fieldName]);
     }
 
     protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array

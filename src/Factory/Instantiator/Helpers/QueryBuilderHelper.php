@@ -19,7 +19,7 @@ use Lkt\QueryBuilding\Query;
 
 class QueryBuilderHelper
 {
-    public static function getComponentQuery(string $component): Query
+    public static function getComponentQuery(Schema|string $component): Query
     {
         return (ComponentDatabaseIntegration::from($component))->query;
     }
@@ -169,7 +169,7 @@ class QueryBuilderHelper
 
         // Prepare query builder
         $query = QueryBuilderHelper::getComponentQuery($field->getComponent());
-        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($pivotSchema->getComponent());
+        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($pivotSchema);
 
         $pivotQueryBuilder
             ->andIntegerEqual($pivotOwnField->getColumn(), $item->getIdColumnValue());

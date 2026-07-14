@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator\ValueObjects;
 
 use Lkt\Connectors\DatabaseConnections;
 use Lkt\Connectors\DatabaseConnector;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
 
@@ -17,10 +18,18 @@ class ComponentDatabaseIntegration
     public DatabaseConnector $databaseConnector;
     public Query $query;
 
-    public function __construct(string $component)
+    public function __construct(Schema|string $component)
     {
-        $schema = Schema::get($component);
-        $query = Query::table($schema->getTable());
+        $schema = $component instanceof Schema ? $component : Schema::get($component);
+        $component = $schema->getComponent();
+
+        if ($schema->getInstanceSettings()->getQueryCallerClassName() !== '') {
+            $fqdn = $schema->getInstanceSettings()->getQueryCallerFQDN();
+            $query = call_user_func_array([$fqdn, 'getCaller'], []);
+
+        } else {
+            $query = Query::table($schema->getTable());
+        }
 
         $connector = $schema->getDatabaseConnector();
         if ($connector === '') $connector = DatabaseConnections::$defaultConnector;
@@ -34,7 +43,7 @@ class ComponentDatabaseIntegration
         $this->query = $query;
     }
 
-    public static function from(string $component): static
+    public static function from(Schema|string $component): static
     {
         return new static($component);
 //        return static::$cache[$component] ??= new static($component);

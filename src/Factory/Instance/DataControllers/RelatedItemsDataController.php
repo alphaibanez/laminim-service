@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -369,7 +370,7 @@ final class RelatedItemsDataController
         } else {
             $builder = QueryBuilderHelper::prepareRelatedQuery(
                 $this->item,
-                QueryBuilderHelper::getComponentQuery($field->getComponent()),
+                QueryBuilderHelper::getComponentQuery($field->getComponent($this->schema,$this->item)),
                 $this->schema,
                 $field,
                 $forceRefresh,

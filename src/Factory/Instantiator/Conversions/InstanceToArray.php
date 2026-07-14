@@ -12,6 +12,7 @@ use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Schema;
 
+/** @deprecated  */
 class InstanceToArray
 {
     public static function convert(AbstractInstance $instance): array

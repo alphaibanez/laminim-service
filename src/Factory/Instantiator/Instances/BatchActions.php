@@ -2,16 +2,12 @@
 
 namespace Lkt\Factory\Instantiator\Instances;
 
-use Lkt\Connectors\Cache\QueryCache;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 
@@ -156,7 +152,7 @@ class BatchActions
                 $item->setAccessPolicy($accessPolicyName, AccessPolicyEndOfLife::UntilNextRead);
             }
             if ($mode === 'related') {
-                $r[] = $item->readAsRelated();
+                $r[] = $item->autoRead();
             } else {
                 $r[] = $item->autoRead();
             }

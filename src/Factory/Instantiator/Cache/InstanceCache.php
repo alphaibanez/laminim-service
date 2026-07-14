@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Cache;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 
 final class InstanceCache
@@ -14,7 +15,7 @@ final class InstanceCache
      * @param $data
      * @return int
      */
-    public static function store(string $code, AbstractInstance $data): int
+    public static function store(string $code, AbstractInstance|Item $data): int
     {
         self::$cache[$code] = $data;
         return 1;
@@ -24,7 +25,7 @@ final class InstanceCache
      * @param string $code
      * @return AbstractInstance|null
      */
-    public static function load(string $code):? AbstractInstance
+    public static function load(string $code): AbstractInstance|Item|null
     {
         if (self::inCache($code)) {
             return self::$cache[$code];

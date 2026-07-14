@@ -3,6 +3,8 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
+use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithIdentifierValueTrait
@@ -31,6 +33,31 @@ trait ItemWithIdentifierValueTrait
         ksort($r);
         $this->identifierValue = $r;
         return $this->identifierValue;
+    }
+
+    /**
+     * @return mixed
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
+    public function getIdColumnValue(): mixed
+    {
+        $data = $this->getOriginalData();
+        $schema = Schema::get(static::COMPONENT);
+        $identifiers = $schema->getIdentifiers();
+        if (count($identifiers) === 1) {
+            $identifierValue = $this->getIdentifierValue();
+            return $identifierValue[array_keys($identifierValue)[0]];
+//            return $data[$schema->getIdString()];
+        }
+
+        $r = [];
+        foreach ($identifiers as $identifier) {
+            $k = $identifier->getName();
+            $r[$k] = $data[$k];
+        }
+
+        return $r;
     }
 
     public function isSameIdentifierValue(array $values): bool

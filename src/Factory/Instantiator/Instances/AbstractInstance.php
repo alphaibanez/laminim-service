@@ -28,7 +28,6 @@ use Lkt\Factory\Instance\Traits\ItemWithPivotDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
-use Lkt\Factory\Instantiator\Conversions\InstanceToArray;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
@@ -226,11 +225,6 @@ abstract class AbstractInstance implements Item
     public function getComponent(): string
     {
         return static::COMPONENT;
-    }
-
-    public function toArray(): array
-    {
-        return InstanceToArray::convert($this);
     }
 
     protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array

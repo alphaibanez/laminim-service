@@ -63,8 +63,6 @@ use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
-use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
-use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileBrowser\Enums\FileEntityType;
@@ -336,69 +334,6 @@ abstract class AbstractInstance implements Item
         return $r;
     }
 
-    public function linkPivot(string $pivotComponent, $id): static
-    {
-        $pivotSchema = Schema::get($pivotComponent);
-
-        $pointingField = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
-
-        if ($pointingField instanceof PivotLeftIdField) {
-            $referencedField = $pivotSchema->getPivotRightIdField();
-        } else {
-            $referencedField = $pivotSchema->getPivotLeftIdField();
-        }
-
-        /** @var PivotPositionField $positionField */
-        $positionField = $pivotSchema->getOnePositionField();
-
-        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($pivotComponent);
-
-        $pivotQueryBuilder->setColumns(["MAX({$positionField->getColumn()}) AS {$positionField->getName()}"]);
-
-        $results = $pivotQueryBuilder->select();
-        $nextPosition = $results[0]['position'] === null ? 0 : (int)$results[0]['position'] + 1;
-
-
-        $instance = $pivotSchema->getItemInstance();
-
-        $pointingSetter = $pointingField->getSetterForPrimitiveValue();
-        $instance->{$pointingSetter}($this->getIdColumnValue());
-
-        $referencedSetter = $referencedField->getSetterForPrimitiveValue();
-        $instance->{$referencedSetter}($id);
-
-        $positionSetter = $positionField->getSetterForPrimitiveValue();
-        $instance->{$positionSetter}($nextPosition);
-
-        $instance->save();
-        return $this;
-    }
-
-    public function unlinkPivot(string $pivotComponent, $id): static
-    {
-        $pivotSchema = Schema::get($pivotComponent);
-
-        $pointingField = $pivotSchema->getOneFieldPointingToComponent(static::COMPONENT);
-
-        if ($pointingField instanceof PivotLeftIdField) {
-            $referencedField = $pivotSchema->getPivotRightIdField();
-        } else {
-            $referencedField = $pivotSchema->getPivotLeftIdField();
-        }
-
-        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($pivotComponent);
-
-        $pointingGetter = $pointingField->getGetterForPrimitiveValue();
-        $pivotQueryBuilder->andIntegerEqual($pointingField->getColumn(), $this->{$pointingGetter}());
-
-        $referencedGetter = $referencedField->getGetterForPrimitiveValue();
-        $pivotQueryBuilder->andIntegerEqual($referencedField->getColumn(), $this->{$referencedGetter}());
-
-        $anonymous = $pivotSchema->getItemInstance();
-        $instance = $anonymous::getOne($pivotQueryBuilder);
-        $instance->delete();
-        return $this;
-    }
 
     public static function getUniqueFilteredQueryBuilder(array $data): Query
     {

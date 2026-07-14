@@ -70,8 +70,8 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         $needle = $subscription->getId();
         foreach ($current as $item) if ($item->getId() === $needle) return false;
 
-
-        $this->linkPivot(LktShoppingOrderPivotSubscription::COMPONENT, $subscription->getId());
+        $this->linkPivot('subscriptions', $subscription->getId());
+//        $this->linkPivot(LktShoppingOrderPivotSubscription::COMPONENT, $subscription->getId());
         return true;
     }
 
@@ -82,7 +82,8 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         foreach ($currentCoupons as $currentCoupon) if ($currentCoupon->getId() === $needle) return false;
 
 
-        $this->linkPivot(LktShoppingOrderPivotCoupon::COMPONENT, $coupon->getId());
+        $this->linkPivot('coupons', $coupon->getId());
+//        $this->linkPivot(LktShoppingOrderPivotCoupon::COMPONENT, $coupon->getId());
         return true;
     }
 

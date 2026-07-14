@@ -396,7 +396,6 @@ final class PivotDataController
 
     public function getPivots(string $key): array|null
     {
-        /** @var PivotField $field */
         $field = $this->schema->getPivotField($key);
         $idColumn = $this->schema->getIdString();
 
@@ -429,5 +428,75 @@ final class PivotDataController
 
         $this->pivots[$key] = $pivots;
         return $this->pivots[$key];
+    }
+
+    public function link(string $key, $id): static
+    {
+        $field = $this->schema->getPivotField($key);
+        $component = $field->getComponent($this->schema, $this->item);
+
+        $pivotSchema = Schema::get($component);
+
+        $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent());
+
+        if ($pointingField instanceof PivotLeftIdField) {
+            $referencedField = $pivotSchema->getPivotRightIdField();
+        } else {
+            $referencedField = $pivotSchema->getPivotLeftIdField();
+        }
+
+        /** @var PivotPositionField $positionField */
+        $positionField = $pivotSchema->getOnePositionField();
+
+        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($component);
+
+        $pivotQueryBuilder->setColumns(["MAX({$positionField->getColumn()}) AS {$positionField->getName()}"]);
+
+        $results = $pivotQueryBuilder->select();
+        $nextPosition = $results[0]['position'] === null ? 0 : (int)$results[0]['position'] + 1;
+
+
+        $instance = $pivotSchema->getItemInstance();
+
+        $pointingSetter = $pointingField->getSetterForPrimitiveValue();
+        $instance->{$pointingSetter}($this->item->getIdColumnValue());
+
+        $referencedSetter = $referencedField->getSetterForPrimitiveValue();
+        $instance->{$referencedSetter}($id);
+
+        $positionSetter = $positionField->getSetterForPrimitiveValue();
+        $instance->{$positionSetter}($nextPosition);
+
+        $instance->save();
+        return $this;
+    }
+
+    public function unlink(string $key, $id): static
+    {
+        $field = $this->schema->getPivotField($key);
+        $component = $field->getComponent($this->schema, $this->item);
+
+        $pivotSchema = Schema::get($component);
+
+        $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent());
+
+        if ($pointingField instanceof PivotLeftIdField) {
+            $referencedField = $pivotSchema->getPivotRightIdField();
+        } else {
+            $referencedField = $pivotSchema->getPivotLeftIdField();
+        }
+
+        $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($component);
+
+        $pointingGetter = $pointingField->getGetterForPrimitiveValue();
+        $pivotQueryBuilder->andIntegerEqual($pointingField->getColumn(), $this->{$pointingGetter}());
+
+        $referencedGetter = $referencedField->getGetterForPrimitiveValue();
+        $pivotQueryBuilder->andIntegerEqual($referencedField->getColumn(), $this->{$referencedGetter}());
+
+        $anonymous = $pivotSchema->getItemInstance();
+        $instance = $anonymous::getOne($pivotQueryBuilder);
+        $instance->delete();
+        return $this;
     }
 }

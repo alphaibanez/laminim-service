@@ -17,4 +17,16 @@ trait ItemWithPivotDataTrait
         $this->pivotData = new PivotDataController($schema, $item);
         return $this;
     }
+
+    public function linkPivot(string $key, $id): static
+    {
+        $this->pivotData->link($key, $id);
+        return $this;
+    }
+
+    public function unlinkPivot(string $key, $id): static
+    {
+        $this->pivotData->unlink($key, $id);
+        return $this;
+    }
 }

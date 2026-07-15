@@ -126,6 +126,12 @@ class FieldsCodeHelper
                     ->setData($templateData)
                     ->parse();
                 continue;
+
+
+            }elseif ($field instanceof EmailField) {
+                $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
+                continue;
+
             } elseif ($field instanceof StringField || $field instanceof HTMLField) {
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/string-field.phtml')
                     ->setData($templateData)
@@ -138,11 +144,6 @@ class FieldsCodeHelper
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/encrypt-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
-
-            if ($field instanceof EmailField) {
-                $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
                 continue;
             }
 

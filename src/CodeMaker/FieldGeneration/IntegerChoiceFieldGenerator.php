@@ -16,10 +16,10 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
 
         if ($this->data->isMultiple) {
             $r[] = "/** @return int[] */";
-            $r[] = "public function get{$this->data->methodName}():array { return \$this->_getIntegerChoiceVal('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():array { return \$this->multipleIntegerData->get('{$this->data->fieldName}'); }";
 
         } else {
-            $r[] = "public function get{$this->data->methodName}():int { return \$this->_getIntegerChoiceVal('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():int { return \$this->integerData->get('{$this->data->fieldName}'); }";
         }
 
 
@@ -32,11 +32,11 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
         if ($this->data->isMultiple) {
-            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { return \$this->_setIntegerChoiceVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->multipleIntegerData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } else {
             $enumClass = $this->getEnumChoiceClass();
-            $r[] = "public function set{$this->data->methodName}(int{$enumClass} \${$this->data->fieldName}):static { return \$this->_setIntegerChoiceVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+            $r[] = "public function set{$this->data->methodName}(int{$enumClass} \${$this->data->fieldName}):static { \$this->integerData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
         }
 
         return implode(' ', $r);
@@ -49,14 +49,16 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
         $lowerFieldMethod = lcfirst($this->data->methodName);
 
         if ($this->data->isMultiple) {
-            $r[] = "public function {$lowerFieldMethod}Is(array \$value):bool { return \$this->_integerChoiceEqual('{$this->data->fieldName}', \$value); }";
+            $r[] = "public function {$lowerFieldMethod}Is(array \$value):bool { return \$this->multipleIntegerData->equal('{$this->data->fieldName}', \$value); }";
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->multipleIntegerData->has('{$this->data->fieldName}'); }";
+            $r[] = "public function has{$this->data->methodName}In(array \$values):bool { return \$this->multipleIntegerData->in('{$this->data->fieldName}', \$values); }";
 
         } else {
             $enumClass = $this->getEnumChoiceClass();
-            $r[] = "public function {$lowerFieldMethod}Is(int{$enumClass} \$value):bool { return \$this->_integerChoiceEqual('{$this->data->fieldName}', \$value); }";
+            $r[] = "public function {$lowerFieldMethod}Is(int{$enumClass} \$value):bool { return \$this->integerData->equal('{$this->data->fieldName}', \$value); }";
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->integerData->has('{$this->data->fieldName}'); }";
+            $r[] = "public function has{$this->data->methodName}In(array \$values):bool { return \$this->integerData->in('{$this->data->fieldName}', \$values); }";
         }
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->_hasIntegerChoiceVal('{$this->data->fieldName}'); }";
-        $r[] = "public function has{$this->data->methodName}In(array \$values):bool { return \$this->_integerChoiceIn('{$this->data->fieldName}', \$values); }";
 
         return implode(' ', $r);
     }

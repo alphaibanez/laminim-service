@@ -72,15 +72,23 @@ class StringChoiceFieldGenerator implements FieldGenerator
 
                 $optionVal = $this->data->options[$i];
 
-                $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->_getStringChoiceVal('{$this->data->fieldName}') === '{$optionVal}'; }";
+                if ($this->data->isMultiple) {
+                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->multipleStringData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
 
-                $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-                $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->_setStringChoiceVal('{$this->data->fieldName}', '{$optionVal}'); }";
+                    $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->multipleStringData->set('{$this->data->fieldName}', '{$optionVal}'); }";
 
+                } else {
+                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->stringData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
+
+                    $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->stringData->set('{$this->data->fieldName}', '{$optionVal}'); }";
+                }
 
                 if ($this->data->enabledEmptyPreset) {
                     $r[] = "public static function emptyWith{$this->data->methodName}EqualTo{$option}(): static { return static::getInstance()->{$this->data->methodName}{$option}(); }";
                 }
+
             }
         }
         return implode(' ', $r);

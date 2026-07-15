@@ -39,6 +39,7 @@ trait ItemWithAccessPolicyTrait
 
     public function getAccessPolicyUsage(): ?AccessPolicyUsage
     {
+        if (!isset($this->accessPolicy)) return null;
         return $this->accessPolicy;
     }
 }

@@ -78,10 +78,18 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
                     $optionVal = (int)$optionVal;
                 }
 
-                $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->_getIntegerChoiceVal('{$this->data->fieldName}') === {$optionVal}; }";
+                if ($this->data->isMultiple) {
+                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->multipleIntegerData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
 
-                $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-                $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->_setIntegerChoiceVal('{$this->data->fieldName}', {$optionVal}); }";
+                    $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->multipleIntegerData->set('{$this->data->fieldName}', '{$optionVal}'); }";
+
+                } else {
+                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->integerData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
+
+                    $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->integerData->set('{$this->data->fieldName}', '{$optionVal}'); }";
+                }
 
 
                 if ($this->data->enabledEmptyPreset) {

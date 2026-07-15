@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithMultipleStringDataTrait
 {
-    private MultipleStringDataController $multipleStringData;
+    protected MultipleStringDataController $multipleStringData;
 
     private function initMultipleStringData(Schema $schema, Item $item, array $rawData): static
     {

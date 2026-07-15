@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithConstantDataTrait
 {
-    private ConstantDataController $constantData;
+    protected ConstantDataController $constantData;
 
     private function initConstantData(Schema $schema, Item $item): static
     {

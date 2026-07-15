@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithConcatDataTrait
 {
-    private ConcatDataController $concatData;
+    protected ConcatDataController $concatData;
 
     private function initConcatData(Schema $schema, Item $item): static
     {

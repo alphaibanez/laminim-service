@@ -9,7 +9,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithJSONDataTrait
 {
-    private JsonDataController $jsonData;
+    protected JsonDataController $jsonData;
 
     private function initJSONData(Schema $schema, Item $item, array $rawData): static
     {

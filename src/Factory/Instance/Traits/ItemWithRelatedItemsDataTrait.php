@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithRelatedItemsDataTrait
 {
-    private RelatedItemsDataController $relatedItemsData;
+    protected RelatedItemsDataController $relatedItemsData;
 
     private function initRelatedItemsData(Schema $schema, Item $item, array $rawData): static
     {

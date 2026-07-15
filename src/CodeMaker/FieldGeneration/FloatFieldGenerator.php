@@ -2,19 +2,24 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-class FloatFieldGenerator extends AbstractFieldGenerator
+use Lkt\CodeMaker\Interfaces\FieldGenerator;
+use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+
+class FloatFieldGenerator implements FieldGenerator
 {
+    use FieldGeneratorCommon;
+
     public function getGetters(): string
     {
         $r = [];
 
         if ($this->data->isMultiple) {
-            $r[] = "/** @return float[] */";
-            $r[] = "public function get{$this->data->methodName}():array { return \$this->_getFloatVal('{$this->data->fieldName}'); }";
+            $r[] = "/** @return float[]|null */";
+            $r[] = "public function get{$this->data->methodName}():array|null { return \$this->multipleFloatData->get('{$this->data->fieldName}'); }";
 
         } else {
-            $r[] = "public function get{$this->data->methodName}():float { return \$this->_getFloatVal('{$this->data->fieldName}'); }";
-            $r[] = "public function get{$this->data->methodName}Formatted():float { return \$this->_getFloatFormattedVal('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():float|null { return \$this->floatData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}Formatted():string|null { return \$this->floatData->formatted('{$this->data->fieldName}'); }";
         }
 
         return implode(' ', $r);
@@ -26,10 +31,10 @@ class FloatFieldGenerator extends AbstractFieldGenerator
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
         if ($this->data->isMultiple) {
-            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { return \$this->_setFloatVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->multipleFloatData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } else {
-            $r[] = "public function set{$this->data->methodName}(float \${$this->data->fieldName}):static { return \$this->_setFloatVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+            $r[] = "public function set{$this->data->methodName}(float \${$this->data->fieldName}):static { \$this->floatData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
         }
 
         return implode(' ', $r);
@@ -39,7 +44,11 @@ class FloatFieldGenerator extends AbstractFieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->_hasFloatVal('{$this->data->fieldName}'); }";
+        if ($this->data->isMultiple) {
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->multipleFloatData->has('{$this->data->fieldName}'); }";
+        } else {
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->floatData->has('{$this->data->fieldName}'); }";
+        }
 
         return implode(' ', $r);
     }

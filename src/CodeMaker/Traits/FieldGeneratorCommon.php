@@ -1,24 +1,19 @@
 <?php
 
-namespace Lkt\CodeMaker\FieldGeneration;
+namespace Lkt\CodeMaker\Traits;
 
 use Lkt\CodeMaker\DTO\FieldGeneratorData;
+use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 
-abstract class AbstractFieldGenerator
+trait FieldGeneratorCommon
 {
     public FieldGeneratorData $data;
+
 
     public function __construct(FieldGeneratorData $data)
     {
         $this->data = $data;
     }
-
-
-    abstract public function getGetters(): string;
-    abstract public function getSetters(): string;
-    abstract public function getCheckers(): string;
-    abstract public function parse(): string;
-
     public static function generateCode(FieldGeneratorData $data): string
     {
         return (new static($data))->parse();

@@ -2,13 +2,18 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-class BooleanFieldGenerator extends AbstractFieldGenerator
+use Lkt\CodeMaker\Interfaces\FieldGenerator;
+use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+
+class BooleanFieldGenerator implements FieldGenerator
 {
+    use FieldGeneratorCommon;
+
     public function getGetters(): string
     {
         $r = [];
 
-        $r[] = "public function {$this->data->fieldName}():bool { return \$this->_getBooleanVal('{$this->data->fieldName}'); }";
+        $r[] = "public function {$this->data->fieldName}():bool { return \$this->booleanData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -18,7 +23,7 @@ class BooleanFieldGenerator extends AbstractFieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(bool \${$this->data->fieldName}):static { return \$this->_setBooleanVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+        $r[] = "public function set{$this->data->methodName}(bool \${$this->data->fieldName}):static { \$this->booleanData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }

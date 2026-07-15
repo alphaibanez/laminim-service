@@ -9,7 +9,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithMultipleIntegerDataTrait
 {
-    private MultipleIntegerDataController $multipleIntegerData;
+    protected MultipleIntegerDataController $multipleIntegerData;
 
     private function initMultipleIntegerData(Schema $schema, Item $item, array $rawData): static
     {

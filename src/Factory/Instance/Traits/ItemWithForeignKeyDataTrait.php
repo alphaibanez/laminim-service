@@ -9,7 +9,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithForeignKeyDataTrait
 {
-    private ForeignKeyDataController $foreignKeyData;
+    protected ForeignKeyDataController $foreignKeyData;
 
     private function initForeignKeyData(Schema $schema, Item $item, array $rawData): static
     {

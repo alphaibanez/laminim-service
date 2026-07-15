@@ -9,7 +9,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithColorDataTrait
 {
-    private ColorDataController $colorData;
+    protected ColorDataController $colorData;
 
     private function initColorData(Schema $schema, Item $item, array $rawData): static
     {

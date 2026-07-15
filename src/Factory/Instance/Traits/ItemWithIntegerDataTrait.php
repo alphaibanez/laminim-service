@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithIntegerDataTrait
 {
-    private IntegerDataController $integerData;
+    protected IntegerDataController $integerData;
 
     private function initIntegerData(Schema $schema, Item $item, array $rawData): static
     {

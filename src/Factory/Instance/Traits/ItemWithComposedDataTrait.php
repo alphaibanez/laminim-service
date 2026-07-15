@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithComposedDataTrait
 {
-    private ComposedDataController $composedData;
+    protected ComposedDataController $composedData;
 
     private function initComposedData(Schema $schema, Item $item, bool $refreshing = false): static
     {

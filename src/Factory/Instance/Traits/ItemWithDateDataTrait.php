@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithDateDataTrait
 {
-    private DateDataController $dateData;
+    protected DateDataController $dateData;
 
     private function initDateData(Schema $schema, Item $item, array $rawData): static
     {

@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithPivotDataTrait
 {
-    private PivotDataController $pivotData;
+    protected PivotDataController $pivotData;
 
     private function initPivotData(Schema $schema, Item $item, bool $refreshing = false): static
     {

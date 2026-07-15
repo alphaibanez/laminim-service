@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithStringDataTrait
 {
-    private StringDataController $stringData;
+    protected StringDataController $stringData;
 
     private function initStringData(Schema $schema, Item $item, array $rawData): static
     {

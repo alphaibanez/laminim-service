@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithMultipleFloatDataTrait
 {
-    private MultipleFloatDataController $multipleFloatData;
+    protected MultipleFloatDataController $multipleFloatData;
 
     private function initMultipleFloatData(Schema $schema, Item $item, array $rawData): static
     {

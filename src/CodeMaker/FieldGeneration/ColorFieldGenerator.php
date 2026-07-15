@@ -2,15 +2,20 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-class ColorFieldGenerator extends AbstractFieldGenerator
+use Lkt\CodeMaker\Interfaces\FieldGenerator;
+use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+
+class ColorFieldGenerator implements FieldGenerator
 {
+    use FieldGeneratorCommon;
+
     public function getGetters(): string
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string { return \$this->_getColorVal('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Rgb(float \$opacity = null):array { return \$this->_getColorRgbVal('{$this->data->fieldName}', \$opacity); }";
-        $r[] = "public function get{$this->data->methodName}RgbFormatted(float \$opacity = null):array { return \$this->_getColorRgbStringVal('{$this->data->fieldName}', \$opacity); }";
+        $r[] = "public function get{$this->data->methodName}():string { return \$this->colorData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Rgb(float \$opacity = null):array { return \$this->colorData->getRGBA('{$this->data->fieldName}', \$opacity); }";
+        $r[] = "public function get{$this->data->methodName}RgbFormatted(float \$opacity = null):array { return \$this->colorData->getRGBAString('{$this->data->fieldName}', \$opacity); }";
 
         return implode(' ', $r);
     }
@@ -20,7 +25,7 @@ class ColorFieldGenerator extends AbstractFieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { return \$this->_setColorVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { \$this->colorData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }
@@ -29,7 +34,7 @@ class ColorFieldGenerator extends AbstractFieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->_hasColorVal('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}():bool { return \$this->colorData->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

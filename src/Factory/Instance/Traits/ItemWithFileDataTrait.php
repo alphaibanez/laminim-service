@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithFileDataTrait
 {
-    private FileDataController $fileData;
+    protected FileDataController $fileData;
 
     private function initFileData(Schema $schema, Item $item, array $rawData): static
     {

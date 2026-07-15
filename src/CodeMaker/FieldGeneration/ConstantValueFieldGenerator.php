@@ -2,13 +2,18 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-class ConstantValueFieldGenerator extends AbstractFieldGenerator
+use Lkt\CodeMaker\Interfaces\FieldGenerator;
+use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+
+class ConstantValueFieldGenerator implements FieldGenerator
 {
+    use FieldGeneratorCommon;
+
     public function getGetters(): string
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():{$this->data->getterReturnType} { return \$this->_getConstantValueVal('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}():{$this->data->getterReturnType} { return \$this->constantData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

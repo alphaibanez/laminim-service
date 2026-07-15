@@ -5,6 +5,7 @@ namespace Lkt\Factory\Instance\DataControllers;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instantiator\SystemConnections\NumberFormatter;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 
@@ -34,6 +35,17 @@ final class FloatDataController
         }
 
         return null;
+    }
+
+    public function formatted(string $key): string|null
+    {
+        $val = $this->get($key);
+        if ($val === null) return null;
+
+        $formatter = NumberFormatter::getDecimalNumberFormatter();
+        $r = $formatter->format($val);
+        if (!$r) return null;
+        return $r;
     }
 
     public function has(string $key): bool

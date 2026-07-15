@@ -9,7 +9,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithEncryptDataTrait
 {
-    private EncryptDataController $encryptData;
+    protected EncryptDataController $encryptData;
 
     private function initEncryptData(Schema $schema, Item $item, array $rawData): static
     {

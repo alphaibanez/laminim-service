@@ -2,8 +2,13 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-class FileFieldGenerator extends AbstractFieldGenerator
+use Lkt\CodeMaker\Interfaces\FieldGenerator;
+use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+
+class FileFieldGenerator implements FieldGenerator
 {
+    use FieldGeneratorCommon;
+
     public function getGetters(): string
     {
         $r = [];

@@ -2,13 +2,18 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-class EmailFieldGenerator extends AbstractFieldGenerator
+use Lkt\CodeMaker\Interfaces\FieldGenerator;
+use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+
+class EmailFieldGenerator implements FieldGenerator
 {
+    use FieldGeneratorCommon;
+
     public function getGetters(): string
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string { return \$this->_getEmailVal('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}():string { return \$this->stringData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -18,7 +23,7 @@ class EmailFieldGenerator extends AbstractFieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { return \$this->_setEmailVal('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { \$this->stringData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }
@@ -27,7 +32,7 @@ class EmailFieldGenerator extends AbstractFieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->_hasEmailVal('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}():bool { return \$this->stringData->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

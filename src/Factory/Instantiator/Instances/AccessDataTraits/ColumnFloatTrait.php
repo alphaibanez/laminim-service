@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
-use Lkt\Factory\Instantiator\SystemConnections\NumberFormatter;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 
@@ -32,8 +31,9 @@ trait ColumnFloatTrait
      */
     protected function _getFloatFormattedVal(string $fieldName): string|array
     {
-        $formatter = NumberFormatter::getDecimalNumberFormatter();
-        return $formatter->format($this->_getFloatVal($fieldName));
+        return $this->floatData->formatted($fieldName);
+//        $formatter = NumberFormatter::getDecimalNumberFormatter();
+//        return $formatter->format($this->_getFloatVal($fieldName));
     }
 
     /**

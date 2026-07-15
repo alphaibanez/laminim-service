@@ -8,7 +8,7 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithFloatDataTrait
 {
-    private FloatDataController $floatData;
+    protected FloatDataController $floatData;
 
     private function initFloatData(Schema $schema, Item $item, array $rawData): static
     {

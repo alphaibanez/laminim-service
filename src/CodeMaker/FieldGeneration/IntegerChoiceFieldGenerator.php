@@ -112,7 +112,10 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
                     $optionsText = '[' .implode(',', $options) . ']';
                 }
 
-                $comparatorFunctionContent = $singleMode ? "_integerChoiceEqual" : '_integerChoiceIn';
+                $comparatorFunctionContent = $singleMode ? "equal" : 'in';
+                $comparatorFunctionContent = $this->data->isMultiple
+                    ? "multipleIntegerData->{$comparatorFunctionContent}"
+                    : "integerData->{$comparatorFunctionContent}";
 
                 $r[] = "public function {$lowerFieldMethod}Is{$upperComparatorName}(): bool { return \$this->{$comparatorFunctionContent}('{$this->data->fieldName}', {$optionsText}); }";
 

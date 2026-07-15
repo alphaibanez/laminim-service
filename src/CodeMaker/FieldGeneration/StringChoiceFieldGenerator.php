@@ -106,7 +106,10 @@ class StringChoiceFieldGenerator implements FieldGenerator
                     $optionsText = "['" .implode("','", $options) . "']";
                 }
 
-                $comparatorFunctionContent = $singleMode ? "_stringChoiceEqual" : '_stringChoiceIn';
+                $comparatorFunctionContent = $singleMode ? "equal" : 'in';
+                $comparatorFunctionContent = $this->data->isMultiple
+                    ? "multipleStringData->{$comparatorFunctionContent}"
+                    : "stringData->{$comparatorFunctionContent}";
 
                 $r[] = "public function {$lowerFieldMethod}Is{$upperComparatorName}(): bool { return \$this->{$comparatorFunctionContent}('{$this->data->fieldName}', {$optionsText}); }";
 

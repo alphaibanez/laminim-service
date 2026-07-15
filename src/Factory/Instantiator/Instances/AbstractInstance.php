@@ -132,9 +132,53 @@ abstract class AbstractInstance implements Item
         $this->initialFeed($initialData);
     }
 
+    /**
+     * @return Query
+     * @throws SchemaNotDefinedException
+     */
+    public static function getQueryBuilder()
+    {
+        return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
+    }
+
+    public function getComponent(): string
+    {
+        return static::COMPONENT;
+    }
+
     public function getSchema(): Schema|null
     {
         return Schema::get(static::COMPONENT);
+    }
+
+    public static function getWhereBuilder(): Where
+    {
+        return Instantiator::getCustomWhere(static::COMPONENT);
+    }
+
+
+    public static function getUniqueFilteredQueryBuilder(array $data): Query
+    {
+        $schema = Schema::get(static::COMPONENT);
+
+        $query = static::getQueryBuilder();
+        $langCodes = Locale::getAvailableLangCodesValues();
+
+        foreach ($schema->getUniqueFields() as $field) {
+            if ($field instanceof StringField) {
+                if ($field->isI18nJson()) {
+                    foreach ($langCodes as $langCode) {
+                        if (isset($data[$field->getName()][$langCode])) {
+                            $query->andStringEqual($field->getLocaleColumn($langCode), $data[$field->getName()][$langCode]);
+                        }
+                    }
+                } else {
+                    $query->andStringEqual($field->getColumn(), $data[$field->getName()]);
+                }
+            }
+        }
+
+        return $query;
     }
 
     /**
@@ -156,20 +200,6 @@ abstract class AbstractInstance implements Item
     public static function getQueryCaller()
     {
         return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
-    }
-
-    /**
-     * @return Query
-     * @throws SchemaNotDefinedException
-     */
-    public static function getQueryBuilder()
-    {
-        return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
-    }
-
-    public function getComponent(): string
-    {
-        return static::COMPONENT;
     }
 
     /**
@@ -204,11 +234,22 @@ abstract class AbstractInstance implements Item
 //        return $this->save();
     }
 
+    /**
+     * @deprecated
+     * @param array $params
+     * @return static
+     */
     public static function create(array $params): static
     {
         return (new static())->feedAndSave($params);
     }
 
+    /**
+     * @deprecated
+     * @param AbstractInstance $instance
+     * @param array $params
+     * @return static
+     */
     public static function update(AbstractInstance $instance, array $params): static
     {
         return $instance->feedAndSave($params);
@@ -257,35 +298,5 @@ abstract class AbstractInstance implements Item
         }
 
         return $r;
-    }
-
-
-    public static function getUniqueFilteredQueryBuilder(array $data): Query
-    {
-        $schema = Schema::get(static::COMPONENT);
-
-        $query = static::getQueryCaller();
-        $langCodes = Locale::getAvailableLangCodesValues();
-
-        foreach ($schema->getUniqueFields() as $field) {
-            if ($field instanceof StringField) {
-                if ($field->isI18nJson()) {
-                    foreach ($langCodes as $langCode) {
-                        if (isset($data[$field->getName()][$langCode])) {
-                            $query->andStringEqual($field->getLocaleColumn($langCode), $data[$field->getName()][$langCode]);
-                        }
-                    }
-                } else {
-                    $query->andStringEqual($field->getColumn(), $data[$field->getName()]);
-                }
-            }
-        }
-
-        return $query;
-    }
-
-    public static function getWhereBuilder(): Where
-    {
-        return Instantiator::getCustomWhere(static::COMPONENT);
     }
 }

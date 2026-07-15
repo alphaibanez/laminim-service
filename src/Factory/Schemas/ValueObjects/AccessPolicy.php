@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Schemas\ValueObjects;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Schema;
 

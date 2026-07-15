@@ -3,8 +3,8 @@
 namespace Lkt\FileBrowser\Http;
 
 use Lkt\FileBrowser\Enums\FileEntityType;
-use Lkt\Instances\LktFileEntity;
 use Lkt\Http\Response;
+use Lkt\Instances\LktFileEntity;
 
 class FileBrowserHttp
 {

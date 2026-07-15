@@ -3,13 +3,13 @@
 namespace Lkt\Factory\Instantiator\Helpers;
 
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\FileUpload\File;
-use Lkt\FileUpload\FileSystem\Simple;
-use Lkt\FileUpload\FileUpload;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\FileUpload\File;
+use Lkt\FileUpload\FileSystem\Simple;
+use Lkt\FileUpload\FileUpload;
 use function Lkt\Tools\System\makePathToDirectory;
 
 class FileUploadHelper

@@ -2,8 +2,6 @@
 
 namespace Lkt\Factory\Schemas\Values;
 
-use Lkt\Factory\Schemas\Exceptions\InvalidFieldNameException;
-
 final class FieldLabelValue
 {
     private string $value;

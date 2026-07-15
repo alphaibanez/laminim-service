@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;

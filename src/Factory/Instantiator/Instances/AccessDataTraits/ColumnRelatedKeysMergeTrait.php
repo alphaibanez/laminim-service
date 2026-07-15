@@ -2,13 +2,9 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
-use Lkt\Factory\Instantiator\Relations\RelatedKeysMergeHelper;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
-use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
-use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Where;
-use function Lkt\Tools\Pagination\getTotalPages;
 
 trait ColumnRelatedKeysMergeTrait
 {

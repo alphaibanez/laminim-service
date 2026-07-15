@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\DTO;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;

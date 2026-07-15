@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Factory\Instance\DataControllers\IntegerDataController;
 use Lkt\Factory\Instance\DataControllers\MultipleIntegerDataController;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;

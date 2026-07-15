@@ -6,7 +6,6 @@ use Lkt\Connectors\Enums\RevolutUrl;
 use Lkt\Connectors\Enums\RevolutWebhookEvent;
 use Lkt\Connectors\RevolutResponse\ErrorResponse;
 use Lkt\Connectors\RevolutResponse\WebhookResponse;
-use Lkt\Debug\VarDumper;
 
 trait WebhookTrait
 {

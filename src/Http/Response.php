@@ -2,7 +2,6 @@
 
 namespace Lkt\Http;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Http\Traits\ContentTypeTrait;
 use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;

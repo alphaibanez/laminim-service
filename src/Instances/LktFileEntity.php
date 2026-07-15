@@ -2,7 +2,6 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktFileEntity;
 use Lkt\Http\Response;

@@ -2,8 +2,6 @@
 
 namespace Lkt\Templates;
 
-use function Lkt\Tools\System\isAbsolutePath;
-
 
 class Template extends BaseTemplate
 {

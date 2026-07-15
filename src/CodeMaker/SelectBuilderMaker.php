@@ -5,7 +5,6 @@ namespace Lkt\CodeMaker;
 use Lkt\CodeMaker\Helpers\FieldsSelectBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Factory\Schemas\Values\StringValue;
 use Lkt\Templates\Template;
 use function Lkt\Tools\Strings\removeDuplicatedWhiteSpaces;
 

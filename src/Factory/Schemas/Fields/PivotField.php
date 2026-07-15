@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;

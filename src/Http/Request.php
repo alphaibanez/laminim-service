@@ -2,7 +2,6 @@
 
 namespace Lkt\Http;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Schema;
@@ -14,7 +13,7 @@ use Lkt\Http\Enums\HttpStatus;
 use Lkt\Http\Routes\AbstractRoute;
 use Lkt\Users\Interfaces\SessionUserInterface;
 use Lkt\WebItems\Enums\WebItemAction;
-use \Lkt\WebItems\WebItem;
+use Lkt\WebItems\WebItem;
 use function Lkt\Tools\Arrays\digArray;
 
 class Request

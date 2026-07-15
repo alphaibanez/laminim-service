@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Factory\Instance\DataControllers\FileDataController;
 use Lkt\Factory\Instance\DataControllers\JsonDataController;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;

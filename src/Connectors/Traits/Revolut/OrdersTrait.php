@@ -5,7 +5,6 @@ namespace Lkt\Connectors\Traits\Revolut;
 use Lkt\Connectors\Enums\RevolutUrl;
 use Lkt\Connectors\RevolutResponse\ErrorResponse;
 use Lkt\Connectors\RevolutResponse\OrderResponse;
-use Lkt\Debug\VarDumper;
 
 trait OrdersTrait
 {

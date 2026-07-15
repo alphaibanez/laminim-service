@@ -2,7 +2,6 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Generated\GeneratedLktShoppingPrice;
 use Lkt\Traits\WithComponentIdTrait;

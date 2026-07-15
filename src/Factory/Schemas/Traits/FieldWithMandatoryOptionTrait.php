@@ -2,8 +2,6 @@
 
 namespace Lkt\Factory\Schemas\Traits;
 
-use Lkt\Factory\Schemas\Values\FieldWhereValue;
-
 trait FieldWithMandatoryOptionTrait
 {
     protected bool $mandatory = false;

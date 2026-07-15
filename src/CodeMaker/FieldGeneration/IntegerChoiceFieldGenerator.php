@@ -4,7 +4,6 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
-use Lkt\Debug\VarDumper;
 
 class IntegerChoiceFieldGenerator implements FieldGenerator
 {

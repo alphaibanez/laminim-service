@@ -3,7 +3,6 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Factory\Instance\DataControllers\EncryptDataController;
-use Lkt\Factory\Instance\DataControllers\StringDataController;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;
 

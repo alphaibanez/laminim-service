@@ -3,7 +3,6 @@
 namespace Lkt\Connectors;
 
 use Lkt\Connectors\Curl\CurlResponse;
-use Lkt\Debug\VarDumper;
 
 class CurlConnector extends AbstractCurlConnector
 {

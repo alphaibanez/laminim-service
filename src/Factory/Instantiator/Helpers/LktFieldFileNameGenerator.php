@@ -2,12 +2,12 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
-use Lkt\FileUpload\FileNameGenerator\FileNameGenerator;
-use Lkt\FileUpload\FileNameGenerator\Slug;
-use Lkt\FileUpload\FileUpload;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\FileUpload\FileNameGenerator\FileNameGenerator;
+use Lkt\FileUpload\FileNameGenerator\Slug;
+use Lkt\FileUpload\FileUpload;
 use Lkt\MIME;
 
 class LktFieldFileNameGenerator implements FileNameGenerator

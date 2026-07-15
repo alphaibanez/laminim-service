@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instantiator;

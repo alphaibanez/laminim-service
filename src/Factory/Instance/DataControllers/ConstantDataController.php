@@ -2,11 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Factory\Instance\Enums\EmptyDataMode;
-use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
-use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Schema;
 
 final class ConstantDataController

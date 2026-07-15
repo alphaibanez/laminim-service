@@ -2,7 +2,6 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Generated\GeneratedLktShoppingOrder;
 use Lkt\Shop\Enums\OrderStatus;
 

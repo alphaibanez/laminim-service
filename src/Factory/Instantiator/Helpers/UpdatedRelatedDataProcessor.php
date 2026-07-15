@@ -88,7 +88,8 @@ class UpdatedRelatedDataProcessor
                 /** @var AbstractInstance $instance */
                 $instance = call_user_func_array([$relatedClass, 'getInstance'], ['id' => $datum[$relatedIdColumn]]);
                 if ($this->accessPolicy) $instance->setAccessPolicy($this->accessPolicy);
-                $instance::feedInstance($instance, $datum);
+//                $instance::feedInstance($instance, $datum);
+                $instance->feed($datum);
 
             } else if (is_numeric($datum)) {
                 $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum]);
@@ -149,7 +150,8 @@ class UpdatedRelatedDataProcessor
             }
 
             $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum[$relatedIdColumn]]);
-            $instance::feedInstance($instance, $datum);
+//            $instance::feedInstance($instance, $datum);
+            $instance->feed($datum);
             $r[] = $instance;
         }
 

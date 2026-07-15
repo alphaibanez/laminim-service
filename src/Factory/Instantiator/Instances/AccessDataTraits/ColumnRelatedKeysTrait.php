@@ -132,7 +132,8 @@ trait ColumnRelatedKeysTrait
 
         foreach ($data as $datum) {
             $instance = $relatedClass::getInstance($datum[$relatedIdColumn]);
-            $instance::feedInstance($instance, $datum);
+//            $instance::feedInstance($instance, $datum);
+            $instance->feed($datum);
             $r[] = $instance;
         }
 

@@ -260,7 +260,8 @@ final class RelatedItemsDataController
                 /** @var Item $instance */
                 $instance = call_user_func_array([$relatedClass, 'getInstance'], $constructorData);
                 if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
-                $instance::feedInstance($instance, $datum);
+                $instance->feed($datum);
+//                $instance::feedInstance($instance, $datum);
 
             } else if (is_numeric($datum)) {
                 $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum]);

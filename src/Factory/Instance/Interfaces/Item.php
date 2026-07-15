@@ -62,6 +62,9 @@ interface Item
     public function delete(): static;
     public static function getBatchActions(array $items): BatchActions;
 
+    public static function mkOrUp(array $data): static;
+    public static function mkIfNot(array $data): static;
+
     /**
      * @laminim
      * Dynamic method calling

@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -94,7 +95,9 @@ trait ItemWithCrudTrait
 
     public function duplicate(): static
     {
-        $clone = static::getInstance()->setAccessPolicy('duplicate');
+        /** @var Item $clone */
+        $clone = static::getInstance();
+        $clone->setAccessPolicy('duplicate');
         $data = $this->autoRead();
         $payload = [];
         $schema = Schema::get(static::COMPONENT);
@@ -183,7 +186,8 @@ trait ItemWithCrudTrait
 
         $payload = $clone->prepareCrudData($payload, CrudOperation::Create);
 
-        static::feedInstance($clone, $payload);
+        $clone->feed($payload);
+//        static::feedInstance($clone, $payload);
         return $clone;
     }
 
@@ -228,5 +232,25 @@ trait ItemWithCrudTrait
         QueryCache::set($connector, $query, []);
         $this->initialFeed([]);
         return $this;
+    }
+
+    public static function mkOrUp(array $data): static
+    {
+        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
+        if (!$instance) {
+            $instance = static::getInstance()->feedAndSave($data);
+        } else {
+            $instance->feedAndSave($data);
+        }
+        return $instance;
+    }
+
+    public static function mkIfNot(array $data): static
+    {
+        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
+        if (!$instance) {
+            $instance = static::getInstance()->feedAndSave($data);
+        }
+        return $instance;
     }
 }

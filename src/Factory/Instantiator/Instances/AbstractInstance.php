@@ -27,9 +27,8 @@ use Lkt\Factory\Instance\Traits\ItemWithMultipleStringDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithPivotDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithSchemaStorePathTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
-use Lkt\Factory\Instantiator\Enums\CrudOperation;
-use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnBooleanTrait;
@@ -55,7 +54,6 @@ use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnStringChoiceTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnStringTrait;
 use Lkt\Factory\Instantiator\Instances\AccessDataTraits\ColumnValueListTrait;
 use Lkt\Factory\Instantiator\Instantiator;
-use Lkt\Factory\Instantiator\ValueObjects\MonthlyAccuratePages;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
@@ -64,11 +62,8 @@ use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\FileBrowser\Enums\FileEntityType;
-use Lkt\Instances\LktFileEntity;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
-use Lkt\QueryBuilding\SelectBuilder;
 use Lkt\QueryBuilding\Where;
 
 abstract class AbstractInstance implements Item
@@ -98,7 +93,8 @@ abstract class AbstractInstance implements Item
         ItemWithDataTrait,
         ItemWithAccessPolicyTrait,
         ItemWithInstanceFactoryTrait,
-        ItemWithCrudTrait;
+        ItemWithCrudTrait,
+        ItemWithSchemaStorePathTrait;
 
     use ColumnStringTrait,
         ColumnIntegerTrait,
@@ -171,57 +167,6 @@ abstract class AbstractInstance implements Item
         return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
     }
 
-    /**
-     * @param int $page
-     * @param Query|null $queryCaller
-     * @param string|null $countableField
-     * @return array
-     * @throws InvalidComponentException
-     * @throws InvalidCountableFieldException
-     * @throws InvalidSchemaAppClassException
-     * @throws SchemaNotDefinedException
-     */
-    public static function getMonthlyAccuratePage(int $page, Query|null $queryCaller = null, string|null $countableField = null): array
-    {
-        if (!$queryCaller) $queryCaller = static::getQueryBuilder();
-        $originalSelect = $queryCaller->getColumns();
-        $pagesValueObject = static::getMonthlyAccuratePages($queryCaller, $countableField);
-        $queryCaller->setColumns($originalSelect);
-        $month = $pagesValueObject->getPageYearMonth($page);
-
-        if (is_null($month)) {
-            return [];
-        }
-
-        $queryCaller->andExtractYearMonthEqual($countableField, $month);
-        return Instantiator::makeResults(static::COMPONENT, $queryCaller->selectDistinct());
-    }
-
-    /**
-     * @param Query|null $query
-     * @param string|null $countableField
-     * @param int $itemsPerPage
-     * @return MonthlyAccuratePages
-     * @throws InvalidCountableFieldException
-     * @throws SchemaNotDefinedException
-     */
-    public static function getMonthlyAccuratePages(Query|null $query = null, string|null $countableField = null): MonthlyAccuratePages
-    {
-        if (!$countableField) throw InvalidCountableFieldException::getInstance(__METHOD__, static::COMPONENT);
-
-        if (!$query) $query = static::getQueryBuilder();
-
-        $query->setColumns(SelectBuilder::extractYearMonthDatum($countableField, 'countable_datum'));
-
-        $results = $query->selectDistinct();
-
-        $data = array_unique(array_map(function ($item) {
-            return (int)$item['countable_datum'];
-        }, $results));
-
-        return new MonthlyAccuratePages($data);
-    }
-
     public function getComponent(): string
     {
         return static::COMPONENT;
@@ -238,8 +183,9 @@ abstract class AbstractInstance implements Item
      */
     public function autoCreate(array $data, array $internalMethodsArguments = []): static
     {
-        static::feedInstance($this, $this->prepareCrudData($data, CrudOperation::Create), $internalMethodsArguments);
-        return $this->save();
+        return $this->feedAndSave($data, $internalMethodsArguments);
+//        static::feedInstance($this, $this->prepareCrudData($data, CrudOperation::Create), $internalMethodsArguments);
+//        return $this->save();
     }
 
     /**
@@ -253,20 +199,28 @@ abstract class AbstractInstance implements Item
      */
     public function autoUpdate(array $data, array $internalMethodsArguments = []): static
     {
-        static::feedInstance($this, $this->prepareCrudData($data, CrudOperation::Update), $internalMethodsArguments);
-        return $this->save();
+        return $this->feedAndSave($data, $internalMethodsArguments);
+//        static::feedInstance($this, $this->prepareCrudData($data, CrudOperation::Update), $internalMethodsArguments);
+//        return $this->save();
     }
 
     public static function create(array $params): static
     {
-        return (new static())->autoCreate($params);
+        return (new static())->feedAndSave($params);
     }
 
     public static function update(AbstractInstance $instance, array $params): static
     {
-        return $instance->autoUpdate($params);
+        return $instance->feedAndSave($params);
     }
 
+    /**
+     * @deprecated
+     * @param AbstractInstance $instance
+     * @param array $params
+     * @param array $internalMethodsArguments
+     * @return static
+     */
     public static function feedInstance(AbstractInstance $instance, array $params, array $internalMethodsArguments = []): static
     {
         return $instance->feed($params, $internalMethodsArguments);
@@ -333,50 +287,5 @@ abstract class AbstractInstance implements Item
     public static function getWhereBuilder(): Where
     {
         return Instantiator::getCustomWhere(static::COMPONENT);
-    }
-
-    public static function mkOrUp(array $data): static
-    {
-        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
-        if (!$instance) {
-            $instance = static::getInstance()->autoCreate($data);
-        } else {
-            $instance->autoUpdate($data);
-        }
-        return $instance;
-    }
-
-    public static function mkIfNot(array $data): static
-    {
-        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
-        if (!$instance) {
-            $instance = static::getInstance()->autoCreate($data);
-        }
-        return $instance;
-    }
-
-    public static $schemaStorePath = null;
-    public static $schemaPublicPath = null;
-
-
-    public static function getSchemaStorePath($instance): string
-    {
-        if (is_callable(static::$schemaStorePath)) {
-            return call_user_func(static::$schemaStorePath, $instance);
-        }
-        return '';
-    }
-
-
-    public static function getSchemaPublicPath(LktFileEntity|null $instance = null): string
-    {
-        if ($instance instanceof LktFileEntity) {
-            if ($instance->getType() === FileEntityType::StorageUnit->value || $instance->getType() === FileEntityType::Directory->value) return '';
-        }
-
-        if (is_callable(static::$schemaPublicPath)) {
-            return call_user_func(static::$schemaPublicPath, $instance);
-        }
-        return '';
     }
 }

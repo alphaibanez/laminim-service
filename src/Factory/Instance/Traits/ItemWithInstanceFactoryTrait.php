@@ -3,14 +3,17 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
+use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
+use Lkt\Factory\Instantiator\ValueObjects\MonthlyAccuratePages;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
+use Lkt\QueryBuilding\SelectBuilder;
 use function Lkt\Tools\Pagination\getTotalPages;
 
 trait ItemWithInstanceFactoryTrait
@@ -167,5 +170,57 @@ trait ItemWithInstanceFactoryTrait
         if ($limit <= 0) $limit = $schema->getItemsPerPage();
         if ($limit >= 0) $queryCaller->pagination($page, $limit);
         return Instantiator::makeResults(static::COMPONENT, $queryCaller->selectDistinct());
+    }
+
+
+    /**
+     * @param int $page
+     * @param Query|null $queryCaller
+     * @param string|null $countableField
+     * @return array
+     * @throws InvalidComponentException
+     * @throws InvalidCountableFieldException
+     * @throws InvalidSchemaAppClassException
+     * @throws SchemaNotDefinedException
+     */
+    public static function getMonthlyAccuratePage(int $page, Query|null $queryCaller = null, string|null $countableField = null): array
+    {
+        if (!$queryCaller) $queryCaller = static::getQueryBuilder();
+        $originalSelect = $queryCaller->getColumns();
+        $pagesValueObject = static::getMonthlyAccuratePages($queryCaller, $countableField);
+        $queryCaller->setColumns($originalSelect);
+        $month = $pagesValueObject->getPageYearMonth($page);
+
+        if (is_null($month)) {
+            return [];
+        }
+
+        $queryCaller->andExtractYearMonthEqual($countableField, $month);
+        return Instantiator::makeResults(static::COMPONENT, $queryCaller->selectDistinct());
+    }
+
+    /**
+     * @param Query|null $query
+     * @param string|null $countableField
+     * @param int $itemsPerPage
+     * @return MonthlyAccuratePages
+     * @throws InvalidCountableFieldException
+     * @throws SchemaNotDefinedException
+     */
+    public static function getMonthlyAccuratePages(Query|null $query = null, string|null $countableField = null): MonthlyAccuratePages
+    {
+        if (!$countableField) throw InvalidCountableFieldException::getInstance(__METHOD__, static::COMPONENT);
+
+        if (!$query) $query = static::getQueryBuilder();
+
+        $query->setColumns(SelectBuilder::extractYearMonthDatum($countableField, 'countable_datum'));
+
+        $results = $query->selectDistinct();
+
+        $data = array_unique(array_map(function ($item) {
+            return (int)$item['countable_datum'];
+        }, $results));
+
+        return new MonthlyAccuratePages($data);
     }
 }

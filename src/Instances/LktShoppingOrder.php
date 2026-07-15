@@ -51,7 +51,7 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         $items = [];
         foreach ($payload as $value) {
             $ins = LktShoppingOrderItem::getInstance();
-            $ins::feedInstance($ins, [
+            $ins->feed([
                 ...$value,
                 'order' => $this->getId(),
             ]);

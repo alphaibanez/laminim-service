@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -118,7 +119,6 @@ final class RelatedItemsDataController
         if (!$field) return null;
 
         $builder = $this->getQuery($key, $where, $page, $itemsPerPage, $additionalData);
-
 
         if ($field instanceof RelatedKeysMergeField) {
             $data = RelatedKeysMergeHelper::getRawResultsFromQueryUnion($this->schema->getComponent(), $key, $builder);
@@ -368,9 +368,12 @@ final class RelatedItemsDataController
             );
 
         } else {
+
+            $targetComponent = $field->getComponent($this->schema,$this->item);
+
             $builder = QueryBuilderHelper::prepareRelatedQuery(
                 $this->item,
-                QueryBuilderHelper::getComponentQuery($field->getComponent($this->schema,$this->item)),
+                QueryBuilderHelper::getComponentQuery($targetComponent),
                 $this->schema,
                 $field,
                 $forceRefresh,
@@ -378,19 +381,21 @@ final class RelatedItemsDataController
             );
         }
 
-        if ($field instanceof RelatedKeysField) {
-            $constraints = $this->item::getWhereBuilder();
-            foreach ($this->item->getIdentifierValue() as $column => $value) {
-                $constraints->andWhere(
-                    $this->item::getWhereBuilder()
-                        ->orStringLike($column, ";{$value};")
-                        ->orStringLike($column, "{$value}")
-                        ->orStringEndsLike($column, "{$value};")
-                        ->orStringBeginsLike($column, ";{$value}")
-                );
-            }
-            $builder->andWhere($constraints);
-        }
+//        VarDumper::dump($this->schema->getComponent(), $field->getComponent($this->schema,$this->item), $field, $builder);
+
+//        if ($field instanceof RelatedKeysField) {
+//            $constraints = $this->item::getWhereBuilder();
+//            foreach ($this->item->getIdentifierValue() as $column => $value) {
+//                $constraints->andWhere(
+//                    $this->item::getWhereBuilder()
+//                        ->orStringLike($column, ";{$value};")
+//                        ->orStringLike($column, "{$value}")
+//                        ->orStringEndsLike($column, "{$value};")
+//                        ->orStringBeginsLike($column, ";{$value}")
+//                );
+//            }
+//            $builder->andWhere($constraints);
+//        }
 
         if (is_numeric($page)) {
             $limit = ($itemsPerPage ?? $field->getItemsPerPage()) ?? 10;

@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator\Helpers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
@@ -14,6 +15,7 @@ use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
+use Lkt\QueryBuilding\Where;
 
 class QueryBuilderHelper
 {
@@ -26,7 +28,7 @@ class QueryBuilderHelper
     {
         $relatedSchema = Schema::get($field->getComponent($schema, $item));
 
-        $where = (array)$field?->getWhere();
+//        $where = (array)$field?->getWhere();
 
         $identifierValue = $item->getIdentifierValue();
         $idColumnValue = $identifierValue[array_keys($identifierValue)[0]];
@@ -78,7 +80,7 @@ class QueryBuilderHelper
                 }
             }
 
-        } elseif ($field->hasMultipleReferences()) {
+        } elseif (method_exists($field, 'hasMultipleReferences', ) && $field->hasMultipleReferences()) {
             foreach ($field->getMultipleReferences() as $reference) {
                 $relatedField = $relatedSchema->getField($reference);
 
@@ -113,8 +115,8 @@ class QueryBuilderHelper
                 } elseif ($relatedField instanceof StringField) {
                     $query->andStringEqual($relatedField->getColumn(), $idColumnValue);
                 }
-            } elseif ($field instanceof RelatedKeysField) {
 
+            } elseif ($field instanceof RelatedKeysField) {
                 $anonymous = $relatedSchema->getItemInstance();
                 $column = $relatedField->getColumn();
                 $where = $anonymous::getWhereBuilder()
@@ -130,14 +132,16 @@ class QueryBuilderHelper
         $order = $field->getOrder();
         if (!is_array($order)) $order = [];
 
-        if (count($where) > 0){
-            $query->andRaw(implode(' AND ', $where));
-        }
+//        if (is_array($where) && count($where) > 0){
+//            $query->andRaw(implode(' AND ', $where));
+//        } elseif ($where instanceof Where) {
+//            $query->andWhere($where);
+//        }
 
         $query->orderBy(implode(',', $order));
         $query->setForceRefresh($forceRefresh);
 
-        if ($field->isSingleMode()) $query->pagination(1, 1);
+        if ($field instanceof RelatedField && $field->isSingleMode()) $query->pagination(1, 1);
 
         return $query;
     }

@@ -4,6 +4,7 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -105,6 +106,7 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         // fetch
+//        VarDumper::dump($sql);
         $result = $this->connection->query($sql, \PDO::FETCH_ASSOC);
 
         if ($this->forceRefresh) $this->forceRefreshFinished();

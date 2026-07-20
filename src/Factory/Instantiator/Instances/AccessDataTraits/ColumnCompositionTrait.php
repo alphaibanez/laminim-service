@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 
@@ -30,7 +31,7 @@ trait ColumnCompositionTrait
         $ins = $this->composedData->getItem($composedComponent, $additionalData);
         if (!$ins) return null;
 
-        return $ins->retrieveValue($fieldName, $additionalData);
+        return $ins->retrieveValue($fieldName, $additionalData, RetrieveDataMode::Item);
     }
 
     /**

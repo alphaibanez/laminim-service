@@ -19,8 +19,7 @@ trait ColumnForeignTrait
      */
     protected function _getForeignVal($type = '', $id = 0, string $fieldName = ''): ?AbstractInstance
     {
-        $this->foreignKeyData->getItem($fieldName);
-        return $this;
+        return $this->foreignKeyData->getItem($fieldName);
     }
 
     /**

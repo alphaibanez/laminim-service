@@ -81,13 +81,13 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
                     $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->multipleIntegerData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
 
                     $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-                    $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->multipleIntegerData->set('{$this->data->fieldName}', '{$optionVal}'); }";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { \$this->multipleIntegerData->set('{$this->data->fieldName}', '{$optionVal}'); return \$this; }";
 
                 } else {
                     $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->integerData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
 
                     $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-                    $r[] = "public function set{$this->data->methodName}{$option}(): static { return \$this->integerData->set('{$this->data->fieldName}', '{$optionVal}'); }";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { \$this->integerData->set('{$this->data->fieldName}', '{$optionVal}'); return \$this; }";
                 }
 
 

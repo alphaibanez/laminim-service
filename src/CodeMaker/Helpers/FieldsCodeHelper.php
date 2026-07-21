@@ -9,6 +9,7 @@ use Lkt\CodeMaker\FieldGeneration\ConstantValueFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\EmailFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FileFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FloatFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\ForeignKeyFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
@@ -79,18 +80,22 @@ class FieldsCodeHelper
                     $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
                 }
                 $fieldGeneratorData->relatedComponent = $relatedComponent;
-                $templateData['component'] = $relatedComponent;
-                $templateData['relatedClassName'] = '';
-                $templateData['relatedReturnClass'] = '';
+                $fieldGeneratorData->relatedReturnType = $relatedClassName;
+                $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
+                $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
 
-                if ($relatedClassName !== '' && !$field->isSoftTyped()) {
-                    $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
-                    $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName;
-                }
-
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/foreign-key-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+//                $templateData['component'] = $relatedComponent;
+//                $templateData['relatedClassName'] = '';
+//                $templateData['relatedReturnClass'] = '';
+//
+//                if ($relatedClassName !== '' && !$field->isSoftTyped()) {
+//                    $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
+//                    $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName;
+//                }
+//
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/foreign-key-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
                 continue;
             }
 

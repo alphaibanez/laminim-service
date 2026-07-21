@@ -13,9 +13,12 @@ class ForeignKeyFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "{$this->getRelatedReturnAnnotationFormatted()}";
-        $r[] = "public function {$this->data->fieldName}(){$this->getRelatedReturnTypeFormatted()} { return \$this->foreignKeyData->getItem('{$this->data->fieldName}'); }";
-        $r[] = "public function {$this->data->fieldName}Id():int { return \$this->foreignKeyData->get('{$this->data->fieldName}'); }";
+        $returnAnnotation = $this->getRelatedReturnAnnotationFormatted();
+        if ($returnAnnotation) {
+            $r[] = "/** {$returnAnnotation} */";
+        }
+        $r[] = "public function get{$this->data->methodName}(){$this->getRelatedReturnTypeFormatted()} { return \$this->foreignKeyData->getItem('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Id():int { return \$this->foreignKeyData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -25,7 +28,7 @@ class ForeignKeyFieldGenerator implements FieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(int \${$this->data->fieldName}):static { \$this->foreignKeyData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+        $r[] = "public function set{$this->data->methodName}Id(int \${$this->data->fieldName}):static { \$this->foreignKeyData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }
@@ -34,8 +37,8 @@ class ForeignKeyFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has<?php echo {$this->data->fieldName};?>Id() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
-        $r[] = "public function has<?php echo {$this->data->fieldName};?>() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName};Id() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName};() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

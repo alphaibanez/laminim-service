@@ -482,7 +482,8 @@ class MariaDBConnector extends DatabaseConnector
                     if ($value instanceof \DateTime) {
                         $value = $value->format('Y-m-d H:i:s');
                     } else {
-                        $value = '0000-00-00 00:00:00';
+                        if ($nullable) $value =  'null';
+                        else $value = '0000-00-00 00:00:00';
                     }
                 }
 

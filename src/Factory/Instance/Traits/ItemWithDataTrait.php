@@ -212,6 +212,17 @@ trait ItemWithDataTrait
             $this->foreignKeysData->save();
         }
 
+        // Assign default values
+        /** @var AbstractField $fieldsWithDefaultValue */
+        $fieldsWithDefaultValue = $schema->getFieldsToUpdateOnInstanceUpdate();
+        foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
+            $defaultValueKey = $fieldWithDefaultValue->getName();
+            if ($this->hasAssignedValue($defaultValueKey)) continue;
+
+            $defaultValue = $isUpdate ? $fieldWithDefaultValue->getOnInstanceUpdateValue() : $fieldWithDefaultValue->getDefaultValue();
+            $this->assignValue($defaultValueKey, $defaultValue);
+        }
+
         $original = $this->getOriginalData();
         $payload = $this->getUpdatePayload();
 
@@ -225,39 +236,6 @@ trait ItemWithDataTrait
                 $hasKey = $accessPolicyExcludedField->getGetterForChecker();
                 if (array_key_exists($key, $payload)) unset($payload[$key]);
                 if (array_key_exists($hasKey, $payload)) unset($payload[$hasKey]);
-            }
-        }
-
-        // Update only: auto update values
-        if ($isUpdate) {
-            /** @var AbstractField $fieldsWithDefaultValue */
-            $fieldsWithDefaultValue = $schema->getFieldsToUpdateOnInstanceUpdate();
-            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
-                $defaultValueKey = $fieldWithDefaultValue->getName();
-                if (isset($payload[$defaultValueKey])) continue;
-
-                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
-                if (isset($payload[$defaultValueKey])) continue;
-
-                $defaultValue = $fieldWithDefaultValue->getOnInstanceUpdateValue();
-                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
-                $this->{$setter}($defaultValue);
-            }
-
-            // Create only: set default values
-        } else {
-            /** @var AbstractField $fieldsWithDefaultValue */
-            $fieldsWithDefaultValue = $schema->getFieldsWithDefaultValue();
-            foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
-                $defaultValueKey = $fieldWithDefaultValue->getName();
-                if (isset($payload[$defaultValueKey])) continue;
-
-                $defaultValueKey = $fieldWithDefaultValue->getName().'Id';
-                if (isset($payload[$defaultValueKey])) continue;
-
-                $defaultValue = $fieldWithDefaultValue->getDefaultValue();
-                $setter = $fieldWithDefaultValue->getSetterForPrimitiveValue();
-                $this->{$setter}($defaultValue);
             }
         }
 

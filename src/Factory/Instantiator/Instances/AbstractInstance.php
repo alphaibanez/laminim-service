@@ -141,7 +141,8 @@ abstract class AbstractInstance implements Item
         return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
     }
 
-    public function getComponent(): string
+    /** @deprecated */
+    public function getComponent(): string|null
     {
         return static::COMPONENT;
     }

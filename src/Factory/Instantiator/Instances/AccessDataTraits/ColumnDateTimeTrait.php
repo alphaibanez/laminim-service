@@ -36,7 +36,7 @@ trait ColumnDateTimeTrait
      */
     protected function _getDateTimeFormattedIntlVal(string $fieldName, string $format = null): string
     {
-        return $this->dateData->intlFormat($fieldName, $format);
+        return trim($this->dateData->intlFormat($fieldName, $format));
     }
 
     /**

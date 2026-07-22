@@ -7,7 +7,7 @@ use Lkt\Users\Enums\RoleCapability;
 
 interface SessionUserInterface
 {
-    public function getId(): int;
+    public function getId(): int|null;
 
     public function signIn(): static;
     public function signOut(): static;

@@ -11,7 +11,9 @@ use Lkt\CodeMaker\FieldGeneration\FileFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FloatFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ForeignKeyFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\IntegerFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringBelowMaxLengthComputedField;
@@ -64,6 +66,7 @@ class FieldsCodeHelper
             $fieldGeneratorData->fieldName = $fieldName;
             $fieldGeneratorData->methodName = $fieldMethod;
             $fieldGeneratorData->selfReturningAnnotation = $returnSelf;
+            $fieldGeneratorData->field = $field;
 
             $templateData = [
                 'fieldName' => $fieldName,
@@ -109,10 +112,12 @@ class FieldsCodeHelper
                 $methods[] = IntegerChoiceFieldGenerator::generateCode($fieldGeneratorData);
                 continue;
             } elseif ($field instanceof IntegerField) {
-                $templateData['isMultiple'] = $field->isMultiple();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/integer-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $fieldGeneratorData->isMultiple = $field->isMultiple();
+                $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
+//                $templateData['isMultiple'] = $field->isMultiple();
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/integer-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
                 continue;
             }
 
@@ -127,9 +132,12 @@ class FieldsCodeHelper
                 continue;
 
             } elseif ($field instanceof ValueListField) {
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/value-list-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $fieldGeneratorData->isMultiple = true;
+                $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
+
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/value-list-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
                 continue;
 
 
@@ -138,9 +146,11 @@ class FieldsCodeHelper
                 continue;
 
             } elseif ($field instanceof StringField || $field instanceof HTMLField) {
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/string-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
+
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/string-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
                 continue;
             }
 
@@ -164,7 +174,6 @@ class FieldsCodeHelper
             }
 
             if ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
-
                 $templateData['formats'] = $field->getFormats();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/datetime-field.phtml')
                     ->setData($templateData)

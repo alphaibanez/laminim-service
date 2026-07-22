@@ -7,6 +7,7 @@ use Lkt\CodeMaker\FieldGeneration\BooleanFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ColorFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ConstantValueFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\EmailFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\EncryptFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FileFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FloatFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ForeignKeyFieldGenerator;
@@ -75,7 +76,6 @@ class FieldsCodeHelper
             ];
 
             if ($field instanceof ForeignKeyField) {
-
                 $relatedComponent = $field->getComponent();
                 $relatedClassName = '';
                 if ($relatedComponent) {
@@ -86,24 +86,10 @@ class FieldsCodeHelper
                 $fieldGeneratorData->relatedReturnType = $relatedClassName;
                 $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
                 $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
-
-//                $templateData['component'] = $relatedComponent;
-//                $templateData['relatedClassName'] = '';
-//                $templateData['relatedReturnClass'] = '';
-//
-//                if ($relatedClassName !== '' && !$field->isSoftTyped()) {
-//                    $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
-//                    $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName;
-//                }
-//
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/foreign-key-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
                 continue;
             }
 
             if ($field instanceof IntegerChoiceField) {
-
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
                 $fieldGeneratorData->options = $field->getAllowedOptions();
                 $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
@@ -114,15 +100,10 @@ class FieldsCodeHelper
             } elseif ($field instanceof IntegerField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
-//                $templateData['isMultiple'] = $field->isMultiple();
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/integer-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
                 continue;
             }
 
             if ($field instanceof StringChoiceField) {
-
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
                 $fieldGeneratorData->options = $field->getAllowedOptions();
                 $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
@@ -134,10 +115,6 @@ class FieldsCodeHelper
             } elseif ($field instanceof ValueListField) {
                 $fieldGeneratorData->isMultiple = true;
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
-
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/value-list-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
                 continue;
 
 
@@ -147,18 +124,15 @@ class FieldsCodeHelper
 
             } elseif ($field instanceof StringField || $field instanceof HTMLField) {
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
-
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/string-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
                 continue;
             }
 
             if ($field instanceof EncryptField) {
-                $templateData['hashMode'] = $field->isHashMode();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/encrypt-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);
+//                $templateData['hashMode'] = $field->isHashMode();
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/encrypt-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
                 continue;
             }
 

@@ -87,77 +87,55 @@ class FieldsCodeHelper
                 $fieldGeneratorData->relatedReturnType = $relatedClassName;
                 $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
                 $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof IntegerChoiceField) {
+            } elseif ($field instanceof IntegerChoiceField) {
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
                 $fieldGeneratorData->options = $field->getAllowedOptions();
                 $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
                 $methods[] = IntegerChoiceFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
 
             } elseif ($field instanceof IntegerField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof StringChoiceField) {
+            } elseif ($field instanceof StringChoiceField) {
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
                 $fieldGeneratorData->options = $field->getAllowedOptions();
                 $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
                 $fieldGeneratorData->isMultiple = false;
                 $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
                 $methods[] = StringChoiceFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
 
             } elseif ($field instanceof ValueListField) {
                 $fieldGeneratorData->isMultiple = true;
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
 
 
             } elseif ($field instanceof EmailField) {
                 $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
 
             } elseif ($field instanceof StringField || $field instanceof HTMLField) {
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof EncryptField) {
+            } elseif ($field instanceof EncryptField) {
                 $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);
-//                $templateData['hashMode'] = $field->isHashMode();
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/encrypt-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
-                continue;
-            }
 
-            if ($field instanceof BooleanField) {
+            } elseif ($field instanceof BooleanField) {
                 $methods[] = BooleanFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof FloatField) {
+            } elseif ($field instanceof FloatField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = FloatFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+            } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
                 $templateData['formats'] = $field->getFormats();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/datetime-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof ForeignKeysField || $field instanceof RelatedField || $field instanceof RelatedKeysField) {
+            } elseif ($field instanceof ForeignKeysField || $field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
                 $relatedComponent = $field->getComponent();
                 if (Schema::exists($relatedComponent)) {
@@ -221,10 +199,8 @@ class FieldsCodeHelper
                         ->setData($templateData)
                         ->parse();
                 }
-                continue;
-            }
 
-            if ($field instanceof PivotField) {
+            } elseif ($field instanceof PivotField) {
 
                 $relatedComponent = $field->getComponent();
                 $relatedSchema = Schema::get($relatedComponent);
@@ -237,51 +213,32 @@ class FieldsCodeHelper
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/pivot-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof FileField) {
+            } elseif ($field instanceof FileField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = FileFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof ColorField) {
+            } elseif ($field instanceof ColorField) {
                 $methods[] = ColorFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof ConstantValueField) {
+            } elseif ($field instanceof ConstantValueField) {
                 $fieldGeneratorData->getterReturnType = $field->getConstantValueType();
                 $methods[] = ConstantValueFieldGenerator::generateCode($fieldGeneratorData);
-                continue;
-            }
 
-            if ($field instanceof JSONField) {
+            } elseif ($field instanceof JSONField) {
                 $methods[] = JsonFieldGenerator::generateCode($fieldGeneratorData);
 
-//                $templateData['isAssoc'] = $field->isAssoc();
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/json-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
-                continue;
-            }
-
-            if ($field instanceof RelatedKeysMergeField) {
+            } elseif ($field instanceof RelatedKeysMergeField) {
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-merge-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof ConcatField) {
+            } elseif ($field instanceof ConcatField) {
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/concat-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof BooleansComputedField) {
+            } elseif ($field instanceof BooleansComputedField) {
                 $templateData['allRequired'] = BooleansComputedField::getAllConditionRequiredString($field, $schema);
                 if ($templateData['allRequired'] === '') continue;
                 $templateData['allRequiredSetter'] = BooleansComputedField::getAllConditionRequiredSetterString($field, $schema);
@@ -289,50 +246,40 @@ class FieldsCodeHelper
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/booleans-computed-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof StringEqualComputedField) {
+            } elseif ($field instanceof StringEqualComputedField) {
                 $relatedField = $schema->getField($field->getField());
                 $templateData['getter'] = $relatedField->getGetterForComputed();
                 $templateData['value'] = $field->getValue();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-equal-computed-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof StringInComputedField) {
+            } elseif ($field instanceof StringInComputedField) {
                 $relatedField = $schema->getField($field->getField());
                 $templateData['getter'] = $relatedField->getGetterForComputed();
                 $templateData['value'] = "'" . implode("','", $field->getValue()) . "'";
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-in-computed-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof StringAboveMinLengthComputedField) {
+            } elseif ($field instanceof StringAboveMinLengthComputedField) {
                 $relatedField = $schema->getField($field->getField());
                 $templateData['getter'] = $relatedField->getGetterForComputed();
                 $templateData['value'] = $field->getValue();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-above-min-length-computed-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof StringBelowMaxLengthComputedField) {
+            } elseif ($field instanceof StringBelowMaxLengthComputedField) {
                 $relatedField = $schema->getField($field->getField());
                 $templateData['getter'] = $relatedField->getGetterForComputed();
                 $templateData['value'] = $field->getValue();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-below-max-length-computed-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
-            }
 
-            if ($field instanceof StringBetweenMinAndMaxLengthComputedField) {
+            } elseif ($field instanceof StringBetweenMinAndMaxLengthComputedField) {
                 $relatedField = $schema->getField($field->getField());
                 $templateData['getter'] = $relatedField->getGetterForComputed();
                 $value = $field->getValue();
@@ -341,7 +288,6 @@ class FieldsCodeHelper
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-between-min-and-max-length-computed-field.phtml')
                     ->setData($templateData)
                     ->parse();
-                continue;
             }
         }
 

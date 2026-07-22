@@ -6,6 +6,7 @@ use Lkt\CodeMaker\DTO\FieldGeneratorData;
 use Lkt\CodeMaker\FieldGeneration\BooleanFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ColorFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ConstantValueFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\DateTimeFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\EmailFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\EncryptFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\FileFieldGenerator;
@@ -130,10 +131,7 @@ class FieldsCodeHelper
                 $methods[] = FloatFieldGenerator::generateCode($fieldGeneratorData);
 
             } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
-                $templateData['formats'] = $field->getFormats();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/datetime-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $methods[] = DateTimeFieldGenerator::generateCode($fieldGeneratorData);
 
             } elseif ($field instanceof ForeignKeysField || $field instanceof RelatedField || $field instanceof RelatedKeysField) {
 

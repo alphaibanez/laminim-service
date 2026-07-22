@@ -13,6 +13,7 @@ use Lkt\CodeMaker\FieldGeneration\FloatFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ForeignKeyFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\JsonFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
@@ -97,6 +98,7 @@ class FieldsCodeHelper
                 $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
                 $methods[] = IntegerChoiceFieldGenerator::generateCode($fieldGeneratorData);
                 continue;
+
             } elseif ($field instanceof IntegerField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
@@ -118,7 +120,7 @@ class FieldsCodeHelper
                 continue;
 
 
-            }elseif ($field instanceof EmailField) {
+            } elseif ($field instanceof EmailField) {
                 $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
                 continue;
 
@@ -177,7 +179,7 @@ class FieldsCodeHelper
                         $relatedIdentifiers = $relatedSchema->getIdentifiers();
                         $additionalInput = [];
                         $additionalInputDetection = [];
-                        foreach ($relatedIdentifiers  as $relatedIdentifier) {
+                        foreach ($relatedIdentifiers as $relatedIdentifier) {
                             if ($relatedIdentifier->getColumn() === $field->getColumn()) continue;
 
                             $relatedIdentifierSchema = Schema::get($relatedIdentifier->getComponent());
@@ -256,10 +258,12 @@ class FieldsCodeHelper
             }
 
             if ($field instanceof JSONField) {
-                $templateData['isAssoc'] = $field->isAssoc();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/json-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $methods[] = JsonFieldGenerator::generateCode($fieldGeneratorData);
+
+//                $templateData['isAssoc'] = $field->isAssoc();
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/json-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
                 continue;
             }
 
@@ -386,7 +390,7 @@ class FieldsCodeHelper
                     $relatedIdentifiers = $nestedComposedSchema->getIdentifiers();
                     $_additionalInput = [];
                     $_additionalInputDetection = [];
-                    foreach ($relatedIdentifiers  as $relatedIdentifier) {
+                    foreach ($relatedIdentifiers as $relatedIdentifier) {
                         if ($nestedCompositionLevel === 1 && $relatedIdentifier->getColumn() === $compositionField->getColumn()) continue;
 
                         $relatedIdentifierSchema = Schema::get($relatedIdentifier->getComponent());
@@ -402,8 +406,12 @@ class FieldsCodeHelper
                         $_additionalInputDetection[] = "'{$relatedIdentifier->getName()}' => \${$relatedIdentifier->getName()} instanceOf AbstractInstance ? (int)\${$relatedIdentifier->getName()}?->getIdColumnValue() : \${$relatedIdentifier->getName()}";
                     }
 
-                    $_additionalInput = array_filter($_additionalInput, function ($d) { return trim($d) !== ''; });
-                    $_additionalInputDetection = array_filter($_additionalInputDetection, function ($d) { return trim($d) !== ''; });
+                    $_additionalInput = array_filter($_additionalInput, function ($d) {
+                        return trim($d) !== '';
+                    });
+                    $_additionalInputDetection = array_filter($_additionalInputDetection, function ($d) {
+                        return trim($d) !== '';
+                    });
 
                     $additionalInput = implode(', ', $_additionalInput);
                     $additionalInputDetection = implode(', ', $_additionalInputDetection);

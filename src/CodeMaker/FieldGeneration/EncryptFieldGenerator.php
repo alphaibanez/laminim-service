@@ -41,7 +41,7 @@ class EncryptFieldGenerator implements FieldGenerator
 
         } else {
             $enumClass = $this->getEnumChoiceClass();
-            $r[] = "public function set{$this->data->methodName}(string{$enumClass} \${$this->data->fieldName}):static { \$this->encryptData->has('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}(string{$enumClass} \${$this->data->fieldName}):static { \$this->encryptData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
         }
 
         return implode(' ', $r);

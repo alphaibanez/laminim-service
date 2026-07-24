@@ -5,6 +5,7 @@ namespace Lkt\CodeMaker\Helpers;
 use Lkt\CodeMaker\DTO\FieldGeneratorData;
 use Lkt\CodeMaker\FieldGeneration\BooleanFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ColorFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\ConcatFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ConstantValueFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\DateTimeFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\EmailFieldGenerator;
@@ -232,9 +233,7 @@ class FieldsCodeHelper
                     ->parse();
 
             } elseif ($field instanceof ConcatField) {
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/concat-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $methods[] = ConcatFieldGenerator::generateCode($fieldGeneratorData);
 
             } elseif ($field instanceof BooleansComputedField) {
                 $templateData['allRequired'] = BooleansComputedField::getAllConditionRequiredString($field, $schema);

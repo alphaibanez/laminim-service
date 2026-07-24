@@ -3,6 +3,7 @@
 namespace Lkt\CodeMaker;
 
 use Lkt\CodeMaker\Helpers\FieldsCodeHelper;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
@@ -42,16 +43,23 @@ class CodeMaker
                 $implements = "implements {$implements};";
             }
 
-            $traits = $instanceSettings?->getUsedTraitsAsString();
-            if ($traits !== ''){
-                $traits = "use {$traits};";
+            $traits = [];
+            $instanceTraits = $instanceSettings?->getUsedTraitsAsString();
+            if ($instanceTraits !== ''){
+                $traits[] = $instanceTraits;
             }
 
             $namespace = $instanceSettings?->getNamespaceForGeneratedClass();
 
 
-            $methods = FieldsCodeHelper::makeFieldsCode($schema);
+            $methodsData = FieldsCodeHelper::makeFieldsCode($schema);
+            $methods = $methodsData['methods'];
+            $methodsTraits = $methodsData['traits'];
+            if ($methodsTraits !== ''){
+                $traits[] = $methodsTraits;
+            }
 
+            $traitsStr = 'use ' . implode(',', $traits) . ';';
 
             $relatedQueryCaller = $schema->getInstanceSettings()?->getQueryCallerFQDN();
 
@@ -67,7 +75,7 @@ class CodeMaker
                 'className' => $instanceSettings?->getClassNameForGeneratedClass(),
                 'extends' => $extends,
                 'implements' => $implements,
-                'traits' => $traits,
+                'traits' => $traitsStr,
                 'namespace' => $namespace,
                 'methods' => $methods,
                 'returnSelf' => $returnSelf,

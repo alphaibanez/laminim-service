@@ -3,13 +3,11 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\Relations\RelatedKeysMergeHelper;
-use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Where;
@@ -36,9 +34,16 @@ final class RelatedItemsDataController
         $this->item = $ins;
     }
 
-    public function has(string $key): bool
+    public function has(
+        string     $key,
+        Where|null $where = null,
+        int|null   $page = null,
+        int|null   $itemsPerPage = null,
+        array      $additionalData = [],
+        bool       $forceRefresh = false
+    ): bool
     {
-        $v = $this->getItems($key);
+        $v = $this->getItems($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
         return is_array($v) && count($v) > 0;
     }
 
@@ -369,7 +374,7 @@ final class RelatedItemsDataController
 
         } else {
 
-            $targetComponent = $field->getComponent($this->schema,$this->item);
+            $targetComponent = $field->getComponent($this->schema, $this->item);
 
             $builder = QueryBuilderHelper::prepareRelatedQuery(
                 $this->item,

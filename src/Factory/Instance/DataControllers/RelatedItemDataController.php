@@ -59,9 +59,9 @@ final class RelatedItemDataController
         return null;
     }
 
-    public function has(string $key): bool
+    public function has(string $key, array $additionalData = []): bool
     {
-        return $this->getItem($key) !== null;
+        return $this->getItem($key, $additionalData) !== null;
     }
 
     public function __debugInfo() {

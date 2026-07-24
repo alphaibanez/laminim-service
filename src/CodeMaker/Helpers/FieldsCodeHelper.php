@@ -16,6 +16,7 @@ use Lkt\CodeMaker\FieldGeneration\ForeignKeyFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\JsonFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
 use Lkt\Debug\VarDumper;
@@ -53,7 +54,7 @@ use Lkt\Templates\Template;
 
 class FieldsCodeHelper
 {
-    public static function makeFieldsCode(Schema $schema): string
+    public static function makeFieldsCode(Schema $schema): array
     {
         $instanceSettings = $schema->getInstanceSettings();
 
@@ -155,6 +156,11 @@ class FieldsCodeHelper
                     $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
                     $relatedQueryCaller = $relatedSchema->getInstanceSettings()->getQueryCallerFQDN();
 
+                    $fieldGeneratorData->relatedComponent = $relatedComponent;
+                    $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
+                    $fieldGeneratorData->relatedReturnType = $relatedClassName;
+                    $fieldGeneratorData->relatedQueryBuilder = $relatedQueryCaller;
+
                     $templateData['component'] = $relatedComponent;
                     $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
                     $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '[]';
@@ -181,7 +187,17 @@ class FieldsCodeHelper
 
                         $templateData['additionalInput'] = implode(', ', $additionalInput);
                         $templateData['additionalInputDetection'] = implode(', ', $additionalInputDetection);
+
+                        $fieldGeneratorData->additionalInput = implode(', ', $additionalInput);
+                        $fieldGeneratorData->additionalInputDetection = implode(', ', $additionalInputDetection);
                     }
+                }
+
+                if ($field->isSoftTyped()) {
+                    $templateData['relatedClassName'] = '';
+                    $templateData['relatedReturnClass'] = '';
+                    $fieldGeneratorData->relatedReturnAnnotation = '';
+                    $fieldGeneratorData->relatedReturnType = '';
                 }
 
                 if ($field instanceof RelatedField) {
@@ -189,12 +205,11 @@ class FieldsCodeHelper
                     if ($field->isSingleMode()) {
                         $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '|null';
                         $templateData['singleReturnType'] = ': ?\\' . $relatedClassName;
-                    }
-                }
 
-                if ($field->isSoftTyped()) {
-                    $templateData['relatedClassName'] = '';
-                    $templateData['relatedReturnClass'] = '';
+//                        $methods[] = RelatedFieldGenerator::generateCode($fieldGeneratorData);
+//                        $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
+//                        continue;
+                    }
                 }
 
                 if ($field instanceof ForeignKeysField) {
@@ -477,6 +492,14 @@ class FieldsCodeHelper
             }
         }
 
-        return implode("\n", $methods);
+        $traitsUsageString = '';
+        if (count($traitsUsage) > 0) {
+            $traitsUsageString = '\\' . implode(',\\', $traitsUsage);
+        }
+
+        return [
+            'methods' => implode("\n", $methods),
+            'traits' => $traitsUsageString,
+        ];
     }
 }

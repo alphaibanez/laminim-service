@@ -819,7 +819,7 @@ trait ItemWithDataTrait
             return $this->foreignKeysData->has($key);
 
         } elseif ($field instanceof RelatedField) {
-            if ($field->isSingleMode()) return $this->relatedItemData->has($key);
+            if ($field->isSingleMode()) return $this->relatedItemData->has($key, $additionalData);
             return $this->relatedItemsData->has($key);
 
         } elseif ($field instanceof RelatedKeysField) {

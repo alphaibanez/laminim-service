@@ -13,6 +13,9 @@ class FieldGeneratorData
     public string $relatedComponent = '';
     public string $relatedReturnAnnotation = '';
     public string $relatedReturnType = '';
+    public string $relatedQueryBuilder = '';
+    public string $additionalInput = '';
+    public string $additionalInputDetection = '';
 
     public array $options = [];
     public array $comparatorsIn = [];

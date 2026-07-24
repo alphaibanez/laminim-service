@@ -89,6 +89,7 @@ abstract class AbstractInstance implements Item
         ItemWithConcatDataTrait,
         ItemWithMultipleStringDataTrait;
 
+    // @todo these traits must be automatically generated in order to remove AbstractInstance extension
     use ItemWithIdentifierValueTrait,
         ItemWithDataTrait,
         ItemWithAccessPolicyTrait,
@@ -139,12 +140,6 @@ abstract class AbstractInstance implements Item
     public static function getQueryBuilder()
     {
         return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
-    }
-
-    /** @deprecated */
-    public function getComponent(): string|null
-    {
-        return static::COMPONENT;
     }
 
     public function getSchema(): Schema|null

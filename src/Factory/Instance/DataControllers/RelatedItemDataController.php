@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Schema;
 
@@ -11,6 +12,7 @@ final class RelatedItemDataController
 {
     private array $data = [];
     private array $payload = [];
+    private array $needsUpdate = [];
 
     private Schema $schema;
     private Item $item;
@@ -62,6 +64,105 @@ final class RelatedItemDataController
     public function has(string $key, array $additionalData = []): bool
     {
         return $this->getItem($key, $additionalData) !== null;
+    }
+
+
+
+    public function setItem(string $key, array $data, string $accessPolicy = 'lkt-related')
+    {
+        $field = $this->schema->getKindOfRelatedField($key);
+        if (!$field) return null;
+
+        $accessPolicyUsage = $this->item->getAccessPolicyUsage();
+
+        if ($accessPolicyUsage) {
+            $customRelationAccessPolicy = $field->getAssociatedAccessPolicy($accessPolicyUsage->name);
+            if ($customRelationAccessPolicy) $accessPolicy = $customRelationAccessPolicy;
+        }
+
+        $relatedComponent = $field->getComponent($this->schema, $this->item);
+        if ($relatedComponent === '') return null;
+
+        $relatedSchema = Schema::get($relatedComponent);
+        $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+        $relatedIdentifiers = $relatedSchema->getIdentifiers();
+
+        $itemsWithFedData = [];
+        foreach ($this->data as &$datum) {
+            if (is_array($datum)) {
+
+                $constructorData = [];
+
+                foreach ($relatedIdentifiers as $relatedIdentifier) {
+                    $name = $relatedIdentifier->getName();
+                    // @todo detect $this->item applied access policy
+                    // and change the name var in order of avoid missing refs
+                    // in case a field name was overwritten
+                    if (!$datum[$name]) {
+                        if (method_exists($field, 'getRelatedComponentFeeds')) {
+                            foreach ($field->getRelatedComponentFeeds() as $relatedColumnKey => $relatedColumnValue) {
+                                if (is_callable($relatedColumnValue)) {
+                                    $relatedColumnValue = call_user_func_array($relatedColumnValue, [
+                                        'referrer' => $this->item
+                                    ]);
+                                }
+                                if (!$datum[$relatedColumnKey]) $datum[$relatedColumnKey] = $relatedColumnValue;
+                            }
+                        }
+                    }
+
+                    $constructorData[$name] = $datum[$name];
+                }
+
+                /** @var Item $instance */
+                $instance = call_user_func_array([$relatedClass, 'getInstance'], $constructorData);
+                if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
+                $instance->feed($datum);
+
+            } else if (is_numeric($datum)) {
+                $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum]);
+
+            }
+
+            if ($instance) {
+                $itemsWithFedData[] = $instance;
+            }
+        }
+
+        // @remember Changes won't be persistent until $this->item was saved!
+        $this->needsUpdate[$key] = $itemsWithFedData;
+        $this->payload[$key] = $data;
+    }
+
+    public function save(): self
+    {
+        /**
+         * @var string $key
+         * @var array[] $items
+         */
+        foreach ($this->needsUpdate as $key => $item) {
+
+            $field = $this->schema->getKindOfRelatedField($key);
+
+            $relatedComponent = $field->getComponent($this->schema, $this->item);
+            $relatedSchema = Schema::get($relatedComponent);
+            /** @var AbstractInstance $relatedClass */
+            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+
+
+            /** @var Item $ins */
+            $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
+            $ins->feedAndSave($item);
+        }
+
+        $this->needsUpdate = [];
+
+        return $this;
+    }
+
+    public function hasToSave(): bool
+    {
+        return count($this->needsUpdate) > 0;
     }
 
     public function __debugInfo() {

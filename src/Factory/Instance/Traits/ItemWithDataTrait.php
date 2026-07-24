@@ -495,6 +495,18 @@ trait ItemWithDataTrait
             }
         }
 
+        if (isset($this->relatedItemData)) {
+            if ($this->relatedItemData->hasToSave()) {
+                $this->relatedItemData->save();
+            }
+        }
+
+        if (isset($this->relatedItemsData)) {
+            if ($this->relatedItemsData->hasToSave()) {
+                $this->relatedItemsData->save();
+            }
+        }
+
         // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item
         if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
             VarDumper::die('@todo PENDING_PARENT_FOREIGN_KEYS');

@@ -265,7 +265,6 @@ final class RelatedItemsDataController
                 $instance = call_user_func_array([$relatedClass, 'getInstance'], $constructorData);
                 if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
                 $instance->feed($datum);
-//                $instance::feedInstance($instance, $datum);
 
             } else if (is_numeric($datum)) {
                 $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum]);
@@ -324,9 +323,9 @@ final class RelatedItemsDataController
                     $ins->delete();
                 }
             }
-
-
         }
+
+        $this->needsUpdate = [];
 
         return $this;
     }
@@ -423,5 +422,10 @@ final class RelatedItemsDataController
         }
 
         return $builder;
+    }
+
+    public function hasToSave(): bool
+    {
+        return count($this->needsUpdate) > 0;
     }
 }

@@ -18,6 +18,7 @@ use Lkt\CodeMaker\FieldGeneration\IntegerFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\JsonFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringBelowMaxLengthComputedField;
@@ -60,6 +61,7 @@ class FieldsCodeHelper
         $returnSelf = '\\' . $className;
 
         $methods = [];
+        $traitsUsage = [];
 
         foreach ($schema->getFields() as $field) {
 
@@ -89,6 +91,7 @@ class FieldsCodeHelper
                 $fieldGeneratorData->relatedReturnType = $relatedClassName;
                 $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
                 $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = ForeignKeyFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof IntegerChoiceField) {
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
@@ -97,10 +100,12 @@ class FieldsCodeHelper
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
                 $methods[] = IntegerChoiceFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = IntegerChoiceFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof IntegerField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = IntegerFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof StringChoiceField) {
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
@@ -109,30 +114,38 @@ class FieldsCodeHelper
                 $fieldGeneratorData->isMultiple = false;
                 $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
                 $methods[] = StringChoiceFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = StringChoiceFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof ValueListField) {
                 $fieldGeneratorData->isMultiple = true;
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
 
 
             } elseif ($field instanceof EmailField) {
                 $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = EmailFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof StringField || $field instanceof HTMLField) {
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof EncryptField) {
                 $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = EncryptFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof BooleanField) {
                 $methods[] = BooleanFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = BooleanFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof FloatField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = FloatFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = FloatFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
                 $methods[] = DateTimeFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = DateTimeFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof ForeignKeysField || $field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
@@ -216,16 +229,20 @@ class FieldsCodeHelper
             } elseif ($field instanceof FileField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();
                 $methods[] = FileFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = FileFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof ColorField) {
                 $methods[] = ColorFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = ColorFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof ConstantValueField) {
                 $fieldGeneratorData->getterReturnType = $field->getConstantValueType();
                 $methods[] = ConstantValueFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = ConstantValueFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof JSONField) {
                 $methods[] = JsonFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = JsonFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof RelatedKeysMergeField) {
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-merge-field.phtml')
@@ -234,6 +251,7 @@ class FieldsCodeHelper
 
             } elseif ($field instanceof ConcatField) {
                 $methods[] = ConcatFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = ConcatFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof BooleansComputedField) {
                 $templateData['allRequired'] = BooleansComputedField::getAllConditionRequiredString($field, $schema);
@@ -287,6 +305,18 @@ class FieldsCodeHelper
                     ->parse();
             }
         }
+
+        $finalTraitsUsage = [];
+        foreach ($traitsUsage as $traits) {
+            foreach ($traits as $t) {
+                if (!in_array($t, $finalTraitsUsage, true)) {
+                    $finalTraitsUsage[] = $t;
+                }
+            }
+        }
+
+        $traitsUsage = array_unique($finalTraitsUsage);
+        sort($traitsUsage);
 
         foreach ($schema->getCompositionFields() as $compositionField) {
             $compositionFieldName = $compositionField->getName();

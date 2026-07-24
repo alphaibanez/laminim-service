@@ -4,6 +4,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 
 class ForeignKeyFieldGenerator implements FieldGenerator
 {
@@ -49,5 +51,12 @@ class ForeignKeyFieldGenerator implements FieldGenerator
             $this->getGetters(),
             $this->getSetters(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithForeignKeyDataTrait::class
+        ];
     }
 }

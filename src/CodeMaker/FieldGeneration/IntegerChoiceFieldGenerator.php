@@ -4,6 +4,10 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithMultipleIntegerDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 
 class IntegerChoiceFieldGenerator implements FieldGenerator
 {
@@ -140,5 +144,17 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
             $this->getOptionsMethods(),
             $this->getComparatorsInMethods(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        if ($field instanceof IntegerField && $field->isMultiple()) {
+            return [
+                ItemWithMultipleIntegerDataTrait::class
+            ];
+        }
+        return [
+            ItemWithIntegerDataTrait::class
+        ];
     }
 }

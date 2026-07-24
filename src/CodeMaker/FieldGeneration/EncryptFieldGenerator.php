@@ -4,6 +4,9 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 
@@ -72,5 +75,12 @@ class EncryptFieldGenerator implements FieldGenerator
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithEncryptDataTrait::class
+        ];
     }
 }

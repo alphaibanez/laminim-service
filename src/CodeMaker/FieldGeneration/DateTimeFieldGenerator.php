@@ -5,6 +5,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
@@ -60,5 +62,12 @@ class DateTimeFieldGenerator implements FieldGenerator
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithDateDataTrait::class
+        ];
     }
 }

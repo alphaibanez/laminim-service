@@ -4,6 +4,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithFileDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 
 class FileFieldGenerator implements FieldGenerator
 {
@@ -77,5 +79,12 @@ class FileFieldGenerator implements FieldGenerator
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithFileDataTrait::class
+        ];
     }
 }

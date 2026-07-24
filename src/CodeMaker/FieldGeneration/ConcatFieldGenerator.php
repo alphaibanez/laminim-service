@@ -4,6 +4,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithConcatDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 
 class ConcatFieldGenerator implements FieldGenerator
 {
@@ -34,5 +36,12 @@ class ConcatFieldGenerator implements FieldGenerator
             $this->getGetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithConcatDataTrait::class
+        ];
     }
 }

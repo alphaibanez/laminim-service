@@ -4,6 +4,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 
 class EmailFieldGenerator implements FieldGenerator
 {
@@ -44,5 +46,12 @@ class EmailFieldGenerator implements FieldGenerator
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithStringDataTrait::class
+        ];
     }
 }

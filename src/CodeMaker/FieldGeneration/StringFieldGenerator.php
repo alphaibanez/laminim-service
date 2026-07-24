@@ -4,6 +4,9 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithMultipleStringDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 
 class StringFieldGenerator implements FieldGenerator
@@ -79,5 +82,17 @@ class StringFieldGenerator implements FieldGenerator
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        if ($field instanceof ValueListField) {
+            return [
+                ItemWithMultipleStringDataTrait::class
+            ];
+        }
+        return [
+            ItemWithStringDataTrait::class
+        ];
     }
 }

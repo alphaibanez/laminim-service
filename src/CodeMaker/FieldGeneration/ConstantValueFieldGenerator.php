@@ -4,6 +4,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 
 class ConstantValueFieldGenerator implements FieldGenerator
 {
@@ -31,5 +33,12 @@ class ConstantValueFieldGenerator implements FieldGenerator
     public function parse(): string
     {
         return $this->getGetters();
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithConstantDataTrait::class
+        ];
     }
 }

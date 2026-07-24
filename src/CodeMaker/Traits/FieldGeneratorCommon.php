@@ -14,6 +14,7 @@ trait FieldGeneratorCommon
     {
         $this->data = $data;
     }
+
     public static function generateCode(FieldGeneratorData $data): string
     {
         return (new static($data))->parse();

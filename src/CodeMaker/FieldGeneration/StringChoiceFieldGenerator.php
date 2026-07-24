@@ -4,6 +4,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
 
 class StringChoiceFieldGenerator implements FieldGenerator
 {
@@ -135,5 +137,12 @@ class StringChoiceFieldGenerator implements FieldGenerator
             $this->getOptionsMethods(),
             $this->getComparatorsInMethods(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        return [
+            ItemWithStringDataTrait::class
+        ];
     }
 }

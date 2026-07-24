@@ -4,6 +4,10 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithMultipleFloatDataTrait;
+use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Schemas\Fields\FloatField;
 
 class FloatFieldGenerator implements FieldGenerator
 {
@@ -60,5 +64,17 @@ class FloatFieldGenerator implements FieldGenerator
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    public static function generateTraitsUsageCode(AbstractField $field): array
+    {
+        if ($field instanceof FloatField && $field->isMultiple()) {
+            return [
+                ItemWithMultipleFloatDataTrait::class
+            ];
+        }
+        return [
+            ItemWithFloatDataTrait::class
+        ];
     }
 }

@@ -19,7 +19,6 @@ use Lkt\CodeMaker\FieldGeneration\JsonFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringBelowMaxLengthComputedField;
@@ -200,28 +199,8 @@ class FieldsCodeHelper
                     $fieldGeneratorData->relatedReturnType = '';
                 }
 
-                if ($field instanceof RelatedField || $field instanceof ForeignKeysField || $field instanceof RelatedKeysField) {
-                    $methods[] = RelatedFieldGenerator::generateCode($fieldGeneratorData);
-                    $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
-                    continue;
-
-//                    $templateData['isSingleMode'] = $field->isSingleMode();
-//                    if ($field->isSingleMode()) {
-//                        $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '|null';
-//                        $templateData['singleReturnType'] = ': ?\\' . $relatedClassName;
-//                    }
-                }
-
-                if ($field instanceof ForeignKeysField) {
-                    $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/foreign-keys-field.phtml')
-                        ->setData($templateData)
-                        ->parse();
-
-                } elseif ($field instanceof RelatedKeysField) {
-                    $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-field.phtml')
-                        ->setData($templateData)
-                        ->parse();
-                }
+                $methods[] = RelatedFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof PivotField) {
 

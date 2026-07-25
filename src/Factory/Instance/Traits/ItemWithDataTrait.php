@@ -291,8 +291,6 @@ trait ItemWithDataTrait
         $origIdColumn = $schema->getIdColumn();
         $origIdColumn = $origIdColumn[0];
 
-        $id = 0;
-
         if (count($payload) > 0) {
 
             // Save current instance process
@@ -324,16 +322,7 @@ trait ItemWithDataTrait
                 if ($id > 0) {
                     $updatedData[$origIdColumn] = $id;
                 }
-
-//                $pendingPivotLinks = null;
-//                if (isset($this->pivotData) && $this->pivotData->hasToLink()) {
-//                    $pendingPivotLinks = $this->pivotData->getPendingLinks();
-//                }
                 $this->initialFeed($updatedData, true);
-                // Innecesario con el parámetro refreshing a true
-//                if ($pendingPivotLinks) {
-//                    foreach ($pendingPivotLinks as $k => $j) $this->pivotData->prepareToLink($k, $j);
-//                }
             }
         }
 
@@ -691,7 +680,11 @@ trait ItemWithDataTrait
             $this->foreignKeysData->set($key, $value);
 
         } elseif ($field instanceof RelatedField) {
-            $this->relatedItemsData->setItems($key, (array)$value);
+            if ($field->isSingleMode()) {
+                $this->relatedItemData->setItem($key, (array)$value);
+            } else {
+                $this->relatedItemsData->setItems($key, (array)$value);
+            }
 
         } elseif ($field instanceof PivotField) {
             $this->pivotData->setItems($key, (array)$value);

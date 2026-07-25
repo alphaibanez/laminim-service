@@ -68,7 +68,7 @@ final class RelatedItemDataController
 
 
 
-    public function setItem(string $key, array $data, string $accessPolicy = 'lkt-related')
+    public function setItem(string $key, array $item, string $accessPolicy = 'lkt-related')
     {
         $field = $this->schema->getKindOfRelatedField($key);
         if (!$field) return null;
@@ -85,77 +85,43 @@ final class RelatedItemDataController
 
         $relatedSchema = Schema::get($relatedComponent);
         $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
-        $relatedIdentifiers = $relatedSchema->getIdentifiers();
 
-        $itemsWithFedData = [];
-        foreach ($this->data as &$datum) {
-            if (is_array($datum)) {
+        $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
+        $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
 
-                $constructorData = [];
+        $instance = null;
 
-                foreach ($relatedIdentifiers as $relatedIdentifier) {
-                    $name = $relatedIdentifier->getName();
-                    // @todo detect $this->item applied access policy
-                    // and change the name var in order of avoid missing refs
-                    // in case a field name was overwritten
-                    if (!$datum[$name]) {
-                        if (method_exists($field, 'getRelatedComponentFeeds')) {
-                            foreach ($field->getRelatedComponentFeeds() as $relatedColumnKey => $relatedColumnValue) {
-                                if (is_callable($relatedColumnValue)) {
-                                    $relatedColumnValue = call_user_func_array($relatedColumnValue, [
-                                        'referrer' => $this->item
-                                    ]);
-                                }
-                                if (!$datum[$relatedColumnKey]) $datum[$relatedColumnKey] = $relatedColumnValue;
-                            }
-                        }
-                    }
+        if (is_array($item)) {
+            $instance = Instantiator::make($relatedComponent, $item);
 
-                    $constructorData[$name] = $datum[$name];
-                }
+        } elseif ($item instanceof $relatedClass) {
+            $instance = $item;
+        }
 
-                /** @var Item $instance */
-                $instance = call_user_func_array([$relatedClass, 'getInstance'], $constructorData);
-                if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
-                $instance->feed($datum);
+        if ($instance instanceof  $relatedClass) {
+            if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
+            $instance->feed($item);
 
-            } else if (is_numeric($datum)) {
-                $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum]);
-
-            }
-
-            if ($instance) {
-                $itemsWithFedData[] = $instance;
+            if (true || !$instance->hasAssignedValue($relatedFieldPointingMeKey)) {
+                $instance->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
             }
         }
 
         // @remember Changes won't be persistent until $this->item was saved!
-        $this->needsUpdate[$key] = $itemsWithFedData;
-        $this->payload[$key] = $data;
+        $this->needsUpdate[$key] = $instance;
+        $this->payload[$key] = $item;
     }
 
     public function save(): self
     {
         /**
          * @var string $key
-         * @var array[] $items
+         * @var Item[] $items
          */
-        foreach ($this->needsUpdate as $key => $item) {
-
-            $field = $this->schema->getKindOfRelatedField($key);
-
-            $relatedComponent = $field->getComponent($this->schema, $this->item);
-            $relatedSchema = Schema::get($relatedComponent);
-            /** @var AbstractInstance $relatedClass */
-            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
-
-
-            /** @var Item $ins */
-            $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
-            $ins->feedAndSave($item);
-        }
+        foreach ($this->needsUpdate as $key => $item) $item->save();
 
         $this->needsUpdate = [];
+        $this->payload = [];
 
         return $this;
     }
@@ -168,6 +134,7 @@ final class RelatedItemDataController
     public function __debugInfo() {
         return [
             'data' => $this->data,
+            'needsUpdate' => $this->needsUpdate,
         ];
     }
 }

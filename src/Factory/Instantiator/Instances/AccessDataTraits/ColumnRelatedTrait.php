@@ -186,26 +186,7 @@ trait ColumnRelatedTrait
      */
     protected function _setRelatedValWithData($type = '', $column = '', $data = [])
     {
-        VarDumper::die('toca hacer esto');
-        $schema = Schema::get(static::COMPONENT);
-        $accessPolicy = 'lkt-related';
-        $field = $schema->getField($column);
-        if ($this->accessPolicy) {
-            $auxAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
-            if ($auxAccessPolicy) $accessPolicy = $auxAccessPolicy;
-        }
-
-        $dataProcessor = new UpdatedRelatedDataProcessor(
-            $schema,
-            $column,
-            $data,
-            $this,
-            $accessPolicy
-        );
-        $dataProcessor->processRelatedField();
-
-        $this->PENDING_UPDATE_RELATED_DATA[$column] = $dataProcessor->pendingUpdateData;
-        $this->UPDATED_RELATED_DATA[$column] = $dataProcessor->updatedData;
+        $this->relatedItemsData->setItems($column, $data);
         return $this;
     }
 

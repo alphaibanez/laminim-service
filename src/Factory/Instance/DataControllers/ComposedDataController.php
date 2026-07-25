@@ -29,6 +29,7 @@ final class ComposedDataController
 
     public function getItem(string $key, array $additionalData = []): Item|null
     {
+        // @todo: sometimes, it returns null. An anonymous item should be ensured
         return $this->item->retrieveValue($key, $additionalData, RetrieveDataMode::Item);
     }
 

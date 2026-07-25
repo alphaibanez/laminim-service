@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -49,22 +50,37 @@ trait ItemWithInstanceFactoryTrait
             return $r;
         }
 
-        $codeId = is_array($id) ? implode('-', $id) : $id;
-
         $schema = Schema::get(static::COMPONENT);
-        $code = $schema->getInstanceCode([], $codeId);
+        $code = is_array($id)
+            ? $schema->getInstanceCode($id)
+            : $schema->getInstanceCode([], $id)
+        ;
 
+        // Match anonymous instance feed with an array of data
+        if (str_ends_with($code, '_')) {
+            $r = new static($initialData);
+            if (is_array($id) && count($initialData) === 0) {
+                $r->feed($id);
+            }
+            InstanceCache::store($code, $r);
+            return InstanceCache::load($code);
+        }
+
+        // Match already cached instance
         if (InstanceCache::inCache($code)) {
             $cached = InstanceCache::load($code);
             return $cached;
         }
 
+        // Traditional blank scenery: instance when given a numeric id and an array of initial data
         if (count($initialData) > 0) {
-            $r = new static($initialData);
+            $r = new static();
+            $r->feed($initialData);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
         }
 
+        // Database fetch
         $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
         $builder = $dbIntegration->query;
         $schema = $dbIntegration->schema;
@@ -78,7 +94,10 @@ trait ItemWithInstanceFactoryTrait
             return InstanceCache::load($code);
         }
 
-        return new static($initialData);
+        // Fallback anonymous instance
+        $r = new static();
+        $r->feed($initialData);
+        return $r;
     }
 
     /**

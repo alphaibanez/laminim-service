@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -212,6 +213,7 @@ final class RelatedItemsDataController
     {
         return [
             'data' => $this->data,
+            'needsUpdate' => $this->needsUpdate,
         ];
     }
 
@@ -232,46 +234,30 @@ final class RelatedItemsDataController
 
         $relatedSchema = Schema::get($relatedComponent);
         $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
-        $relatedIdentifiers = $relatedSchema->getIdentifiers();
+
+        $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
+        $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
 
         $itemsWithFedData = [];
-        foreach ($this->data as &$datum) {
-            if (is_array($datum)) {
 
-                $constructorData = [];
+        foreach ($items as $item) {
+            $instance = null;
 
-                foreach ($relatedIdentifiers as $relatedIdentifier) {
-                    $name = $relatedIdentifier->getName();
-                    // @todo detect $this->item applied access policy
-                    // and change the name var in order of avoid missing refs
-                    // in case a field name was overwritten
-                    if (!$datum[$name]) {
-                        if (method_exists($field, 'getRelatedComponentFeeds')) {
-                            foreach ($field->getRelatedComponentFeeds() as $relatedColumnKey => $relatedColumnValue) {
-                                if (is_callable($relatedColumnValue)) {
-                                    $relatedColumnValue = call_user_func_array($relatedColumnValue, [
-                                        'referrer' => $this->item
-                                    ]);
-                                }
-                                if (!$datum[$relatedColumnKey]) $datum[$relatedColumnKey] = $relatedColumnValue;
-                            }
-                        }
-                    }
+            if (is_array($item)) {
+                $instance = Instantiator::make($relatedComponent, $item);
 
-                    $constructorData[$name] = $datum[$name];
-                }
-
-                /** @var Item $instance */
-                $instance = call_user_func_array([$relatedClass, 'getInstance'], $constructorData);
-                if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
-                $instance->feed($datum);
-
-            } else if (is_numeric($datum)) {
-                $instance = call_user_func_array([$relatedClass, 'getInstance'], [$datum]);
-
+            } elseif ($item instanceof $relatedClass) {
+                $instance = $item;
             }
 
-            if ($instance) {
+            if ($instance instanceof  $relatedClass) {
+                if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
+                $instance->feed($item);
+
+                if (true || !$instance->hasAssignedValue($relatedFieldPointingMeKey)) {
+                    $instance->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
+                }
+
                 $itemsWithFedData[] = $instance;
             }
         }
@@ -285,7 +271,7 @@ final class RelatedItemsDataController
     {
         /**
          * @var string $key
-         * @var array[] $items
+         * @var Item[] $items
          */
         foreach ($this->needsUpdate as $key => $items) {
 
@@ -299,19 +285,31 @@ final class RelatedItemsDataController
             $currentIds = $this->getItemsIds($key, null, null, null, [], true);
             $updatedIds = [];
 
-            $updatedInstances = [];
+
+            $itemsToCreate = [];
+            $itemsToUpdate = [];
+            $itemsToDelete = [];
 
             foreach ($items as $item) {
-                /** @var Item $ins */
-                $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
-                $ins->feed($item);
-                $updatedInstances[] = $ins;
-                $updatedIds[] = $ins->getIdColumnValue();
+                if ($item->isAnonymous()) {
+                    $itemsToCreate[] = $item;
+
+                } else {
+                    $itemsToUpdate[] = $item;
+                    $updatedIds[] = $item->getIdColumnValue();
+                }
             }
 
-            if (count($updatedInstances) > 0) {
-                $batchActions = $relatedClass::getBatchActions($updatedInstances);
+            // Update instances
+            if (count($itemsToUpdate) > 0) {
+                $batchActions = $relatedClass::getBatchActions($itemsToUpdate);
                 $batchActions->update();
+            }
+
+            // Create instances
+            if (count($itemsToCreate) > 0) {
+                $batchActions = $relatedClass::getBatchActions($itemsToCreate);
+                $batchActions->create();
             }
 
             $diff = compareArrays($currentIds, $updatedIds);
@@ -326,6 +324,7 @@ final class RelatedItemsDataController
         }
 
         $this->needsUpdate = [];
+        $this->payload = [];
 
         return $this;
     }

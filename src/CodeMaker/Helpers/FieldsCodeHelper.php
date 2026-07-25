@@ -16,6 +16,7 @@ use Lkt\CodeMaker\FieldGeneration\ForeignKeyFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\IntegerFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\JsonFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\PivotFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
@@ -208,13 +209,21 @@ class FieldsCodeHelper
                 $relatedSchema = Schema::get($relatedComponent);
 
                 $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
-                $templateData['component'] = $relatedComponent;
-                $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
-                $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '[]';
+//                $templateData['component'] = $relatedComponent;
+//                $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
+//                $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '[]';
 
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/pivot-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $fieldGeneratorData->relatedComponent = $relatedComponent;
+                $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
+                $fieldGeneratorData->relatedReturnType = $relatedClassName;
+
+
+                $methods[] = PivotFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = PivotFieldGenerator::generateTraitsUsageCode($field);
+
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/pivot-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
 
             } elseif ($field instanceof FileField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();

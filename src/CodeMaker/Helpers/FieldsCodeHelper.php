@@ -200,7 +200,7 @@ class FieldsCodeHelper
                     $fieldGeneratorData->relatedReturnType = '';
                 }
 
-                if ($field instanceof RelatedField) {
+                if ($field instanceof RelatedField || $field instanceof ForeignKeysField) {
                     $methods[] = RelatedFieldGenerator::generateCode($fieldGeneratorData);
                     $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
                     continue;

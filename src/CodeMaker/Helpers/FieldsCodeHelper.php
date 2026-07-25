@@ -205,11 +205,11 @@ class FieldsCodeHelper
                     $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
                     continue;
 
-                    $templateData['isSingleMode'] = $field->isSingleMode();
-                    if ($field->isSingleMode()) {
-                        $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '|null';
-                        $templateData['singleReturnType'] = ': ?\\' . $relatedClassName;
-                    }
+//                    $templateData['isSingleMode'] = $field->isSingleMode();
+//                    if ($field->isSingleMode()) {
+//                        $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '|null';
+//                        $templateData['singleReturnType'] = ': ?\\' . $relatedClassName;
+//                    }
                 }
 
                 if ($field instanceof ForeignKeysField) {
@@ -217,10 +217,6 @@ class FieldsCodeHelper
                         ->setData($templateData)
                         ->parse();
 
-                } elseif ($field instanceof RelatedField) {
-                    $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-field.phtml')
-                        ->setData($templateData)
-                        ->parse();
                 } elseif ($field instanceof RelatedKeysField) {
                     $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-field.phtml')
                         ->setData($templateData)

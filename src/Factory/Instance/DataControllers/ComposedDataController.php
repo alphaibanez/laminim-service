@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -107,6 +108,7 @@ final class ComposedDataController
     public function prepareAdditionalData(string $key, array $additionalData = []): array
     {
         $compositionValuesFields = $key ? $this->schema->getCompositionValueFields($key) : $this->schema->getAllCompositionValueFields();
+
         /**
          * @var  $key
          * @var AbstractField $compositionValueField

@@ -703,6 +703,14 @@ trait ItemWithDataTrait
             if (!$this->composedData->hasComposedInstance($key)) {
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($key);
                 if (!$fieldComposingThisField) return null;
+
+                $relatedComponent = $fieldComposingThisField->getComponent($schema, $this);
+                $relatedSchema = Schema::get($relatedComponent);
+                $relatedField = $relatedSchema->getField($fieldComposingThisField->getColumn());
+                if ($relatedField) {
+                    $additionalData[$relatedField->getName()] = $this->getIdColumnValue();
+                }
+
                 /** @var Item $composedInstance */
                 $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
                 $this->composedData->setComposedInstance($key, $composedInstance);
@@ -855,6 +863,14 @@ trait ItemWithDataTrait
             if (!$this->composedData->hasComposedInstance($key)) {
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($key);
                 if (!$fieldComposingThisField) return null;
+
+                $relatedComponent = $fieldComposingThisField->getComponent($schema, $this);
+                $relatedSchema = Schema::get($relatedComponent);
+                $relatedField = $relatedSchema->getField($fieldComposingThisField->getColumn());
+                if ($relatedField) {
+                    $additionalData[$relatedField->getName()] = $this->getIdColumnValue();
+                }
+
                 /** @var Item $composedInstance */
                 $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
                 $this->composedData->setComposedInstance($key, $composedInstance);

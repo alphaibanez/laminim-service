@@ -32,7 +32,7 @@ class RelatedFieldGenerator implements FieldGenerator
             }
             $r[] = "public function get{$this->data->methodName}({$this->data->additionalInput}){$this->getRelatedReturnTypeFormatted()} { {$additionalInputDetection}return \$this->relatedItemData->getItem('{$this->data->fieldName}', \$additionalData); }";
 
-        } elseif ($field instanceof RelatedField) {
+        } elseif ($field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
             if ($returnAnnotation) $r[] = "/** {$returnAnnotation}[] */";
 
@@ -90,7 +90,7 @@ class RelatedFieldGenerator implements FieldGenerator
         if ($field instanceof RelatedField && $field->isSingleMode()) {
             $r[] = "public function has{$this->data->methodName}({$this->data->additionalInput}):bool { {$additionalInputDetection}return \$this->relatedItemData->has('{$this->data->fieldName}', \$additionalData); }";
 
-        } elseif ($field instanceof RelatedField) {
+        } elseif ($field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
             $additionalInput = $this->data->additionalInput;
             if ($additionalInput !== '') $additionalInput = ", {$additionalInput}";

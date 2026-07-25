@@ -201,14 +201,14 @@ class FieldsCodeHelper
                 }
 
                 if ($field instanceof RelatedField) {
+                    $methods[] = RelatedFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
+                    continue;
+
                     $templateData['isSingleMode'] = $field->isSingleMode();
                     if ($field->isSingleMode()) {
                         $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '|null';
                         $templateData['singleReturnType'] = ': ?\\' . $relatedClassName;
-
-//                        $methods[] = RelatedFieldGenerator::generateCode($fieldGeneratorData);
-//                        $traitsUsage[] = RelatedFieldGenerator::generateTraitsUsageCode($field);
-//                        continue;
                     }
                 }
 

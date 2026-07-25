@@ -39,11 +39,11 @@ class RelatedFieldGenerator implements FieldGenerator
 
             $additionalInput = $this->data->additionalInput;
             if ($additionalInput !== '') $additionalInput = ", {$additionalInput}";
-            $r[] = "public function get{$this->data->methodName}(Where|null \$where = null, int|null \$page, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): array|null { {$additionalInputDetection}return \$this->relatedItemsData->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData); }";
+            $r[] = "public function get{$this->data->methodName}(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): array|null { {$additionalInputDetection}return \$this->relatedItemsData->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData); }";
 
             $r[] = "public function get{$this->data->methodName}Page(int|null \$page, Where|null \$where = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): array|null { return \$this->relatedItemsData->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
-            $r[] = "public function get{$this->data->methodName}Count(string|null \$countableField, Where|null \$where = null): array|null { return \$this->relatedItemsData->getItemsCount('{$this->data->fieldName}', \$where, \$countableField); }";
-            $r[] = "public function get{$this->data->methodName}Count(string|null \$countableField, Where|null \$where = null, int|null \$itemsPerPage = null): array|null { return \$this->relatedItemsData->getItemsAmountOfPages('{$this->data->fieldName}', \$where, \$countableField, \$itemsPerPage); }";
+            $r[] = "public function get{$this->data->methodName}Count(string|null \$countableField = null, Where|null \$where = null): int|null { return \$this->relatedItemsData->getItemsCount('{$this->data->fieldName}', \$where, \$countableField); }";
+            $r[] = "public function get{$this->data->methodName}AmountOfPages(string|null \$countableField = null, Where|null \$where = null, int|null \$itemsPerPage = null): int|null { return \$this->relatedItemsData->getItemsAmountOfPages('{$this->data->fieldName}', \$where, \$countableField, \$itemsPerPage); }";
         }
 
         return implode(' ', $r);
@@ -83,7 +83,7 @@ class RelatedFieldGenerator implements FieldGenerator
 
             $additionalInput = $this->data->additionalInput;
             if ($additionalInput !== '') $additionalInput = ", {$additionalInput}";
-            $r[] = "public function has{$this->data->methodName}(Where|null \$where = null, int|null \$page, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): array|null { {$additionalInputDetection}return \$this->relatedItemsData->has('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+            $r[] = "public function has{$this->data->methodName}(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): bool { {$additionalInputDetection}return \$this->relatedItemsData->has('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
 
         }
         return implode(' ', $r);

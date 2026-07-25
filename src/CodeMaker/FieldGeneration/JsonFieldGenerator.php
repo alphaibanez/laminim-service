@@ -38,10 +38,10 @@ class JsonFieldGenerator implements FieldGenerator
 
         if ($this->data->field instanceof JSONField) {
             if ($this->data->field->isAssoc()) {
-                $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { return \$this->jsonData->set('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+                $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->jsonData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return  \$this;}";
 
             } else {
-                $r[] = "public function set{$this->data->methodName}(\StdClass \${$this->data->fieldName}):static { return \$this->jsonData->set('{$this->data->fieldName}', \${$this->data->fieldName}); }";
+                $r[] = "public function set{$this->data->methodName}(\StdClass \${$this->data->fieldName}):static { \$this->jsonData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return  \$this;}";
             }
         }
 

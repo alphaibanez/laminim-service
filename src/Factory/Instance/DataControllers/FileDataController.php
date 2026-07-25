@@ -66,7 +66,7 @@ final class FileDataController
         return $this->item::getSchemaStorePath($this) ?? $file->directory->path;
     }
 
-    protected function getFileName(string $key, int $index = 0): string
+    public function getFileName(string $key, int $index = 0): string
     {
         $field = $this->schema->getFileField($key);
 

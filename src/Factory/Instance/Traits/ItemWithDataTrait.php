@@ -484,16 +484,12 @@ trait ItemWithDataTrait
             }
         }
 
-        if (isset($this->relatedItemData)) {
-            if ($this->relatedItemData->hasToSave()) {
-                $this->relatedItemData->save();
-            }
+        if (isset($this->relatedItemData) && $this->relatedItemData->hasToSave()) {
+            $this->relatedItemData->save();
         }
 
-        if (isset($this->relatedItemsData)) {
-            if ($this->relatedItemsData->hasToSave()) {
-                $this->relatedItemsData->save();
-            }
+        if (isset($this->relatedItemsData) && $this->relatedItemsData->hasToSave()) {
+            $this->relatedItemsData->save();
         }
 
         // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item

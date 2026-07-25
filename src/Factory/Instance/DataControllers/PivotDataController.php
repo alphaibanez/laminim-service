@@ -116,21 +116,22 @@ final class PivotDataController
 
         if (isset($this->data[$cacheKey])) return $this->data[$cacheKey];
 
-        /** @var Schema $pivotSchema */
-        $pivotSchema = $field->getPivotSchema();
-
-        $pivotIdentifiers = $pivotSchema->getIdentifiers();
-        $pivotForeignColumn = null;
-        foreach ($pivotIdentifiers as $identifier) {
-            if ($identifier instanceof PivotLeftIdField || $identifier instanceof PivotRightIdField) {
-                if ($identifier->getComponent() === $field->getComponent($this->schema, $this->item)) {
-                    $pivotForeignColumn = $identifier;
-                    break;
-                }
-            }
-        }
-
-        $toSchema = Schema::get($pivotForeignColumn->getComponent());
+//        /** @var Schema $pivotSchema */
+//        $pivotSchema = $field->getPivotSchema();
+//
+//        $pivotIdentifiers = $pivotSchema->getIdentifiers();
+//        $pivotForeignColumn = null;
+//        foreach ($pivotIdentifiers as $identifier) {
+//            if ($identifier instanceof PivotLeftIdField || $identifier instanceof PivotRightIdField) {
+//                if ($identifier->getComponent() === $field->getComponent($this->schema, $this->item)) {
+//                    $pivotForeignColumn = $identifier;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        $toSchema = Schema::get($pivotForeignColumn->getComponent());
+        $toSchema = Schema::get($field->getTargetComponent($this->schema, $this->item));
 
         $query = QueryBuilderHelper::preparePivotQuery($this->item, $field, $forceRefresh);
         $results = Instantiator::makeResults($toSchema->getComponent(), $query->select());

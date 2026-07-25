@@ -51,7 +51,7 @@ Schema::add(
         ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
         ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
 
-        ->addField(PivotField::definePivot(LktShoppingSubscription::COMPONENT, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LktShoppingOrderPivotSubscription::COMPONENT)
+        ->addField(PivotField::definePivot(LktShoppingOrder::COMPONENT, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LktShoppingOrderPivotSubscription::COMPONENT)
             ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
             ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingSubscription::COMPONENT, 'subscription', 'subscription_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))

@@ -20,6 +20,7 @@ use Lkt\CodeMaker\FieldGeneration\PivotFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringBelowMaxLengthComputedField;
@@ -205,13 +206,10 @@ class FieldsCodeHelper
 
             } elseif ($field instanceof PivotField) {
 
-                $relatedComponent = $field->getComponent();
+                $relatedComponent = $field->getTargetComponent($schema);
                 $relatedSchema = Schema::get($relatedComponent);
 
                 $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
-//                $templateData['component'] = $relatedComponent;
-//                $templateData['relatedClassName'] = ':?\\' . $relatedClassName;
-//                $templateData['relatedReturnClass'] = '@return \\' . $relatedClassName . '[]';
 
                 $fieldGeneratorData->relatedComponent = $relatedComponent;
                 $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
@@ -220,10 +218,6 @@ class FieldsCodeHelper
 
                 $methods[] = PivotFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = PivotFieldGenerator::generateTraitsUsageCode($field);
-
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/pivot-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
 
             } elseif ($field instanceof FileField) {
                 $fieldGeneratorData->isMultiple = $field->isMultiple();

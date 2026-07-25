@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
@@ -99,5 +100,23 @@ class PivotField extends AbstractField
     public function getQueryBuilderGetter(): string
     {
         return $this->getGetterForPrimitiveValue() . 'QueryBuilder';
+    }
+
+    public function getTargetComponent(Schema|null $schema = null, Item|null $item = null): string|null
+    {
+        $pivotSchema = $this->getPivotSchema();
+
+        $pivotIdentifiers = $pivotSchema->getIdentifiers();
+        $pivotForeignColumn = null;
+        foreach ($pivotIdentifiers as $identifier) {
+            if ($identifier instanceof PivotLeftIdField || $identifier instanceof PivotRightIdField) {
+                if ($identifier->getComponent() === $this->getComponent($schema, $item)) {
+                    $pivotForeignColumn = $identifier;
+                    break;
+                }
+            }
+        }
+
+        return $pivotForeignColumn->getComponent();
     }
 }

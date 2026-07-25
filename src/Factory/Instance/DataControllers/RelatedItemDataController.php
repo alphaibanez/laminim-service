@@ -102,7 +102,7 @@ final class RelatedItemDataController
             if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
             $instance->feed($item);
 
-            if (true || !$instance->hasAssignedValue($relatedFieldPointingMeKey)) {
+            if (!$instance->hasAssignedValue($relatedFieldPointingMeKey)) {
                 $instance->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
             }
         }

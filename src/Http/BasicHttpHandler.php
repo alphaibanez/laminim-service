@@ -246,7 +246,7 @@ class BasicHttpHandler
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
         $rawResults = $helperInstance::getPage($request->page, $builder);
-        $batchActions = $helperInstance::getBatchActions($rawResults);
+        $batchActions = $schema->getBatchActions($rawResults);
         $results = $batchActions->read($accessPolicy);
 
         $perm = [];
@@ -279,8 +279,7 @@ class BasicHttpHandler
         if (!$request->targetComponent) return Response::badRequest();
 
         $schema = Schema::get($request->targetComponent);
-        $helperInstance = $schema->getItemInstance();
-        $builder = $helperInstance::getQueryCaller();
+        $builder = $schema->getQueryBuilder();
 
         if ($request->accessLevel === AccessLevel::OnlyAdminUsers) {
             if (!$request->loggedUser) return Response::forbidden();
@@ -307,8 +306,8 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        $rawResults = $helperInstance::getMany($builder);
-        $batchActions = $helperInstance::getBatchActions($rawResults);
+        $rawResults = $schema->getMany($builder);
+        $batchActions = $schema->getBatchActions($rawResults);
         $results = $batchActions->read($accessPolicy);
 //        foreach ($rawResults as $rawResult) {
 //            if ($accessPolicy) {

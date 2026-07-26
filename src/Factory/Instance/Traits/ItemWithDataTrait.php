@@ -1000,8 +1000,7 @@ trait ItemWithDataTrait
                 }
 
             } else {
-                $helperInstance = $relatedSchema->getItemInstance();
-                $batchActions = $helperInstance::getBatchActions((array)$items);
+                $batchActions = $relatedSchema->getBatchActions((array)$items);
                 $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
 //                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);
             }

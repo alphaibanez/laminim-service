@@ -303,13 +303,13 @@ final class RelatedItemsDataController
 
             // Update instances
             if (count($itemsToUpdate) > 0) {
-                $batchActions = $relatedClass::getBatchActions($itemsToUpdate);
+                $batchActions = $relatedSchema->getBatchActions($itemsToUpdate);
                 $batchActions->update();
             }
 
             // Create instances
             if (count($itemsToCreate) > 0) {
-                $batchActions = $relatedClass::getBatchActions($itemsToCreate);
+                $batchActions = $relatedSchema->getBatchActions($itemsToCreate);
                 $batchActions->create();
             }
 

@@ -84,6 +84,9 @@ trait ItemWithCrudTrait
                 continue;
             }
 
+            if ($field instanceof RelatedKeysField && $responseKey === $field->getAppendForeignKeysName()) {
+                continue;
+            }
             $dataToAdd = $this->readValue($field->getName(), $responseKey);
             foreach ($dataToAdd as $z => $y) $r[$z] = $y;
         }

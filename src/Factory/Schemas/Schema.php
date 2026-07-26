@@ -5,6 +5,7 @@ namespace Lkt\Factory\Schemas;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
+use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
@@ -1652,5 +1653,10 @@ final class Schema
         }
 
         return $this;
+    }
+
+    public function getBatchActions(array $items): BatchActions
+    {
+        return BatchActions::fromComponent($this->getComponent(), $items);
     }
 }

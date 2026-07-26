@@ -3,7 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
-use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -214,6 +214,7 @@ final class RelatedItemsDataController
         return [
             'data' => $this->data,
             'needsUpdate' => $this->needsUpdate,
+            'appendItemsInParentForeignKeysFieldStack' => $this->appendItemsInParentForeignKeysFieldStack,
         ];
     }
 
@@ -329,24 +330,55 @@ final class RelatedItemsDataController
         return $this;
     }
 
+    public function hasToAppendItemsInParentForeignKeysField(): bool
+    {
+        return count($this->appendItemsInParentForeignKeysFieldStack) > 0;
+    }
+
     public function prepareToAppendItemsInParentForeignKeysField(string $key, int|array $parentIdentifierValue): self
     {
-        $this->appendItemsInParentForeignKeysFieldStack[$key] = $parentIdentifierValue;
+        $field = $this->schema->getRelatedKeysField($key);
+
+        $this->appendItemsInParentForeignKeysFieldStack[$field->getName()] = $parentIdentifierValue;
         return $this;
     }
 
-    public function appendItemsInParentForeignKeysField(string $key): self
+    public function appendItemsInParentForeignKeysField(): self
     {
-        $field = $this->schema->getRelatedKeysField($key);
-        if (!$field) return $this;
+        $idColumnValue = $this->item->getIdColumnValue();
 
+        foreach ($this->appendItemsInParentForeignKeysFieldStack as $key => $id) {
 
-        $relatedId = $this->appendItemsInParentForeignKeysFieldStack[$key];
-        if (!is_array($relatedId)) {
-            $relatedId = [$relatedId];
+            $field = $this->schema->getRelatedKeysField($key);
+            if (!$field) continue;
+
+            $relatedSchema = Schema::get($field->getComponent($this->schema, $this->item));
+            $relatedSchemaField = $relatedSchema->getField($field->getColumn());
+            $relatedDatum = $relatedSchemaField->getName();
+
+            $parentIds = is_array($id) ? $id : [$id];
+            $instancesToUpdate = [];
+            foreach ($parentIds as $parentId) {
+                $parentInstance = $relatedSchema->getItemInstance($parentId);
+                if (!$parentInstance->isAnonymous()) {
+                    $currentIds = $parentInstance->retrieveValue($relatedDatum, [], RetrieveDataMode::Ids);
+
+                    if (!in_array($idColumnValue, $currentIds)) {
+                        $parentInstance->assignValue($relatedDatum, [
+                            ...$currentIds, $idColumnValue
+                        ], RetrieveDataMode::Ids);
+
+                        $instancesToUpdate[] = $parentInstance;
+                    }
+                }
+            }
+
+            if (count($instancesToUpdate) > 0) {
+                $batchActions = $relatedSchema->getBatchActions($instancesToUpdate);
+                $batchActions->update();
+            }
         }
 
-        // @todo
 
         return $this;
     }

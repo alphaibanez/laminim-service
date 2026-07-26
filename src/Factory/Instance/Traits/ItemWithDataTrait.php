@@ -63,11 +63,11 @@ trait ItemWithDataTrait
             ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
             ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
             ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
-            ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData)
             ->initJSONData($schema, $this, $groupedData->jsonData)
             ->initFileData($schema, $this, $groupedData->fileData)
             ->initMultipleStringData($schema, $this, $groupedData->multipleStringData)
 
+            ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData, $refreshing)
             ->initPivotData($schema, $this, $refreshing)
             ->initComposedData($schema, $this, $refreshing)
 
@@ -180,7 +180,8 @@ trait ItemWithDataTrait
             }
 
             // Common primitive value fields (included composed elements thanks to generated setter detection  approach)
-            $this->assignValue($field->getName(), $value);
+            $key = $field instanceof RelatedKeysField && $param === $field->getAppendForeignKeysName() ? $param : $field->getName();
+            $this->assignValue($key, $value);
         }
 
         if (count($composedInstances) > 0) {
@@ -488,21 +489,13 @@ trait ItemWithDataTrait
             $this->relatedItemData->save();
         }
 
-        if (isset($this->relatedItemsData) && $this->relatedItemsData->hasToSave()) {
-            $this->relatedItemsData->save();
-        }
+        if (isset($this->relatedItemsData)) {
+            if ($this->relatedItemsData->hasToSave()) {
+                $this->relatedItemsData->save();
+            }
 
-        // @check Creo que esto ya no sirve, ya que ahora se asignan los valores antes de actualizar este item
-        if (count($this->PENDING_PARENT_FOREIGN_KEYS) > 0) {
-            VarDumper::die('@todo PENDING_PARENT_FOREIGN_KEYS');
-            foreach ($this->PENDING_PARENT_FOREIGN_KEYS as $field => $relatedId) {
-                if (is_array($relatedId)) {
-                    foreach ($relatedId as $value) {
-                        if ($value !== null) $this->_saveAppendToParentForeignKeys($field, $value);
-                    }
-                } else {
-                    $this->_saveAppendToParentForeignKeys($field, $relatedId);
-                }
+            if ($this->relatedItemsData->hasToAppendItemsInParentForeignKeysField()) {
+                $this->relatedItemsData->appendItemsInParentForeignKeysField();
             }
         }
 
@@ -629,7 +622,7 @@ trait ItemWithDataTrait
      * @throws SchemaNotDefinedException
      * @throws \Lkt\Factory\Schemas\Exceptions\DuplicatedValueException
      */
-    public function assignValue(string $key, mixed $value): static
+    public function assignValue(string $key, mixed $value, RetrieveDataMode $mode = RetrieveDataMode::Auto): static
     {
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
@@ -684,6 +677,11 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof PivotField) {
             $this->pivotData->setItems($key, (array)$value);
+
+        } elseif ($field instanceof RelatedKeysField) {
+            if ($key === $field->getAppendForeignKeysName()) {
+                $this->relatedItemsData->prepareToAppendItemsInParentForeignKeysField($key, $value);
+            }
         }
 
         return $this;
@@ -761,6 +759,9 @@ trait ItemWithDataTrait
         } elseif ($field instanceof ForeignKeysField) {
             if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->foreignKeysData->get($key);
+            }
+            if ($dataMode === RetrieveDataMode::Ids) {
+                return $this->foreignKeysData->getIds($key);
             }
             return $this->foreignKeysData->getItems($key);
 

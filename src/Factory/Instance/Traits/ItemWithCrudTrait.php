@@ -199,6 +199,11 @@ trait ItemWithCrudTrait
         return $this->duplicate()->save();
     }
 
+    /**
+     * @deprecated use $schema->getBatchActions instead
+     * @param array $items
+     * @return BatchActions
+     */
     public static function getBatchActions(array $items): BatchActions
     {
         return BatchActions::fromComponent(static::COMPONENT, $items);

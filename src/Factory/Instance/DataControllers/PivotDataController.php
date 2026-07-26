@@ -291,20 +291,20 @@ final class PivotDataController
                 }
             }
 
-            $anonymous = $pivotSchema->getItemInstance();
+//            $anonymous = $pivotSchema->getItemInstance();
 
             if (count($itemsToCreate) > 0) {
-                $createBatchActions = $anonymous::getBatchActions($itemsToCreate);
+                $createBatchActions = $pivotSchema->getBatchActions($itemsToCreate);
                 $createBatchActions->create();
             }
 
             if (count($itemsToUpdate) > 0) {
-                $createBatchActions = $anonymous::getBatchActions($itemsToUpdate);
+                $createBatchActions = $pivotSchema->getBatchActions($itemsToUpdate);
                 $createBatchActions->update();
             }
 
             if (count($itemsToDelete) > 0) {
-                $createBatchActions = $anonymous::getBatchActions($itemsToDelete);
+                $createBatchActions = $pivotSchema->getBatchActions($itemsToDelete);
                 $createBatchActions->drop();
             }
         }

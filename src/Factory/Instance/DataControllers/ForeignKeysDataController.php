@@ -254,7 +254,7 @@ final class ForeignKeysDataController
             }
 
             if (count($updatedInstances) > 0) {
-                $batchActions = $relatedClass::getBatchActions($updatedInstances);
+                $batchActions = $relatedSchema->getBatchActions($updatedInstances);
                 $batchActions->update();
             }
 

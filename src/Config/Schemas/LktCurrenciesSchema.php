@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -13,7 +14,7 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCurrency;
 
 Schema::add(
-    Schema::table('lkt_currencies', LktCurrency::COMPONENT)
+    Schema::table('lkt_currencies', LaminimComponent::Currency->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktCurrency::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

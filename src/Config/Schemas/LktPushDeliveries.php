@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
@@ -14,7 +15,7 @@ use Lkt\Instances\LktPushNotification;
 use Lkt\PushNotifications\Enums\DeliveryStatus;
 
 Schema::add(
-    Schema::table('lkt_push_deliveries', LktPushDelivery::COMPONENT)
+    Schema::table('lkt_push_deliveries', LaminimComponent::PushDelivery->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktPushDelivery::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

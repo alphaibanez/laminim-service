@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IdField;
@@ -11,7 +12,7 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUserRole;
 
 Schema::add(
-    Schema::table('lkt_users_roles', LktUserRole::COMPONENT)
+    Schema::table('lkt_users_roles', LaminimComponent::UserRole->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktUserRole::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

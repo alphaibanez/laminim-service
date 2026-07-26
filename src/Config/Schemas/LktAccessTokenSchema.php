@@ -4,6 +4,7 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\AccessTokenDuration;
 use Lkt\Enums\AccessTokenPurpose;
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
@@ -14,7 +15,7 @@ use Lkt\Instances\LktAccessToken;
 use Lkt\Instances\LktUser;
 
 Schema::add(
-    Schema::table('lkt_access_token', LktAccessToken::COMPONENT)
+    Schema::table('lkt_access_token', LaminimComponent::AccessToken->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktAccessToken::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

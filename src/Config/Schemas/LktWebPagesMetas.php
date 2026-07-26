@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -15,7 +16,7 @@ use Lkt\Instances\LktWebPage;
 use Lkt\Instances\LktWebPageMetas;
 
 Schema::add(
-    Schema::table('lkt_web_pages__metas', LktWebPageMetas::COMPONENT)
+    Schema::table('lkt_web_pages__metas', LaminimComponent::WebPageMetas->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktWebPageMetas::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -13,7 +14,7 @@ use Lkt\Instances\LktFileFormat;
 
 
 Schema::add(
-    Schema::table('lkt_file_formats', LktFileFormat::COMPONENT)
+    Schema::table('lkt_file_formats', LaminimComponent::FileFormat->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktFileFormat::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

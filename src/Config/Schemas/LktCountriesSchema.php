@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -12,7 +13,7 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCountry;
 
 Schema::add(
-    Schema::table('lkt_countries', LktCountry::COMPONENT)
+    Schema::table('lkt_countries', LaminimComponent::Country->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktCountry::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

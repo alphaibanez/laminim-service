@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -14,7 +15,7 @@ use Lkt\Instances\LktShoppingOrder;
 use Lkt\Instances\LktShoppingOrderItem;
 
 Schema::add(
-    Schema::table('lkt_shopping_orders__items', LktShoppingOrderItem::COMPONENT)
+    Schema::table('lkt_shopping_orders__items', LaminimComponent::ShoppingOrderItem->value)
 
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingOrderItem::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
 

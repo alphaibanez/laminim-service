@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -14,7 +15,7 @@ use Lkt\Instances\LktContactRequest;
 use Lkt\Instances\LktUser;
 
 Schema::add(
-    Schema::table('lkt_contact_requests', LktContactRequest::COMPONENT)
+    Schema::table('lkt_contact_requests', LaminimComponent::ContactRequest->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktContactRequest::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
@@ -21,7 +22,7 @@ use Lkt\Instances\LktUser;
 use Lkt\Shop\Enums\SubscriptionStatus;
 
 Schema::add(
-    Schema::table('lkt_shopping_subscriptions', LktShoppingSubscription::COMPONENT)
+    Schema::table('lkt_shopping_subscriptions', LaminimComponent::ShoppingSubscription->value)
 
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
 

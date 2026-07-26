@@ -3,6 +3,7 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Config\Settings\UserSettings;
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -23,7 +24,7 @@ use Lkt\Users\Enums\ThemeMode;
 use Lkt\Users\Enums\UserStatus;
 
 Schema::add(
-    Schema::table('lkt_users', LktUser::COMPONENT)
+    Schema::table('lkt_users', LaminimComponent::User->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktUser::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

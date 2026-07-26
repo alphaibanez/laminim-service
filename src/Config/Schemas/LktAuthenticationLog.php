@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -17,7 +18,7 @@ use Lkt\Users\Enums\PerformedAuthAction;
 use Lkt\Users\Enums\UserStatus;
 
 Schema::add(
-    Schema::table('lkt_authentication_logs', LktAuthenticationLog::COMPONENT)
+    Schema::table('lkt_authentication_logs', LaminimComponent::AuthenticationLog->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktAuthenticationLog::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

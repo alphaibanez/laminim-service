@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -16,7 +17,7 @@ use Lkt\Shop\Enums\PaymentMethod;
 use Lkt\Shop\Enums\PaymentStatus;
 
 Schema::add(
-    Schema::table('lkt_shopping_orders__payments', LktShoppingOrderPayment::COMPONENT)
+    Schema::table('lkt_shopping_orders__payments', LaminimComponent::ShoppingOrderPayment->value)
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingOrderPayment::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
         ->setItemsPerPage(20)
         ->setCountableField('id')

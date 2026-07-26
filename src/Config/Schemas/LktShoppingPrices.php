@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -18,7 +19,7 @@ use Lkt\Shop\Enums\PriceCriteria;
 use Lkt\Shop\Enums\PriceType;
 
 Schema::add(
-    Schema::table('lkt_shopping_prices', LktShoppingPrice::COMPONENT)
+    Schema::table('lkt_shopping_prices', LaminimComponent::ShoppingPrice->value)
 
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingPrice::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
 

@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -25,7 +26,7 @@ use Lkt\Shop\Enums\CouponDiscountType;
 use Lkt\Shop\Enums\CouponType;
 
 Schema::add(
-    Schema::table('lkt_shopping_coupons', LktShoppingCoupon::COMPONENT)
+    Schema::table('lkt_shopping_coupons', LaminimComponent::ShoppingCoupon->value)
 
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
 

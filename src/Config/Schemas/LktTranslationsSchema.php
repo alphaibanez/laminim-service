@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -16,7 +17,7 @@ use Lkt\Instances\LktTranslation;
 use Lkt\Translations\Enums\TranslationType;
 
 Schema::add(
-    Schema::table('lkt_i18n', LktTranslation::COMPONENT)
+    Schema::table('lkt_i18n', LaminimComponent::Translation->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktTranslation::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

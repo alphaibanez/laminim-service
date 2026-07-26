@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IdField;
@@ -15,7 +16,7 @@ use Lkt\PushNotifications\Enums\NotificationStatus;
 use Lkt\PushNotifications\Enums\NotificationTargetType;
 
 Schema::add(
-    Schema::table('lkt_push_notifications', LktPushNotification::COMPONENT)
+    Schema::table('lkt_push_notifications', LaminimComponent::PushNotification->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktPushNotification::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

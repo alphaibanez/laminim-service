@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -15,7 +16,7 @@ use Lkt\Instances\LktHttpRequestLog;
 use Lkt\Instances\LktUser;
 
 Schema::add(
-    Schema::table('lkt_http_requests_logs', LktHttpRequestLog::COMPONENT)
+    Schema::table('lkt_http_requests_logs', LaminimComponent::HTTPRequestLog->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktHttpRequestLog::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

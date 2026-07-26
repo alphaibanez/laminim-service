@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -21,7 +22,7 @@ use Lkt\Instances\LktMenuPivotEntry;
 use Lkt\Instances\LktUser;
 
 Schema::add(
-    Schema::table('lkt_menus', LktMenu::COMPONENT)
+    Schema::table('lkt_menus', LaminimComponent::Menu->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktMenu::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

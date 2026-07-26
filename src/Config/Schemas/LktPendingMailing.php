@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Schemas;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
@@ -14,7 +15,7 @@ use Lkt\Instances\LktPendingMail;
 use Lkt\Mailing\Enums\QueuePriority;
 
 Schema::add(
-    Schema::table('lkt_mailing_queue', LktPendingMail::COMPONENT)
+    Schema::table('lkt_mailing_queue', LaminimComponent::PendingMail->value)
         ->setInstanceSettings(
             InstanceSettings::define(LktPendingMail::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')

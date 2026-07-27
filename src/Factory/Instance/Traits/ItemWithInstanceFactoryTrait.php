@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -28,7 +27,7 @@ trait ItemWithInstanceFactoryTrait
         if (!$id) {
             $r = new static($initialData);
 
-            $schema = Schema::get(static::COMPONENT);
+            $schema = $r->getSchema();
             $fields = $schema->getChoiceFieldsWithDefaultValue();
 
             if (count($fields)) {

@@ -47,7 +47,7 @@ trait ItemWithDataTrait
 {
     public function initialFeed(array $initialData = [], bool $refreshing = false): static
     {
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
         $groupedData = new GroupedData($schema, $initialData);
 
         $this
@@ -81,7 +81,7 @@ trait ItemWithDataTrait
     /** @todo puede que se pueda parametrizar initialFeed para que acepte un parámetro que agregue los valores por defecto */
     public function setData(array $initialData): static
     {
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
 
         foreach ($initialData as $column => $datum) {
             $field = $schema->getField($column);
@@ -202,7 +202,8 @@ trait ItemWithDataTrait
     {
         $isUpdate = !$this->isAnonymous();
 
-        $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
+        $schema = $this->getSchema();
+        $dbIntegration = ComponentDatabaseIntegration::from($schema->getComponent());
         $queryBuilder = $dbIntegration->query;
         $connection = $dbIntegration->databaseConnector;
         $schema = $dbIntegration->schema;
@@ -215,7 +216,7 @@ trait ItemWithDataTrait
 
         // Assign default values
         /** @var AbstractField $fieldsWithDefaultValue */
-        $fieldsWithDefaultValue = $schema->getFieldsToUpdateOnInstanceUpdate();
+        $fieldsWithDefaultValue = $isUpdate ? $schema->getFieldsToUpdateOnInstanceUpdate() : $schema->getFieldsWithDefaultValue();
         foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
             $defaultValueKey = $fieldWithDefaultValue->getName();
             if ($this->hasAssignedValue($defaultValueKey)) continue;
@@ -292,7 +293,7 @@ trait ItemWithDataTrait
         $origIdColumn = $schema->getIdColumn();
         $origIdColumn = $origIdColumn[0];
 
-        if (count($payload) > 0) {
+        if (count($parsed) > 0) {
 
             // Save current instance process
             $queryBuilder->updateData($parsed);
@@ -329,179 +330,181 @@ trait ItemWithDataTrait
 
         $hasToReUpdate = false;
 
-        if (count($pendingUploadBase64Files) > 0) {
-            foreach ($pendingUploadBase64Files as $fileFieldName => $fileFieldValue) {
-                $this->fileData->base64ToFile($fileFieldName, $fileFieldValue);
-                $hasToReUpdate = true;
+        if (!$this->isAnonymous()) {
+            if (count($pendingUploadBase64Files) > 0) {
+                foreach ($pendingUploadBase64Files as $fileFieldName => $fileFieldValue) {
+                    $this->fileData->base64ToFile($fileFieldName, $fileFieldValue);
+                    $hasToReUpdate = true;
+                }
             }
-        }
 
-        if (count($pendingUploadBase64MultipleFiles) > 0) {
-            foreach ($pendingUploadBase64MultipleFiles as $fileFieldName => $fileFieldValue) {
-                $this->fileData->base64ToFiles($fileFieldName, $fileFieldValue);
-                $hasToReUpdate = true;
+            if (count($pendingUploadBase64MultipleFiles) > 0) {
+                foreach ($pendingUploadBase64MultipleFiles as $fileFieldName => $fileFieldValue) {
+                    $this->fileData->base64ToFiles($fileFieldName, $fileFieldValue);
+                    $hasToReUpdate = true;
+                }
             }
-        }
 
-        if (isset($this->fileData) && $this->fileData->hasPendingHttpUploads()) {
-            foreach ($fileFields as $fileField) {
-                $this->fileData->httpUploadToFile($fileField->getName());
+            if (isset($this->fileData) && $this->fileData->hasPendingHttpUploads()) {
+                foreach ($fileFields as $fileField) {
+                    $this->fileData->httpUploadToFile($fileField->getName());
+                }
             }
-        }
 
-        // Update relational data
-        if ($isUpdate && count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
-            foreach ($this->PENDING_UPDATE_RELATED_DATA as $column => $data) {
+            // Update relational data
+            if ($isUpdate && count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
+                foreach ($this->PENDING_UPDATE_RELATED_DATA as $column => $data) {
 
-                if (count($data) === 0) continue;
+                    if (count($data) === 0) continue;
 
-                /** @var RelatedField $field */
-                $field = $schema->getField($column);
-                $relatedComponent = $field->getComponent($schema, $this);
+                    /** @var RelatedField $field */
+                    $field = $schema->getField($column);
+                    $relatedComponent = $field->getComponent($schema, $this);
 
-                if ($field instanceof ForeignKeysField && count($data) === 0) {
-                    $currentItems = $this->_getForeignListData($column);
-                    if (count($currentItems) === 0) continue;
-                }
-
-                $relatedSchema = Schema::get($relatedComponent);
-
-                $relatedIdColumn = $relatedSchema->getIdColumn()[0];
-                /** @var AbstractInstance $relatedClass */
-                $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
-
-                $relatedMode = false;
-                $foreignKeysMode = false;
-
-                $foreignKeysIds = [];
-
-                // Check which items must be deleted
-                if ($field instanceof RelatedField) {
-                    $relatedMode = true;
-                    $currentItems = $this->_getRelatedVal($relatedComponent, $column, true);
-
-                } elseif ($field instanceof ForeignKeysField) {
-                    $foreignKeysMode = true;
-                    $currentItems = $this->_getForeignListData($column);
-                }
-
-                $currentIds = [];
-
-                /** @var AbstractInstance[] $currentItems */
-                foreach ($currentItems as $currentItem) {
-                    $code = $relatedSchema->getInstanceCode($currentItem);
-                    if (!in_array($code, $currentIds, true)) $currentIds[] = $code;
-                }
-
-                $updatedIds = [];
-                foreach ($data as $datum) {
-                    $code = $relatedSchema->getInstanceCode($datum);
-                    if ($code) $updatedIds[] = $code;
-                }
-
-                $diff = compareArrays($currentIds, $updatedIds);
-
-                // Delete
-                if (method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
-                    foreach ($diff['deleted'] as $deletedId) {
-                        $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
-                        $ins->delete();
+                    if ($field instanceof ForeignKeysField && count($data) === 0) {
+                        $currentItems = $this->_getForeignListData($column);
+                        if (count($currentItems) === 0) continue;
                     }
-                }
 
-                if ($relatedMode) {
-                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
-                    $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
-                    if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
-                        if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
-                            $relatedForeignKeyKey .= 'Id';
+                    $relatedSchema = Schema::get($relatedComponent);
+
+                    $relatedIdColumn = $relatedSchema->getIdColumn()[0];
+                    /** @var AbstractInstance $relatedClass */
+                    $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+
+                    $relatedMode = false;
+                    $foreignKeysMode = false;
+
+                    $foreignKeysIds = [];
+
+                    // Check which items must be deleted
+                    if ($field instanceof RelatedField) {
+                        $relatedMode = true;
+                        $currentItems = $this->_getRelatedVal($relatedComponent, $column, true);
+
+                    } elseif ($field instanceof ForeignKeysField) {
+                        $foreignKeysMode = true;
+                        $currentItems = $this->_getForeignListData($column);
+                    }
+
+                    $currentIds = [];
+
+                    /** @var AbstractInstance[] $currentItems */
+                    foreach ($currentItems as $currentItem) {
+                        $code = $relatedSchema->getInstanceCode($currentItem);
+                        if (!in_array($code, $currentIds, true)) $currentIds[] = $code;
+                    }
+
+                    $updatedIds = [];
+                    foreach ($data as $datum) {
+                        $code = $relatedSchema->getInstanceCode($datum);
+                        if ($code) $updatedIds[] = $code;
+                    }
+
+                    $diff = compareArrays($currentIds, $updatedIds);
+
+                    // Delete
+                    if (method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
+                        foreach ($diff['deleted'] as $deletedId) {
+                            $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
+                            $ins->delete();
                         }
                     }
 
-                } elseif ($foreignKeysMode) {
-
-                    $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
-                    if ($relatedForeignKeyColumn instanceof RelatedKeysField) {
-                        $relatedForeignKeyKey = $relatedForeignKeyColumn?->getAppendForeignKeysName();
-                        if (!$relatedForeignKeyKey) $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
-
+                    if ($relatedMode) {
+                        $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
+                        $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
                         if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
                             if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
                                 $relatedForeignKeyKey .= 'Id';
                             }
                         }
-                    }
-                }
 
-                if (isset($this->accessPolicy) && $this->accessPolicy->name) {
-                    $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
-                }
-                if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';
+                    } elseif ($foreignKeysMode) {
 
+                        $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
+                        if ($relatedForeignKeyColumn instanceof RelatedKeysField) {
+                            $relatedForeignKeyKey = $relatedForeignKeyColumn?->getAppendForeignKeysName();
+                            if (!$relatedForeignKeyKey) $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
 
-                // Update or create
-                foreach ($data as $datum) {
-                    if ($relatedMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
-                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
-                    }
-                    elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
-                        $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
+                            if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
+                                if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
+                                    $relatedForeignKeyKey .= 'Id';
+                                }
+                            }
+                        }
                     }
 
-                    if ($datum[$relatedIdColumn] > 0) {
-                        $ins = $relatedClass::getInstance($datum[$relatedIdColumn]);
-                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
-                        $ins->autoUpdate($datum);
+                    if (isset($this->accessPolicy) && $this->accessPolicy->name) {
+                        $relatedAccessPolicy = $field->getAssociatedAccessPolicy($this->accessPolicy->name);
+                    }
+                    if (!$relatedAccessPolicy) $relatedAccessPolicy = 'lkt-related';
 
-                    } else {
-                        $ins = $relatedClass::getInstance();
-                        if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
-                        $ins->autoCreate($datum);
+
+                    // Update or create
+                    foreach ($data as $datum) {
+                        if ($relatedMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
+                            $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
+                        }
+                        elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
+                            $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
+                        }
+
+                        if ($datum[$relatedIdColumn] > 0) {
+                            $ins = $relatedClass::getInstance($datum[$relatedIdColumn]);
+                            if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
+                            $ins->feedAndSave($datum);
+
+                        } else {
+                            $ins = $relatedClass::getInstance();
+                            if ($relatedAccessPolicy) $ins->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
+                            $ins->feedAndSave($datum);
+                        }
+
+                        if ($foreignKeysMode) $foreignKeysIds[] = $ins->getId();
                     }
 
-                    if ($foreignKeysMode) $foreignKeysIds[] = $ins->getId();
+                    if ($foreignKeysMode && count($foreignKeysIds) > 0) {
+                        $setter = 'set' . ucfirst($field->getName());
+                        $this->{$setter}($foreignKeysIds);
+                        $hasToReUpdate = true;
+                    }
+                }
+                $this->PENDING_UPDATE_RELATED_DATA = [];
+            }
+
+            if ($hasToReUpdate) {
+                $this->save();
+            }
+
+            if (isset($this->pivotData)) {
+                if ($this->pivotData->hasToSave()) {
+                    $this->pivotData->save();
                 }
 
-                if ($foreignKeysMode && count($foreignKeysIds) > 0) {
-                    $setter = 'set' . ucfirst($field->getName());
-                    $this->{$setter}($foreignKeysIds);
-                    $hasToReUpdate = true;
+                if ($this->pivotData->hasToLink()) {
+                    $this->pivotData->linkPendingPivots();
                 }
             }
-            $this->PENDING_UPDATE_RELATED_DATA = [];
-        }
 
-        if ($hasToReUpdate) {
-            $this->save();
-        }
-
-        if (isset($this->pivotData)) {
-            if ($this->pivotData->hasToSave()) {
-                $this->pivotData->save();
+            if (isset($this->relatedItemData) && $this->relatedItemData->hasToSave()) {
+                $this->relatedItemData->save();
             }
 
-            if ($this->pivotData->hasToLink()) {
-                $this->pivotData->linkPendingPivots();
-            }
-        }
+            if (isset($this->relatedItemsData)) {
+                if ($this->relatedItemsData->hasToSave()) {
+                    $this->relatedItemsData->save();
+                }
 
-        if (isset($this->relatedItemData) && $this->relatedItemData->hasToSave()) {
-            $this->relatedItemData->save();
-        }
-
-        if (isset($this->relatedItemsData)) {
-            if ($this->relatedItemsData->hasToSave()) {
-                $this->relatedItemsData->save();
+                if ($this->relatedItemsData->hasToAppendItemsInParentForeignKeysField()) {
+                    $this->relatedItemsData->appendItemsInParentForeignKeysField();
+                }
             }
 
-            if ($this->relatedItemsData->hasToAppendItemsInParentForeignKeysField()) {
-                $this->relatedItemsData->appendItemsInParentForeignKeysField();
+            // Update composed data
+            if (isset($this->composedData) && $this->composedData->hasToSave()) {
+                $this->composedData->save();
             }
-        }
-
-        // Update composed data
-        if (isset($this->composedData) && $this->composedData->hasToSave()) {
-            $this->composedData->save();
         }
 
         if (isset($this->accessPolicy) && $this->accessPolicy->matchedEndOfLife(AccessPolicyEndOfLife::UntilNextWrite)) {
@@ -511,7 +514,7 @@ trait ItemWithDataTrait
         if ($reload) {
             $cacheCode = $schema->getInstanceCode($original);
             InstanceCache::clearCode($cacheCode);
-            return Instantiator::make(static::COMPONENT, $this->getIdColumnValue(), $original);
+            return Instantiator::make($schema->getComponent(), $this->getIdColumnValue(), $original);
         }
 
         return $this;

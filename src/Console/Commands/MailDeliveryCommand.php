@@ -4,6 +4,8 @@ namespace Lkt\Console\Commands;
 
 
 use Lkt\Connectors\MailConnector;
+use Lkt\Enums\LaminimComponent;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\LktPendingMailOrderBy;
 use Lkt\Instances\LktPendingMail;
 use Symfony\Component\Console\Command\Command;
@@ -41,7 +43,9 @@ class MailDeliveryCommand extends Command
 
         $connector = MailConnector::get($connector);
 
-        $mails = LktPendingMail::getMany(LktPendingMail::getQueryBuilder()->orderBy(LktPendingMailOrderBy::priorityDESC()->andIdDESC()));
+        $pendingMailSchema = Schema::get(LaminimComponent::PendingMail->value);
+
+        $mails = LktPendingMail::getMany($pendingMailSchema->getQueryBuilder()->orderBy(LktPendingMailOrderBy::priorityDESC()->andIdDESC()));
 
         foreach ($mails as $mail) {
             if ($mail->send($connector, $from) === true) $mail->delete();

@@ -50,7 +50,7 @@ Schema::add(
         ->addField(StringField::define('property'))
         ->addField(StringField::define('value')->setIsI18nJson())
         ->addField(AssocJSONField::define('valueData', 'value')->setIsI18nJson())
-        ->addField(ForeignKeyField::defineRelation(LktTranslation::COMPONENT, 'parent', 'parent_id'))
-        ->addField(RelatedField::defineRelation(LktTranslation::COMPONENT, 'children', 'parent_id')->setOrder(LktTranslationOrderBy::propertyASC()))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Translation->value, 'parent', 'parent_id'))
+        ->addField(RelatedField::defineRelation(LaminimComponent::Translation->value, 'children', 'parent_id')->setOrder(LktTranslationOrderBy::propertyASC()))
         ->addAccessPolicy('write', ['type', 'property', 'valueData', 'parent', 'children'])
 );

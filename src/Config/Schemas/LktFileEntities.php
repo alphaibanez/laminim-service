@@ -57,14 +57,14 @@ Schema::add(
                 ->setStorePath([LktFileEntity::class, 'getSchemaStorePath'])
                 ->setPublicPath([LktFileEntity::class, 'getSchemaPublicPath'])
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('embedCode', 'embed_code'))
         ->addField(AssocJSONField::define('config'))
         ->addField(
-            ForeignKeyField::defineRelation(LktFileEntity::COMPONENT, 'parent', 'parent_id')
+            ForeignKeyField::defineRelation(LaminimComponent::FileEntity->value, 'parent', 'parent_id')
         )
         ->addField(
-            RelatedField::defineRelation(LktFileEntity::COMPONENT, 'children', 'parent_id')
+            RelatedField::defineRelation(LaminimComponent::FileEntity->value, 'children', 'parent_id')
         )
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())

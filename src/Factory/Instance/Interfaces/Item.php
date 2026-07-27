@@ -3,7 +3,6 @@
 namespace Lkt\Factory\Instance\Interfaces;
 
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
-use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
@@ -60,7 +59,6 @@ interface Item
     public function duplicate(): static;
     public function saveDuplicate(): static;
     public function delete(): static;
-    public static function getBatchActions(array $items): BatchActions;
 
     public static function mkOrUp(array $data): static;
     public static function mkIfNot(array $data): static;
@@ -76,6 +74,10 @@ interface Item
     /**
      * @laminim
      * Instance factory
+     *
+     * @todo
+     * These methods should be deprecated and prefer $schema non-static method instantiation
+     * in order to be able to remove static COMPONENT constant
      */
     public static function getInstance($id = null, array $initialData = []): static;
     public static function getInstanceOrNull($id = null, array $initialData = []): static|null;

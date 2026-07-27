@@ -2,6 +2,8 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Enums\LaminimComponent;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktShoppingOrder;
 use Lkt\Shop\Enums\OrderStatus;
 
@@ -14,7 +16,7 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
         $this->setStatus($status)->save();
 
         $log = LktShoppingOrderStatusLog::getInstance();
-        $log->autoCreate([
+        $log->feedAndSave([
             'order' => $this->getId(),
             'status' => $status->value,
         ]);
@@ -35,7 +37,7 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
     public function addPayment(array $payload): LktShoppingOrderPayment
     {
         $payment = LktShoppingOrderPayment::getInstance();
-        return $payment->autoCreate([
+        return $payment->feedAndSave([
             ...$payload,
             'order' => $this->getId(),
         ]);
@@ -57,7 +59,8 @@ class LktShoppingOrder extends GeneratedLktShoppingOrder
             $items[] = $ins;
         }
 
-        $batchActions = LktShoppingOrderItem::getBatchActions($items);
+        $targetSchema = Schema::get(LaminimComponent::ShoppingOrderItem->value);
+        $batchActions = $targetSchema->getBatchActions($items);
         $batchActions->create();
 
         return $items;

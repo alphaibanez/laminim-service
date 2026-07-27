@@ -13,7 +13,6 @@ use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktAuthenticationLog;
-use Lkt\Instances\LktUser;
 use Lkt\Users\Enums\PerformedAuthAction;
 use Lkt\Users\Enums\UserStatus;
 
@@ -49,7 +48,7 @@ Schema::add(
         ->addField(StringField::define('clientOS', 'client_os'))
         ->addField(StringField::define('clientBrowser', 'client_browser'))
         ->addField(StringField::define('clientBrowserVersion', 'client_browser_version'))
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'))
         ->addField(IntegerChoiceField::enumChoice(UserStatus::class, 'userStatus', 'user_status')
             ->setDefaultValue(UserStatus::Undefined->value))
 

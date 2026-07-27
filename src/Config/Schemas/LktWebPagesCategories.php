@@ -36,13 +36,13 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('name')->setIsI18nJson()->setIsUnique())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(AssocJSONField::define('config'))
 
         ->addField(
-            RelatedField::defineRelation(LktWebPageMetas::COMPONENT, 'metas', 'webCategory')
+            RelatedField::defineRelation(LaminimComponent::WebPageMetas->value, 'metas', 'webCategory')
                 ->setSingleMode()
                 ->setCompositionContent([
                     'slug' => 'slug',

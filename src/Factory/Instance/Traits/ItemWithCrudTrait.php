@@ -36,7 +36,7 @@ trait ItemWithCrudTrait
 
     public function autoRead(array $internalMethodsArguments = []): array
     {
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
         if (isset($this->accessPolicy)) {
             $fields = $schema->getAccessPolicyFields($this->accessPolicy);
             $composedFields = $schema->getAccessPolicyComposedFields($this->accessPolicy);
@@ -63,7 +63,7 @@ trait ItemWithCrudTrait
      */
     public function readFields(array $fields = [], array $internalMethodsArguments = []): array
     {
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
         $r = [];
         foreach ($fields as $key => $field) {
             $responseKey = $key ?? $field->getName();
@@ -103,7 +103,7 @@ trait ItemWithCrudTrait
         $clone->setAccessPolicy('duplicate');
         $data = $this->autoRead();
         $payload = [];
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
         $includeDuplicatedTextInField = $schema->getIncludeDuplicatedTextInField();
 
         foreach ($data as $fieldName => $value) {
@@ -204,16 +204,19 @@ trait ItemWithCrudTrait
      * @param array $items
      * @return BatchActions
      */
-    public static function getBatchActions(array $items): BatchActions
+    public static function getBatchActions(array $items, string $component = null): BatchActions
     {
-        return BatchActions::fromComponent(static::COMPONENT, $items);
+        if (!$component) $component = static::COMPONENT;
+        return BatchActions::fromComponent($component, $items);
     }
 
     public function delete(): static
     {
         if ($this->isAnonymous()) return $this;
 
-        $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
+        $schema = $this->getSchema();
+
+        $dbIntegration = ComponentDatabaseIntegration::from($schema->getComponent());
         $caller = $dbIntegration->query;
         $connection = $dbIntegration->databaseConnector;
         $connector = $dbIntegration->databaseConnectorName;

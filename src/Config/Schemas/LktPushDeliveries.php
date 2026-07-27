@@ -10,8 +10,6 @@ use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktPushDelivery;
-use Lkt\Instances\LktPushDevice;
-use Lkt\Instances\LktPushNotification;
 use Lkt\PushNotifications\Enums\DeliveryStatus;
 
 Schema::add(
@@ -25,6 +23,6 @@ Schema::add(
         ->addField(DateTimeField::define('sentAt', 'sent_at'))
         ->addField(IdField::define('id'))
         ->addField(IntegerChoiceField::enumChoice(DeliveryStatus::class, 'status'))
-        ->addField(ForeignKeyField::defineRelation(LktPushDevice::COMPONENT, 'device', 'device_id'))
-        ->addField(ForeignKeyField::defineRelation(LktPushNotification::COMPONENT, 'notification', 'notification_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::PushDevice->value, 'device', 'device_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::PushNotification->value, 'notification', 'notification_id'))
 );

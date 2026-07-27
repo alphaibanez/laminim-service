@@ -217,7 +217,7 @@ class Router
                 if ($route->hasToBeLogged()) {
                     LktHttpRequestLog::getInstance()
                         ->setAccessPolicy('create')
-                        ->autoCreate([
+                        ->feedAndSave([
                             'route' => $route->getRoute(),
                             'method' => $route->getMethod(),
                             'responseStatus' => $response instanceof Response ? $response->getCode() : 0,

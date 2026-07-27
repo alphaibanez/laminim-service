@@ -33,7 +33,7 @@ Schema::add(
         )
         ->addField(IntegerChoiceField::enumChoice(PaymentStatus::class, 'status')->setDefaultValue(PaymentStatus::Pending->value))
         ->addField(IntegerChoiceField::enumChoice(PaymentMethod::class, 'paymentMethod', 'payment_method'))
-        ->addField(ForeignKeyField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id')->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id')->setOnReadIncludeOptions())
         ->addField(FloatField::define('amount')->setDefaultValue(0))
         ->addField(StringField::define('transactionID', 'transaction_id')->setDefaultValue(''))
         ->setRelatedAccessPolicy([

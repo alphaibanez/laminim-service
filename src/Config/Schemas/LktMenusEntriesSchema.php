@@ -17,7 +17,6 @@ use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Enums\AccessLevel;
-use Lkt\Instances\LktMenu;
 use Lkt\Instances\LktMenuEntry;
 use Lkt\Instances\LktMenuEntryPivotEntry;
 use Lkt\Instances\LktMenuPivotEntry;
@@ -57,15 +56,15 @@ Schema::add(
         ->addField(StringField::define('route')->setDefaultValue(''))
         ->addField(IntegerField::define('itemId', 'item_id'))
         ->addField(MethodGetterField::define('getReadMenuTo', 'to'))
-        ->addField(PivotField::definePivot(LktMenu::COMPONENT, 'lkt_menus__entries', 'menus', 'entry_id', LktMenuPivotEntry::COMPONENT)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktMenu::COMPONENT, 'menu', 'menu_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktMenuEntry::COMPONENT, 'entry', 'entry_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::Menu->value, 'lkt_menus__entries', 'menus', 'entry_id', LaminimComponent::MenuPivotEntry->value)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::Menu->value, 'menu', 'menu_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
-        ->addField(PivotField::definePivot(LktMenuEntry::COMPONENT, 'lkt_menus_entries__children', 'children', 'parent_id', LktMenuEntryPivotEntry::COMPONENT)
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktMenuEntry::COMPONENT, 'child', 'child_id'))
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktMenuEntry::COMPONENT, 'parent', 'parent_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::MenuEntry->value, 'lkt_menus_entries__children', 'children', 'parent_id', LaminimComponent::MenuEntryPivotMenuEntry->value)
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'child', 'child_id'))
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::MenuEntry->value, 'parent', 'parent_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktMenuEntryPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
             ->setRelatedAccessPolicies([

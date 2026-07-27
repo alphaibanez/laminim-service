@@ -2,6 +2,7 @@
 
 namespace Lkt\Config\Routing;
 
+use Lkt\Enums\LaminimComponent;
 use Lkt\Generated\LktAuthenticationLogOrderBy;
 use Lkt\Generated\LktAuthenticationLogQueryBuilder;
 use Lkt\Http\BasicHttpHandler;
@@ -17,7 +18,7 @@ class UsersRouting
         GetRoute::admin('/admin-api/user/{userId}/sign-in/history/page-{page}', BasicHttpHandler::Page)
             ->setTargetAccessPolicy('sign-in-history')
             ->setPageValueParamsExtractionKey('page')
-            ->setTargetComponent(LktAuthenticationLog::COMPONENT)
+            ->setTargetComponent(LaminimComponent::AuthenticationLog->value)
             ->addWebItemActionHookHandler(WebItemActionHookHandler::onPagePrepareQueryBuilder([static::class, 'signInHistory']))
         ;
     }

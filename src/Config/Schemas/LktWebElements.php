@@ -48,7 +48,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(IntegerField::define('type'))
         ->addField(StringField::define('component'))
         ->addField(AssocJSONField::define('props'))
@@ -56,6 +56,6 @@ Schema::add(
         ->addField(AssocJSONField::define('layout'))
         ->addField(AssocJSONField::define('subElements', 'sub_elements'))
         ->addField(
-            ForeignKeysField::defineRelation(LktWebElement::COMPONENT, 'children')
+            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'children')
         )
 );

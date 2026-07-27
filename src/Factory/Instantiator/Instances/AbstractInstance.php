@@ -147,11 +147,6 @@ abstract class AbstractInstance implements Item
         return Schema::get(static::COMPONENT);
     }
 
-    public static function getWhereBuilder(): Where
-    {
-        return Instantiator::getCustomWhere(static::COMPONENT);
-    }
-
 
     public static function getUniqueFilteredQueryBuilder(array $data): Query
     {
@@ -178,10 +173,19 @@ abstract class AbstractInstance implements Item
     }
 
     /**
+     * @deprecated Use $schema->getWhereBuilder instead
+     * @return Where
+     */
+    public static function getWhereBuilder(): Where
+    {
+        return Instantiator::getCustomWhere(static::COMPONENT);
+    }
+
+    /**
+     * @deprecated
      * @throws InvalidComponentException
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
-     * @deprecated
      */
     public function convertToComponent(string $component = ''): ?static
     {
@@ -264,9 +268,9 @@ abstract class AbstractInstance implements Item
     }
 
     /**
+     * @deprecated
      * @param AbstractField[] $fields
      * @return array
-     * @deprecated
      */
     public function readAsRelated(array $internalMethodsArguments = []): array
     {

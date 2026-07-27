@@ -17,9 +17,7 @@ use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktCurrency;
 use Lkt\Instances\LktShoppingCoupon;
-use Lkt\Instances\LktShoppingOrder;
 use Lkt\Instances\LktShoppingOrderPivotCoupon;
 use Lkt\Instances\LktUser;
 use Lkt\Shop\Enums\CouponDiscountType;
@@ -45,8 +43,8 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'owner', 'owned_by')->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'owner', 'owned_by')->setOnReadIncludeOptions())
 
         ->addField(StringField::define('code')->setIsUnique())
 
@@ -56,7 +54,7 @@ Schema::add(
         ->addField(IntegerChoiceField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global))
         ->addField(IntegerChoiceField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent))
         ->addField(FloatField::define('value', 'value')->setDefaultValue(0))
-        ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'))
 
         ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
         ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
@@ -67,9 +65,9 @@ Schema::add(
         ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
         ->addField(BooleanField::define('stackable', 'stackable')->setDefaultValue(false))
 
-        ->addField(PivotField::definePivot(LktShoppingCoupon::COMPONENT, 'lkt_shopping_orders__coupons', 'orders', 'coupon_id', LktShoppingOrderPivotCoupon::COMPONENT)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupon', 'coupon_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'orders', 'coupon_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )

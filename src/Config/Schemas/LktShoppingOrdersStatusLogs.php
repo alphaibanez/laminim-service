@@ -26,6 +26,6 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
         )
-        ->addField(ForeignKeyField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
         ->addField(IntegerChoiceField::enumChoice(OrderStatus::class, 'status'))
 );

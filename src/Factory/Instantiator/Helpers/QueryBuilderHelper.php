@@ -68,9 +68,8 @@ class QueryBuilderHelper
                 }
 
                 elseif ($field instanceof RelatedKeysField) {
-                    $anonymous = $relatedSchema->getItemInstance();
                     $column = $relatedField->getColumn();
-                    $where = $anonymous::getWhereBuilder()
+                    $where = $relatedSchema->getWhereBuilder()
                         ->orStringLike($column, ";{$idColumnValue};")
                         ->orStringLike($column, "{$idColumnValue}")
                         ->orStringEndsLike($column, "{$idColumnValue};")
@@ -93,10 +92,8 @@ class QueryBuilderHelper
                     }
 
                 } elseif ($field instanceof RelatedKeysField) {
-
-                    $anonymous = $relatedSchema->getItemInstance();
                     $column = $relatedField->getColumn();
-                    $where = $anonymous::getWhereBuilder()
+                    $where = $relatedSchema->getWhereBuilder()
                         ->orStringLike($column, ";{$idColumnValue};")
                         ->orStringLike($column, "{$idColumnValue}")
                         ->orStringEndsLike($column, "{$idColumnValue};")
@@ -117,9 +114,8 @@ class QueryBuilderHelper
                 }
 
             } elseif ($field instanceof RelatedKeysField) {
-                $anonymous = $relatedSchema->getItemInstance();
                 $column = $relatedField->getColumn();
-                $where = $anonymous::getWhereBuilder()
+                $where = $relatedSchema->getWhereBuilder()
                     ->orStringLike($column, ";{$idColumnValue};")
                     ->orStringLike($column, "{$idColumnValue}")
                     ->orStringEndsLike($column, "{$idColumnValue};")
@@ -159,7 +155,7 @@ class QueryBuilderHelper
         if ($sameTablePivot) {
             $pivotOwnField = $pivotSchema->getField($field->getColumn());
         } else {
-            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($item::COMPONENT);
+            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($schema->getComponent());
         }
 
         $pivotOrderField = $pivotSchema->getOnePositionField();
@@ -198,7 +194,7 @@ class QueryBuilderHelper
         if ($sameTablePivot) {
             $pivotOwnField = $pivotSchema->getField($field->getColumn());
         } else {
-            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($item::COMPONENT);
+            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($schema->getComponent());
         }
 
         $pivotOrderField = $pivotSchema->getOnePositionField();

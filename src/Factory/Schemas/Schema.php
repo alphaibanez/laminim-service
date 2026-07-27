@@ -4,6 +4,7 @@ namespace Lkt\Factory\Schemas;
 
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
+use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\Instantiator;
@@ -52,6 +53,7 @@ use Lkt\Factory\Schemas\Values\TableValue;
 use Lkt\Http\Response;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
+use Lkt\QueryBuilding\Where;
 use Lkt\WebItems\Enums\WebItemAction;
 use Lkt\WebItems\Enums\WebItemActionHook;
 use Lkt\WebItems\WebItemActionHookHandler;
@@ -1386,8 +1388,14 @@ final class Schema
 
     public function getQueryBuilder(): Query
     {
-        list($queryBuilder) = Instantiator::getQueryCaller($this->getComponent());
-        return $queryBuilder;
+        return QueryBuilderHelper::getComponentQuery($this->getComponent());
+//        list($queryBuilder) = Instantiator::getQueryCaller($this->getComponent());
+//        return $queryBuilder;
+    }
+
+    public function getWhereBuilder(): Where
+    {
+        return Instantiator::getCustomWhere($this->getComponent());
     }
 
     public function setSlugPattern(string $pattern): static

@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
-use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithIdentifierValueTrait
 {
@@ -20,7 +19,7 @@ trait ItemWithIdentifierValueTrait
     {
         if (is_array($this->identifierValue)) return $this->identifierValue;
 
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
         $identifiers = $schema->getIdentifiers();
         $r = [];
         $data = $this->getOriginalData();
@@ -42,7 +41,7 @@ trait ItemWithIdentifierValueTrait
     public function getIdColumnValue(): mixed
     {
         $data = $this->getOriginalData();
-        $schema = Schema::get(static::COMPONENT);
+        $schema = $this->getSchema();
         $identifiers = $schema->getIdentifiers();
         if (count($identifiers) === 1) {
             $identifierValue = $this->getIdentifierValue();

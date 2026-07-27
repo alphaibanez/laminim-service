@@ -15,7 +15,6 @@ use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktShoppingOrder;
 use Lkt\Instances\LktShoppingOrderPivotSubscription;
 use Lkt\Instances\LktShoppingSubscription;
 use Lkt\Instances\LktUser;
@@ -41,7 +40,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
 
         ->addField(IntegerChoiceField::enumChoice(SubscriptionStatus::class, 'status')->setDefaultValue(SubscriptionStatus::Inactive->value))
 
@@ -52,9 +51,9 @@ Schema::add(
         ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
         ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
 
-        ->addField(PivotField::definePivot(LktShoppingOrder::COMPONENT, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LktShoppingOrderPivotSubscription::COMPONENT)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingSubscription::COMPONENT, 'subscription', 'subscription_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::ShoppingOrder->value, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LaminimComponent::ShoppingOrderPivotShoppingSubscription->value)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )

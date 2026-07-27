@@ -2,7 +2,6 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktFileEntity;
 use Lkt\Http\Response;
 use Lkt\MIME;
@@ -13,7 +12,8 @@ class LktFileEntity extends GeneratedLktFileEntity
 
     public function read()
     {
-        $fields = Schema::get(static::COMPONENT)->getAllFields();
+        $schema = $this->getSchema();
+        $fields = $schema->getAllFields();
         return $this->readFields($fields);
     }
 

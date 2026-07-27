@@ -28,7 +28,7 @@ class LktWebElementHttp
         }
 
         $instance = LktWebElement::getInstance();
-        $instance->autoCreate($params);
+        $instance->feedAndSave($params);
 
 
         $beforeElement = (int)$params['beforeElement'];
@@ -68,7 +68,7 @@ class LktWebElementHttp
     {
         $instance = LktWebElement::getInstance((int)$params['id']);
         if ($instance->isAnonymous()) return Response::notFound();
-        $instance->autoUpdate($params);
+        $instance->feedAndSave($params);
 
         return Response::ok([
             'id' => $instance->getId(),

@@ -93,7 +93,7 @@ class LktTranslationsHttp
     {
         $instance = LktTranslation::getInstance();
         try {
-            $instance->setAccessPolicy('write', AccessPolicyEndOfLife::UntilNextWrite)->autoCreate($params);
+            $instance->setAccessPolicy('write', AccessPolicyEndOfLife::UntilNextWrite)->feedAndSave($params);
 
         } catch (DuplicatedValueException $e) {
             return Response::badRequest([
@@ -122,7 +122,7 @@ class LktTranslationsHttp
     {
         $instance = LktTranslation::getInstance((int)$params['id']);
         if ($instance->isAnonymous()) return Response::notFound();
-        $instance->setAccessPolicy('write', AccessPolicyEndOfLife::UntilNextWrite)->autoUpdate($params);
+        $instance->setAccessPolicy('write', AccessPolicyEndOfLife::UntilNextWrite)->feedAndSave($params);
 
         return Response::ok([
             'id' => $instance->getId(),

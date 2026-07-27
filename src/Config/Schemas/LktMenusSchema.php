@@ -17,7 +17,6 @@ use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktMenu;
-use Lkt\Instances\LktMenuEntry;
 use Lkt\Instances\LktMenuPivotEntry;
 use Lkt\Instances\LktUser;
 
@@ -42,14 +41,14 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(BooleanField::define('includeAvailableAdminRoutes', 'include_available_admin_routes'))
         ->addField(MethodGetterField::define('getNavigableEntries', 'navigableEntries'))
-        ->addField(PivotField::definePivot(LktMenuEntry::COMPONENT, 'lkt_menus__entries', 'entries', 'menu_id', LktMenuPivotEntry::COMPONENT)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktMenu::COMPONENT, 'menu', 'menu_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktMenuEntry::COMPONENT, 'entry', 'entry_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::MenuEntry->value, 'lkt_menus__entries', 'entries', 'menu_id', LaminimComponent::MenuPivotEntry->value)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::Menu->value, 'menu', 'menu_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
             ->setRelatedAccessPolicies([

@@ -3,7 +3,6 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
-use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 
@@ -13,10 +12,10 @@ trait ItemWithAccessPolicyTrait
 
     public function setAccessPolicy(string|AccessPolicy $accessPolicy, AccessPolicyEndOfLife $accessPolicyEndOfLife = AccessPolicyEndOfLife::UntilUpdated): static
     {
+        $schema = $this->getSchema();
         if ($accessPolicy instanceof AccessPolicy) {
-            $this->accessPolicy = new AccessPolicyUsage(static::COMPONENT, $accessPolicy->name, $accessPolicyEndOfLife);
+            $this->accessPolicy = new AccessPolicyUsage($schema->getComponent(), $accessPolicy->name, $accessPolicyEndOfLife);
         } else {
-            $schema = Schema::get(static::COMPONENT);
             $isAnonymous = $this->isAnonymous();
             if ($accessPolicyEndOfLife === AccessPolicyEndOfLife::UntilNextWrite) {
                 $modifier = $isAnonymous ? 'mk' : 'up';
@@ -32,7 +31,7 @@ trait ItemWithAccessPolicyTrait
                 }
             }
 
-            $this->accessPolicy = new AccessPolicyUsage(static::COMPONENT, $accessPolicy, $accessPolicyEndOfLife);
+            $this->accessPolicy = new AccessPolicyUsage($schema->getComponent(), $accessPolicy, $accessPolicyEndOfLife);
         }
         return $this;
     }

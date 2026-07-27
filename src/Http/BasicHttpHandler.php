@@ -72,10 +72,10 @@ class BasicHttpHandler
         }
 
         if ($request->payload && count($request->payload) > 0) {
-            $request->targetInstance->autoCreate($request->payload);
+            $request->targetInstance->feedAndSave($request->payload);
 
         } else {
-            $request->targetInstance->autoCreate($request->params);
+            $request->targetInstance->feedAndSave($request->params);
         }
 
         if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessCreate, $request->httpEventHandlers, []);
@@ -111,10 +111,10 @@ class BasicHttpHandler
             $request->targetInstance->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextWrite);
         }
         if ($request->payload && count($request->payload) > 0) {
-            $request->targetInstance->autoUpdate($request->payload);
+            $request->targetInstance->feedAndSave($request->payload);
 
         } else {
-            $request->targetInstance->autoUpdate($request->params);
+            $request->targetInstance->feedAndSave($request->params);
         }
 
         if ($request->httpEventHandlers) HttpEventHandler::triggerEvent(HttpEvent::SuccessUpdate, $request->httpEventHandlers, []);

@@ -16,6 +16,8 @@ enum LaminimComponent: string
     case HTTPRequestLog = 'lkt-http-request-log';
     case MenuEntry = 'lkt-menu-entry';
     case Menu = 'lkt-menu';
+    case MenuPivotEntry = 'lkt-menu-pivot-entry';
+    case MenuEntryPivotMenuEntry = 'lkt-menu-entry-pivot-entry';
     case PendingMail = 'lkt-pending-mail';
     case PushDelivery = 'lkt-push-delivery';
     case PushDevice = 'lkt-push-device';
@@ -27,6 +29,8 @@ enum LaminimComponent: string
     case ShoppingOrderStatusLog = 'lkt-shopping-order-status-log';
     case ShoppingPrice = 'lkt-shopping-price';
     case ShoppingSubscription = 'lkt-shopping-subscription';
+    case ShoppingOrderPivotShoppingCoupon = 'lkt-shopping-order-pivot-coupon';
+    case ShoppingOrderPivotShoppingSubscription = 'lkt-shopping-order-pivot-subscription';
     case Translation = 'lkt-i18n';
     case UserRole = 'lkt-user-role';
     case User = 'lkt-user';

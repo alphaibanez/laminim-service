@@ -2,6 +2,8 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Enums\LaminimComponent;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktWebPageMetas;
 
 class LktWebPageMetas extends GeneratedLktWebPageMetas
@@ -13,6 +15,7 @@ class LktWebPageMetas extends GeneratedLktWebPageMetas
         $slug = explode('/', $slug);
         $slug = $slug[count($slug) - 1];
 
-        return static::getOne(static::getQueryCaller()->andSlugEqual($slug));
+        $schema = Schema::get(LaminimComponent::WebPageMetas->value);
+        return static::getOne($schema->getQueryBuilder()->andSlugEqual($slug));
     }
 }

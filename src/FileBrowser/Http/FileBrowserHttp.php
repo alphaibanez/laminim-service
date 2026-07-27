@@ -15,7 +15,7 @@ class FileBrowserHttp
         $units = LktFileEntity::getMany($query);
         if (count($units) === 0) {
             $unit = LktFileEntity::getInstance()
-                ->autoCreate([
+                ->feedAndSave([
                     'nameData' => ['en' => 'Root', 'es' => 'Raíz'],
                     'type' => FileEntityType::StorageUnit->value,
                 ]);

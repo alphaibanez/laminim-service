@@ -150,7 +150,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     {
         return $this
             ->setAccessPolicy('change-password')
-            ->autoUpdate(['password' => $password])
+            ->feedAndSave(['password' => $password])
             ->save();
     }
 

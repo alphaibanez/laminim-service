@@ -21,9 +21,9 @@ class LktTranslation extends GeneratedLktTranslation
             'parentId' => $parentId,
         ];
         if (!$instance) {
-            $instance = LktTranslation::getInstance()->autoCreate($payload);
+            $instance = LktTranslation::getInstance()->feedAndSave($payload);
         } else {
-            $instance->autoUpdate($payload);
+            $instance->feedAndSave($payload);
         }
         return $instance;
     }
@@ -34,7 +34,7 @@ class LktTranslation extends GeneratedLktTranslation
         $query->andParentEqual($parentId)->setForceRefresh(true);
         $instance = static::getOne($query);
         if (!$instance) {
-            $instance = LktTranslation::getInstance()->autoCreate([
+            $instance = LktTranslation::getInstance()->feedAndSave([
                 'type' => $type->value,
                 'property' => $property,
                 'valueData' => $value,

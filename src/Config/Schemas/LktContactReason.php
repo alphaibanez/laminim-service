@@ -36,7 +36,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(StringField::define('name')->setIsI18nJson()->setIsUnique())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
         ->addField(VisibilityStatusField::define()->setDefaultValue(WebPageStatus::Public->value))

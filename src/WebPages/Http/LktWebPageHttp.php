@@ -45,7 +45,7 @@ class LktWebPageHttp
     public static function create(array $params): Response
     {
         $instance = LktWebPage::getInstance();
-        $instance->autoCreate($params);
+        $instance->feedAndSave($params);
 
         return Response::ok([
             'item' => $instance->autoRead(),
@@ -106,7 +106,7 @@ class LktWebPageHttp
     {
         $instance = LktWebPage::getInstance((int)$request->params['id']);
         if ($instance->isAnonymous()) return Response::notFound();
-        $instance->autoUpdate($request->params);
+        $instance->feedAndSave($request->params);
 
         return Response::ok([
             'id' => $instance->getId(),

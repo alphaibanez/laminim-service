@@ -36,7 +36,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'userId', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'userId', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
 
         ->addField(StringField::define('route'))
         ->addField(StringField::define('method'))

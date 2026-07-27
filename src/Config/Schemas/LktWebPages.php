@@ -58,7 +58,7 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
         )
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
         ->addField(IntegerChoiceField::enumChoice(WebPageStatus::class, 'status'))
         ->addField(IntegerField::define('type'))
 
@@ -66,7 +66,7 @@ Schema::add(
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
 
         ->addField(
-            RelatedField::defineRelation(LktWebPageMetas::COMPONENT, 'metas', 'webPage')
+            RelatedField::defineRelation(LaminimComponent::WebPageMetas->value, 'metas', 'webPage')
                 ->setSingleMode()
                 ->setCompositionContent([
                     'slug' => 'slug',
@@ -82,7 +82,7 @@ Schema::add(
         )
 
         ->addField(
-            ForeignKeysField::defineRelation(LktWebElement::COMPONENT, 'webElements', 'web_elements')
+            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'webElements', 'web_elements')
         )
         ->addAccessPolicy('public-read', [
             'name',

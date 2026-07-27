@@ -12,7 +12,6 @@ use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktAccessToken;
-use Lkt\Instances\LktUser;
 
 Schema::add(
     Schema::table('lkt_access_token', LaminimComponent::AccessToken->value)
@@ -36,6 +35,6 @@ Schema::add(
         )
         ->addField(IntegerChoiceField::enumChoice(AccessTokenDuration::class, 'duration'))
         ->addField(IntegerChoiceField::enumChoice(AccessTokenPurpose::class, 'purpose'))
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'))
         ->addField(StringField::define('token'))
 );

@@ -12,8 +12,6 @@ use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktCountry;
-use Lkt\Instances\LktCurrency;
 use Lkt\Instances\LktShoppingPrice;
 use Lkt\Shop\Enums\PriceCriteria;
 use Lkt\Shop\Enums\PriceType;
@@ -40,8 +38,8 @@ Schema::add(
 
         ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
 
-        ->addField(ForeignKeyField::defineRelation(LktCountry::COMPONENT, 'country', 'country_id')->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id')->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions())
         ->addField(IntegerField::define('componentId', 'component_id'))
         ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
 

@@ -56,13 +56,13 @@ Schema::add(
         }))
         ->addField(IntegerChoiceField::enumChoice(ThemeMode::class, 'preferredThemeMode', 'preferred_theme_mode'))
         ->addField(StringField::define('credentialIdentifier', 'credential_id'))
-        ->addField(ForeignKeysField::defineRelation(LktUserRole::COMPONENT, 'appRoles', 'app_roles'))
-        ->addField(ForeignKeysField::defineRelation(LktUserRole::COMPONENT, 'adminRoles', 'admin_roles'))
+        ->addField(ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'appRoles', 'app_roles'))
+        ->addField(ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'adminRoles', 'admin_roles'))
         ->addField(BooleanField::define('isAdministrator', 'is_administrator'))
         ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
         ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))
 
-        ->addField(RelatedField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupons', 'owned_by'))
+        ->addField(RelatedField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupons', 'owned_by'))
 
         ->setRelatedAccessPolicy([
             'id' => 'value',

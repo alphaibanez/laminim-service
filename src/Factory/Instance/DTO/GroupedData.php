@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DTO;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -64,6 +65,7 @@ final readonly class GroupedData
         foreach ($schema->getAllFields() as $field) {
             $k = $field->getName();
             $dataKey = $k;
+
             if ($field instanceof ForeignKeyField) {
                 if (!array_key_exists($dataKey, $data)) {
                     $dataKey = "{$k}Id";

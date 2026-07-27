@@ -15,14 +15,9 @@ use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktCurrency;
-use Lkt\Instances\LktShoppingCoupon;
 use Lkt\Instances\LktShoppingOrder;
-use Lkt\Instances\LktShoppingOrderItem;
-use Lkt\Instances\LktShoppingOrderPayment;
 use Lkt\Instances\LktShoppingOrderPivotCoupon;
 use Lkt\Instances\LktShoppingOrderPivotSubscription;
-use Lkt\Instances\LktShoppingSubscription;
 use Lkt\Instances\LktUser;
 use Lkt\Shop\Enums\OrderStatus;
 
@@ -47,29 +42,34 @@ Schema::add(
         )
 
         ->addField(IntegerChoiceField::enumChoice(OrderStatus::class, 'status')->setDefaultValue(OrderStatus::Pending))
-        ->addField(ForeignKeyField::defineRelation(LktUser::COMPONENT, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LktCurrency::COMPONENT, 'currency', 'currency_id'))
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'))
         ->addField(FloatField::define('subTotal', 'subtotal')->setDefaultValue(0))
         ->addField(FloatField::define('taxTotal', 'tax_total')->setDefaultValue(0))
         ->addField(FloatField::define('shippingTotal', 'shipping_total')->setDefaultValue(0))
         ->addField(FloatField::define('discountTotal', 'discount_total')->setDefaultValue(0))
         ->addField(FloatField::define('total', 'total')->setDefaultValue(0))
-        ->addField(RelatedField::defineRelation(LktShoppingOrderItem::COMPONENT, 'items', 'order_id'))
-        ->addField(RelatedField::defineRelation(LktShoppingOrderPayment::COMPONENT, 'payments', 'order_id'))
+        ->addField(RelatedField::defineRelation(LaminimComponent::ShoppingOrderItem->value, 'items', 'order_id'))
+        ->addField(RelatedField::defineRelation(LaminimComponent::ShoppingOrderPayment->value, 'payments', 'order_id'))
 
-        ->addField(PivotField::definePivot(LktShoppingCoupon::COMPONENT, 'lkt_shopping_orders__coupons', 'coupons', 'order_id', LktShoppingOrderPivotCoupon::COMPONENT)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingCoupon::COMPONENT, 'coupon', 'coupon_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'coupons', 'order_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
 
-        ->addField(PivotField::definePivot(LktShoppingSubscription::COMPONENT, 'lkt_shopping_orders__subscriptions', 'subscriptions', 'order_id', LktShoppingOrderPivotSubscription::COMPONENT)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LktShoppingOrder::COMPONENT, 'order', 'order_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LktShoppingSubscription::COMPONENT, 'subscription', 'subscription_id'))
+        ->addField(PivotField::definePivot(LaminimComponent::ShoppingSubscription->value, 'lkt_shopping_orders__subscriptions', 'subscriptions', 'order_id', LaminimComponent::ShoppingOrderPivotShoppingSubscription->value)
+            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
+            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'))
             ->setPivotPositionField(PivotPositionField::define('position'))
             ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         )
+
+        ->addAccessPolicy('admin-ls', [
+            'id', 'createdAt', 'status', 'user',
+            'total'
+        ])
 
         ->addAccessPolicy('admin', [
             'id', 'createdAt', 'status', 'user',

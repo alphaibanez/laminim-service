@@ -15,7 +15,7 @@ class EmailFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string { return \$this->stringData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->stringData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

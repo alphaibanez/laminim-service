@@ -20,7 +20,7 @@ class ForeignKeyFieldGenerator implements FieldGenerator
             $r[] = "/** {$returnAnnotation} */";
         }
         $r[] = "public function get{$this->data->methodName}(){$this->getRelatedReturnTypeFormatted()} { return \$this->foreignKeyData->getItem('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Id():int { return \$this->foreignKeyData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Id():int|null { return \$this->foreignKeyData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

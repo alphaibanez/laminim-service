@@ -19,10 +19,10 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
 
         if ($this->data->isMultiple) {
             $r[] = "/** @return int[] */";
-            $r[] = "public function get{$this->data->methodName}():array { return \$this->multipleIntegerData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():array|null { return \$this->multipleIntegerData->get('{$this->data->fieldName}'); }";
 
         } else {
-            $r[] = "public function get{$this->data->methodName}():int { return \$this->integerData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():int|null { return \$this->integerData->get('{$this->data->fieldName}'); }";
         }
 
 

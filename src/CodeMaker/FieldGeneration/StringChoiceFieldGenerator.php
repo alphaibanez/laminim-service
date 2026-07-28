@@ -17,10 +17,10 @@ class StringChoiceFieldGenerator implements FieldGenerator
 
         if ($this->data->isMultiple) {
             $r[] = "/** @return string[] */";
-            $r[] = "public function get{$this->data->methodName}():array { return \$this->multipleStringData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():array|null { return \$this->multipleStringData->get('{$this->data->fieldName}'); }";
 
         } else {
-            $r[] = "public function get{$this->data->methodName}():string { return \$this->stringData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():string|null { return \$this->stringData->get('{$this->data->fieldName}'); }";
         }
 
 

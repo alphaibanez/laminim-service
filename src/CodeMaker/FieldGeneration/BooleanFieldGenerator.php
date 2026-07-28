@@ -15,7 +15,7 @@ class BooleanFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function {$this->data->fieldName}():bool { return \$this->booleanData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function {$this->data->fieldName}():bool|null { return \$this->booleanData->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

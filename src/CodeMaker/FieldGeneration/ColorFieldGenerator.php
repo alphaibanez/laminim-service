@@ -15,9 +15,9 @@ class ColorFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string { return \$this->colorData->get('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Rgb(float \$opacity = null):array { return \$this->colorData->getRGBA('{$this->data->fieldName}', \$opacity); }";
-        $r[] = "public function get{$this->data->methodName}RgbFormatted(float \$opacity = null):array { return \$this->colorData->getRGBAString('{$this->data->fieldName}', \$opacity); }";
+        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->colorData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Rgb(float \$opacity = null):array|null { return \$this->colorData->getRGBA('{$this->data->fieldName}', \$opacity); }";
+        $r[] = "public function get{$this->data->methodName}RgbFormatted(float \$opacity = null):array|null { return \$this->colorData->getRGBAString('{$this->data->fieldName}', \$opacity); }";
 
         return implode(' ', $r);
     }

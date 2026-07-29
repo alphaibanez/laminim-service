@@ -31,7 +31,13 @@ final class ComposedDataController
     public function getItem(string $key, array $additionalData = []): Item|null
     {
         // @todo: sometimes, it returns null. An anonymous item should be ensured
-        return $this->item->retrieveValue($key, $additionalData, RetrieveDataMode::Item);
+        $r = $this->item->retrieveValue($key, $additionalData, RetrieveDataMode::ItemOrAnonymous);
+
+        if (!$r) {
+            VarDumper::die($key, $additionalData, $this->schema->getComponent());
+        }
+
+        return $r;
     }
 
     public function setItems(array $items): self
@@ -58,6 +64,7 @@ final class ComposedDataController
 
     public function getComposedInstance(string $key): Item
     {
+//        return $this->getItem($key);
         return $this->needsUpdate[$key];
     }
 

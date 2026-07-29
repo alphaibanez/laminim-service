@@ -298,13 +298,18 @@ trait ItemWithDataTrait
             // Save current instance process
             $queryBuilder->updateData($parsed);
 
-            if ($isUpdate) {
+            if (!$this->isAnonymous()) {
                 $schema->applyIdentifierConstraintsToQueryFromInstance($queryBuilder, $this);
                 $query = $connection->getUpdateQuery($queryBuilder);
             } else {
                 $query = $connection->getInsertQuery($queryBuilder);
             }
 
+//            VarDumper::dump([
+//                $schema->getComponent(),
+//                $this->getIdColumnValue(),
+//                $query,
+//            ]);
             $queryResponse = $connection->query($query);
 
             $id = (int)$connection->getLastInsertedId();
@@ -757,7 +762,7 @@ trait ItemWithDataTrait
                 return $this->foreignKeyData->get($key);
             }
             if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
-            return $this->foreignKeyData->getItem($key, $additionalData);
+            return $this->foreignKeyData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
 
         } elseif ($field instanceof ForeignKeysField) {
             if ($dataMode === RetrieveDataMode::Raw) {
@@ -770,7 +775,7 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof RelatedField) {
             if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
-            if ($field->isSingleMode()) return $this->relatedItemData->getItem($key, $additionalData);
+            if ($field->isSingleMode()) return $this->relatedItemData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
             return $this->relatedItemsData->getItems($key);
 
         } elseif ($field instanceof RelatedKeysField) {

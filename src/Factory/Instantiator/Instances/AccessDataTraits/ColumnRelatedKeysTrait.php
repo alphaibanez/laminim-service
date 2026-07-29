@@ -95,8 +95,6 @@ trait ColumnRelatedKeysTrait
             $instance->feed($datum);
             $r[] = $instance;
         }
-
-        $this->UPDATED_RELATED_DATA[$column] = $r;
         return $this;
     }
 

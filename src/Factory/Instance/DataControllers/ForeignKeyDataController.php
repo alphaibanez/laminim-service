@@ -13,6 +13,7 @@ final class ForeignKeyDataController
 {
     private array $data = [];
     private array $payload = [];
+    private array $items = [];
 
     private Schema $schema;
     private Item $item;
@@ -37,21 +38,30 @@ final class ForeignKeyDataController
         return null;
     }
 
-    public function getItem(string $key, array $additionalData = []): Item|null
+    public function getItem(string $key, array $additionalData = [], bool $retrieveAnonymous = false): Item|null
     {
         $field = $this->schema->getForeignKeyField($key);
         if (!$field) return null;
 
+        if (array_key_exists($key, $this->items)) return $this->items[$key];
+
         $type = $field->getComponent($this->schema, $this->item);
         $id = $this->get($key);
 
+        $relatedComponent = $field->getComponent($this->schema, $this->item);
+        $relatedSchema = Schema::get($relatedComponent);
+
         if (!$type || $id <= 0) {
+            if ($retrieveAnonymous) {
+                $instance = $relatedSchema->getItemInstance();
+                $instance->feed($additionalData);
+                $this->items[$key] = $instance;
+                return $this->items[$key];
+            }
             return null;
         }
 
         if (count($additionalData) > 0) {
-            $relatedComponent = $field->getComponent($this->schema, $this->item);
-            $relatedSchema = Schema::get($relatedComponent);
             $query = $relatedSchema->getQueryBuilder();
             $relatedSchema->filterBuilder($query, $additionalData);
             if ($query->hasConstraints()) {
@@ -62,16 +72,18 @@ final class ForeignKeyDataController
                     $instance->feed($additionalData);
                 }
 
-                return $instance;
+                $this->items[$key] = $instance;
+                return $this->items[$key];
             }
         }
 
-        $instance = Instantiator::make($type, $id);
+        $instance = $relatedSchema->getItemInstance($id);
         if ($instance->isAnonymous() && count($additionalData) > 0) {
             $instance->feed($additionalData);
         }
 
-        return $instance;
+        $this->items[$key] = $instance;
+        return $this->items[$key];
     }
 
     public function has(string $key): bool

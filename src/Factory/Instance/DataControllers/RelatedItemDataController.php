@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Schema;
 
@@ -23,13 +22,27 @@ final class RelatedItemDataController
         $this->item = $ins;
     }
 
-    public function getItem(string $key, array $additionalData): Item|null
+    public function getItem(string $key, array $additionalData, bool $retrieveAnonymous = false): Item|null
     {
-        if ($this->item->isAnonymous()) return null;
         if (array_key_exists($key, $this->data)) return $this->data[$key];
 
         $field = $this->schema->getRelatedField($key);
         if (!$field) return null;
+
+        if (array_key_exists($key, $this->data)) return $this->data[$key];
+
+        $relatedSchema = Schema::get($field->getComponent());
+
+        if ($this->item->isAnonymous()) {
+            if ($retrieveAnonymous) {
+                $instance = $relatedSchema->getItemInstance();
+                $instance->feed($additionalData);
+                $this->data[$key] = $instance;
+                return $this->data[$key];
+            }
+
+            return null;
+        }
 
         $builder = QueryBuilderHelper::prepareRelatedQuery(
             $this->item,
@@ -41,10 +54,7 @@ final class RelatedItemDataController
         );
         $builder->andPageLimitIs(1);
 
-        $data = $builder->select();
-        $relatedSchema = Schema::get($field->getComponent());
-
-        $results = Instantiator::makeResults($relatedSchema->getComponent(), $data);
+        $results = $relatedSchema->getMany($builder);
         if (count($results) > 0) {
             $this->data[$key] = $results[0];
             return $this->data[$key];
@@ -52,10 +62,10 @@ final class RelatedItemDataController
 
         // Related mode, should return an anonymous instance
         if (count($additionalData) > 0) {
-            $relatedSchema = Schema::get($field->getComponent($this->schema, $this->item));
             $instance = $relatedSchema->getItemInstance();
             $instance->feed($additionalData);
-            return $instance;
+            $this->data[$key] = $instance;
+            return $this->data[$key];
         }
 
         return null;

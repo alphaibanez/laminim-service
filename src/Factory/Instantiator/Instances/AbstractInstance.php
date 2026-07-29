@@ -119,8 +119,6 @@ abstract class AbstractInstance implements Item
         ColumnConcatTrait,
         ColumnCompositionTrait,
         ColumnConstantValueTrait;
-
-    protected array $UPDATED_RELATED_DATA = [];
     protected array $PENDING_UPDATE_RELATED_DATA = [];
 
     const COMPONENT = '';

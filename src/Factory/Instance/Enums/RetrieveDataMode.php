@@ -8,4 +8,5 @@ enum RetrieveDataMode: int
     case Raw = 0;
     case Item = 1;
     case Ids = 2;
+    case ItemOrAnonymous = 3;
 }

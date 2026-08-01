@@ -28,6 +28,7 @@ enum LaminimComponent: string
     case ShoppingOrderPayment = 'lkt-shopping-order-payment';
     case ShoppingOrderStatusLog = 'lkt-shopping-order-status-log';
     case ShoppingPrice = 'lkt-shopping-price';
+    case ShoppingTax = 'lkt-shopping-tax';
     case ShoppingSubscription = 'lkt-shopping-subscription';
     case ShoppingOrderPivotShoppingCoupon = 'lkt-shopping-order-pivot-coupon';
     case ShoppingOrderPivotShoppingSubscription = 'lkt-shopping-order-pivot-subscription';

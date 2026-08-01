@@ -27,6 +27,7 @@ ComponentId::add(LaminimComponentId::ShoppingOrderPayment->value, LaminimCompone
 ComponentId::add(LaminimComponentId::ShoppingOrderStatusLog->value, LaminimComponent::ShoppingOrderStatusLog->value);
 ComponentId::add(LaminimComponentId::ShoppingSubscription->value, LaminimComponent::ShoppingSubscription->value);
 ComponentId::add(LaminimComponentId::ShoppingPrice->value, LaminimComponent::ShoppingPrice->value);
+ComponentId::add(LaminimComponentId::ShoppingTax->value, LaminimComponent::ShoppingTax->value);
 ComponentId::add(LaminimComponentId::Translation->value, LaminimComponent::Translation->value);
 ComponentId::add(LaminimComponentId::WebElement->value, LaminimComponent::WebElement->value);
 ComponentId::add(LaminimComponentId::WebPage->value, LaminimComponent::WebPage->value);

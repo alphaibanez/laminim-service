@@ -7,6 +7,7 @@ use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IdField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -41,6 +42,8 @@ Schema::add(
 
         ->addField(StringField::define('name')->setIsI18nJson())
         ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+
+        ->addField(RelatedField::defineRelation(LaminimComponent::CountryState->value, 'states', 'country_id'))
 
         ->addAccessPolicy('admin', [
             'id',

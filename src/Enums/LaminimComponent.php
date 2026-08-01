@@ -9,6 +9,7 @@ enum LaminimComponent: string
     case ContactReason = 'lkt-contact-reason';
     case ContactRequest = 'lkt-contact-request';
     case Country = 'lkt-country';
+    case CountryState = 'lkt-country-state';
     case Currency = 'lkt-currency';
     case DateFormat = 'lkt-date-format';
     case FileEntity = 'lkt-file-entity';

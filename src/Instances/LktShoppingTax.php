@@ -17,7 +17,7 @@ class LktShoppingTax extends GeneratedLktShoppingTax
             return $price + $percent;
         }
 
-        if ($this->taxTypeIsPercentualAdd()) {
+        if ($this->taxTypeIsPercentualReverseCalc()) {
             return $price/(($this->getTaxAmount()/100)+1);
         }
 

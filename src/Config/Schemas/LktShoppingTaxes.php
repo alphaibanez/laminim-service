@@ -52,6 +52,7 @@ Schema::add(
 
         ->setRelatedAccessPolicy([
             'id' => 'value',
+            'name' => 'label',
             'id',
             'isActive',
             'country',
@@ -61,15 +62,23 @@ Schema::add(
         ->addAccessPolicy('admin', [
             'id',
             'createdAt',
+            'nameData',
             'isActive',
             'country',
+            'currency',
             'taxAmount',
+            'taxType',
+            'taxTarget',
         ])
 
         ->addAccessPolicy('w:admin', [
+            'nameData',
             'isActive',
             'country',
+            'currency',
             'taxAmount',
+            'taxType',
+            'taxTarget',
         ])
 
         ->addAccessPolicy('admin-ls', [

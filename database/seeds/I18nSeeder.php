@@ -1052,5 +1052,17 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Bloqueado',
             'en' => 'Blocked',
         ], $parentId);
+
+
+        $parent = LktTranslation::createIfMissing('shoppingPriceTypeOptions', TranslationType::Many, []);
+        $parentId = $parent->getId();
+        LktTranslation::createIfMissing('0', TranslationType::Text, [
+            'es' => 'Precio final',
+            'en' => 'Final price',
+        ], $parentId);
+        LktTranslation::createIfMissing('1', TranslationType::Text, [
+            'es' => 'Precio & tasas',
+            'en' => 'Price & tax',
+        ], $parentId);
     }
 }

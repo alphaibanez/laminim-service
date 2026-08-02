@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LktCountriesStates20260213131315 extends AbstractMigration
+class LktShoppingPrices20260505181829 extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,19 +32,12 @@ class LktCountriesStates20260213131315 extends AbstractMigration
      */
     public function change()
     {
-        $exists = $this->hasTable('lkt_countries_states');
-        if ($exists) return;
+        $table = $this->table('lkt_shopping_prices');
 
-        $table = $this->table('lkt_countries_states', ['collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('created_at', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
-            ->addColumn('updated_at', 'datetime', ['null' => true, 'default' => null, 'update' => 'CURRENT_TIMESTAMP'])
-
-            ->addColumn('name', 'text', ['null' => true, 'default' => null, 'after' => 'name', 'limit' => MysqlAdapter::TEXT_LONG, 'collation' => 'utf8mb4_unicode_ci'])
-            ->addColumn('country_id', 'integer', ['default' => 0])
+        $table
+            ->addColumn('shopping_tax_id', 'integer', ['default' => 0])
         ;
 
-        $table->addIndex(['country_id']);
-
-        $table->create();
+        $table->update();
     }
 }

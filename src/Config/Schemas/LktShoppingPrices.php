@@ -40,6 +40,7 @@ Schema::add(
 
         ->addField(ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions())
         ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions())
+        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingTax->value, 'shoppingTax', 'shopping_tax_id')->setOnReadIncludeOptions())
         ->addField(IntegerField::define('componentId', 'component_id'))
         ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
 
@@ -74,6 +75,7 @@ Schema::add(
             'attachedCriteria',
             'product',
             'webItemName',
+            'shoppingTax',
         ])
 
         ->addAccessPolicy('w:admin', [
@@ -86,6 +88,7 @@ Schema::add(
             'taxAmount',
             'type',
             'attachedCriteria',
+            'shoppingTax',
         ])
 
         ->addAccessPolicy('admin-ls', [

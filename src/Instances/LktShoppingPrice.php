@@ -20,4 +20,22 @@ class LktShoppingPrice extends GeneratedLktShoppingPrice
 
         return $data;
     }
+
+    public function getFinalPricePerUnit(): float
+    {
+        $shoppingTax = $this->getShoppingTax();
+        $price = $this->getPricePerUnit();
+
+        if ($shoppingTax) {
+            if ($shoppingTax->taxTypeIsFixedAmount()) {
+                return $price + $shoppingTax->getTaxAmount();
+            }
+
+            if ($shoppingTax->taxTypeIsPercentualAdd()) {
+                return $price + $shoppingTax->getTaxAmount();
+            }
+        }
+
+        return $price;
+    }
 }

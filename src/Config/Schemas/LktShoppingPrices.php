@@ -10,6 +10,7 @@ use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktShoppingPrice;
@@ -46,6 +47,7 @@ Schema::add(
 
         ->addField(FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0))
         ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
+        ->addField(MethodGetterField::define('getFinalPricePerUnit', 'finalPricePerUnit'))
         ->addField(IntegerChoiceField::enumChoice(PriceType::class, 'type', 'price_type')->setDefaultValue(PriceType::Override->value))
         ->addField(IntegerChoiceField::enumChoice(PriceCriteria::class, 'attachedCriteria', 'attached_criteria')->setDefaultValue(PriceCriteria::ByCountry->value))
 
@@ -76,6 +78,7 @@ Schema::add(
             'product',
             'webItemName',
             'shoppingTax',
+            'getFinalPricePerUnit',
         ])
 
         ->addAccessPolicy('w:admin', [

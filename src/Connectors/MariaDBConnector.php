@@ -561,7 +561,17 @@ class MariaDBConnector extends DatabaseConnector
                 $whereConstraint->setTable('');
             }
 
-            $col = "JSON_UNQUOTE(JSON_EXTRACT({$col}, \"$.{$lang}\"))";
+            $v = $whereConstraint->getValue();
+
+            // Lowercase for case-insensitive search
+            if (is_string($v)) {
+                $col = "JSON_UNQUOTE(LOWER(JSON_EXTRACT({$col}, \"$.{$lang}\")))";
+                $whereConstraint->setValue(strtolower($v));
+
+            }  else {
+                $col = "JSON_UNQUOTE(JSON_EXTRACT({$col}, \"$.{$lang}\"))";
+            }
+
             $whereConstraint->setColumn($col);
         }
         return $whereConstraint;

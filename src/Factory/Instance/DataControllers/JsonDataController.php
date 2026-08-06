@@ -7,6 +7,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Validations\ParseColumn;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Locale\Locale;
 
 final class JsonDataController
 {
@@ -72,20 +73,39 @@ final class JsonDataController
         $f = $this->schema->getJSONField($key);
         $associative = $f->isAssoc();
 
+        $r = null;
+
         if (is_array($value)) {
-            if ($associative) return $value;
-            return json_decode(json_encode($value), false);
+            if ($associative) {
+                $r = $value;
+            } else {
+                $r = json_decode(json_encode($value), false);
+            }
         }
 
-        if (is_object($value)) {
-            if ($associative) return json_decode(json_encode($value), true);
-            return $value;
+        elseif (is_object($value)) {
+            if ($associative) {
+                $r = json_decode(json_encode($value), true);
+            } else {
+                $r = $value;
+            }
         }
 
-        if (is_string($value)){
+        elseif (is_string($value)){
             $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
             $value = ParseColumn::HTMLDatumToInstance($value);
-            return json_decode($value, $associative);
+            $r = json_decode($value, $associative);
+        }
+
+        if ($r !== null) {
+            if ($associative) {
+                $availableLanguages = Locale::getAvailableLangCodesValues();
+                foreach ($availableLanguages as $language) {
+                    if (!isset($r[$language])) $r[$language] = '';
+                    $r[$language] = htmlspecialchars_decode($r[$language], JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+                }
+            }
+            return $r;
         }
 
         return json_decode('{}', $associative);

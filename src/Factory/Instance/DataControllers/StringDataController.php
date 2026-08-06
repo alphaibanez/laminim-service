@@ -82,8 +82,8 @@ final class StringDataController
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getKindOfStringField($key);
-        $trimMode = $f->getTrimMode();
+        $field = $this->schema->getKindOfStringField($key);
+        $trimMode = $field->getTrimMode();
 
         if (is_object($value) && property_exists($value, 'value') && isset($value->value)) {
             $value = $value->value;
@@ -93,8 +93,16 @@ final class StringDataController
             $value = $this->trim($value, $trimMode);
         }
 
-        if ($f instanceof StringChoiceField) {
-            $availableOptions = $f->getAllowedOptions();
+        if ($field->isI18nJson()) {
+            $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+//            $value = str_replace(':LKT_SLASH:', '\\', $value);
+//            $value = str_replace(':LKT_QUESTION_MARK:', '?', $value);
+//            $value = str_replace(':LKT_SINGLE_QUOTE:', "'", $value);
+//            $value = trim(str_replace('\"', '"', $value));
+        }
+
+        if ($field instanceof StringChoiceField) {
+            $availableOptions = $field->getAllowedOptions();
 
             if (!in_array($value, $availableOptions, true)) {
                 throw InvalidIntegerChoiceValueException::getInstance($value, $key, $this->schema->getComponent());
@@ -102,13 +110,13 @@ final class StringDataController
 
             return $value;
 
-        } elseif ($f instanceof EmailField) {
+        } elseif ($field instanceof EmailField) {
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 return $value;
             }
         }
 
-        $mode = $f->getInvalidDataMode();
+        $mode = $field->getInvalidDataMode();
 
         return match ($mode) {
             InvalidDataMode::CastToType => $this->trim((string)$value, $trimMode),

@@ -14,7 +14,7 @@ class I18nStringLikeConstraint extends AbstractConstraint
         $lang = Locale::getLangCode();
         if (!$lang) $lang = 'en';
 
-        return "JSON_CONTAINS({$prepend}{$this->column}, '{$v}', \"$.{$lang}\")";
+        return "JSON_CONTAINS({$prepend}{$this->column}, LOWER('{$v}'), LOWER(\"$.{$lang}\"))";
 
 //        $lang = Locale::getLangCode();
 //        if (!$lang) $lang = 'en';

@@ -53,8 +53,19 @@ abstract class AbstractConstraint
         return $this;
     }
 
+    public function setValue(string $value): static
+    {
+        $this->value = $value;
+        return $this;
+    }
+
     public function getTable(): string
     {
         return $this->table;
+    }
+
+    public function getValue(): mixed
+    {
+        return $this->value;
     }
 }

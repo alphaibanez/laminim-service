@@ -2,6 +2,8 @@
 
 namespace Lkt\Connectors;
 
+use Lkt\Connectors\Enums\MailSecurity;
+
 abstract class AbstractMailConnector
 {
     protected string $name;
@@ -9,7 +11,7 @@ abstract class AbstractMailConnector
     protected string $host;
     protected string $user;
     protected string $password;
-    protected string $security;
+    protected MailSecurity|null $security = null;
     protected string $mailingFrom;
     protected int $port = 0;
     
@@ -54,7 +56,7 @@ abstract class AbstractMailConnector
         return $this->email;
     }
 
-    public function getSecurity(): string
+    public function getSecurity(): MailSecurity|null
     {
         return $this->security;
     }
@@ -94,7 +96,7 @@ abstract class AbstractMailConnector
         return $this;
     }
 
-    public function setSecurity(string $security): static
+    public function setSecurity(MailSecurity $security): static
     {
         $this->security = $security;
         return $this;

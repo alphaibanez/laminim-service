@@ -2,7 +2,6 @@
 
 namespace Lkt\Connectors;
 
-use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class MailConnector extends AbstractMailConnector
@@ -82,7 +81,7 @@ class MailConnector extends AbstractMailConnector
                 $mailer->Password = $this->getPassword();
             }
 
-            if ($this->security !== '') $mailer->SMTPSecure = $this->getSecurity();
+            if ($this->security) $mailer->SMTPSecure = $this->getSecurity()?->value;
 
             $mailer->setFrom($replyTo, $fromName);
             $mailer->addReplyTo($replyTo);
@@ -100,7 +99,7 @@ class MailConnector extends AbstractMailConnector
 
             $isSent = $mailer->send();
 
-        } catch (Exception) {
+        } catch (\Exception) {
 
             $isSent = false;
         }

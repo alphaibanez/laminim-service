@@ -18,7 +18,7 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
         $now->sub(\DateInterval::createFromDateString('10 minutes'));
 
         $dateLimit = $now->format('Y-m-d H:i:s');
-        $counterQuery = static::getQueryCaller()
+        $counterQuery = static::getQueryBuilder()
             ->andAttemptedCredentialEqual($attemptedCredential)
             ->andCreatedAtGreaterOrEqualThan($dateLimit);
 

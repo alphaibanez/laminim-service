@@ -11,7 +11,7 @@ class LktTranslation extends GeneratedLktTranslation
 
     public static function createOrUpdate(string $property, TranslationType $type, array $value = [], int $parentId = 0): static
     {
-        $query = static::getQueryCaller()->andPropertyEqual($property);
+        $query = static::getQueryBuilder()->andPropertyEqual($property);
         $query->andParentEqual($parentId)->setForceRefresh(true);
         $instance = static::getOne($query);
         $payload = [
@@ -30,7 +30,7 @@ class LktTranslation extends GeneratedLktTranslation
 
     public static function createIfMissing(string $property, TranslationType $type, array $value = [], int $parentId = 0): static
     {
-        $query = static::getQueryCaller()->andPropertyEqual($property);
+        $query = static::getQueryBuilder()->andPropertyEqual($property);
         $query->andParentEqual($parentId)->setForceRefresh(true);
         $instance = static::getOne($query);
         if (!$instance) {

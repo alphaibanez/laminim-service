@@ -17,7 +17,7 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function fromToken(string $token, AccessTokenPurpose|null $purpose = null): ?static
     {
-        $query = static::getQueryCaller()
+        $query = static::getQueryBuilder()
             ->andTokenEqual($token);
 
         if ($purpose) {
@@ -29,7 +29,7 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function fromUser(LktUser $user, AccessTokenPurpose|null $purpose = null): ?static
     {
-        $query = static::getQueryCaller()
+        $query = static::getQueryBuilder()
             ->andUserEqual($user->getId());
 
         if ($purpose) {
@@ -42,7 +42,7 @@ class LktAccessToken extends GeneratedLktAccessToken
     public static function createChangePasswordAccessToken(LktUser $user, \DateTime $expiresAt): static
     {
         $previousToken = static::getOne(
-            static::getQueryCaller()
+            static::getQueryBuilder()
                 ->andUserEqual($user->getId())
                 ->andPurposeEqual(AccessTokenPurpose::ChangePassword->value)
                 ->andDurationEqual(AccessTokenDuration::Temporary->value)
@@ -67,7 +67,7 @@ class LktAccessToken extends GeneratedLktAccessToken
     public static function createIdentifierAccessToken(LktUser $user, \DateTime $expiresAt): static
     {
         $previousToken = static::getOne(
-            static::getQueryCaller()
+            static::getQueryBuilder()
                 ->andUserEqual($user->getId())
                 ->andPurposeEqual(AccessTokenPurpose::Identifier->value)
                 ->andDurationEqual(AccessTokenDuration::Temporary->value)
@@ -92,7 +92,7 @@ class LktAccessToken extends GeneratedLktAccessToken
     public static function getActiveIdentifierAccessToken(LktUser $user, \DateTime $expiresAt): static
     {
         $previousToken = static::getOne(
-            static::getQueryCaller()
+            static::getQueryBuilder()
                 ->andUserEqual($user->getId())
                 ->andPurposeEqual(AccessTokenPurpose::Identifier->value)
                 ->andDurationEqual(AccessTokenDuration::Temporary->value)

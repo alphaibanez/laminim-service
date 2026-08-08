@@ -55,7 +55,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public static function authenticate(string $username, string $password): ?static
     {
-        $query = static::getQueryCaller()
+        $query = static::getQueryBuilder()
             ->andPasswordEqual($password);
 
         if (UserSettings::$authMode === UserAuthenticationMode::Email) {
@@ -92,7 +92,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public static function rememberPassword(string $username): ?static
     {
-        $query = static::getQueryCaller()
+        $query = static::getQueryBuilder()
             ->andEmailEqual($username);
 
         $user = static::getOne($query);

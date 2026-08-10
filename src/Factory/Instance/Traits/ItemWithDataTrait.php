@@ -21,6 +21,7 @@ use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
+use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
@@ -784,6 +785,9 @@ trait ItemWithDataTrait
         } elseif ($field instanceof ConcatField) {
             return $this->concatData->get($key);
 
+        } elseif ($field instanceof ConstantValueField) {
+            return $this->constantData->get($key);
+
         } elseif ($field instanceof PivotField) {
             return $this->pivotData->getItems($key);
 
@@ -845,6 +849,9 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof ConcatField) {
             return $this->concatData->has($key);
+
+        } elseif ($field instanceof ConstantValueField) {
+            return $this->constantData->has($key);
 
         } elseif ($field instanceof PivotField) {
             return $this->pivotData->has($key);
@@ -1134,6 +1141,9 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof ConcatField) {
             return [$responseKey => $this->concatData->get($key)];
+
+        } elseif ($field instanceof ConstantValueField) {
+            return [$responseKey => $this->constantData->get($key)];
         }
 
         return null;

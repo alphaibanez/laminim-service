@@ -19,6 +19,7 @@ namespace <?php echo $namespace?>;
 use Lkt\QueryBuilding\Where;
 use Lkt\QueryBuilding\Query;
 use Lkt\Factory\Instantiator\Instantiator;
+use Lkt\Factory\Schemas\Schema;
 <?php endif; ?>
 
 class <?php echo $className; ?> <?php echo $extends?> <?php echo $implements?> {
@@ -31,21 +32,19 @@ class <?php echo $className; ?> <?php echo $extends?> <?php echo $implements?> {
     /**
     * @return <?php echo $returnSelf;?>[]
     */
-    public static function getMany(Query $builder = null): array
+    public static function getMany(Query $query = null): array
     {
-        /** @var <?php echo $returnSelf;?>[] */
-        $r = parent::getMany($builder);
-        return $r;
+        $schema = Schema::get(static::COMPONENT);
+        return $schema->getMany($query);
     }
 
     /**
     * @return <?php echo $returnSelf;?>|null
     */
-    public static function getOne(Query $builder = null)
+    public static function getOne(Query $query = null)
     {
-        /** @var <?php echo $returnSelf;?> */
-        $r = parent::getOne($builder);
-        return $r;
+        $schema = Schema::get(static::COMPONENT);
+        return $schema->getOne($query);
     }
 
     /** @deprecated @return <?php echo $queryCaller;?> */
@@ -81,11 +80,10 @@ class <?php echo $className; ?> <?php echo $extends?> <?php echo $implements?> {
     /**
     * @return <?php echo $returnSelf;?>[]
     */
-    public static function getPage(int $page, Query $builder = null, int $itemsPerPage = 0): array
+    public static function getPage(int $page, Query $query = null, int $itemsPerPage = 0): array
     {
-        /** @var <?php echo $returnSelf;?>[] */
-        $r = parent::getPage($page, $builder, $itemsPerPage);
-        return $r;
+        $schema = Schema::get(static::COMPONENT);
+        return $schema->getPage($query, $page, $itemsPerPage);
     }
     <?php endif; ?>
 }

@@ -82,9 +82,9 @@ interface Item
      */
     public static function getInstance($id = null, array $initialData = []): static;
     public static function getInstanceOrNull($id = null, array $initialData = []): static|null;
-    public static function getMany(Query $queryCaller = null): array;
-    public static function getPage(int $page, Query $queryCaller = null, int $itemsPerPage = 0): array;
-    public static function getOne(Query $queryCaller = null);
-    public static function getCount(Query $queryCaller = null, string $countableField = null): int;
+    public static function getMany(Query $query = null): array;
+    public static function getPage(int $page, Query $query = null, int $itemsPerPage = 0): array;
+    public static function getOne(Query $query = null);
+    public static function getCount(Query $query = null, string $countableField = null): int;
     public static function getAmountOfPages(Query $queryCaller = null, string $countableField = null, int $itemsPerPage = 0): int;
 }

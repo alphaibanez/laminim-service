@@ -24,7 +24,7 @@ class Instantiator
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
      */
-    public static function make(string $component, $id, array $data = []): ?AbstractInstance
+    public static function make(string $component, $id, array $data = []): null|Item|AbstractInstance
     {
         $schema = Schema::get($component);
         $code = $schema->getInstanceCode($data, $id);

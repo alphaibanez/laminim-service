@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
@@ -294,8 +295,6 @@ final class InstanceSettings
         if ($this->classToBeExtended instanceof StringValue) {
             return $this->classToBeExtended->getValue();
         }
-
-        if ($this->abstractInstanceExtends) return AbstractInstance::class;
         return '';
     }
 

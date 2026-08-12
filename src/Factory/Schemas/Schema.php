@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
@@ -457,7 +458,6 @@ final class Schema
 
         if ($this->instanceSettings instanceof InstanceSettings) {
             if ($this->instanceSettings->hasLegalExtendClass()) {
-
                 $code = $this->instanceSettings->getClassToBeExtended()::COMPONENT;
                 if ($code) {
                     $schema = Schema::get($code);
@@ -1383,6 +1383,16 @@ final class Schema
 
     public function getMany(Query $query)
     {
+        return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
+    }
+
+    public function getPage(Query $query = null, int|null $page = null, int|null $itemsPerPage = null)
+    {
+        if (!$query) $query = $this->getQueryBuilder();
+        $limit = $itemsPerPage;
+        if ($limit <= 0) $limit = $query->getLimit();
+        if ($limit <= 0) $limit = $this->getItemsPerPage();
+        if ($limit >= 0) $query->pagination($page, $limit);
         return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
     }
 

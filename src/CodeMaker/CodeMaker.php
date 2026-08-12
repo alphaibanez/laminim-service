@@ -4,6 +4,14 @@ namespace Lkt\CodeMaker;
 
 use Lkt\CodeMaker\Helpers\FieldsCodeHelper;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Interfaces\Item;
+use Lkt\Factory\Instance\Traits\ItemWithAccessPolicyTrait;
+use Lkt\Factory\Instance\Traits\ItemWithCrudTrait;
+use Lkt\Factory\Instance\Traits\ItemWithDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithIdentifierValueTrait;
+use Lkt\Factory\Instance\Traits\ItemWithInstanceFactoryTrait;
+use Lkt\Factory\Instance\Traits\ItemWithSchemaStorePathTrait;
+use Lkt\Factory\Instance\Traits\ItemWithSchemaTrait;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
@@ -36,14 +44,39 @@ class CodeMaker
                 ? $instanceSettings?->getClassToBeExtended()
                 : '';
 
+            if (!$extends && $instanceSettings->hasAbstractInstanceExtends()) {
+                $extends = AbstractInstance::class;
+            }
+
             if ($extends !== '') $extends = "extends \\{$extends}";
 
-            $implements = $instanceSettings?->getImplementedInterfacesAsString();
-            if ($implements !== ''){
-                $implements = "implements {$implements};";
+            $implements = [];
+            $implementsCfg = $instanceSettings?->getImplementedInterfacesAsString();
+            if ($implementsCfg !== '') $implements[] = $implementsCfg;
+
+            if (!$instanceSettings->hasAbstractInstanceExtends()) {
+                $implements[] = '\\' . Item::class;
+            }
+
+            if (count($implements) > 0) {
+                $t = implode(',', $implements);
+                $implements = "implements {$t}";
+            } else {
+                $implements = '';
             }
 
             $traits = [];
+            if (!$instanceSettings->hasAbstractInstanceExtends()) {
+                $traits[] = '\\' . implode(',\\', [
+                        ItemWithIdentifierValueTrait::class,
+                        ItemWithDataTrait::class,
+                        ItemWithAccessPolicyTrait::class,
+                        ItemWithInstanceFactoryTrait::class,
+                        ItemWithCrudTrait::class,
+                        ItemWithSchemaStorePathTrait::class,
+                        ItemWithSchemaTrait::class,
+                    ]);
+            }
             $instanceTraits = $instanceSettings?->getUsedTraitsAsString();
             if ($instanceTraits !== ''){
                 $traits[] = $instanceTraits;
@@ -51,12 +84,16 @@ class CodeMaker
 
             $namespace = $instanceSettings?->getNamespaceForGeneratedClass();
 
-
             $methodsData = FieldsCodeHelper::makeFieldsCode($schema);
             $methods = $methodsData['methods'];
             $methodsTraits = $methodsData['traits'];
             if ($methodsTraits !== ''){
                 $traits[] = $methodsTraits;
+            }
+
+            if (!$instanceSettings->hasAbstractInstanceExtends()) {
+                $methods = ['public function __construct(array $initialData = []){$this->initialFeed($initialData);}', $methods];
+                $methods = implode('', $methods);
             }
 
             $traitsStr = 'use ' . implode(',', $traits) . ';';

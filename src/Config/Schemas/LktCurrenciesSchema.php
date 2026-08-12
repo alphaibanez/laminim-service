@@ -19,6 +19,7 @@ Schema::add(
             InstanceSettings::define(LktCurrency::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
+            ->setAbstractInstanceExtends(true)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')

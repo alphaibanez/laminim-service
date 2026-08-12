@@ -11,8 +11,6 @@ trait ItemWithSchemaTrait
 {
     protected Schema $schema;
 
-    const COMPONENT = '';
-
     public function getSchema(): Schema|null
     {
         return Schema::get(static::COMPONENT);

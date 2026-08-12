@@ -29,6 +29,7 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
+use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
@@ -51,30 +52,85 @@ trait ItemWithDataTrait
         $schema = $this->getSchema();
         $groupedData = new GroupedData($schema, $initialData);
 
-        $this
-            ->initStringData($schema, $this, $groupedData->stringData)
-            ->initBooleanData($schema, $this, $groupedData->booleanData)
-            ->initIntegerData($schema, $this, $groupedData->integerData)
-            ->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData)
-            ->initFloatData($schema, $this, $groupedData->floatData)
-            ->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData)
-            ->initDateData($schema, $this, $groupedData->dateData)
-            ->initColorData($schema, $this, $groupedData->colorData)
-            ->initEncryptData($schema, $this, $groupedData->encryptData)
-            ->initForeignKeyData($schema, $this, $groupedData->foreignKeyData)
-            ->initForeignKeysData($schema, $this, $groupedData->foreignKeysData)
-            ->initRelatedItemData($schema, $this, $groupedData->relatedItemData)
-            ->initJSONData($schema, $this, $groupedData->jsonData)
-            ->initFileData($schema, $this, $groupedData->fileData)
-            ->initMultipleStringData($schema, $this, $groupedData->multipleStringData)
+        if (property_exists($this, 'stringData')) {
+            $this->initStringData($schema, $this, $groupedData->stringData);
+        }
 
-            ->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData, $refreshing)
-            ->initPivotData($schema, $this, $refreshing)
-            ->initComposedData($schema, $this, $refreshing)
+        if (property_exists($this, 'booleanData')) {
+            $this->initBooleanData($schema, $this, $groupedData->booleanData);
+        }
 
-            ->initConstantData($schema, $this)
-            ->initConcatData($schema, $this)
-        ;
+        if (property_exists($this, 'integerData')) {
+            $this->initIntegerData($schema, $this, $groupedData->integerData);
+        }
+
+        if (property_exists($this, 'multipleIntegerData')) {
+            $this->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData);
+        }
+
+        if (property_exists($this, 'floatData')) {
+            $this->initFloatData($schema, $this, $groupedData->floatData);
+        }
+
+        if (property_exists($this, 'multipleFloatData')) {
+            $this->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData);
+        }
+
+        if (property_exists($this, 'dateData')) {
+            $this->initDateData($schema, $this, $groupedData->dateData);
+        }
+
+        if (property_exists($this, 'colorData')) {
+            $this->initColorData($schema, $this, $groupedData->colorData);
+        }
+
+        if (property_exists($this, 'encryptData')) {
+            $this->initEncryptData($schema, $this, $groupedData->encryptData);
+        }
+
+        if (property_exists($this, 'foreignKeyData')) {
+            $this->initForeignKeyData($schema, $this, $groupedData->foreignKeyData);
+        }
+
+        if (property_exists($this, 'foreignKeysData')) {
+            $this->initForeignKeysData($schema, $this, $groupedData->foreignKeysData);
+        }
+
+        if (property_exists($this, 'relatedItemData')) {
+            $this->initRelatedItemData($schema, $this, $groupedData->relatedItemData);
+        }
+
+        if (property_exists($this, 'jsonData')) {
+            $this->initJSONData($schema, $this, $groupedData->jsonData);
+        }
+
+        if (property_exists($this, 'fileData')) {
+            $this->initFileData($schema, $this, $groupedData->fileData);
+        }
+
+        if (property_exists($this, 'multipleStringData')) {
+            $this->initMultipleStringData($schema, $this, $groupedData->multipleStringData);
+        }
+
+        if (property_exists($this, 'relatedItemsData')) {
+            $this->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData, $refreshing);
+        }
+
+        if (property_exists($this, 'pivotData')) {
+            $this->initPivotData($schema, $this, $refreshing);
+        }
+
+        if (property_exists($this, 'composedData')) {
+            $this->initComposedData($schema, $this, $refreshing);
+        }
+
+        if (property_exists($this, 'constantData')) {
+            $this->initConstantData($schema, $this);
+        }
+
+        if (property_exists($this, 'concatData')) {
+            $this->initConcatData($schema, $this);
+        }
 
         return $this;
     }
@@ -582,19 +638,57 @@ trait ItemWithDataTrait
     {
         $r = [];
 
-        foreach ($this->stringData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->integerData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->multipleIntegerData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->floatData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->multipleFloatData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->booleanData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->dateData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->foreignKeyData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->foreignKeysData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->jsonData->getPayload() as $k => $v) $r[$k] = $v;
-        foreach ($this->fileData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'stringData')) {
+            foreach ($this->stringData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'integerData')) {
+            foreach ($this->integerData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'multipleIntegerData')) {
+            foreach ($this->multipleIntegerData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'floatData')) {
+            foreach ($this->floatData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'multipleFloatData')) {
+            foreach ($this->multipleFloatData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'booleanData')) {
+            foreach ($this->booleanData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'dateData')) {
+            foreach ($this->dateData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'colorData')) {
+            foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'encryptData')) {
+            foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'foreignKeyData')) {
+            foreach ($this->foreignKeyData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'foreignKeysData')) {
+            foreach ($this->foreignKeysData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'jsonData')) {
+            foreach ($this->jsonData->getPayload() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'fileData')) {
+            foreach ($this->fileData->getPayload() as $k => $v) $r[$k] = $v;
+        }
 
         return $r;
     }
@@ -603,19 +697,57 @@ trait ItemWithDataTrait
     {
         $r = [];
 
-        foreach ($this->stringData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->integerData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->multipleIntegerData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->floatData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->multipleFloatData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->booleanData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->dateData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->colorData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->encryptData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->foreignKeyData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->foreignKeysData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->jsonData->getOriginalData() as $k => $v) $r[$k] = $v;
-        foreach ($this->fileData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'stringData')) {
+            foreach ($this->stringData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'integerData')) {
+            foreach ($this->integerData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'multipleIntegerData')) {
+            foreach ($this->multipleIntegerData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'floatData')) {
+            foreach ($this->floatData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'multipleFloatData')) {
+            foreach ($this->multipleFloatData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'booleanData')) {
+            foreach ($this->booleanData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'dateData')) {
+            foreach ($this->dateData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'colorData')) {
+            foreach ($this->colorData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'encryptData')) {
+            foreach ($this->encryptData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'foreignKeyData')) {
+            foreach ($this->foreignKeyData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'foreignKeysData')) {
+            foreach ($this->foreignKeysData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'jsonData')) {
+            foreach ($this->jsonData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
+
+        if (property_exists($this, 'fileData')) {
+            foreach ($this->fileData->getOriginalData() as $k => $v) $r[$k] = $v;
+        }
 
         return $r;
     }
@@ -636,7 +768,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField) {
+        if ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
             $this->stringData->set($key, $value);
 
         } elseif ($field instanceof IntegerField) {
@@ -727,7 +859,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField) {
+        if ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
             return $this->stringData->get($key);
 
         } elseif ($field instanceof FloatField) {
@@ -806,7 +938,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField) {
+        if ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
             return $this->stringData->has($key);
 
         } elseif ($field instanceof FloatField) {

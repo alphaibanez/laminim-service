@@ -67,11 +67,9 @@ final class Commander
         $r = [];
 
         foreach (Commander::$schedule as $command => $config) {
-//            $caller = static::$crontabCommand;
             $expression = new CronExpression("$config[0] $config[1] $config[2] $config[3] $config[4]");
             if ($expression->isMatching()) {
                 $r[] = static::$consoleCommands[$command];
-//                $r[] = "$caller $command";
             }
         }
 

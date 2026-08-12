@@ -15,7 +15,7 @@ class LktTranslationsHttp
 {
     public static function index(array $params): Response
     {
-        $queryBuilder = LktTranslation::getQueryCaller()
+        $queryBuilder = LktTranslation::getQueryBuilder()
             ->andParentEqual(0);
 
         if (isset($params['type'])) {

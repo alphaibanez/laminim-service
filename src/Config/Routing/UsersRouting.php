@@ -8,7 +8,6 @@ use Lkt\Generated\LktAuthenticationLogQueryBuilder;
 use Lkt\Http\BasicHttpHandler;
 use Lkt\Http\Request;
 use Lkt\Http\Routes\GetRoute;
-use Lkt\Instances\LktAuthenticationLog;
 use Lkt\WebItems\WebItemActionHookHandler;
 
 class UsersRouting

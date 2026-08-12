@@ -27,7 +27,7 @@ class LktContactRequest extends GeneratedLktContactRequest
 
             $dateLimit = $now->format('Y-m-d H:i:s');
 
-            $counterQuery = static::getQueryCaller()
+            $counterQuery = static::getQueryBuilder()
                 ->andClientIPAddressEqual($networking->remoteAddress)
                 ->andClientUserAgentEqual($networking->userAgent)
                 ->andCreatedAtGreaterOrEqualThan($dateLimit);

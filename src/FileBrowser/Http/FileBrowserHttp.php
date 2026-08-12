@@ -10,7 +10,7 @@ class FileBrowserHttp
 {
     public static function fileBrowser(array $params): Response
     {
-        $query = LktFileEntity::getQueryCaller()->andTypeEqual(FileEntityType::StorageUnit->value);
+        $query = LktFileEntity::getQueryBuilder()->andTypeEqual(FileEntityType::StorageUnit->value);
 
         $units = LktFileEntity::getMany($query);
         if (count($units) === 0) {

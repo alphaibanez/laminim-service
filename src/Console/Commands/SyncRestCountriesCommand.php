@@ -74,7 +74,7 @@ class SyncRestCountriesCommand extends Command
                 $isoCodeCCA2 = trim($result->codes->alpha_2);
                 $isoCodeCCN3 = trim($result->codes->alpha_3);
 
-                $country = LktCountry::getOne(LktCountry::getQueryCaller()->andIsoCodeAlpha2Equal($isoCodeCCA2));
+                $country = LktCountry::getOne(LktCountry::getQueryBuilder()->andIsoCodeAlpha2Equal($isoCodeCCA2));
                 if ($country && $country->syncExcluded()) continue;
 
                 if (!$country) $country = LktCountry::getInstance()->setIsoCodeAlpha2($isoCodeCCA2)->setIsoCodeNumeric3($isoCodeCCN3);

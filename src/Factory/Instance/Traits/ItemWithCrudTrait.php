@@ -247,18 +247,22 @@ trait ItemWithCrudTrait
 
     public static function mkOrUp(array $data): static
     {
-        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder();
+        $schema->filterBuilderWithUniqueData($query, $data);;
+        $instance = static::getOne($query);
         if (!$instance) {
-            $instance = static::getInstance()->feedAndSave($data);
-        } else {
-            $instance->feedAndSave($data);
+            $instance = static::getInstance();
         }
-        return $instance;
+        return $instance->feedAndSave($data);
     }
 
     public static function mkIfNot(array $data): static
     {
-        $instance = static::getOne(static::getUniqueFilteredQueryBuilder($data));
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder();
+        $schema->filterBuilderWithUniqueData($query, $data);;
+        $instance = static::getOne($query);
         if (!$instance) {
             $instance = static::getInstance()->feedAndSave($data);
         }

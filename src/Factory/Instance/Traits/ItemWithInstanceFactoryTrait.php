@@ -114,12 +114,11 @@ trait ItemWithInstanceFactoryTrait
      * @throws InvalidComponentException
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
-     * @throws Exception
      */
     public static function getMany(Query $queryCaller = null): array
     {
         if (!$queryCaller) {
-            $queryCaller = static::getQueryCaller();
+            $queryCaller = static::getQueryBuilder();
         }
         return Instantiator::makeResults(static::COMPONENT, $queryCaller->selectDistinct());
     }
@@ -132,7 +131,7 @@ trait ItemWithInstanceFactoryTrait
      */
     public static function getOne(Query $queryCaller = null)
     {
-        if (!$queryCaller) $queryCaller = static::getQueryCaller();
+        if (!$queryCaller) $queryCaller = static::getQueryBuilder();
         $queryCaller->pagination(1, 1);
         $r = Instantiator::makeResults(static::COMPONENT, $queryCaller->selectDistinct());
         if (count($r) > 0) {
@@ -146,7 +145,7 @@ trait ItemWithInstanceFactoryTrait
      */
     public static function getCount(Query $queryCaller = null, string $countableField = null): int
     {
-        if (!$queryCaller) $queryCaller = static::getQueryCaller();
+        if (!$queryCaller) $queryCaller = static::getQueryBuilder();
 
         if (!$countableField) {
             $schema = Schema::get(static::COMPONENT);
@@ -181,7 +180,7 @@ trait ItemWithInstanceFactoryTrait
      */
     public static function getPage(int $page, Query $queryCaller = null, int $itemsPerPage = 0): array
     {
-        if (!$queryCaller) $queryCaller = static::getQueryCaller();
+        if (!$queryCaller) $queryCaller = static::getQueryBuilder();
         $schema = Schema::get(static::COMPONENT);
         $limit = $itemsPerPage;
         if ($limit <= 0) $limit = $queryCaller->getLimit();

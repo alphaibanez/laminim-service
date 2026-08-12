@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\DTO;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -12,6 +11,7 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
+use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -82,7 +82,7 @@ final readonly class GroupedData
             if ($field instanceof ValueListField) {
                 $multipleStringData[$k] = $data[$dataKey];
             }
-            elseif ($field instanceof StringField || $field instanceof EmailField) {
+            elseif ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
                 $stringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ForeignKeyField) {

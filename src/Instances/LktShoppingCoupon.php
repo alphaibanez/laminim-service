@@ -21,7 +21,7 @@ class LktShoppingCoupon extends GeneratedLktShoppingCoupon
 
     public static function findActiveCode(string $code): static|null
     {
-        $query = static::getQueryCaller()
+        $query = static::getQueryBuilder()
             ->andIsActiveIsTrue()
             ->andCodeEqual($code)
         ;

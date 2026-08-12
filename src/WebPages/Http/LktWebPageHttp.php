@@ -12,7 +12,7 @@ class LktWebPageHttp
 {
     public static function index(array $params): Response
     {
-        $queryBuilder = LktWebPage::getQueryCaller();
+        $queryBuilder = LktWebPage::getQueryBuilder();
 
         if (isset($params['type'])) {
             $type = (int)clearInput($params['type']);

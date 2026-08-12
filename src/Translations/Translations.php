@@ -414,7 +414,7 @@ class Translations
         $lang = static::determineLang($lang);
         if (isset(static::$combinedStack[$lang])) return static::$combinedStack[$lang];
 
-        $results = LktTranslation::getMany(LktTranslation::getQueryCaller()->andParentEqual(0));
+        $results = LktTranslation::getMany(LktTranslation::getQueryBuilder()->andParentEqual(0));
         $r = [];
 
         foreach ($results as $result) static::processTranslationResult($result, $r, $lang);

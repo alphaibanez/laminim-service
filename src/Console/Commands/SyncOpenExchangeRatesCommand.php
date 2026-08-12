@@ -60,7 +60,7 @@ class SyncOpenExchangeRatesCommand extends Command
         foreach ($availableCurrencies as $availableCurrency) {
             $codeAlpha3 = $availableCurrency->value;
 
-            $currency = LktCurrency::getOne(LktCurrency::getQueryCaller()->andIsoCodeAlpha3Equal($codeAlpha3));
+            $currency = LktCurrency::getOne(LktCurrency::getQueryBuilder()->andIsoCodeAlpha3Equal($codeAlpha3));
             if ($currency && $currency->syncExcluded()) continue;
 
             if (!$currency) {

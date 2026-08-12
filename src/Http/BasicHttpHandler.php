@@ -218,7 +218,7 @@ class BasicHttpHandler
 
         $schema = Schema::get($request->targetComponent);
         $helperInstance = $schema->getItemInstance();
-        $builder = $helperInstance::getQueryCaller();
+        $builder = $helperInstance::getQueryBuilder();
 
         if ($capability && $capability === RoleCapability::Owned) {
             $ownershipField = $schema->getOwnershipField();

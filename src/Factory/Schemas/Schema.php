@@ -768,10 +768,10 @@ final class Schema
         return null;
     }
 
-    public function getKindOfStringField(string $field): null|StringField|EmailField
+    public function getKindOfStringField(string $field): null|StringField|EmailField|HTMLField
     {
         $r = $this->getField($field);
-        if ($r instanceof StringField || $r instanceof EmailField) return $r;
+        if ($r instanceof StringField || $r instanceof EmailField || $r instanceof HTMLField) return $r;
         return null;
     }
 
@@ -1588,6 +1588,25 @@ final class Schema
                 }
             }
         }
+    }
+
+    public function filterBuilderWithUniqueData(Query &$builder, array $data): void
+    {
+        $fields = $this->getUniqueFields();
+        if (count($fields) === 0) return;
+
+        // Filter data and keep only unique fields info
+        $payload = [];
+        foreach ($fields as $field) {
+            $k = $field->getName();
+
+            if (array_key_exists($k, $data)) {
+                $payload[$k] = $data[$k];
+            }
+        }
+
+        if (count($payload) === 0) return;
+        $this->filterBuilder($builder, $payload);
     }
 
     protected ItemToI18nPolicy|null $itemToI18nPolicy = null;

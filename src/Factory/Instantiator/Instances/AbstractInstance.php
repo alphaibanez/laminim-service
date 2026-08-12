@@ -146,6 +146,14 @@ abstract class AbstractInstance implements Item
     }
 
 
+    /**
+     * @deprecated Use $schema->filterBuilderWithUniqueData() instead
+     * 
+     * @param array $data
+     * @return Query
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
     public static function getUniqueFilteredQueryBuilder(array $data): Query
     {
         $schema = Schema::get(static::COMPONENT);

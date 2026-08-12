@@ -110,7 +110,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public static function ableToSignUp(string $username): bool
     {
-        $user = static::getOne(static::getQueryCaller()->andEmailEqual($username));
+        $user = static::getOne(static::getQueryBuilder()->andEmailEqual($username));
         LktAuthenticationLog::logSignUp($username, $user);
         return !is_object($user);
     }

@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\Validations\ParseColumn;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
@@ -93,7 +92,14 @@ final class JsonDataController
 
         elseif (is_string($value)){
             $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
-            $value = ParseColumn::HTMLDatumToInstance($value);
+
+            // Decodes legacy escape patters previous to tables encoded as utf8mb4_unicode_ci
+            // @todo someday should be removed
+            $value = str_replace(':LKT_SLASH:', '\\', $value);
+            $value = str_replace(':LKT_QUESTION_MARK:', '?', $value);
+            $value = str_replace(':LKT_SINGLE_QUOTE:', "'", $value);
+            $value = trim(str_replace('\"', '"', $value));
+
             $r = json_decode($value, $associative);
         }
 

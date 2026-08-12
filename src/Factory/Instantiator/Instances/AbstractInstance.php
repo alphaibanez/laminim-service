@@ -28,6 +28,7 @@ use Lkt\Factory\Instance\Traits\ItemWithPivotDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithSchemaStorePathTrait;
+use Lkt\Factory\Instance\Traits\ItemWithSchemaTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
@@ -95,7 +96,8 @@ abstract class AbstractInstance implements Item
         ItemWithAccessPolicyTrait,
         ItemWithInstanceFactoryTrait,
         ItemWithCrudTrait,
-        ItemWithSchemaStorePathTrait;
+        ItemWithSchemaStorePathTrait,
+        ItemWithSchemaTrait;
 
     use ColumnStringTrait,
         ColumnIntegerTrait,
@@ -119,9 +121,8 @@ abstract class AbstractInstance implements Item
         ColumnConcatTrait,
         ColumnCompositionTrait,
         ColumnConstantValueTrait;
-    protected array $PENDING_UPDATE_RELATED_DATA = [];
 
-    const COMPONENT = '';
+    protected array $PENDING_UPDATE_RELATED_DATA = [];
 
     /**
      * @param array $initialData
@@ -132,23 +133,8 @@ abstract class AbstractInstance implements Item
     }
 
     /**
-     * @return Query
-     * @throws SchemaNotDefinedException
-     */
-    public static function getQueryBuilder()
-    {
-        return QueryBuilderHelper::getComponentQuery(static::COMPONENT);
-    }
-
-    public function getSchema(): Schema|null
-    {
-        return Schema::get(static::COMPONENT);
-    }
-
-
-    /**
      * @deprecated Use $schema->filterBuilderWithUniqueData() instead
-     * 
+     *
      * @param array $data
      * @return Query
      * @throws InvalidComponentException

@@ -16,6 +16,7 @@ interface Item
      * Self schema reference
      */
     public function getSchema(): Schema|null;
+    public static function getQueryBuilder();
 
     /**
      * @laminim

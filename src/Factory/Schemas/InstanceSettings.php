@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaClassNameForGeneratedClassException;
@@ -24,6 +25,19 @@ final class InstanceSettings
     private ?StringValue $whereClassName = null;
     protected array $implementsInterfaces = [];
     protected array $traits = [];
+
+    protected bool $abstractInstanceExtends = true;
+
+    public function setAbstractInstanceExtends(bool $status = true): static
+    {
+        $this->abstractInstanceExtends = $status;
+        return $this;
+    }
+
+    public function hasAbstractInstanceExtends(): bool
+    {
+        return $this->abstractInstanceExtends;
+    }
 
 
     public function setInterface(string $interface): self
@@ -280,6 +294,8 @@ final class InstanceSettings
         if ($this->classToBeExtended instanceof StringValue) {
             return $this->classToBeExtended->getValue();
         }
+
+        if ($this->abstractInstanceExtends) return AbstractInstance::class;
         return '';
     }
 

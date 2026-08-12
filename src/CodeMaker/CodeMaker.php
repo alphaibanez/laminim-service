@@ -34,9 +34,9 @@ class CodeMaker
 
             $extends = $instanceSettings?->hasLegalExtendClass()
                 ? $instanceSettings?->getClassToBeExtended()
-                : AbstractInstance::class;
+                : '';
 
-            $extends = '\\'. $extends;
+            if ($extends !== '') $extends = "extends \\{$extends}";
 
             $implements = $instanceSettings?->getImplementedInterfacesAsString();
             if ($implements !== ''){

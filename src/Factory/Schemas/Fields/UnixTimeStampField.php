@@ -9,8 +9,6 @@ use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 
 class UnixTimeStampField extends AbstractField
 {
-    const TYPE = 'date';
-
     use FieldWithNullOptionTrait,
         FieldWithFormatsOptionTrait,
         DateFieldWithFormattedValueTrait,

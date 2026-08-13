@@ -4,8 +4,6 @@ namespace Lkt\Factory\Schemas\Fields;
 
 class ValueListField extends StringField
 {
-    const TYPE = 'value-list';
-
     protected string $separator = ';';
     protected string $readMode = 'both';
 

@@ -10,8 +10,6 @@ abstract class AbstractField
 {
     use BaseFieldTrait;
 
-    const TYPE = '';
-
     protected FieldColumnValue $column;
 
     protected $defaultValue = [];

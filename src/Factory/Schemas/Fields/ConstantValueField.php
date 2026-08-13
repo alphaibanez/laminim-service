@@ -6,8 +6,6 @@ use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 
 class ConstantValueField extends AbstractField
 {
-    const TYPE = 'constant-value';
-
     use FieldWithNullOptionTrait;
 
     protected string $constantValueType = 'string';

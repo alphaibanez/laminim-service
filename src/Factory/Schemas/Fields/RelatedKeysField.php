@@ -13,8 +13,6 @@ use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
 
 class RelatedKeysField extends AbstractField
 {
-    const TYPE = 'related-keys';
-
     use FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,

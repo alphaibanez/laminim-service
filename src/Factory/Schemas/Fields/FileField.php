@@ -12,8 +12,6 @@ use Lkt\MIME;
 
 class FileField extends AbstractField
 {
-    const TYPE = 'file';
-
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
         FieldWithEmptyDataModeTrait;

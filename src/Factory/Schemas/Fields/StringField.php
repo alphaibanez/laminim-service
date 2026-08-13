@@ -11,8 +11,6 @@ use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 
 class StringField extends AbstractField
 {
-    const TYPE = 'text';
-
     protected bool $unique = false;
     protected TrimMode $trimMode = TrimMode::Full;
 

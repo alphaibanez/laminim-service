@@ -7,8 +7,6 @@ use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
 
 class IntegerChoiceField extends IntegerField
 {
-    const TYPE = 'integer-choice';
-
     use FieldWithChoiceOptionTrait,
         FieldWithPrefabRoleTrait;
 }

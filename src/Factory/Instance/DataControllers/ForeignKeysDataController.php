@@ -101,13 +101,13 @@ final class ForeignKeysDataController
             if (is_numeric($id)) {
                 if ($relatedClass) {
                     $instance = call_user_func_array([$relatedClass, 'getInstance'], ['id' => $id]);
-                    if ($instance instanceof AbstractInstance && !$instance->isAnonymous()) {
+                    if ($instance instanceof Item && !$instance->isAnonymous()) {
                         $r[] = $instance;
                     }
 
                 } else {
                     $t = Instantiator::make($relatedComponent, $id);
-                    if ($t instanceof AbstractInstance && !$t->isAnonymous()) {
+                    if ($t instanceof Item && !$t->isAnonymous()) {
                         $r[] = $t;
                     }
                 }

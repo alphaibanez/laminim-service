@@ -1160,8 +1160,8 @@ final class Schema
 
     /**
      * @return array|mixed
-     *  @throws InvalidComponentException
-     *@deprecated
+     * @throws InvalidComponentException
+     * @deprecated
      * Avoid using this method.
      * Replaced by
      *  - getIdentifiers (object oriented)
@@ -1477,7 +1477,7 @@ final class Schema
 
         if (!$instanceId) {
 
-            if ($instanceData instanceof AbstractInstance) {
+            if ($instanceData instanceof Item) {
                 $instanceData = $instanceData->autoRead();
             }
 
@@ -1531,10 +1531,15 @@ final class Schema
             if (!$field) continue;
 
             if ($field instanceof StringField) {
-                $v = clearInput($value);
+                $v = is_string($value) ? clearInput($value) : $value;
                 if ($v) {
                     if ($field->isI18nJson()) {
-                        $builder->andStringLike($field->getLocaleColumn($langCode), $value);
+                        if (is_array($value)) {
+                            $v = $value[$langCode];
+                            $builder->andStringLike($field->getLocaleColumn($langCode), $v);
+                        } else {
+                            $builder->andStringLike($field->getLocaleColumn($langCode), $value);
+                        }
 
                     } else {
                         $builder->andStringLike($field->getColumn(), $v);

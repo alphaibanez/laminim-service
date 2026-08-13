@@ -20,7 +20,7 @@ class Instantiator
      * @param string $component
      * @param $id
      * @param array $data
-     * @return AbstractInstance|null
+     * @return Item|null
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
      */
@@ -33,7 +33,7 @@ class Instantiator
 
         $callable = [$schema->getInstanceSettings()->getAppClass(), 'getInstance'];
 
-        /** @var AbstractInstance $r */
+        /** @var Item $r */
         $r = call_user_func_array($callable, ['id' => $id, 'initialData' => $data]);
 
         return $r;
@@ -42,14 +42,14 @@ class Instantiator
     /**
      * @param string $component
      * @param array $results
-     * @return AbstractInstance[]
+     * @return Item[]
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
      * @throws \Lkt\Factory\Schemas\Exceptions\InvalidComponentException
      */
     public static function makeResults(string|Schema $component, array $results): array
     {
-        /** @var AbstractInstance[] $response */
+        /** @var Item[] $response */
         $response = [];
         $schema = $component instanceof Schema ? $component : Schema::get($component);
         $appClass = $schema->getInstanceSettings()->getAppClass();

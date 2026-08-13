@@ -40,7 +40,7 @@ class QueryBuilderHelper
                 $identifierName = $identifier->getName();
 
                 if ($field instanceof RelatedField) {
-                    if ($identifier instanceof ForeignKeyField && $additionalData[$identifierName] instanceof AbstractInstance) {
+                    if ($identifier instanceof ForeignKeyField && $additionalData[$identifierName] instanceof Item) {
 
                         if ($relatedField->getColumn() === $identifier->getColumn()) {
                             $query->andIntegerEqual($relatedField->getColumn(), $idColumnValue);

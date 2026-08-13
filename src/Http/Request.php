@@ -2,6 +2,7 @@
 
 namespace Lkt\Http;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Schema;
@@ -27,7 +28,7 @@ class Request
     readonly public GrantedPermsAttempt $attemptToGrantPerms;
     readonly public string $extractedTargetInstanceIdFromParamsKey;
     readonly public WebItem|null $targetWebItem;
-    readonly public AbstractInstance|null $targetInstance;
+    readonly public AbstractInstance|Item|null $targetInstance;
     readonly public SessionUserInterface|null $loggedUser;
 
     /** @var HttpEventHandler[] */

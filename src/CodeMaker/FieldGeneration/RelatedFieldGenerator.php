@@ -64,12 +64,12 @@ class RelatedFieldGenerator implements FieldGenerator
 
         if ($field instanceof RelatedField && $field->isSingleMode()) {
             $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-            $r[] = "public function set{$this->data->methodName}WithData(int \${$this->data->fieldName}):static { \$this->relatedItemData->setItem('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}WithData(array \${$this->data->fieldName}):static { \$this->relatedItemData->setItem('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } elseif ($field instanceof RelatedField) {
 
             $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-            $r[] = "public function set{$this->data->methodName}WithData(int \${$this->data->fieldName}):static { \$this->relatedItemsData->setItems('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}WithData(array \${$this->data->fieldName}):static { \$this->relatedItemsData->setItems('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } elseif ($field instanceof ForeignKeysField) {
             $r[] = "/** @return {$this->data->selfReturningAnnotation} */";

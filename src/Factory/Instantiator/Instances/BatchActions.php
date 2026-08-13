@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
@@ -13,12 +14,12 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 
 class BatchActions
 {
-    /** @var AbstractInstance[]  */
+    /** @var Item[]  */
     public readonly array $items;
 
     /**
      * @param Schema $schema
-     * @param AbstractInstance[] $items
+     * @param Item[] $items
      */
     protected function __construct(public readonly Schema $schema, array $items)
     {

@@ -20,7 +20,6 @@ use Lkt\CodeMaker\FieldGeneration\PivotFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
 use Lkt\Factory\Schemas\ComputedFields\StringBelowMaxLengthComputedField;
@@ -183,7 +182,7 @@ class FieldsCodeHelper
                             $relatedIdentifierClassName = $relatedIdentifierSchema->getInstanceSettings()->getAppClass();
 
                             $additionalInput[] = "\\{$relatedIdentifierClassName}|int|null \${$relatedIdentifier->getName()}";
-                            $additionalInputDetection[] = "'{$relatedIdentifier->getName()}' => \${$relatedIdentifier->getName()} instanceOf AbstractInstance ? (int)\${$relatedIdentifier->getName()}?->getIdColumnValue() : \${$relatedIdentifier->getName()},";
+                            $additionalInputDetection[] = "'{$relatedIdentifier->getName()}' => \${$relatedIdentifier->getName()} instanceOf Item ? (int)\${$relatedIdentifier->getName()}?->getIdColumnValue() : \${$relatedIdentifier->getName()},";
                         }
 
                         $templateData['additionalInput'] = implode(', ', $additionalInput);
@@ -369,7 +368,7 @@ class FieldsCodeHelper
                         }
 
                         $_additionalInput[] = $tmpAdditionalInput;
-                        $_additionalInputDetection[] = "'{$relatedIdentifier->getName()}' => \${$relatedIdentifier->getName()} instanceOf AbstractInstance ? (int)\${$relatedIdentifier->getName()}?->getIdColumnValue() : \${$relatedIdentifier->getName()}";
+                        $_additionalInputDetection[] = "'{$relatedIdentifier->getName()}' => \${$relatedIdentifier->getName()} instanceOf Item ? (int)\${$relatedIdentifier->getName()}?->getIdColumnValue() : \${$relatedIdentifier->getName()}";
                     }
 
                     $_additionalInput = array_filter($_additionalInput, function ($d) {

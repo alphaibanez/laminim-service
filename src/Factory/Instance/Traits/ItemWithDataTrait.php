@@ -1064,7 +1064,7 @@ trait ItemWithDataTrait
             }
 
             $item = $this->foreignKeyData->getItem($key, $additionalData);
-            if ($item instanceof AbstractInstance) {
+            if ($item instanceof Item) {
                 if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
                 $item = $item->autoRead();
             }

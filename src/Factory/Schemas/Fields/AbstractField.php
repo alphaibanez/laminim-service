@@ -76,12 +76,17 @@ abstract class AbstractField
         return new static($name, $column);
     }
 
+    /**
+     * @deprecated Use Item::assignValue instead
+     */
     public function getSetter(): string
     {
         return 'set'. ucfirst($this->getName());
     }
 
-
+    /**
+     * @deprecated Use Item::assignValue instead
+     */
     public function getSetterForPrimitiveValue(): string
     {
         if ($this instanceof ForeignKeyField) return 'set'. ucfirst($this->getName()) . 'Id';
@@ -97,6 +102,9 @@ abstract class AbstractField
         return 'get'. ucfirst($this->getName());
     }
 
+    /**
+     * @deprecated Use Item::retrieveValue instead
+     */
     public function getGetterForPrimitiveValue(): string
     {
         if ($this instanceof BooleanField) return $this->getName();
@@ -107,6 +115,9 @@ abstract class AbstractField
         return 'get'. ucfirst($this->getName());
     }
 
+    /**
+     * @deprecated Use Item::retrieveValue instead
+     */
     public function getGetterForData(): string
     {
         if ($this instanceof BooleanField) return $this->getName();
@@ -117,6 +128,9 @@ abstract class AbstractField
         return 'get'. ucfirst($this->getName()) . 'Data';
     }
 
+    /**
+     * @deprecated Use Item::hasValue instead
+     */
     public function getGetterForChecker(): string
     {
         if ($this instanceof BooleanField) return $this->getName();
@@ -124,23 +138,35 @@ abstract class AbstractField
         return 'has'. ucfirst($this->getName());
     }
 
+    /**
+     * @deprecated
+     */
     public function setLabel(string $label): static
     {
         $this->label = new FieldLabelValue($label);
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     public function getLabel(): string
     {
         return $this->label->getValue();
     }
 
+    /**
+     * @deprecated
+     */
     public function setCustomType(string $type): static
     {
         $this->customType = new FieldCustomTypeValue($type);
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     public function getCustomType(): string
     {
         return $this->customType->getValue();

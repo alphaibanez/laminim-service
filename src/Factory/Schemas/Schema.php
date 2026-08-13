@@ -1304,6 +1304,13 @@ final class Schema
         return $r;
     }
 
+    /**
+     * @param string|AccessPolicyUsage $accessPolicy
+     * @return AbstractField[]
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     * @throws UndefinedAccessPolicyException
+     */
     public function getAccessPolicyExcludedFields(string|AccessPolicyUsage $accessPolicy): array
     {
         $accessPolicy = $accessPolicy instanceof AccessPolicyUsage ? $this->getAccessPolicy($accessPolicy->name) : $this->getAccessPolicy($accessPolicy);
@@ -1313,6 +1320,11 @@ final class Schema
         });
     }
 
+    /**
+     * @param string|AccessPolicyUsage $accessPolicy
+     * @return AbstractField[]
+     * @throws UndefinedAccessPolicyException
+     */
     public function getAccessPolicyComposedFields(string|AccessPolicyUsage $accessPolicy): array
     {
         $accessPolicy = $accessPolicy instanceof AccessPolicyUsage ? $this->getAccessPolicy($accessPolicy->name) : $this->getAccessPolicy($accessPolicy);

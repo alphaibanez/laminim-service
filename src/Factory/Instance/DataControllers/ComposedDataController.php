@@ -28,6 +28,30 @@ final class ComposedDataController
         $this->item = $ins;
     }
 
+    public function get(string $key, string $property, array $additionalData = []): mixed
+    {
+        $ins = $this->getItem($key, $additionalData);
+        if (!$ins) return null;
+
+        return $ins->retrieveValue($property, $additionalData, RetrieveDataMode::Item);
+    }
+
+    public function set(string $key, string $property, mixed $value, array $additionalData = []): Item|null
+    {
+        $ins = $this->getItem($key, $additionalData);
+        if (!$ins) return null;
+
+        return $ins->assignValue($property, $value);
+    }
+
+    public function has(string $key, string $property, array $additionalData = []): bool
+    {
+        $ins = $this->getItem($key, $additionalData);
+        if (!$ins) return false;
+
+        return $ins->hasAssignedValue($property);
+    }
+
     public function getItem(string $key, array $additionalData = []): Item|null
     {
         // @todo: sometimes, it returns null. An anonymous item should be ensured
@@ -99,17 +123,6 @@ final class ComposedDataController
             }
         }
         return $this;
-    }
-
-    public function has(string $key): bool
-    {
-        $v = $this->getItem($key);
-
-        $f = $this->schema->getForeignKeyField($key);
-        $mode = $f->getEmptyDataMode();
-
-        if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
-        return $v > 0;
     }
 
     public function prepareAdditionalData(string $key, array $additionalData = []): array

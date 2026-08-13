@@ -97,11 +97,6 @@ class PivotField extends AbstractField
         return $this;
     }
 
-    public function getQueryBuilderGetter(): string
-    {
-        return $this->getGetterForPrimitiveValue() . 'QueryBuilder';
-    }
-
     public function getTargetComponent(Schema|null $schema = null, Item|null $item = null): string|null
     {
         $pivotSchema = $this->getPivotSchema();

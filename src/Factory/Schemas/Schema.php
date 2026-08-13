@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
-use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
@@ -1043,13 +1043,13 @@ final class Schema
 
                 $foreignIdMatcher = "{$fieldName}Id";
                 if (substr($fieldName, -2) === 'Id') {
-                    $foreignIdMatcher = substr($fieldName, 0, strlen($fieldName) -2);
+                    $foreignIdMatcher = substr($fieldName, 0, strlen($fieldName) - 2);
                 }
 
                 if (in_array($fieldName, $compositionContent) || in_array($foreignIdMatcher, $compositionContent)) {
                     return $compositionField;
                 }
-                if (array_key_exists($fieldName, $compositionContent)|| array_key_exists($foreignIdMatcher, $compositionContent)) {
+                if (array_key_exists($fieldName, $compositionContent) || array_key_exists($foreignIdMatcher, $compositionContent)) {
                     return $compositionField;
                 }
             }
@@ -1110,7 +1110,9 @@ final class Schema
 
     public function getIdentifiersNames(): array
     {
-        return array_map(function (AbstractField $field) { return $field->getName();}, $this->getIdentifiers());
+        return array_map(function (AbstractField $field) {
+            return $field->getName();
+        }, $this->getIdentifiers());
     }
 
     public function hasComplexPrimaryKey(): bool
@@ -1460,7 +1462,9 @@ final class Schema
 
             $params = $reflectionMethod->getParameters();
 
-            $paramsKeys = array_map(function (\ReflectionParameter $param){ return $param->getName();}, $params);
+            $paramsKeys = array_map(function (\ReflectionParameter $param) {
+                return $param->getName();
+            }, $params);
 
             foreach (array_keys($args) as $key) {
                 if (!in_array($key, $paramsKeys)) unset($args[$key]);
@@ -1637,6 +1641,7 @@ final class Schema
     }
 
     protected ItemToI18nPolicy|null $itemToI18nPolicy = null;
+
     public function setItemToI18nPolicy(string $i18nKey, string $valueField, string $labelField, callable|null $queryBuilderTweak = null): static
     {
         $this->itemToI18nPolicy = new ItemToI18nPolicy($i18nKey, $valueField, $labelField, $queryBuilderTweak);
@@ -1648,7 +1653,7 @@ final class Schema
         return $this->itemToI18nPolicy instanceof ItemToI18nPolicy;
     }
 
-    public function getItemToI18nPolicy():? ItemToI18nPolicy
+    public function getItemToI18nPolicy(): ?ItemToI18nPolicy
     {
         return $this->itemToI18nPolicy;
     }
@@ -1666,15 +1671,15 @@ final class Schema
         $fields = $this->getIdentifiers();
 
         foreach ($fields as $field) {
-            $getter = $field->getGetterForPrimitiveValue();
+            $prop = $field->getName();
             if ($field instanceof IntegerField) {
-                $query->andIntegerEqual($field->getColumn(), $instance->{$getter}());
+                $query->andIntegerEqual($field->getColumn(), $instance->retrieveValue($prop, [], RetrieveDataMode::Raw));
 
             } elseif ($field instanceof StringField) {
-                $query->andStringEqual($field->getColumn(), $instance->{$getter}());
+                $query->andStringEqual($field->getColumn(), $instance->retrieveValue($prop, [], RetrieveDataMode::Raw));
 
             } elseif ($field instanceof DateTimeField) {
-                $query->andDatetimeEqual($field->getColumn(), $instance->{$getter}());
+                $query->andDatetimeEqual($field->getColumn(), $instance->retrieveValue($prop, [], RetrieveDataMode::Raw));
             }
         }
 

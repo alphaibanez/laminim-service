@@ -31,11 +31,6 @@ class RelatedField extends AbstractField
         return (new static($name, $column))->setComponent($component);
     }
 
-    public function getQueryBuilderGetter(): string
-    {
-        return $this->getGetterForPrimitiveValue() . 'QueryCaller';
-    }
-
     protected bool $returnsEmptyOneInSingleMode = false;
 
     public function setReturnsEmptyOneInSingleMode(bool $enable = true): static

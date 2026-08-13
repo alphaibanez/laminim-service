@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -308,7 +307,7 @@ trait ItemWithDataTrait
             foreach ($fileFields as $fileField) {
                 if ($this->fileData->updatedWithBase64String($fileField->getName())) {
                     $storePath = $fileField->getStorePath($this);
-                    if ($storePath === ''){
+                    if ($storePath === '') {
                         throw UnsetFieldStorePathException::getInstance($fileField->getName(), $schema->getComponent());
                     }
 
@@ -325,22 +324,20 @@ trait ItemWithDataTrait
         }
 
         foreach ($schema->getMandatoryFields() as $mandatoryField) {
-            $checkerMethod = $mandatoryField->getGetterForChecker();
-            if (!$this->{$checkerMethod}()) {
-                $additionalFieldsToColumn =  array_filter($schema->getFields(), function (AbstractField $field) use ($mandatoryField) {
+            if (!$this->hasAssignedValue($mandatoryField->getName())) {
+                $additionalFieldsToColumn = array_filter($schema->getFields(), function (AbstractField $field) use ($mandatoryField) {
                     return $field->getName() !== $mandatoryField->getName()
                         && $field->getColumn() === $mandatoryField->getColumn();
                 });
                 $ok = false;
                 if (count($additionalFieldsToColumn) > 0) {
                     foreach ($additionalFieldsToColumn as $additionalFieldToColumn) {
-                        $additionalCheckerMethod = $additionalFieldToColumn->getGetterForChecker();
-                        $ok = $ok || $this->{$additionalCheckerMethod}();
+                        $ok = $ok || $this->hasAssignedValue($additionalFieldToColumn->getName());
                     }
                 }
 
                 if (!$ok) {
-                    throw MissedMandatoryValueException::getInstance($schema->getComponent() . '.' .$mandatoryField->getName());
+                    throw MissedMandatoryValueException::getInstance($schema->getComponent() . '.' . $mandatoryField->getName());
                 }
             }
         }
@@ -507,8 +504,7 @@ trait ItemWithDataTrait
                     foreach ($data as $datum) {
                         if ($relatedMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
                             $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
-                        }
-                        elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
+                        } elseif ($foreignKeysMode && $relatedForeignKeyKey && !$datum[$relatedForeignKeyKey]) {
                             $datum[$relatedForeignKeyKey] = $this->getIdColumnValue();
                         }
 
@@ -600,7 +596,9 @@ trait ItemWithDataTrait
 
         $params = $reflectionMethod->getParameters();
 
-        $paramsKeys = array_map(function (\ReflectionParameter $param){ return $param->getName();}, $params);
+        $paramsKeys = array_map(function (\ReflectionParameter $param) {
+            return $param->getName();
+        }, $params);
 
         foreach (array_keys($args) as $key) {
             if (!in_array($key, $paramsKeys)) unset($args[$key]);
@@ -631,7 +629,6 @@ trait ItemWithDataTrait
         }
         return $this->{$method}();
     }
-
 
 
     public function getUpdatePayload(): array
@@ -1250,13 +1247,13 @@ trait ItemWithDataTrait
 
             if ($field->readModeIsBoth()) {
                 $r[$responseKey] = $this->{$getter}();
-                $r[$responseKey.'List'] = $this->{$getter.'AsArray'}();
+                $r[$responseKey . 'List'] = $this->{$getter . 'AsArray'}();
 
             } elseif ($field->readModeIsString()) {
                 $r[$responseKey] = $this->{$getter}();
 
             } elseif ($field->readModeIsArray()) {
-                $r[$responseKey] = $this->{$getter.'AsArray'}();
+                $r[$responseKey] = $this->{$getter . 'AsArray'}();
             }
             return $r;
 
@@ -1266,7 +1263,8 @@ trait ItemWithDataTrait
             $value = $this->{$getter}();
             $r[$responseKey] = $value;
             $i18nOptions = $field->getI18nViewOptions();
-            if ($i18nOptions !== '') {;
+            if ($i18nOptions !== '') {
+                ;
                 $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
             }
             return $r;

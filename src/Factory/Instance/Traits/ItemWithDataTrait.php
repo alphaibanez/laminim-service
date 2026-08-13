@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -1217,9 +1218,8 @@ trait ItemWithDataTrait
         } elseif ($field instanceof PivotField) {
 
             $schema = $this->getSchema();
-            $getter = $field->getGetterForPrimitiveValue();
             /** @var static[] $items */
-            $items = $this->{$getter}();
+            $items = $this->pivotData->getItems($field->getName());
             if (!is_array($items)) $items = [];
             $r = [];
             $t = [];
@@ -1243,28 +1243,25 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof ValueListField) {
             $r = [];
-            $getter = $field->getGetterForPrimitiveValue();
 
             if ($field->readModeIsBoth()) {
-                $r[$responseKey] = $this->{$getter}();
-                $r[$responseKey . 'List'] = $this->{$getter . 'AsArray'}();
+                $r[$responseKey] = $this->multipleStringData->getAsString($field->getName());
+                $r[$responseKey . 'List'] = $this->multipleStringData->get($field->getName());
 
             } elseif ($field->readModeIsString()) {
-                $r[$responseKey] = $this->{$getter}();
+                $r[$responseKey] = $this->multipleStringData->getAsString($field->getName());
 
             } elseif ($field->readModeIsArray()) {
-                $r[$responseKey] = $this->{$getter . 'AsArray'}();
+                $r[$responseKey] = $this->multipleStringData->get($field->getName());
             }
             return $r;
 
         } elseif ($field instanceof StringChoiceField) {
             $r = [];
-            $getter = $field->getGetterForPrimitiveValue();
-            $value = $this->{$getter}();
+            $value = $this->stringData->get($field->getName());
             $r[$responseKey] = $value;
             $i18nOptions = $field->getI18nViewOptions();
             if ($i18nOptions !== '') {
-                ;
                 $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
             }
             return $r;

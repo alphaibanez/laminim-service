@@ -27,6 +27,7 @@ trait ItemWithInstanceFactoryTrait
         if (!$id) {
             $r = new static($initialData);
 
+            /** @var Schema $schema */
             $schema = $r->getSchema();
             $fields = $schema->getChoiceFieldsWithDefaultValue();
 

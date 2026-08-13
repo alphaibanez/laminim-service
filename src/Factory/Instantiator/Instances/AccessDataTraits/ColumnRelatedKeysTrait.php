@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
@@ -112,20 +113,18 @@ trait ColumnRelatedKeysTrait
         if ($field instanceof RelatedKeysField) {
             $relatedSchema = Schema::get($field->getComponent());
             $relatedSchemaField = $relatedSchema->getField($field->getColumn());
-
-            $setter = $relatedSchemaField->getSetter();
-            $getter = $relatedSchemaField->getGetterForPrimitiveValue();
+            $relatedSchemaFieldName = $relatedSchemaField->getName();
 
             if (!is_array($parentValue)) $parentValue = [$parentValue];
             foreach ($parentValue as $value) {
                 $instance = $relatedSchema->getItemInstance($value);
                 if (!$instance->isAnonymous()) {
-                    $currentIds = $instance->{$getter}();
+                    $currentIds = $instance->retrieveValue($relatedSchemaFieldName, [], RetrieveDataMode::Raw);
                     if (!in_array($this->getIdColumnValue(), $currentIds)) {
-                        $instance->{$setter}([
+                        $instance->assignValue($relatedSchemaFieldName, [
                             ...$currentIds,
                             $this->getIdColumnValue(),
-                        ])->save();
+                        ], RetrieveDataMode::Raw)->save();
                     }
                 }
             }

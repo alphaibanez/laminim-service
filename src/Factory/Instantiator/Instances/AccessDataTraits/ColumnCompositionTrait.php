@@ -7,7 +7,7 @@ use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 
 trait ColumnCompositionTrait
 {
-    protected function _getCompositionAdditionalData(array $additionalData = [], string $fieldName = null, mixed $reflectedInstance = null, string $reflectedMethod = null)
+    protected function _getCompositionAdditionalData(array $additionalData = [], string $fieldName = null)
     {
         return $this->composedData->prepareAdditionalData((string)$fieldName, $additionalData);
     }

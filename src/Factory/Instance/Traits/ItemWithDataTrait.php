@@ -272,7 +272,7 @@ trait ItemWithDataTrait
         }
 
         // Assign default values
-        /** @var AbstractField $fieldsWithDefaultValue */
+        /** @var AbstractField[] $fieldsWithDefaultValue */
         $fieldsWithDefaultValue = $isUpdate ? $schema->getFieldsToUpdateOnInstanceUpdate() : $schema->getFieldsWithDefaultValue();
         foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
             $defaultValueKey = $fieldWithDefaultValue->getName();

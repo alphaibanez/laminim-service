@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Schemas\Traits;
 
+use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -32,8 +34,8 @@ trait FieldWithComponentOptionTrait
             $dynamicComponentFieldName = $this->getDynamicComponentField();
             if ($dynamicComponentFieldName !== '') {
                 $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
-                $getter = $dynamicComponentField->getGetterForPrimitiveValue();
-                $dynamicType = $instance->{$getter}();
+//                $getter = $dynamicComponentField->getGetterForPrimitiveValue();
+                $dynamicType = $instance->retrieveValue($dynamicComponentField->getName(), [], RetrieveDataMode::Raw);
                 if (is_numeric($dynamicType)) return ComponentId::getComponent((int)$dynamicType);
                 elseif ($dynamicType !== '') return $dynamicType;
             }

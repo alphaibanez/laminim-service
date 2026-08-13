@@ -2,7 +2,7 @@
   "name": "alphaibanez/laminim-service",
   "description": "Laminim Kernel Tools Backend Service",
   "type": "library",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "require": {
     "php": ">=8.2.0",
     "ext-pdo": "*",

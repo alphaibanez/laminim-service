@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
@@ -227,9 +228,10 @@ trait ItemWithCrudTrait
         $connection->query($connection->getDeleteQuery($caller));
 
         foreach ($schema->getFieldsWithAppendForeignKeysName() as $relatedField) {
-            $getter = $relatedField->getGetterForData();
+//            $getter = $relatedField->getGetterForData();
             /** @var AbstractInstance[] $relatedElements */
-            $relatedElements = $this->{$getter}();
+//            $relatedElements = $this->{$getter}();
+            $relatedElements = $this->retrieveValue($relatedField->getName(), [], RetrieveDataMode::Item);
             $relatedSchema = Schema::get($relatedField->getComponent());
             $relatedElementsField = $relatedSchema->getField($relatedField->getColumn());
             foreach ($relatedElements as $element) {

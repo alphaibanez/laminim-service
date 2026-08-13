@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instantiator;
@@ -448,17 +449,13 @@ final class PivotDataController
         $results = $pivotQueryBuilder->select();
         $nextPosition = $results[0]['position'] === null ? 0 : (int)$results[0]['position'] + 1;
 
-
         $instance = $pivotSchema->getItemInstance();
 
-        $pointingSetter = $pointingField->getSetterForPrimitiveValue();
-        $instance->{$pointingSetter}($this->item->getIdColumnValue());
-
-        $referencedSetter = $referencedField->getSetterForPrimitiveValue();
-        $instance->{$referencedSetter}($id);
-
-        $positionSetter = $positionField->getSetterForPrimitiveValue();
-        $instance->{$positionSetter}($nextPosition);
+        $instance
+            ->assignValue($pointingField->getName(), $this->item->getIdColumnValue(), RetrieveDataMode::Raw)
+            ->assignValue($referencedField->getName(), $id, RetrieveDataMode::Raw)
+            ->assignValue($positionField->getName(), $nextPosition)
+        ;
 
         $instance->save();
         return $this;
@@ -481,11 +478,9 @@ final class PivotDataController
 
         $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($component);
 
-        $pointingGetter = $pointingField->getGetterForPrimitiveValue();
-        $pivotQueryBuilder->andIntegerEqual($pointingField->getColumn(), $this->{$pointingGetter}());
-
-        $referencedGetter = $referencedField->getGetterForPrimitiveValue();
-        $pivotQueryBuilder->andIntegerEqual($referencedField->getColumn(), $this->{$referencedGetter}());
+        $pivotQueryBuilder
+            ->andIntegerEqual($pointingField->getColumn(), $this->item->retrieveValue($pointingField->getName(), [], RetrieveDataMode::Raw))
+            ->andIntegerEqual($referencedField->getColumn(), $id);
 
         $anonymous = $pivotSchema->getItemInstance();
         $instance = $anonymous::getOne($pivotQueryBuilder);

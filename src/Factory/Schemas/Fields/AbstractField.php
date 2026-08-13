@@ -5,7 +5,6 @@ namespace Lkt\Factory\Schemas\Fields;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldNameException;
 use Lkt\Factory\Schemas\Traits\BaseFieldTrait;
 use Lkt\Factory\Schemas\Values\FieldColumnValue;
-use Lkt\Factory\Schemas\Values\FieldLabelValue;
 
 abstract class AbstractField
 {
@@ -14,7 +13,6 @@ abstract class AbstractField
     const TYPE = '';
 
     protected FieldColumnValue $column;
-    protected FieldLabelValue $label;
 
     protected $defaultValue = [];
 
@@ -44,7 +42,6 @@ abstract class AbstractField
 
         $this->name = $name;
         $this->column = new FieldColumnValue($column, $this->name);
-        $this->label = new FieldLabelValue('');
     }
 
     final public function getColumn(): string
@@ -125,23 +122,6 @@ abstract class AbstractField
         if ($this instanceof BooleanField) return $this->getName();
         if ($this instanceof ForeignKeyField) return 'has'. ucfirst($this->getName());
         return 'has'. ucfirst($this->getName());
-    }
-
-    /**
-     * @deprecated
-     */
-    public function setLabel(string $label): static
-    {
-        $this->label = new FieldLabelValue($label);
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getLabel(): string
-    {
-        return $this->label->getValue();
     }
 
     public function setDefaultValue($value): static

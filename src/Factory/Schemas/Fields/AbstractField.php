@@ -3,19 +3,18 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldNameException;
+use Lkt\Factory\Schemas\Traits\BaseFieldTrait;
 use Lkt\Factory\Schemas\Values\FieldColumnValue;
-use Lkt\Factory\Schemas\Values\FieldCustomTypeValue;
 use Lkt\Factory\Schemas\Values\FieldLabelValue;
-use Lkt\Factory\Schemas\Values\FieldNameValue;
 
 abstract class AbstractField
 {
+    use BaseFieldTrait;
+
     const TYPE = '';
 
-    protected FieldNameValue $name;
     protected FieldColumnValue $column;
     protected FieldLabelValue $label;
-    protected FieldCustomTypeValue $customType;
 
     protected $defaultValue = [];
 
@@ -41,21 +40,11 @@ abstract class AbstractField
      */
     public function __construct(string $name, string $column = '')
     {
-        $this->name = new FieldNameValue($name);
-        $this->column = new FieldColumnValue($column, $this->name->getValue());
+        if (!$name) throw new InvalidFieldNameException();
+
+        $this->name = $name;
+        $this->column = new FieldColumnValue($column, $this->name);
         $this->label = new FieldLabelValue('');
-        $this->customType = new FieldCustomTypeValue(static::TYPE);
-    }
-
-    final public function getName(): string
-    {
-        return $this->name->getValue();
-    }
-
-    final public function setName(string $name): static
-    {
-        $this->name = new FieldNameValue($name);
-        return $this;
     }
 
     final public function getColumn(): string
@@ -153,23 +142,6 @@ abstract class AbstractField
     public function getLabel(): string
     {
         return $this->label->getValue();
-    }
-
-    /**
-     * @deprecated
-     */
-    public function setCustomType(string $type): static
-    {
-        $this->customType = new FieldCustomTypeValue($type);
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getCustomType(): string
-    {
-        return $this->customType->getValue();
     }
 
     public function setDefaultValue($value): static

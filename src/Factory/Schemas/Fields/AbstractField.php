@@ -4,50 +4,27 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldNameException;
 use Lkt\Factory\Schemas\Traits\BaseFieldTrait;
-use Lkt\Factory\Schemas\Values\FieldColumnValue;
 
 abstract class AbstractField
 {
     use BaseFieldTrait;
 
-    protected FieldColumnValue $column;
+    protected array $defaultValue = [];
 
-    protected $defaultValue = [];
-
-    protected $onEqualOverrideWithDefaultValue = [];
-
-    protected bool $isIdentifier = false;
-
-    public function setIsIdentifier(bool $status = true): static
-    {
-        $this->isIdentifier = $status;
-        return $this;
-    }
-
-    public function isIdentifier(): bool
-    {
-        return $this->isIdentifier;
-    }
+    protected array $onEqualOverrideWithDefaultValue = [];
 
     /**
      * @throws InvalidFieldNameException
      */
-    public function __construct(string $name, string $column = '')
+    public function __construct(string $name, string|null $column = null)
     {
         if (!$name) throw new InvalidFieldNameException();
 
         $this->name = $name;
-        $this->column = new FieldColumnValue($column, $this->name);
-    }
+        if (!$column) $column = $name;
+        if (!$column) throw new InvalidFieldNameException();
 
-    final public function getColumn(): string
-    {
-        return $this->column->getValue();
-    }
-
-    final public function getLocaleColumn(string $locale): string
-    {
-        return "__loc:{$locale}:{$this->column->getValue()}";
+        $this->column = $column;
     }
 
     /**
@@ -56,14 +33,6 @@ abstract class AbstractField
     final public static function define(string $name, string $column = ''): static
     {
         return new static($name, $column);
-    }
-
-    /**
-     * @deprecated Use Item::assignValue instead
-     */
-    public function getSetter(): string
-    {
-        return 'set'. ucfirst($this->getName());
     }
 
     /**

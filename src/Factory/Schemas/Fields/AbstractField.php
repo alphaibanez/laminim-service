@@ -16,8 +16,6 @@ abstract class AbstractField
 
     protected $onEqualOverrideWithDefaultValue = [];
 
-    protected array $customViewName = [];
-
     protected bool $isIdentifier = false;
 
     public function setIsIdentifier(bool $status = true): static
@@ -176,29 +174,5 @@ abstract class AbstractField
         }
 
         return $value;
-    }
-
-    /**
-     * @param string $view
-     * @param string $name
-     * @return $this
-     * @deprecated
-     */
-    public function setCustomViewName(string $view, string $name): static
-    {
-        $this->customViewName[$view] = $name;
-        return $this;
-    }
-
-    /**
-     * @param string $view
-     * @return string
-     * @deprecated
-     */
-    public function getCustomViewName(string $view): string
-    {
-        if ($this->customViewName[$view] && $this->customViewName[$view] !== '') return $this->customViewName[$view];
-        if ($this instanceof MethodGetterField) return $this->getColumn();
-        return $this->getName();
     }
 }

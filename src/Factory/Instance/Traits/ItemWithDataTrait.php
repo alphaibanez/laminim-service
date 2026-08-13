@@ -225,7 +225,7 @@ trait ItemWithDataTrait
                     $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
                     if (!$fieldComposingThisField) continue;
                     /** @var Item $composedInstance */
-                    $composedInstance = $this->_getCompositionInstance($fieldComposingThisField?->getName(), $internalMethodsArguments);
+                    $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $internalMethodsArguments);
                     $composedInstances[$composedKey] = $composedInstance;
                 }
 

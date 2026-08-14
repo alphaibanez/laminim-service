@@ -7,17 +7,30 @@ use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 
 trait ColumnCompositionTrait
 {
+    /**
+     * @deprecated
+     * @param array $additionalData
+     * @param string|null $fieldName
+     * @return array
+     */
     protected function _getCompositionAdditionalData(array $additionalData = [], string $fieldName = null)
     {
         return $this->composedData->prepareAdditionalData((string)$fieldName, $additionalData);
     }
 
+    /**
+     * @deprecated
+     * @param string $composedComponent
+     * @param array $additionalData
+     * @return mixed
+     */
     protected function _getCompositionInstance(string $composedComponent, array $additionalData = []): mixed
     {
         return $this->composedData->getItem($composedComponent, $additionalData);
     }
 
     /**
+     * @deprecated
      * @param string $composedComponent
      * @param string $fieldName
      * @return mixed
@@ -29,6 +42,7 @@ trait ColumnCompositionTrait
     }
 
     /**
+     * @deprecated
      * @param string $component
      * @param string $composedComponent
      * @param string $fieldName
@@ -44,6 +58,7 @@ trait ColumnCompositionTrait
     }
 
     /**
+     * @deprecated
      * @param string $composedComponent
      * @param string $fieldName
      * @return bool

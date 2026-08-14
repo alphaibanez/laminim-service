@@ -226,16 +226,17 @@ trait ItemWithCrudTrait
         $schema->applyIdentifierConstraintsToQueryFromInstance($caller, $this);
 
         $connection->query($connection->getDeleteQuery($caller));
+        $id = $this->getIdColumnValue();
 
         foreach ($schema->getFieldsWithAppendForeignKeysName() as $relatedField) {
-//            $getter = $relatedField->getGetterForData();
             /** @var AbstractInstance[] $relatedElements */
-//            $relatedElements = $this->{$getter}();
             $relatedElements = $this->retrieveValue($relatedField->getName(), [], RetrieveDataMode::Item);
             $relatedSchema = Schema::get($relatedField->getComponent());
             $relatedElementsField = $relatedSchema->getField($relatedField->getColumn());
+            $relatedElementsFieldKey = $relatedElementsField->getName();
             foreach ($relatedElements as $element) {
-                $element->_removeForeignListIds($relatedElementsField->getName(), [$id])->save();
+//                $element->_removeForeignListIds($relatedElementsField->getName(), [$id])->save();
+                $element->foreignKeysData->removeIds($relatedElementsFieldKey, [$id])->save();
             }
         }
 

@@ -2,6 +2,7 @@
 
 namespace Lkt\Translations;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktTranslation;
 use Lkt\Locale\Locale;
@@ -437,14 +438,13 @@ class Translations
             if (count($items) === 0) continue;
 
             $valueField = $schema->getField($policy->valueField);
-            $valueFieldGetter = $valueField->getGetterForPrimitiveValue();
+            $valueKey = $valueField->getName();
             $labelField = $schema->getField($policy->labelField);
-            $labelFieldGetter = $labelField->getGetterForPrimitiveValue();
-
+            $labelKey = $labelField->getName();
 
             $temp = [];
             foreach ($items as $item) {
-                $temp[$item->{$valueFieldGetter}()] = $item->$labelFieldGetter();
+                $temp[$item->retrieveValue($valueKey)] = $item->retrieveValue($labelKey);
             }
 
             $itemBasedTranslations[$policy->i18nKey] = $temp;

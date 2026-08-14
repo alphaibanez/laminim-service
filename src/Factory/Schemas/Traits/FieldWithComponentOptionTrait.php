@@ -34,7 +34,6 @@ trait FieldWithComponentOptionTrait
             $dynamicComponentFieldName = $this->getDynamicComponentField();
             if ($dynamicComponentFieldName !== '') {
                 $dynamicComponentField = $schema->getField($dynamicComponentFieldName);
-//                $getter = $dynamicComponentField->getGetterForPrimitiveValue();
                 $dynamicType = $instance->retrieveValue($dynamicComponentField->getName(), [], RetrieveDataMode::Raw);
                 if (is_numeric($dynamicType)) return ComponentId::getComponent((int)$dynamicType);
                 elseif ($dynamicType !== '') return $dynamicType;

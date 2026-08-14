@@ -66,7 +66,6 @@ class LktUserRole extends GeneratedLktUserRole
                         $ownershipField = $schema->getOwnershipField();
                         if (!$ownershipField) return false;
 
-//                        $ownerUserId = $instance->callOwnMethod($ownershipField->getGetterForPrimitiveValue(), []);
                         $ownerUserId = $instance->retrieveValue($ownershipField->getName(), [], RetrieveDataMode::Raw);
                         return $ownerUserId === LktUser::getSignedInUserId();
                     }

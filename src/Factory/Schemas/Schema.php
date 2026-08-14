@@ -619,6 +619,11 @@ final class Schema
         });
     }
 
+    /**
+     * @return AbstractField[]
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
     public function getFieldsWithDefaultValue(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField $field) {
@@ -626,6 +631,11 @@ final class Schema
         });
     }
 
+    /**
+     * @return AbstractField[]
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
     public function getFieldsToUpdateOnInstanceUpdate(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField $field) {
@@ -1665,7 +1675,7 @@ final class Schema
         });
     }
 
-    public function applyIdentifierConstraintsToQueryFromInstance(Query $query, AbstractInstance $instance): static
+    public function applyIdentifierConstraintsToQueryFromInstance(Query $query, AbstractInstance|Item $instance): static
     {
         /** @var AbstractField[] $fields */
         $fields = $this->getIdentifiers();

@@ -11,6 +11,7 @@ trait ColumnBooleanTrait
     use ItemWithBooleanDataTrait;
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return bool
      */
@@ -20,6 +21,7 @@ trait ColumnBooleanTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @param bool $value
      * @return void

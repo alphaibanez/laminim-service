@@ -11,6 +11,7 @@ trait ColumnColorTrait
     use ItemWithColorDataTrait;
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return string
      */
@@ -20,6 +21,7 @@ trait ColumnColorTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @param float|null $opacity
      * @return array
@@ -30,6 +32,7 @@ trait ColumnColorTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @param float|null $opacity
      * @return string
@@ -40,6 +43,7 @@ trait ColumnColorTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return bool
      */
@@ -49,6 +53,7 @@ trait ColumnColorTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @param $value
      * @throws InvalidComponentException

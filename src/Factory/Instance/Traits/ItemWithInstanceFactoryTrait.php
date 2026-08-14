@@ -33,8 +33,7 @@ trait ItemWithInstanceFactoryTrait
 
             if (count($fields)) {
                 foreach ($fields as $field) {
-                    $setter = $field->getSetterForPrimitiveValue();
-                    $r->{$setter}($field->getEmptyDefault());
+                    $r->assignValue($field->getName(), $field->getEmptyDefault());
                 }
             }
 
@@ -42,8 +41,7 @@ trait ItemWithInstanceFactoryTrait
 
             if (count($fields)) {
                 foreach ($fields as $field) {
-                    $setter = $field->getSetterForPrimitiveValue();
-                    $r->{$setter}($field->getDefaultValue());
+                    $r->assignValue($field->getName(), $field->getDefaultValue());
                 }
             }
 

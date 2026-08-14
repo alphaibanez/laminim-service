@@ -2,8 +2,6 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
-use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Fields\AbstractField;
@@ -54,14 +52,7 @@ final class ComposedDataController
 
     public function getItem(string $key, array $additionalData = []): Item|null
     {
-        // @todo: sometimes, it returns null. An anonymous item should be ensured
-        $r = $this->item->retrieveValue($key, $additionalData, RetrieveDataMode::ItemOrAnonymous);
-
-        if (!$r) {
-            VarDumper::die($key, $additionalData, $this->schema->getComponent());
-        }
-
-        return $r;
+        return $this->item->retrieveValue($key, $additionalData, RetrieveDataMode::ItemOrAnonymous);
     }
 
     public function setItems(array $items): self
@@ -135,15 +126,7 @@ final class ComposedDataController
          */
         foreach ($compositionValuesFields as $key => $compositionValueField) {
             if (!$additionalData[$key]) {
-                if ($compositionValueField instanceof ForeignKeyField) {
-                    $getterAux = $compositionValueField->getGetterForData();
-                } else {
-                    $getterAux = $compositionValueField->getGetterForPrimitiveValue();
-                }
-
-                if (is_callable([$this, $getterAux])) {
-                    $additionalData[$key] = $this->{$getterAux}();
-                }
+                $additionalData[$key] = $this->item->retrieveValue($compositionValueField->getName(), $additionalData, RetrieveDataMode::Raw);
             }
         }
 

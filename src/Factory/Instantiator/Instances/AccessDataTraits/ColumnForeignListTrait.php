@@ -12,6 +12,7 @@ trait ColumnForeignListTrait
     use ItemWithForeignKeysDataTrait;
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return array
      * @throws InvalidComponentException
@@ -23,6 +24,7 @@ trait ColumnForeignListTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return array
      * @throws InvalidComponentException
@@ -35,6 +37,7 @@ trait ColumnForeignListTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return string
      */
@@ -44,6 +47,7 @@ trait ColumnForeignListTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @return bool
      */
@@ -53,6 +57,7 @@ trait ColumnForeignListTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @param string|array|null $value
      * @throws InvalidComponentException
@@ -64,6 +69,13 @@ trait ColumnForeignListTrait
         return $this;
     }
 
+    /**
+     * @deprecated
+     * @param string $fieldName
+     * @param array $data
+     * @return $this
+     * @throws \Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException
+     */
     protected function _setForeignListWithData(string $fieldName, array $data = []): static
     {
         $this->foreignKeysData->set($fieldName, $data);
@@ -71,6 +83,7 @@ trait ColumnForeignListTrait
     }
 
     /**
+     * @deprecated
      * @param string $fieldName
      * @param array $value
      * @return $this

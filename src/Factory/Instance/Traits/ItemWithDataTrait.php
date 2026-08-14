@@ -292,9 +292,7 @@ trait ItemWithDataTrait
 
             foreach ($accessPolicyExcludedFields as $accessPolicyExcludedField) {
                 $key = $accessPolicyExcludedField->getName();
-                $hasKey = $accessPolicyExcludedField->getGetterForChecker();
                 if (array_key_exists($key, $payload)) unset($payload[$key]);
-                if (array_key_exists($hasKey, $payload)) unset($payload[$hasKey]);
             }
         }
 

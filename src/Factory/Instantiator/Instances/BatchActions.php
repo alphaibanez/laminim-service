@@ -89,11 +89,9 @@ class BatchActions
                     if (!$component) continue;
 
                     $prop = $field->getName();
-//                    $getter = $field->getGetterForPrimitiveValue();
 
                     foreach ($this->items as $item) {
                         $v = $item->retrieveValue($prop, [], RetrieveDataMode::Raw);
-//                        $v = $item->{$getter}();
                         if (!isset($preFetchForeignKey[$component])) $preFetchForeignKey[$component] = [];
                         if (!in_array($v, $preFetchForeignKey[$component])) {
                             $preFetchForeignKey[$component][] = $v;
@@ -104,11 +102,9 @@ class BatchActions
                     $component = $field->getComponent();
                     if (!$component) continue;
 
-//                    $getter = $field->getGetterForPrimitiveValue();
                     $prop = $field->getName();
 
                     foreach ($this->items as $item) {
-//                        $v = $item->{$getter}();
                         $v = $item->retrieveValue($prop, [], RetrieveDataMode::Raw);
                         if (!isset($preFetchForeignKeys[$component])) $preFetchForeignKeys[$component] = [];
                         foreach ($v as $v_) {

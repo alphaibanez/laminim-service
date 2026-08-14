@@ -36,57 +36,15 @@ abstract class AbstractField
     }
 
     /**
-     * @deprecated Use Item::assignValue instead
+     * @deprecated
+     * @return string
      */
-    public function getSetterForPrimitiveValue(): string
-    {
-        if ($this instanceof ForeignKeyField) return 'set'. ucfirst($this->getName()) . 'Id';
-        if ($this instanceof ForeignKeysField) return 'set'. ucfirst($this->getName()) . 'Ids';
-        return 'set'. ucfirst($this->getName());
-    }
-
     public function getGetterForComputed(): string
     {
         if ($this instanceof BooleanField) {
             return $this->getName();
         }
         return 'get'. ucfirst($this->getName());
-    }
-
-    /**
-     * @deprecated Use Item::retrieveValue instead
-     */
-    public function getGetterForPrimitiveValue(): string
-    {
-        if ($this instanceof BooleanField) return $this->getName();
-        if ($this instanceof ForeignKeyField) return 'get'. ucfirst($this->getName()) . 'Id';
-        if ($this instanceof ForeignKeysField) return 'get'. ucfirst($this->getName()) . 'Ids';
-        if ($this instanceof RelatedKeysField) return 'get'. ucfirst($this->getName()) . 'Ids';
-        if ($this instanceof MethodGetterField) return $this->getName();
-        return 'get'. ucfirst($this->getName());
-    }
-
-    /**
-     * @deprecated Use Item::retrieveValue instead
-     */
-    public function getGetterForData(): string
-    {
-        if ($this instanceof BooleanField) return $this->getName();
-        if ($this instanceof ForeignKeyField) return 'get'. ucfirst($this->getName());
-        if ($this instanceof ForeignKeysField) return 'get'. ucfirst($this->getName()) . 'Data';
-        if ($this instanceof RelatedKeysField) return 'get'. ucfirst($this->getName());
-        if ($this instanceof MethodGetterField) return $this->getName();
-        return 'get'. ucfirst($this->getName()) . 'Data';
-    }
-
-    /**
-     * @deprecated Use Item::hasValue instead
-     */
-    public function getGetterForChecker(): string
-    {
-        if ($this instanceof BooleanField) return $this->getName();
-        if ($this instanceof ForeignKeyField) return 'has'. ucfirst($this->getName());
-        return 'has'. ucfirst($this->getName());
     }
 
     public function setDefaultValue($value): static

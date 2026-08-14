@@ -22,8 +22,8 @@ class BooleansComputedField extends AbstractComputedField
         foreach ($values as $key => $bool) {
             if (is_bool($bool)) {
                 $datum = $schema->getField($key);
-                $getter = $datum->getGetterForComputed();
-                $str = "\$this->{$getter}()";
+                $getter = $datum->getName();
+                $str = "\$this->hasAssignedValue('{$getter}')";
                 if (!$bool) {
                     $str = "!{$str}";
                 }

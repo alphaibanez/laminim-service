@@ -410,7 +410,7 @@ trait ItemWithDataTrait
             }
 
             // Update relational data
-            if ($isUpdate && count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
+            if ($isUpdate && property_exists($this, 'PENDING_UPDATE_RELATED_DATA') && count($this->PENDING_UPDATE_RELATED_DATA) > 0) {
                 foreach ($this->PENDING_UPDATE_RELATED_DATA as $column => $data) {
 
                     if (count($data) === 0) continue;

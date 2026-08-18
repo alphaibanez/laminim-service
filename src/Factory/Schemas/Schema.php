@@ -1394,23 +1394,25 @@ final class Schema
         return Instantiator::make($this->getComponent(), $id);
     }
 
-    public function getOne(Query $queryCaller = null): Item|null
+    public function getOne(Query|null $query = null): Item|null
     {
-        if (!$queryCaller) $queryCaller = $this->getQueryBuilder();
-        $queryCaller->pagination(1, 1);
-        $r = Instantiator::makeResults($this->getComponent(), $queryCaller->selectDistinct());
+        if (!$query) $query = $this->getQueryBuilder();
+        if (!$query) $query = $this->getQueryBuilder();
+        $query->pagination(1, 1);
+        $r = Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
         if (count($r) > 0) {
             return $r[0];
         }
         return null;
     }
 
-    public function getMany(Query $query)
+    public function getMany(Query|null $query = null)
     {
+        if (!$query) $query = $this->getQueryBuilder();
         return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
     }
 
-    public function getPage(Query $query = null, int|null $page = null, int|null $itemsPerPage = null)
+    public function getPage(Query|null $query = null, int|null $page = null, int|null $itemsPerPage = null)
     {
         if (!$query) $query = $this->getQueryBuilder();
         $limit = $itemsPerPage;

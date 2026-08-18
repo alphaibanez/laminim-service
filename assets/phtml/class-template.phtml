@@ -32,7 +32,7 @@ class <?php echo $className; ?> <?php echo $extends?> <?php echo $implements?> {
     /**
     * @return <?php echo $returnSelf;?>[]
     */
-    public static function getMany(Query $query = null): array
+    public static function getMany(Query|null $query = null): array
     {
         $schema = Schema::get(static::COMPONENT);
         return $schema->getMany($query);
@@ -41,7 +41,7 @@ class <?php echo $className; ?> <?php echo $extends?> <?php echo $implements?> {
     /**
     * @return <?php echo $returnSelf;?>|null
     */
-    public static function getOne(Query $query = null)
+    public static function getOne(Query|null $query = null)
     {
         $schema = Schema::get(static::COMPONENT);
         return $schema->getOne($query);
@@ -80,7 +80,7 @@ class <?php echo $className; ?> <?php echo $extends?> <?php echo $implements?> {
     /**
     * @return <?php echo $returnSelf;?>[]
     */
-    public static function getPage(int $page, Query $query = null, int $itemsPerPage = 0): array
+    public static function getPage(int $page, Query|null $query = null, int $itemsPerPage = 0): array
     {
         $schema = Schema::get(static::COMPONENT);
         return $schema->getPage($query, $page, $itemsPerPage);

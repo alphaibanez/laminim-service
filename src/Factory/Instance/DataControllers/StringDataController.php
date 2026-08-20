@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
@@ -61,10 +62,10 @@ final class StringDataController
         }
 
         if (is_object($f) && method_exists($f, 'isUnique') && $f->isUnique()) {
-            $setter = 'and' . ucfirst($key) . 'Equal';
-            $builder = $this->schema->getQueryBuilder()->{$setter}($value);
+            $builder = $this->schema->getQueryBuilder();
+            $this->schema->filterBuilderWithUniqueData($builder, [$key => $value]);
             $result = $this->schema->getOne($builder);
-            if ($result instanceof Item && $result->isSameIdentifierValue($this->item->getIdentifierValue())) {
+            if ($result instanceof Item && !$result->isSameIdentifierValue($this->item->getIdentifierValue())) {
                 throw DuplicatedValueException::getInstance($value);
             }
         }
@@ -95,7 +96,11 @@ final class StringDataController
         }
 
         if (method_exists($field, 'isI18nJson') && $field->isI18nJson()) {
-            $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+            if (is_array($value)) { // If multi lang data given
+                foreach ($value as &$v) $v = htmlspecialchars_decode($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+            } else {
+                $value = htmlspecialchars_decode($value, JSON_UNESCAPED_UNICODE|ENT_QUOTES);
+            }
 //            $value = str_replace(':LKT_SLASH:', '\\', $value);
 //            $value = str_replace(':LKT_QUESTION_MARK:', '?', $value);
 //            $value = str_replace(':LKT_SINGLE_QUOTE:', "'", $value);

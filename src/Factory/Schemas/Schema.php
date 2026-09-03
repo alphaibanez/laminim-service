@@ -51,7 +51,6 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Factory\Schemas\ValueObjects\ItemToI18nPolicy;
 use Lkt\Factory\Schemas\Values\ComponentValue;
-use Lkt\Factory\Schemas\Values\TableValue;
 use Lkt\Http\Response;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
@@ -75,7 +74,7 @@ final class Schema
     /** @var AccessPolicy[] */
     protected array $accessPolicies = [];
 
-    protected ?TableValue $table = null;
+    protected string|null $table = null;
 
     protected ?ComponentValue $component = null;
 
@@ -273,7 +272,11 @@ final class Schema
      */
     public function __construct(string $table, string $component, bool $isPivot = false, SchemaContext $context = SchemaContext::DatabaseData)
     {
-        $this->table = new TableValue($table);
+        if (!$table && $context === SchemaContext::DatabaseData) {
+            throw new InvalidTableException();
+        }
+
+        $this->table = $table;
         $this->component = new ComponentValue($component);
         $this->pivot = $isPivot;
         $this->context = $context;
@@ -417,7 +420,7 @@ final class Schema
     public function toArray(): array
     {
         return [
-            'table' => $this->table->getValue(),
+            'table' => $this->table,
             'idColumn' => $this->pivot ? $this->idFields : $this->idFields[0],
             'pivot' => $this->pivot,
             'instance' => $this->instanceSettings->toArray(),
@@ -1290,9 +1293,9 @@ final class Schema
     /**
      * @return string
      */
-    public function getTable(): string
+    public function getTable(): string|null
     {
-        return $this->table->getValue();
+        return $this->table;
     }
 
     /**

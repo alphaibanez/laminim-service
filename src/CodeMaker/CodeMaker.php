@@ -96,7 +96,11 @@ class CodeMaker
                 $methods = implode('', $methods);
             }
 
-            $traitsStr = 'use ' . implode(',', $traits) . ';';
+            if (count($traits) > 0) {
+                $traitsStr = 'use ' . implode(',', $traits) . ';';
+            } else {
+                $traitsStr = '';
+            }
 
             $relatedQueryCaller = $schema->getInstanceSettings()?->getQueryCallerFQDN();
 

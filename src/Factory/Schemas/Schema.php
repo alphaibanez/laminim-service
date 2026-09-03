@@ -10,6 +10,7 @@ use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
+use Lkt\Factory\Schemas\Enums\SchemaContext;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidTableException;
@@ -106,6 +107,8 @@ final class Schema
      * @var WebItemActionHookHandler[]
      */
     protected array $webItemActionHookHandlers = [];
+
+    protected SchemaContext $context;
 
     public function setOwnershipField(string $fieldName): static
     {
@@ -211,7 +214,7 @@ final class Schema
      */
     public static function table(string $table, string $component): self
     {
-        return new static($table, $component);
+        return new static($table, $component, false, SchemaContext::DatabaseData);
     }
 
     /**
@@ -223,7 +226,7 @@ final class Schema
      */
     public static function local(string $component): self
     {
-        return new static('_', $component);
+        return new static('_', $component, false, SchemaContext::CodedData);
     }
 
     /**
@@ -247,7 +250,7 @@ final class Schema
      */
     public static function pivotTable(string $table, string $component): self
     {
-        return new static($table, $component, true);
+        return new static($table, $component, true, SchemaContext::DatabaseData);
     }
 
     /**
@@ -257,11 +260,12 @@ final class Schema
      * @throws InvalidComponentException
      * @throws InvalidTableException
      */
-    public function __construct(string $table, string $component, bool $isPivot = false)
+    public function __construct(string $table, string $component, bool $isPivot = false, SchemaContext $context = SchemaContext::DatabaseData)
     {
         $this->table = new TableValue($table);
         $this->component = new ComponentValue($component);
         $this->pivot = $isPivot;
+        $this->context = $context;
         $debug = debug_backtrace()[1]['file'];
         $path = realpath($debug);
         $this->registeredAsLib = str_contains($path, '/vendor');

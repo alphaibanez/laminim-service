@@ -46,6 +46,13 @@ trait FieldWithComponentOptionTrait
         return '';
     }
 
+    public function getTargetSchema(Schema|null $schema = null, AbstractInstance|Item|null $instance = null): Schema|null
+    {
+        $component = $this->getComponent($schema, $instance);
+        if (!$component) return null;
+        return Schema::get($component);
+    }
+
     public function setAutoRemoveUnlinked(bool $enabled = true): static
     {
         $this->autoRemoveUnlinked = $enabled;

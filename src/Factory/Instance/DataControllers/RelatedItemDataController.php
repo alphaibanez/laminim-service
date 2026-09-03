@@ -6,6 +6,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\QueryBuilding\Where;
 
 final class RelatedItemDataController
 {
@@ -20,6 +21,40 @@ final class RelatedItemDataController
     {
         $this->schema = $schema;
         $this->item = $ins;
+    }
+
+    public function getQuery(
+        string     $key,
+        Where|null $where = null,
+        int|null   $page = null,
+        int|null   $itemsPerPage = null,
+        array      $additionalData = [],
+        bool       $forceRefresh = false
+    )
+    {
+        $field = $this->schema->getRelatedField($key);
+        if (!$field) return null;
+
+        $builder = QueryBuilderHelper::prepareRelatedQuery(
+            $this->item,
+            QueryBuilderHelper::getComponentQuery($field->getComponent()),
+            $this->schema,
+            $field,
+            false,
+            $additionalData
+        );
+        $fieldConfigWhere = $field->getWhere();
+        if ($fieldConfigWhere) {
+            if (is_array($fieldConfigWhere)) {
+                foreach ($fieldConfigWhere as $w) {
+                    $builder->andWhere($w);
+                }
+            } else {
+                $builder->andWhere($fieldConfigWhere);
+            }
+        }
+        $builder->andPageLimitIs(1);
+        return $builder;
     }
 
     public function getItem(string $key, array $additionalData, bool $retrieveAnonymous = false): Item|null
@@ -44,15 +79,7 @@ final class RelatedItemDataController
             return null;
         }
 
-        $builder = QueryBuilderHelper::prepareRelatedQuery(
-            $this->item,
-            QueryBuilderHelper::getComponentQuery($field->getComponent()),
-            $this->schema,
-            $field,
-            false,
-            $additionalData
-        );
-        $builder->andPageLimitIs(1);
+        $builder = $this->getQuery($key);
 
         $results = $relatedSchema->getMany($builder);
         if (count($results) > 0) {

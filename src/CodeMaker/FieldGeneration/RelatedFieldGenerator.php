@@ -4,6 +4,7 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeysDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
@@ -32,6 +33,10 @@ class RelatedFieldGenerator implements FieldGenerator
             }
             $r[] = "public function get{$this->data->methodName}({$this->data->additionalInput}){$this->getRelatedReturnTypeFormatted()} { {$additionalInputDetection}return \$this->relatedItemData->getItem('{$this->data->fieldName}', \$additionalData); }";
 
+            $targetSchema = $field->getTargetSchema();
+            $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
+            $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+
         } elseif ($field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
             if ($returnAnnotation) $r[] = "/** {$returnAnnotation}[] */";
@@ -43,6 +48,12 @@ class RelatedFieldGenerator implements FieldGenerator
             $r[] = "public function get{$this->data->methodName}Page(int|null \$page, Where|null \$where = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): array|null { return \$this->relatedItemsData->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
             $r[] = "public function get{$this->data->methodName}Count(string|null \$countableField = null, Where|null \$where = null): int|null { return \$this->relatedItemsData->getItemsCount('{$this->data->fieldName}', \$where, \$countableField); }";
             $r[] = "public function get{$this->data->methodName}AmountOfPages(string|null \$countableField = null, Where|null \$where = null, int|null \$itemsPerPage = null): int|null { return \$this->relatedItemsData->getItemsAmountOfPages('{$this->data->fieldName}', \$where, \$countableField, \$itemsPerPage); }";
+
+            if ($field instanceof RelatedField) {
+                $targetSchema = $field->getTargetSchema();
+                $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
+                $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemsData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+            }
 
         } elseif ($field instanceof ForeignKeysField) {
 

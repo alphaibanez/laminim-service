@@ -88,6 +88,9 @@ class BatchActions
                     $component = $field->getComponent();
                     if (!$component) continue;
 
+                    $relatedSchema = $field->getTargetSchema();
+                    if ($relatedSchema->hasCodedDataContext()) continue;
+
                     $prop = $field->getName();
 
                     foreach ($this->items as $item) {
@@ -101,6 +104,9 @@ class BatchActions
                 elseif ($field instanceof ForeignKeysField) {
                     $component = $field->getComponent();
                     if (!$component) continue;
+
+                    $relatedSchema = $field->getTargetSchema();
+                    if ($relatedSchema->hasCodedDataContext()) continue;
 
                     $prop = $field->getName();
 

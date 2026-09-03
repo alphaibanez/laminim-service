@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -76,6 +77,16 @@ trait ItemWithInstanceFactoryTrait
             $r->feed($initialData);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
+        }
+
+        if ($schema->hasCodedDataContext()) {
+            $payload = [];
+            $fields = $schema->getIdentifiers();
+            if (count($fields) === 1 && !is_array($id)) {
+                $payload[$fields[0]->getName()] = $id;
+            }
+            $r = new static($payload);
+            return $r;
         }
 
         // Database fetch

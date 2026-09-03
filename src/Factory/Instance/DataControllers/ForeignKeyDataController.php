@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -59,6 +60,12 @@ final class ForeignKeyDataController
                 return $this->items[$key];
             }
             return null;
+        }
+
+        if ($relatedSchema->hasCodedDataContext()) {
+            $instance = $relatedSchema->getItemInstance($id);
+            $this->items[$key] = $instance;
+            return $this->items[$key];
         }
 
         if (count($additionalData) > 0) {

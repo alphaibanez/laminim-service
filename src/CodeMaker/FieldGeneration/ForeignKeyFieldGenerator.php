@@ -39,8 +39,8 @@ class ForeignKeyFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName};Id() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
-        $r[] = "public function has{$this->data->methodName};() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}Id() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -49,6 +49,7 @@ class ForeignKeyFieldGenerator implements FieldGenerator
     {
         return implode(' ', [
             $this->getGetters(),
+            $this->getCheckers(),
             $this->getSetters(),
         ]);
     }

@@ -34,8 +34,11 @@ class RelatedFieldGenerator implements FieldGenerator
             $r[] = "public function get{$this->data->methodName}({$this->data->additionalInput}){$this->getRelatedReturnTypeFormatted()} { {$additionalInputDetection}return \$this->relatedItemData->getItem('{$this->data->fieldName}', \$additionalData); }";
 
             $targetSchema = $field->getTargetSchema();
-            $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
-            $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+            if (!$targetSchema->hasCodedDataContext()) {
+                $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
+                if ($targetQuery) $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+
+            }
 
         } elseif ($field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
@@ -51,8 +54,10 @@ class RelatedFieldGenerator implements FieldGenerator
 
             if ($field instanceof RelatedField) {
                 $targetSchema = $field->getTargetSchema();
-                $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
-                $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemsData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+                if (!$targetSchema->hasCodedDataContext()) {
+                    $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
+                    if ($targetQuery) $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemsData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+                }
             }
 
         } elseif ($field instanceof ForeignKeysField) {

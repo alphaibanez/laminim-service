@@ -110,6 +110,11 @@ final class Schema
 
     protected SchemaContext $context;
 
+    public function hasCodedDataContext(): bool
+    {
+        return $this->context === SchemaContext::CodedData;
+    }
+
     public function setOwnershipField(string $fieldName): static
     {
         $this->ownershipField = $fieldName;
@@ -217,12 +222,18 @@ final class Schema
         return new static($table, $component, false, SchemaContext::DatabaseData);
     }
 
+
+    public static function codedData(string $component): self
+    {
+        return new static('_', $component, false, SchemaContext::CodedData);
+    }
+
     /**
      * @param string $component
      * @return self
      * @throws InvalidComponentException
      * @throws InvalidTableException
-     * @deprecated
+     * @deprecated use more specifiq codedData instead
      */
     public static function local(string $component): self
     {

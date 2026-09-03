@@ -13,9 +13,9 @@ class ComponentDatabaseIntegration
 
     public string $component = '';
     public Schema $schema;
-    public string $databaseConnectorName;
-    public DatabaseConnector $databaseConnector;
-    public Query $query;
+    public string|null $databaseConnectorName;
+    public DatabaseConnector|null $databaseConnector;
+    public Query|null $query;
 
     public function __construct(Schema|string $component)
     {
@@ -24,16 +24,24 @@ class ComponentDatabaseIntegration
 
         if ($schema->getInstanceSettings()->getQueryCallerClassName() !== '') {
             $fqdn = $schema->getInstanceSettings()->getQueryCallerFQDN();
-            $query = call_user_func_array([$fqdn, 'getCaller'], []);
+            if (class_exists($fqdn)) {
+                $query = call_user_func_array([$fqdn, 'getCaller'], []);
+            } else {
+                $query = null;
+            }
 
         } else {
             $query = Query::table($schema->getTable());
         }
 
-        $connector = $schema->getDatabaseConnector();
-        if ($connector === '') $connector = DatabaseConnections::$defaultConnector;
-        $connection = DatabaseConnections::get($connector);
-        $query->setColumns($connection->extractSchemaColumns($schema));
+        $connector = null;
+        $connection = null;
+        if (!$schema->hasCodedDataContext()) {
+            $connector = $schema->getDatabaseConnector();
+            if ($connector === '') $connector = DatabaseConnections::$defaultConnector;
+            $connection = DatabaseConnections::get($connector);
+            $query->setColumns($connection->extractSchemaColumns($schema));
+        }
 
         $this->component = $component;
         $this->schema = $schema;

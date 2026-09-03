@@ -50,7 +50,6 @@ use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Factory\Schemas\ValueObjects\ItemToI18nPolicy;
-use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\Http\Response;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;

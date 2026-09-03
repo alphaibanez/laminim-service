@@ -76,7 +76,7 @@ final class Schema
 
     protected string|null $table = null;
 
-    protected ?ComponentValue $component = null;
+    protected string|null $component = null;
 
     protected $databaseConnector = '';
 
@@ -276,8 +276,12 @@ final class Schema
             throw new InvalidTableException();
         }
 
+        if (!$component) {
+            throw new InvalidComponentException();
+        }
+
         $this->table = $table;
-        $this->component = new ComponentValue($component);
+        $this->component = $component;
         $this->pivot = $isPivot;
         $this->context = $context;
         $debug = debug_backtrace()[1]['file'];
@@ -1208,7 +1212,7 @@ final class Schema
      */
     public function getComponent(): string
     {
-        return $this->component->getValue();
+        return $this->component;
     }
 
     /**
@@ -1542,7 +1546,7 @@ final class Schema
 
     public function decodeInstanceCode(string $code): null|array
     {
-        $component = $this->component->getValue();
+        $component = $this->component;
         if (!str_starts_with($code, "{$component}_")) return null;
 
         $l = strlen("{$component}_");

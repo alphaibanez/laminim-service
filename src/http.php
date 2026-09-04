@@ -100,6 +100,14 @@ GetRoute::onlyLoggedUsers('/api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
     ->setTargetAccessPolicy('app');
 
+GetRoute::onlyLoggedUsers('/api/r-{id}-{accessPolicy}/{component}', BasicHttpHandler::Read)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('id')
+    ->setTargetAccessPolicyExtractionKey('accessPolicy')
+    ->setRequiredPermissions(['r'])
+    ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
+    ->setTargetAccessPolicy('app');
+
 PostRoute::onlyLoggedUsers('/api/mk/{component}', BasicHttpHandler::Create)
     ->setWebItemValueParamsExtractionKey('component')
     ->setAnonymousTarget()

@@ -31,6 +31,7 @@ abstract class AbstractRoute
     /** @var TargetAccessPolicy[] */
     protected array $targetAccessPolicyAttempts = [];
     protected string $extractIdColumnValueFromParamsKey = '';
+    protected string $extractAccessPolicyValueFromParamsKey = '';
     protected string $extractPageFromParamsKey = '';
     protected string $extractWebItemFromParamsKey = '';
     protected string $extractPayloadFromParamsKey = '';
@@ -136,8 +137,7 @@ abstract class AbstractRoute
             }
             $accessPolicies = $t;
 
-        }
-        elseif (is_string($accessPolicies)) $accessPolicies = [TargetAccessPolicy::simple($accessPolicies)];
+        } elseif (is_string($accessPolicies)) $accessPolicies = [TargetAccessPolicy::simple($accessPolicies)];
         elseif ($accessPolicies instanceof TargetAccessPolicy) $accessPolicies = [$accessPolicies];
 
         $this->targetAccessPolicyAttempts = $accessPolicies;
@@ -210,6 +210,12 @@ abstract class AbstractRoute
         return $this;
     }
 
+    public function setTargetAccessPolicyExtractionKey(string $column): static
+    {
+        $this->extractAccessPolicyValueFromParamsKey = $column;
+        return $this;
+    }
+
     public function setPageValueParamsExtractionKey(string $column): static
     {
         $this->extractPageFromParamsKey = $column;
@@ -241,6 +247,11 @@ abstract class AbstractRoute
     public function getPageValueParamsExtractionKey(): string
     {
         return $this->extractPageFromParamsKey;
+    }
+
+    public function getTargetAccessPolicyExtractionKey(): string
+    {
+        return $this->extractAccessPolicyValueFromParamsKey;
     }
 
     public function getWebItemValueParamsExtractionKey(): string

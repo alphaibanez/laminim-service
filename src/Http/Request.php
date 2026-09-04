@@ -2,6 +2,7 @@
 
 namespace Lkt\Http;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -93,7 +94,16 @@ class Request
         }
 
         $this->targetAccessPolicyAttempts = $route->getTargetAccessPolicyAttempts();
-        $this->targetAccessPolicy = $route->getTargetAccessPolicy();
+
+        $extractTargetAccessPolicyKey = $route->getTargetAccessPolicyExtractionKey();
+        if ($extractTargetAccessPolicyKey) {
+            $targetAccessPolicy = $this->params[$extractTargetAccessPolicyKey];
+            $this->targetAccessPolicy = TargetAccessPolicy::simple($targetAccessPolicy);
+
+        } else {
+            $this->targetAccessPolicy = $route->getTargetAccessPolicy();
+        }
+
         $this->attemptToGrantPerms = $route->getGrantedPermsAttempt();
 
         $targetIsLoggedUser = $route->getTargetIsLoggedUser();

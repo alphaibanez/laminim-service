@@ -10,7 +10,7 @@ trait ItemWithConstantDataTrait
 {
     protected ConstantDataController $constantData;
 
-    private function initConstantData(Schema $schema, Item $item): static
+    protected function initConstantData(Schema $schema, Item $item): static
     {
         $this->constantData = new ConstantDataController($schema, $item);
         return $this;

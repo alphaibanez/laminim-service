@@ -20,7 +20,7 @@ final class InstanceSettings
     protected array $implementsInterfaces = [];
     protected array $traits = [];
 
-    protected bool $abstractInstanceExtends = true;
+    protected bool $abstractInstanceExtends = false;
 
     public function setAbstractInstanceExtends(bool $status = true): static
     {

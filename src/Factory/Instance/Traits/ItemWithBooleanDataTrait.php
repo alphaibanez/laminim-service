@@ -10,7 +10,7 @@ trait ItemWithBooleanDataTrait
 {
     protected BooleanDataController $booleanData;
 
-    private function initBooleanData(Schema $schema, Item $item, array $rawData): static
+    protected function initBooleanData(Schema $schema, Item $item, array $rawData): static
     {
         $this->booleanData = new BooleanDataController($schema, $item, $rawData);
         return $this;

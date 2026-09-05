@@ -10,7 +10,7 @@ trait ItemWithMultipleStringDataTrait
 {
     protected MultipleStringDataController $multipleStringData;
 
-    private function initMultipleStringData(Schema $schema, Item $item, array $rawData): static
+    protected function initMultipleStringData(Schema $schema, Item $item, array $rawData): static
     {
         $this->multipleStringData = new MultipleStringDataController($schema, $item, $rawData);
         return $this;

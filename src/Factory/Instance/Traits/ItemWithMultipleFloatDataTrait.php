@@ -10,7 +10,7 @@ trait ItemWithMultipleFloatDataTrait
 {
     protected MultipleFloatDataController $multipleFloatData;
 
-    private function initMultipleFloatData(Schema $schema, Item $item, array $rawData): static
+    protected function initMultipleFloatData(Schema $schema, Item $item, array $rawData): static
     {
         $this->multipleFloatData = new MultipleFloatDataController($schema, $item, $rawData);
         return $this;

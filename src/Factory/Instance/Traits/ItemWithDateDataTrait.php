@@ -10,7 +10,7 @@ trait ItemWithDateDataTrait
 {
     protected DateDataController $dateData;
 
-    private function initDateData(Schema $schema, Item $item, array $rawData): static
+    protected function initDateData(Schema $schema, Item $item, array $rawData): static
     {
         $this->dateData = new DateDataController($schema, $item, $rawData);
         return $this;

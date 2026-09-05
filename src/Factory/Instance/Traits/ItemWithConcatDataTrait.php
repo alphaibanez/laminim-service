@@ -10,7 +10,7 @@ trait ItemWithConcatDataTrait
 {
     protected ConcatDataController $concatData;
 
-    private function initConcatData(Schema $schema, Item $item): static
+    protected function initConcatData(Schema $schema, Item $item): static
     {
         $this->concatData = new ConcatDataController($schema, $item);
         return $this;

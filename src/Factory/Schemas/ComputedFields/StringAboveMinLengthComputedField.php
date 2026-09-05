@@ -1,7 +1,9 @@
 <?php
 
 namespace Lkt\Factory\Schemas\ComputedFields;
-
+/**
+ * @deprecated
+ */
 class StringAboveMinLengthComputedField extends AbstractComputedField
 {
     final public static function compute(string $field, int $value = 0): static

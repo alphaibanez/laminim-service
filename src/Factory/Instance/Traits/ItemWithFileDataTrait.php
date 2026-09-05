@@ -10,7 +10,7 @@ trait ItemWithFileDataTrait
 {
     protected FileDataController $fileData;
 
-    private function initFileData(Schema $schema, Item $item, array $rawData): static
+    protected function initFileData(Schema $schema, Item $item, array $rawData): static
     {
         $this->fileData = new FileDataController($schema, $item, $rawData);
         return $this;

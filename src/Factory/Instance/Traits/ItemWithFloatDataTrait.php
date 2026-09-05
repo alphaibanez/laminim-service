@@ -10,7 +10,7 @@ trait ItemWithFloatDataTrait
 {
     protected FloatDataController $floatData;
 
-    private function initFloatData(Schema $schema, Item $item, array $rawData): static
+    protected function initFloatData(Schema $schema, Item $item, array $rawData): static
     {
         $this->floatData = new FloatDataController($schema, $item, $rawData);
         return $this;

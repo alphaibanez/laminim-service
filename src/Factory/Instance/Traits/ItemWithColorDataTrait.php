@@ -10,7 +10,7 @@ trait ItemWithColorDataTrait
 {
     protected ColorDataController $colorData;
 
-    private function initColorData(Schema $schema, Item $item, array $rawData): static
+    protected function initColorData(Schema $schema, Item $item, array $rawData): static
     {
         $this->colorData = new ColorDataController($schema, $item, $rawData);
         return $this;

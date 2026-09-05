@@ -10,7 +10,7 @@ trait ItemWithForeignKeyDataTrait
 {
     protected ForeignKeyDataController $foreignKeyData;
 
-    private function initForeignKeyData(Schema $schema, Item $item, array $rawData): static
+    protected function initForeignKeyData(Schema $schema, Item $item, array $rawData): static
     {
         $this->foreignKeyData = new ForeignKeyDataController($schema, $item, $rawData);
         return $this;

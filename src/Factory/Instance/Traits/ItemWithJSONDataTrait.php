@@ -10,7 +10,7 @@ trait ItemWithJSONDataTrait
 {
     protected JsonDataController $jsonData;
 
-    private function initJSONData(Schema $schema, Item $item, array $rawData): static
+    protected function initJSONData(Schema $schema, Item $item, array $rawData): static
     {
         $this->jsonData = new JsonDataController($schema, $item, $rawData);
         return $this;

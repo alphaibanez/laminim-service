@@ -10,7 +10,7 @@ trait ItemWithMultipleIntegerDataTrait
 {
     protected MultipleIntegerDataController $multipleIntegerData;
 
-    private function initMultipleIntegerData(Schema $schema, Item $item, array $rawData): static
+    protected function initMultipleIntegerData(Schema $schema, Item $item, array $rawData): static
     {
         $this->multipleIntegerData = new MultipleIntegerDataController($schema, $item, $rawData);
         return $this;

@@ -10,7 +10,7 @@ trait ItemWithRelatedItemDataTrait
 {
     protected RelatedItemDataController $relatedItemData;
 
-    private function initRelatedItemData(Schema $schema, Item $item, array $rawData): static
+    protected function initRelatedItemData(Schema $schema, Item $item, array $rawData): static
     {
         $this->relatedItemData = new RelatedItemDataController($schema, $item, $rawData);
         return $this;

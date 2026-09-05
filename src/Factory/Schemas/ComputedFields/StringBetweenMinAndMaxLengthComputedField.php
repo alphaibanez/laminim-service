@@ -2,6 +2,9 @@
 
 namespace Lkt\Factory\Schemas\ComputedFields;
 
+/**
+ * @deprecated
+ */
 class StringBetweenMinAndMaxLengthComputedField extends AbstractComputedField
 {
     final public static function compute(string $field, int $min, int $max): static

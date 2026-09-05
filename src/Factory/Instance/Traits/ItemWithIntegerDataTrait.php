@@ -10,7 +10,7 @@ trait ItemWithIntegerDataTrait
 {
     protected IntegerDataController $integerData;
 
-    private function initIntegerData(Schema $schema, Item $item, array $rawData): static
+    protected function initIntegerData(Schema $schema, Item $item, array $rawData): static
     {
         $this->integerData = new IntegerDataController($schema, $item, $rawData);
         return $this;

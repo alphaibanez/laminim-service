@@ -10,7 +10,7 @@ trait ItemWithStringDataTrait
 {
     protected StringDataController $stringData;
 
-    private function initStringData(Schema $schema, Item $item, array $rawData): static
+    protected function initStringData(Schema $schema, Item $item, array $rawData): static
     {
         $this->stringData = new StringDataController($schema, $item, $rawData);
         return $this;

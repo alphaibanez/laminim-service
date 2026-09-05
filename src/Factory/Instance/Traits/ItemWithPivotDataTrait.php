@@ -10,7 +10,7 @@ trait ItemWithPivotDataTrait
 {
     protected PivotDataController $pivotData;
 
-    private function initPivotData(Schema $schema, Item $item, bool $refreshing = false): static
+    protected function initPivotData(Schema $schema, Item $item, bool $refreshing = false): static
     {
         if ($refreshing && isset($this->pivotData)) return $this;
 

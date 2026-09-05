@@ -10,7 +10,7 @@ trait ItemWithEncryptDataTrait
 {
     protected EncryptDataController $encryptData;
 
-    private function initEncryptData(Schema $schema, Item $item, array $rawData): static
+    protected function initEncryptData(Schema $schema, Item $item, array $rawData): static
     {
         $this->encryptData = new EncryptDataController($schema, $item, $rawData);
         return $this;

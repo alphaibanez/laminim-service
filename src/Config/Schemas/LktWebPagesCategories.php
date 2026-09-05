@@ -6,14 +6,13 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IdField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktWebPageCategory;
-use Lkt\Instances\LktWebPageMetas;
 
 Schema::add(
     Schema::table('lkt_web_pages__categories', LaminimComponent::WebPageCategory->value)
@@ -24,7 +23,7 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IdField::define('id'))
+        ->addField(IntegerField::identifier('id'))
         ->addField(
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
@@ -42,8 +41,7 @@ Schema::add(
         ->addField(AssocJSONField::define('config'))
 
         ->addField(
-            RelatedField::defineRelation(LaminimComponent::WebPageMetas->value, 'metas', 'webCategory')
-                ->setSingleMode()
+            RelatedField::single(LaminimComponent::WebPageMetas->value, 'metas', 'webCategory')
                 ->setCompositionContent([
                     'slug' => 'slug',
                     'slugData' => 'slugData',

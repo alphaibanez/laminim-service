@@ -22,7 +22,6 @@ Schema::add(
                 ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
-        ->setCountableField('id')
         ->setComplexPrimaryKey(['user', 'purpose'])
         ->addField(
             DateTimeField::define('createdAt', 'created_at')

@@ -5,7 +5,6 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
@@ -35,7 +34,7 @@ Schema::add(
             'id' => 'value',
             'name' => 'label',
         ])
-        ->addField(IdField::define('id'))
+        ->addField(IntegerField::identifier('id'))
         ->addField(
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')

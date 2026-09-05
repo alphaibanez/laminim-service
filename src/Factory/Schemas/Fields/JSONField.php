@@ -5,7 +5,6 @@ namespace Lkt\Factory\Schemas\Fields;
 use Lkt\Factory\Schemas\Traits\FieldWithCompressOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
-use Lkt\Factory\Schemas\Values\BooleanValue;
 
 class JSONField extends AbstractField
 {
@@ -13,35 +12,41 @@ class JSONField extends AbstractField
         FieldWithNullOptionTrait,
         FieldWithEmptyDataModeTrait;
 
-    protected ?BooleanValue $assoc = null;
+    protected bool $assoc = false;
 
+    /**
+     * @deprecated use associative constructor insted
+     * @param bool $assoc
+     * @return $this
+     */
     public function setIsAssoc(bool $assoc = true): static
     {
-        $this->assoc = new BooleanValue($assoc);
+        $this->assoc = $assoc;
         return $this;
     }
 
     public function isAssoc(bool $assoc = true): bool
     {
-        if ($this->assoc instanceof BooleanValue) {
-            return $this->assoc->getValue();
-        }
-        return false;
+        return $this->assoc;
     }
 
-    protected ?BooleanValue $storeAsI18nJson = null;
+    protected bool $storeAsI18nJson = false;
 
     final public function setIsI18nJson(bool $allow = true): self
     {
-        $this->storeAsI18nJson = new BooleanValue($allow);
+        $this->storeAsI18nJson = $allow;
         return $this;
     }
 
     final public function isI18nJson(): bool
     {
-        if ($this->storeAsI18nJson instanceof BooleanValue) {
-            return $this->storeAsI18nJson->getValue();
-        }
-        return false;
+        return $this->storeAsI18nJson;
+    }
+
+    public static function associative(string $name, string $column = ''): static
+    {
+        $ins = static::define($name, $column);
+        $ins->assoc = true;
+        return $ins;
     }
 }

@@ -1115,7 +1115,7 @@ final class Schema
 
         } else {
             $fields = array_filter($stack, function (AbstractField|NonRelationalField|RelationalField $field) {
-                return $field instanceof IdField || $field->isIdentifier();
+                return $field->isIdentifier() || $field instanceof IdField;
             });
         }
 

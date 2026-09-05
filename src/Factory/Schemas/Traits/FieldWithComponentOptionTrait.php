@@ -2,29 +2,28 @@
 
 namespace Lkt\Factory\Schemas\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\ComponentId;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Factory\Schemas\Values\ComponentValue;
 
 trait FieldWithComponentOptionTrait
 {
-    protected ?ComponentValue $component = null;
+    protected string|null $component = null;
 
     protected bool $autoRemoveUnlinked = false;
 
     /**
+     * @deprecated
      * @param string $component
      * @return $this
      * @throws InvalidComponentException
      */
     final public function setComponent(string $component = ''): static
     {
-        $this->component = new ComponentValue($component);
+        $this->component = $component;
         return $this;
     }
 
@@ -40,8 +39,8 @@ trait FieldWithComponentOptionTrait
             }
         }
 
-        if ($this->component instanceof ComponentValue) {
-            return $this->component->getValue();
+        if ($this->component) {
+            return $this->component;
         }
         return '';
     }

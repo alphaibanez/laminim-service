@@ -31,6 +31,14 @@ class RelatedField extends AbstractField
         return (new static($name, $column))->setComponent($component);
     }
 
+    public static function single(string $component, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->component = $component;
+        $ins->singleMode = true;
+        return $ins;
+    }
+
     protected bool $returnsEmptyOneInSingleMode = false;
 
     public function setReturnsEmptyOneInSingleMode(bool $enable = true): static

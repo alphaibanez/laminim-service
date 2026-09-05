@@ -5,8 +5,8 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktPushDelivery;
@@ -21,7 +21,7 @@ Schema::add(
         )
         ->addField(DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue())
         ->addField(DateTimeField::define('sentAt', 'sent_at'))
-        ->addField(IdField::define('id'))
+        ->addField(IntegerField::identifier('id'))
         ->addField(IntegerChoiceField::enumChoice(DeliveryStatus::class, 'status'))
         ->addField(ForeignKeyField::defineRelation(LaminimComponent::PushDevice->value, 'device', 'device_id'))
         ->addField(ForeignKeyField::defineRelation(LaminimComponent::PushNotification->value, 'notification', 'notification_id'))

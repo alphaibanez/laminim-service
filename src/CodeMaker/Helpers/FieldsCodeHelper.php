@@ -241,10 +241,6 @@ class FieldsCodeHelper
                 $methods[] = RelatedKeysMergeFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = RelatedKeysMergeFieldGenerator::generateTraitsUsageCode($field);
 
-//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-merge-field.phtml')
-//                    ->setData($templateData)
-//                    ->parse();
-
             } elseif ($field instanceof ConcatField) {
                 $methods[] = ConcatFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = ConcatFieldGenerator::generateTraitsUsageCode($field);

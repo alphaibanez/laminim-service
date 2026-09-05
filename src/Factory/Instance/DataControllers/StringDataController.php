@@ -8,6 +8,8 @@ use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
+use Lkt\Factory\Instantiator\Exceptions\MaxLengthRequiredException;
+use Lkt\Factory\Instantiator\Exceptions\MinLengthRequiredException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Fields\EmailField;
@@ -93,6 +95,14 @@ final class StringDataController
 
         if (is_string($value)) {
             $value = $this->trim($value, $trimMode);
+
+            if ($field->hasMinLength() && !$field->checkMinLength($value)) {
+                throw MinLengthRequiredException::getInstance($value, $field->getMinLength());
+            }
+
+            if ($field->hasMaxLength() && !$field->checkMaxLength($value)) {
+                throw MaxLengthRequiredException::getInstance($value, $field->getMaxLength());
+            }
         }
 
         if (method_exists($field, 'isI18nJson') && $field->isI18nJson()) {

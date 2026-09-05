@@ -2,6 +2,9 @@
 
 namespace Lkt\Connectors;
 
+use Lkt\Context\Enums\RuntimeEntryContext;
+use Lkt\Context\RuntimeContext;
+
 class DatabaseConnections
 {
     /** @var DatabaseConnector[] */
@@ -24,6 +27,9 @@ class DatabaseConnections
     public static function get(string $name): DatabaseConnector
     {
         if (!isset(static::$connectors[$name])) {
+            if (RuntimeContext::$entryContext === RuntimeEntryContext::CodeGeneration) {
+                return MariaDBConnector::define($name);
+            }
             throw new \Exception("Connector '{$name}' doesn't exists");
         }
         return static::$connectors[$name];

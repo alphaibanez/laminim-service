@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Factory\Schemas\Traits;
+namespace Lkt\Factory\Fields\Traits;
 
 trait BaseFieldTrait
 {
@@ -39,12 +39,5 @@ trait BaseFieldTrait
     final public function isIdentifier(): bool
     {
         return $this->isIdentifier;
-    }
-
-    public static function identifier(string $name, string|null $column = null): static
-    {
-        $r = new static($name, $column);
-        $r->setIsIdentifier(true);
-        return $r;
     }
 }

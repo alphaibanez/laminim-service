@@ -8,6 +8,8 @@ use Lkt\CodeMaker\OrderByMaker;
 use Lkt\CodeMaker\QueryCallerMaker;
 use Lkt\CodeMaker\SelectBuilderMaker;
 use Lkt\CodeMaker\WhereMaker;
+use Lkt\Context\Enums\RuntimeEntryContext;
+use Lkt\Context\RuntimeContext;
 use Lkt\Factory\Schemas\Schema;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,6 +35,8 @@ class GenerateCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        RuntimeContext::$entryContext = RuntimeEntryContext::CodeGeneration;
+
         $stack = Schema::getStack();
         echo "Generating code...\n";
         $n = count($stack);

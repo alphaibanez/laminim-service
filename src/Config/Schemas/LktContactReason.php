@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\PrefabFields\VisibilityStatusField;
@@ -17,30 +17,29 @@ use Lkt\WebPages\Enums\WebPageStatus;
 
 Schema::add(
     Schema::table('lkt_contact_reasons', LaminimComponent::ContactReason->value)
-        ->setInstanceSettings(
-            InstanceSettings::define(LktContactReason::class)
-                ->setNamespaceForGeneratedClass('Lkt\Generated')
-                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-                ->setAbstractInstanceExtends(false)
+        ->setInstanceSettings(InstanceSettings::simple(LktContactReason::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+            ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(StringField::define('name')->setIsI18nJson()->setIsUnique())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(VisibilityStatusField::define()->setDefaultValue(WebPageStatus::Public->value))
+                ->setCurrentTimeStampOnUpdate(),
+
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+
+            StringField::define('name')->setIsI18nJson()->setIsUnique(),
+            JSONField::associativeI18n('nameData', 'name'),
+            VisibilityStatusField::define()->setDefaultValue(WebPageStatus::Public->value)
+        ])
 
         ->setItemToI18nPolicy('contactReasons', 'id', 'name')
 

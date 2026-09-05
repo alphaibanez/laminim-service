@@ -32,6 +32,11 @@ class JSONField extends AbstractField
 
     protected bool $storeAsI18nJson = false;
 
+    /**
+     * @deprecated use custom constructor
+     * @param bool $allow
+     * @return $this
+     */
     final public function setIsI18nJson(bool $allow = true): self
     {
         $this->storeAsI18nJson = $allow;
@@ -47,6 +52,21 @@ class JSONField extends AbstractField
     {
         $ins = static::define($name, $column);
         $ins->assoc = true;
+        return $ins;
+    }
+
+    public static function associativeI18n(string $name, string $column = ''): static
+    {
+        $ins = static::define($name, $column);
+        $ins->assoc = true;
+        $ins->storeAsI18nJson = true;
+        return $ins;
+    }
+
+    public static function i18n(string $name, string $column = ''): static
+    {
+        $ins = static::define($name, $column);
+        $ins->storeAsI18nJson = true;
         return $ins;
     }
 }

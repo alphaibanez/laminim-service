@@ -17,39 +17,36 @@ use Lkt\Users\Enums\UserStatus;
 
 Schema::add(
     Schema::table('lkt_authentication_logs', LaminimComponent::AuthenticationLog->value)
-        ->setInstanceSettings(
-            InstanceSettings::define(LktAuthenticationLog::class)
-                ->setNamespaceForGeneratedClass('Lkt\Generated')
-                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-        )
+        ->setInstanceSettings(InstanceSettings::simple(LktAuthenticationLog::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
+
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(IntegerChoiceField::enumChoice(PerformedAuthAction::class, 'performedAction', 'performed_action'))
-        ->addField(StringField::define('attemptedCredential', 'attempted_credential'))
-        ->addField(StringField::define('attemptedPassword', 'attempted_password'))
-        ->addField(BooleanField::define('attemptedSuccessfully', 'attempted_successfully'))
-        ->addField(IntegerField::define('attemptsCounter', 'attempts_counter'))
-        ->addField(StringField::define('clientProtocol', 'client_protocol'))
-        ->addField(StringField::define('clientUserAgent', 'client_useragent'))
-        ->addField(StringField::define('clientIPAddress', 'client_ip_address'))
-        ->addField(StringField::define('clientOS', 'client_os'))
-        ->addField(StringField::define('clientBrowser', 'client_browser'))
-        ->addField(StringField::define('clientBrowserVersion', 'client_browser_version'))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'))
-        ->addField(IntegerChoiceField::enumChoice(UserStatus::class, 'userStatus', 'user_status')
-            ->setDefaultValue(UserStatus::Undefined->value))
+                ->setCurrentTimeStampOnUpdate(),
+
+            IntegerChoiceField::enumChoice(PerformedAuthAction::class, 'performedAction', 'performed_action'),
+            StringField::define('attemptedCredential', 'attempted_credential'),
+            StringField::define('attemptedPassword', 'attempted_password'),
+            BooleanField::define('attemptedSuccessfully', 'attempted_successfully'),
+            IntegerField::define('attemptsCounter', 'attempts_counter'),
+            StringField::define('clientProtocol', 'client_protocol'),
+            StringField::define('clientUserAgent', 'client_useragent'),
+            StringField::define('clientIPAddress', 'client_ip_address'),
+            StringField::define('clientOS', 'client_os'),
+            StringField::define('clientBrowser', 'client_browser'),
+            StringField::define('clientBrowserVersion', 'client_browser_version'),
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'),
+            IntegerChoiceField::enumChoice(UserStatus::class, 'userStatus', 'user_status')->setDefaultValue(UserStatus::Undefined->value)
+        ])
 
         ->addAccessPolicy('sign-in-history', [
             'id',

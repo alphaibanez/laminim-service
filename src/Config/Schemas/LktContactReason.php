@@ -36,7 +36,7 @@ Schema::add(
 
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
 
-            StringField::define('name')->setIsI18nJson()->setIsUnique(),
+            StringField::i18n('name')->setIsUnique(),
             JSONField::associativeI18n('nameData', 'name'),
             VisibilityStatusField::define()->setDefaultValue(WebPageStatus::Public->value)
         ])

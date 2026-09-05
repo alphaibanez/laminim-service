@@ -2,26 +2,27 @@
 
 namespace Lkt\Factory\Schemas\Traits;
 
-use Lkt\Factory\Schemas\Values\BooleanValue;
 use Lkt\Factory\Schemas\Values\StringValue;
 
 trait FieldWithJsonI18nStorageTrait
 {
-    protected ?BooleanValue $storeAsI18nJson = null;
+    protected bool $storeAsI18nJson = false;
     protected ?StringValue $fixedLangKey = null;
 
+    /**
+     * @deprecated use ::i18n constructor instead
+     * @param bool $allow
+     * @return \Lkt\Factory\Schemas\Fields\StringField|FieldWithJsonI18nStorageTrait
+     */
     final public function setIsI18nJson(bool $allow = true): self
     {
-        $this->storeAsI18nJson = new BooleanValue($allow);
+        $this->storeAsI18nJson = $allow;
         return $this;
     }
 
     final public function isI18nJson(): bool
     {
-        if ($this->storeAsI18nJson instanceof BooleanValue) {
-            return $this->storeAsI18nJson->getValue();
-        }
-        return false;
+        return $this->storeAsI18nJson;
     }
 
     final public function setFixedLangKey(string $lang): self

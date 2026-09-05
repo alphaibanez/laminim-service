@@ -27,4 +27,11 @@ class StringField extends AbstractField implements NonRelationalField
         FieldWithEmptyDataModeTrait,
         FieldWithUniqueValue,
         FieldWithTrimMode;
+
+    public static function i18n(string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->storeAsI18nJson = true;
+        return $ins;
+    }
 }

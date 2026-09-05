@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -23,32 +23,34 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d H:i:s')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d H:i:s')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'userId', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(StringField::define('route'))
-        ->addField(StringField::define('method'))
-        ->addField(IntegerField::define('responseStatus', 'response_status'))
-        ->addField(AssocJSONField::define('payload'))
-        ->addField(AssocJSONField::define('request'))
-        ->addField(StringField::define('clientProtocol', 'client_protocol'))
-        ->addField(StringField::define('clientUserAgent', 'client_useragent'))
-        ->addField(StringField::define('clientIPAddress', 'client_ip_address'))
-        ->addField(StringField::define('clientOS', 'client_os'))
-        ->addField(StringField::define('clientBrowser', 'client_browser'))
-        ->addField(StringField::define('clientBrowserVersion', 'client_browser_version'))
-        ->addField(MethodGetterField::define('getFormattedPayload', 'getFormattedPayload'))
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'userId', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+
+            StringField::define('route'),
+            StringField::define('method'),
+            IntegerField::define('responseStatus', 'response_status'),
+            JSONField::associative('payload'),
+            JSONField::associative('request'),
+
+            StringField::define('clientProtocol', 'client_protocol'),
+            StringField::define('clientUserAgent', 'client_useragent'),
+            StringField::define('clientIPAddress', 'client_ip_address'),
+            StringField::define('clientOS', 'client_os'),
+            StringField::define('clientBrowser', 'client_browser'),
+            StringField::define('clientBrowserVersion', 'client_browser_version'),
+            MethodGetterField::define('getFormattedPayload', 'getFormattedPayload'),
+        ])
 
         ->addAccessPolicy('app', [
             'route',

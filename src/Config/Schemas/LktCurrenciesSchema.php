@@ -8,6 +8,7 @@ use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -15,36 +16,32 @@ use Lkt\Instances\LktCurrency;
 
 Schema::add(
     Schema::table('lkt_currencies', LaminimComponent::Currency->value)
-        ->setInstanceSettings(
-            InstanceSettings::define(LktCurrency::class)
-                ->setNamespaceForGeneratedClass('Lkt\Generated')
-                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-                ->setAbstractInstanceExtends(false)
+        ->setInstanceSettings(InstanceSettings::simple(LktCurrency::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+            ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(StringField::define('isoCodeAlpha3', 'iso_code_alpha3'))
-        ->addField(StringField::define('isoCodeNumeric3', 'iso_code_numeric3'))
+            StringField::define('isoCodeAlpha3', 'iso_code_alpha3'),
+            StringField::define('isoCodeNumeric3', 'iso_code_numeric3'),
 
-        ->addField(BooleanField::define('syncExcluded', 'sync_excluded'))
+            BooleanField::define('syncExcluded', 'sync_excluded'),
+            FloatField::define('factorToDefault', 'factor_to_Default'),
 
-        ->addField(FloatField::define('factorToDefault', 'factor_to_Default'))
-
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
+        ])
 
         ->addAccessPolicy('admin', [
             'id',

@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
@@ -34,42 +34,43 @@ Schema::add(
             'id' => 'value',
             'name' => 'label',
         ])
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(IntegerChoiceField::enumChoice(MenuEntryType::class, 'type'))
-        ->addField(IntegerChoiceField::enumChoice(AccessLevel::class, 'accessLevel', 'access_level'))
-        ->addField(StringField::define('component')->setDefaultValue(''))
-        ->addField(StringField::define('url')->setDefaultValue(''))
-        ->addField(StringField::define('route')->setDefaultValue(''))
-        ->addField(IntegerField::define('itemId', 'item_id'))
-        ->addField(MethodGetterField::define('getReadMenuTo', 'to'))
-        ->addField(PivotField::definePivot(LaminimComponent::Menu->value, 'lkt_menus__entries', 'menus', 'entry_id', LaminimComponent::MenuPivotEntry->value)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::Menu->value, 'menu', 'menu_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'))
-            ->setPivotPositionField(PivotPositionField::define('position'))
-            ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-        )
-        ->addField(PivotField::definePivot(LaminimComponent::MenuEntry->value, 'lkt_menus_entries__children', 'children', 'parent_id', LaminimComponent::MenuEntryPivotMenuEntry->value)
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'child', 'child_id'))
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::MenuEntry->value, 'parent', 'parent_id'))
-            ->setPivotPositionField(PivotPositionField::define('position'))
-            ->setPivotInstanceConfig(LktMenuEntryPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-            ->setRelatedAccessPolicies([
-                'r-app-menu' => 'r-app-menu'
-            ])
-        )
+                ->setCurrentTimeStampOnUpdate(),
+
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
+            IntegerChoiceField::enumChoice(MenuEntryType::class, 'type'),
+            IntegerChoiceField::enumChoice(AccessLevel::class, 'accessLevel', 'access_level'),
+            StringField::define('component')->setDefaultValue(''),
+            StringField::define('url')->setDefaultValue(''),
+            StringField::define('route')->setDefaultValue(''),
+            IntegerField::define('itemId', 'item_id'),
+            MethodGetterField::define('getReadMenuTo', 'to'),
+
+            PivotField::definePivot(LaminimComponent::Menu->value, 'lkt_menus__entries', 'menus', 'entry_id', LaminimComponent::MenuPivotEntry->value)
+                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::Menu->value, 'menu', 'menu_id'))
+                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'))
+                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated'),
+
+            PivotField::definePivot(LaminimComponent::MenuEntry->value, 'lkt_menus_entries__children', 'children', 'parent_id', LaminimComponent::MenuEntryPivotMenuEntry->value)
+                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::MenuEntry->value, 'child', 'child_id'))
+                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::MenuEntry->value, 'parent', 'parent_id'))
+                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotInstanceConfig(LktMenuEntryPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+                ->setRelatedAccessPolicies([
+                    'r-app-menu' => 'r-app-menu'
+                ]),
+        ])
         ->addAccessPolicy('write', ['nameData', 'includeAvailableAdminRoutes', 'type', 'url', 'component', 'itemId', 'accessLevel'])
         ->addAccessPolicy('r-app-menu', [
             'to',

@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -14,30 +14,28 @@ use Lkt\Instances\LktCountryState;
 
 Schema::add(
     Schema::table('lkt_countries_states', LaminimComponent::CountryState->value)
-        ->setInstanceSettings(
-            InstanceSettings::define(LktCountryState::class)
-                ->setNamespaceForGeneratedClass('Lkt\Generated')
-                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
+        ->setInstanceSettings(InstanceSettings::simple(LktCountryState::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+            ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id'))
+            ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id'),
 
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
+        ])
 
         ->addAccessPolicy('admin', [
             'id',

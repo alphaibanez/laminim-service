@@ -15,38 +15,37 @@ use Lkt\Instances\LktUser;
 
 Schema::add(
     Schema::table('lkt_contact_requests', LaminimComponent::ContactRequest->value)
-        ->setInstanceSettings(
-            InstanceSettings::define(LktContactRequest::class)
-                ->setNamespaceForGeneratedClass('Lkt\Generated')
-                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-                ->setAbstractInstanceExtends(false)
+        ->setInstanceSettings(InstanceSettings::simple(LktContactRequest::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+            ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(StringField::define('name'))
-        ->addField(EmailField::define('email'))
-        ->addField(StringField::define('phone'))
-        ->addField(StringField::define('message'))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ContactReason->value, 'contactReason', 'contact_reason_id'))
-        ->addField(StringField::define('clientProtocol', 'client_protocol'))
-        ->addField(StringField::define('clientUserAgent', 'client_useragent'))
-        ->addField(StringField::define('clientIPAddress', 'client_ip_address'))
-        ->addField(StringField::define('clientOS', 'client_os'))
-        ->addField(StringField::define('clientBrowser', 'client_browser'))
-        ->addField(StringField::define('clientBrowserVersion', 'client_browser_version'))
+                ->setCurrentTimeStampOnUpdate(),
+
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+
+            StringField::define('name'),
+            EmailField::define('email'),
+            StringField::define('phone'),
+            StringField::define('message'),
+            ForeignKeyField::defineRelation(LaminimComponent::ContactReason->value, 'contactReason', 'contact_reason_id'),
+            StringField::define('clientProtocol', 'client_protocol'),
+            StringField::define('clientUserAgent', 'client_useragent'),
+            StringField::define('clientIPAddress', 'client_ip_address'),
+            StringField::define('clientOS', 'client_os'),
+            StringField::define('clientBrowser', 'client_browser'),
+            StringField::define('clientBrowserVersion', 'client_browser_version'),
+        ])
 
         ->addAccessPolicy('app', [
             'name',

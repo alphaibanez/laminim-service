@@ -23,11 +23,13 @@ Schema::add(
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )
-        ->addField(DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(IntegerField::identifier('id'))
-        ->addField(EmailField::define('email'))
-        ->addField(StringField::define('subject'))
-        ->addField(HTMLField::define('message'))
-        ->addField(IntegerChoiceField::enumChoice(QueuePriority::class, 'priority')->setDefaultValue(QueuePriority::Medium->value))
+        ->setFields([
+            IntegerField::identifier('id'),
+            DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            EmailField::define('email'),
+            StringField::define('subject'),
+            HTMLField::define('message'),
+            IntegerChoiceField::enumChoice(QueuePriority::class, 'priority')->setDefaultValue(QueuePriority::Medium->value),
+        ])
 );

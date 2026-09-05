@@ -28,18 +28,20 @@ Schema::add(
             'id',
             'format',
         ])
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(StringField::define('format')->setIsUnique())
-        ->addField(BooleanField::define('isActive', 'is_active'))
+                ->setCurrentTimeStampOnUpdate(),
+
+            StringField::define('format')->setIsUnique(),
+            BooleanField::define('isActive', 'is_active'),
+        ])
+
 );

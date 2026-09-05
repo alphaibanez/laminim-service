@@ -107,7 +107,7 @@ final class InstanceSettings
      * @return InstanceSettings
      * @throws InvalidSchemaAppClassException
      */
-    public static function define(string $appClass): InstanceSettings
+    public static function define(string $appClass): static
     {
         return new InstanceSettings($appClass);
     }
@@ -118,7 +118,6 @@ final class InstanceSettings
      * @param string $generatedStoreDir
      * @return InstanceSettings
      * @throws InvalidSchemaAppClassException
-     * @throws InvalidSchemaNamespaceForGeneratedClassException
      */
     public static function simple(string $appClass, string $generatedNamespace, string $generatedStoreDir): InstanceSettings
     {
@@ -127,12 +126,7 @@ final class InstanceSettings
             ->setWhereStoreGeneratedClass($generatedStoreDir);
     }
 
-    /**
-     * @param string $namespace
-     * @return $this
-     * @throws InvalidSchemaNamespaceForGeneratedClassException
-     */
-    public function setNamespaceForGeneratedClass(string $namespace): InstanceSettings
+    public function setNamespaceForGeneratedClass(string $namespace): static
     {
         $this->namespaceForGeneratedClass = $namespace;
         return $this;
@@ -150,21 +144,12 @@ final class InstanceSettings
         throw new InvalidSchemaNamespaceForGeneratedClassException();
     }
 
-    /**
-     * @param string $name
-     * @return $this
-     * @throws InvalidSchemaClassNameForGeneratedClassException
-     */
-    public function setClassNameForGeneratedClass(string $name): InstanceSettings
+    public function setClassNameForGeneratedClass(string $name): static
     {
         $this->classForGeneratedClass = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     * @throws InvalidSchemaClassNameForGeneratedClassException
-     */
     public function getClassNameForGeneratedClass(): string
     {
         if ($this->classForGeneratedClass) {
@@ -184,7 +169,7 @@ final class InstanceSettings
      * @param string $name
      * @return $this
      */
-    public function setWhereStoreGeneratedClass(string $name): InstanceSettings
+    public function setWhereStoreGeneratedClass(string $name): static
     {
         $this->whereStoreGeneratedClass = $name;
         return $this;
@@ -194,7 +179,7 @@ final class InstanceSettings
      * @param string $name
      * @return $this
      */
-    public function setQueryCallerClassName(string $name): InstanceSettings
+    public function setQueryCallerClassName(string $name): static
     {
         $this->queryCallerClassName = $name;
         return $this;
@@ -204,7 +189,7 @@ final class InstanceSettings
      * @param string $name
      * @return $this
      */
-    public function setWhereClassName(string $name): InstanceSettings
+    public function setWhereClassName(string $name): static
     {
         $this->whereClassName = $name;
         return $this;
@@ -222,7 +207,8 @@ final class InstanceSettings
     }
 
     /**
-     * @return string
+     * @throws InvalidSchemaAppClassException
+     * @throws InvalidSchemaClassNameForGeneratedClassException
      */
     public function getQueryCallerClassName(): string
     {
@@ -239,9 +225,6 @@ final class InstanceSettings
         return "{$generatedClassName}QueryBuilder";
     }
 
-    /**
-     * @return string
-     */
     public function getWhereClassName(): string
     {
         if ($this->whereClassName) {
@@ -278,7 +261,7 @@ final class InstanceSettings
      * @param string $name
      * @return $this
      */
-    public function setClassToBeExtended(string $name): InstanceSettings
+    public function setClassToBeExtended(string $name): static
     {
         $this->classToBeExtended = $name;
         return $this;
@@ -333,10 +316,7 @@ final class InstanceSettings
         return $r;
     }
 
-    /**
-     * @throws InvalidComponentException
-     */
-    public function setBaseComponent(string $name): InstanceSettings
+    public function setBaseComponent(string $name): static
     {
         $this->baseComponent = $name;
         return $this;

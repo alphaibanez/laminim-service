@@ -2,28 +2,21 @@
 
 namespace Lkt\Factory\Schemas;
 
-use Lkt\Debug\VarDumper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaClassNameForGeneratedClassException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaNamespaceForGeneratedClassException;
-use Lkt\Factory\Schemas\Values\ComponentValue;
-use Lkt\Factory\Schemas\Values\SchemaAppClassValue;
-use Lkt\Factory\Schemas\Values\SchemaClassForGeneratedClassValue;
-use Lkt\Factory\Schemas\Values\SchemaNamespaceForGeneratedClassValue;
-use Lkt\Factory\Schemas\Values\StringValue;
 
 final class InstanceSettings
 {
-    private ?SchemaAppClassValue $appClass = null;
-    private ?SchemaNamespaceForGeneratedClassValue $namespaceForGeneratedClass = null;
-    private ?SchemaClassForGeneratedClassValue $classForGeneratedClass = null;
-    private ?StringValue $whereStoreGeneratedClass = null;
-    private ?StringValue $classToBeExtended = null;
-    private ?ComponentValue $baseComponent = null;
-    private ?StringValue $queryCallerClassName = null;
-    private ?StringValue $whereClassName = null;
+    private string|null $appClass = null;
+    private string|null $namespaceForGeneratedClass = null;
+    private string|null $classForGeneratedClass = null;
+    private string|null $whereStoreGeneratedClass = null;
+    private string|null $classToBeExtended = null;
+    private string|null $baseComponent = null;
+    private string|null $queryCallerClassName = null;
+    private string|null $whereClassName = null;
     protected array $implementsInterfaces = [];
     protected array $traits = [];
 
@@ -94,7 +87,8 @@ final class InstanceSettings
      */
     public function __construct(string $appClass)
     {
-        $this->appClass = new SchemaAppClassValue($appClass);
+        if (!$appClass) throw new InvalidSchemaAppClassException();
+        $this->appClass = $appClass;
     }
 
     /**
@@ -102,8 +96,8 @@ final class InstanceSettings
      */
     public function getAppClass(): string
     {
-        if ($this->appClass instanceof SchemaAppClassValue) {
-            return $this->appClass->getValue();
+        if ($this->appClass) {
+            return $this->appClass;
         }
         throw new InvalidSchemaAppClassException();
     }
@@ -140,7 +134,7 @@ final class InstanceSettings
      */
     public function setNamespaceForGeneratedClass(string $namespace): InstanceSettings
     {
-        $this->namespaceForGeneratedClass = new SchemaNamespaceForGeneratedClassValue($namespace);
+        $this->namespaceForGeneratedClass = $namespace;
         return $this;
     }
 
@@ -150,8 +144,8 @@ final class InstanceSettings
      */
     public function getNamespaceForGeneratedClass(): string
     {
-        if ($this->namespaceForGeneratedClass instanceof SchemaNamespaceForGeneratedClassValue) {
-            return $this->namespaceForGeneratedClass->getValue();
+        if ($this->namespaceForGeneratedClass) {
+            return $this->namespaceForGeneratedClass;
         }
         throw new InvalidSchemaNamespaceForGeneratedClassException();
     }
@@ -163,7 +157,7 @@ final class InstanceSettings
      */
     public function setClassNameForGeneratedClass(string $name): InstanceSettings
     {
-        $this->classForGeneratedClass = new SchemaClassForGeneratedClassValue($name);
+        $this->classForGeneratedClass = $name;
         return $this;
     }
 
@@ -173,8 +167,8 @@ final class InstanceSettings
      */
     public function getClassNameForGeneratedClass(): string
     {
-        if ($this->classForGeneratedClass instanceof SchemaClassForGeneratedClassValue) {
-            return $this->classForGeneratedClass->getValue();
+        if ($this->classForGeneratedClass) {
+            return $this->classForGeneratedClass;
         }
 
         $generatedClassName = $this->getAppClass();
@@ -192,7 +186,7 @@ final class InstanceSettings
      */
     public function setWhereStoreGeneratedClass(string $name): InstanceSettings
     {
-        $this->whereStoreGeneratedClass = new StringValue($name);
+        $this->whereStoreGeneratedClass = $name;
         return $this;
     }
 
@@ -202,7 +196,7 @@ final class InstanceSettings
      */
     public function setQueryCallerClassName(string $name): InstanceSettings
     {
-        $this->queryCallerClassName = new StringValue($name);
+        $this->queryCallerClassName = $name;
         return $this;
     }
 
@@ -212,7 +206,7 @@ final class InstanceSettings
      */
     public function setWhereClassName(string $name): InstanceSettings
     {
-        $this->whereClassName = new StringValue($name);
+        $this->whereClassName = $name;
         return $this;
     }
 
@@ -221,8 +215,8 @@ final class InstanceSettings
      */
     public function getWhereStoreGeneratedClass(): string
     {
-        if ($this->whereStoreGeneratedClass instanceof StringValue) {
-            return $this->whereStoreGeneratedClass->getValue();
+        if ($this->whereStoreGeneratedClass) {
+            return $this->whereStoreGeneratedClass;
         }
         return '';
     }
@@ -232,8 +226,8 @@ final class InstanceSettings
      */
     public function getQueryCallerClassName(): string
     {
-        if ($this->queryCallerClassName instanceof StringValue) {
-            return $this->queryCallerClassName->getValue();
+        if ($this->queryCallerClassName) {
+            return $this->queryCallerClassName;
         }
 
         $generatedClassName = $this->getAppClass();
@@ -250,8 +244,8 @@ final class InstanceSettings
      */
     public function getWhereClassName(): string
     {
-        if ($this->whereClassName instanceof StringValue) {
-            return $this->whereClassName->getValue();
+        if ($this->whereClassName) {
+            return $this->whereClassName;
         }
 
         $generatedClassName = $this->getAppClass();
@@ -286,14 +280,14 @@ final class InstanceSettings
      */
     public function setClassToBeExtended(string $name): InstanceSettings
     {
-        $this->classToBeExtended = new StringValue($name);
+        $this->classToBeExtended = $name;
         return $this;
     }
 
     public function getClassToBeExtended(): string
     {
-        if ($this->classToBeExtended instanceof StringValue) {
-            return $this->classToBeExtended->getValue();
+        if ($this->classToBeExtended) {
+            return $this->classToBeExtended;
         }
         return '';
     }
@@ -344,7 +338,7 @@ final class InstanceSettings
      */
     public function setBaseComponent(string $name): InstanceSettings
     {
-        $this->baseComponent = new ComponentValue($name);
+        $this->baseComponent = $name;
         return $this;
     }
 
@@ -354,8 +348,8 @@ final class InstanceSettings
      */
     public function getBaseComponent(): string
     {
-        if ($this->baseComponent instanceof ComponentValue) {
-            return $this->baseComponent->getValue();
+        if ($this->baseComponent) {
+            return $this->baseComponent;
         }
         throw new InvalidComponentException();
     }
@@ -365,7 +359,7 @@ final class InstanceSettings
      */
     public function hasBaseComponent(): bool
     {
-        return $this->baseComponent instanceof ComponentValue;
+        return trim($this->baseComponent) !== '';
     }
 
     /**

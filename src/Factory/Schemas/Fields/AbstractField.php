@@ -12,16 +12,4 @@ abstract class AbstractField
         FieldWithDefaultValue;
 
     use NonRelationalFieldInstantiation;
-
-    /**
-     * @deprecated
-     * @return string
-     */
-    public function getGetterForComputed(): string
-    {
-        if ($this instanceof BooleanField) {
-            return $this->getName();
-        }
-        return 'get'. ucfirst($this->getName());
-    }
 }

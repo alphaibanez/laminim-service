@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Enums\TimeInSeconds;
+use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
 use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithMultipleOptionTrait;
@@ -10,7 +11,7 @@ use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Values\FieldFilePathValue;
 use Lkt\MIME;
 
-class FileField extends AbstractField
+class FileField extends AbstractField implements NonRelationalField
 {
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,

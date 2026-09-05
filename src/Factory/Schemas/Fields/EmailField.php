@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-class EmailField extends StringField
+use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+
+class EmailField extends StringField implements NonRelationalField
 {
 }

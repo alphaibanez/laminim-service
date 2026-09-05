@@ -18,6 +18,7 @@ use Lkt\CodeMaker\FieldGeneration\IntegerFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\JsonFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\PivotFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
+use Lkt\CodeMaker\FieldGeneration\RelatedKeysMergeFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
@@ -237,9 +238,12 @@ class FieldsCodeHelper
                 $traitsUsage[] = JsonFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof RelatedKeysMergeField) {
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-merge-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
+                $methods[] = RelatedKeysMergeFieldGenerator::generateCode($fieldGeneratorData);
+                $traitsUsage[] = RelatedKeysMergeFieldGenerator::generateTraitsUsageCode($field);
+
+//                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/fields/related-keys-merge-field.phtml')
+//                    ->setData($templateData)
+//                    ->parse();
 
             } elseif ($field instanceof ConcatField) {
                 $methods[] = ConcatFieldGenerator::generateCode($fieldGeneratorData);

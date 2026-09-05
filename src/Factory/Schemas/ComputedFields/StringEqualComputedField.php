@@ -2,6 +2,10 @@
 
 namespace Lkt\Factory\Schemas\ComputedFields;
 
+
+/**
+ * @deprecated Use StringChoice field in order to match options
+ */
 class StringEqualComputedField extends AbstractComputedField
 {
     final public static function compute(string $name, string $field, string $value = ''): static

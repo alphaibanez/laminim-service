@@ -399,6 +399,18 @@ final class Schema
         return $this->instanceSettings;
     }
 
+    public function setFields(array $fields): self
+    {
+        $payload = [];
+        foreach ($fields as $field) {
+            $name = $field->getName();
+            $payload[$name] = $field;
+        }
+
+        $this->fields = $payload;
+        return $this;
+    }
+
 
     /**
      * @param AbstractField $field
@@ -1153,6 +1165,14 @@ final class Schema
         return count($this->complexPrimaryKey) > 1;
     }
 
+    /**
+     * @deprecated
+     *
+     * Complex primary key should be replaced with indetifier fields
+     *
+     * @param array $fieldNames
+     * @return $this
+     */
     public function setComplexPrimaryKey(array $fieldNames): static
     {
         $this->complexPrimaryKey = $fieldNames;

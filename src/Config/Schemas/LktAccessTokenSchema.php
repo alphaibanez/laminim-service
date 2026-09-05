@@ -23,18 +23,18 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setComplexPrimaryKey(['user', 'purpose'])
-        ->addField(
+        ->setFields([
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('expiresAt', 'expires_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(IntegerChoiceField::enumChoice(AccessTokenDuration::class, 'duration'))
-        ->addField(IntegerChoiceField::enumChoice(AccessTokenPurpose::class, 'purpose'))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'))
-        ->addField(StringField::define('token'))
+                ->setCurrentTimeStampAsDefaultValue(),
+
+            IntegerChoiceField::enumChoice(AccessTokenDuration::class, 'duration'),
+            IntegerChoiceField::enumChoice(AccessTokenPurpose::class, 'purpose'),
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'),
+            StringField::define('token'),
+        ])
 );

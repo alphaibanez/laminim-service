@@ -22,11 +22,6 @@ use Lkt\CodeMaker\FieldGeneration\RelatedKeysMergeFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
-use Lkt\Factory\Schemas\ComputedFields\StringAboveMinLengthComputedField;
-use Lkt\Factory\Schemas\ComputedFields\StringBelowMaxLengthComputedField;
-use Lkt\Factory\Schemas\ComputedFields\StringBetweenMinAndMaxLengthComputedField;
-use Lkt\Factory\Schemas\ComputedFields\StringEqualComputedField;
-use Lkt\Factory\Schemas\ComputedFields\StringInComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
@@ -254,47 +249,6 @@ class FieldsCodeHelper
                     ->setData($templateData)
                     ->parse();
 
-            } elseif ($field instanceof StringEqualComputedField) {
-                $relatedField = $schema->getField($field->getField());
-                $templateData['getter'] = $relatedField->getGetterForComputed();
-                $templateData['value'] = $field->getValue();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-equal-computed-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
-
-            } elseif ($field instanceof StringInComputedField) {
-                $relatedField = $schema->getField($field->getField());
-                $templateData['getter'] = $relatedField->getGetterForComputed();
-                $templateData['value'] = "'" . implode("','", $field->getValue()) . "'";
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-in-computed-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
-
-            } elseif ($field instanceof StringAboveMinLengthComputedField) {
-                $relatedField = $schema->getField($field->getField());
-                $templateData['getter'] = $relatedField->getGetterForComputed();
-                $templateData['value'] = $field->getValue();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-above-min-length-computed-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
-
-            } elseif ($field instanceof StringBelowMaxLengthComputedField) {
-                $relatedField = $schema->getField($field->getField());
-                $templateData['getter'] = $relatedField->getGetterForComputed();
-                $templateData['value'] = $field->getValue();
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-below-max-length-computed-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
-
-            } elseif ($field instanceof StringBetweenMinAndMaxLengthComputedField) {
-                $relatedField = $schema->getField($field->getField());
-                $templateData['getter'] = $relatedField->getGetterForComputed();
-                $value = $field->getValue();
-                $templateData['min'] = $value[0];
-                $templateData['max'] = $value[1];
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/computed-fields/string-between-min-and-max-length-computed-field.phtml')
-                    ->setData($templateData)
-                    ->parse();
             }
         }
 
@@ -399,7 +353,7 @@ class FieldsCodeHelper
                     $composedPrimitiveReturnType = '?string';
                     $composedPrimitiveInputType = 'string';
 
-                } elseif ($composedField instanceof BooleanField || $composedField instanceof BooleansComputedField || $composedField instanceof StringEqualComputedField || $composedField instanceof StringInComputedField || $composedField instanceof StringAboveMinLengthComputedField || $composedField instanceof StringBelowMaxLengthComputedField || $composedField instanceof StringBetweenMinAndMaxLengthComputedField) {
+                } elseif ($composedField instanceof BooleanField || $composedField instanceof BooleansComputedField) {
                     $composedPrimitiveReturnType = '?bool';
                     $composedPrimitiveInputType = 'bool';
 

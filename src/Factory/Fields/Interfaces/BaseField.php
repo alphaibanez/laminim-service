@@ -16,7 +16,9 @@ interface BaseField
      * @laminim
      * Field column
      * This is the key used by the database
-     * In relational fields, points to the other table column heading this table
+     * In relational fields, it can be:
+     *  a. the column in this table storing the related id/ids (foreign key/pivot)
+     *  b. the column in the related table containing this table item id (related)
      */
     public function getColumn(): string;
     public function getLocaleColumn(string $locale): string;

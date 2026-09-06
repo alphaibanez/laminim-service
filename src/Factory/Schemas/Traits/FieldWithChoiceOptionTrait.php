@@ -18,12 +18,18 @@ trait FieldWithChoiceOptionTrait
 
     protected ChoiceFieldSource $optionsSource = ChoiceFieldSource::Array;
 
+    /**
+     * @deprecated
+     */
     final public function setAllowedOptions(array $options): static
     {
         $this->allowedOptions = $options;
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     final public function setEnumChoiceClass(string $enumChoiceClass): static
     {
         $this->enumChoiceClass = $enumChoiceClass;
@@ -42,16 +48,18 @@ trait FieldWithChoiceOptionTrait
 
     final public static function choice(array $options, string $name, string $column = ''): static
     {
-        return (new static($name, $column))->setAllowedOptions($options);
+        $ins = new static($name, $column);
+        $ins->allowedOptions = $options;
+        return $ins;
     }
 
     final public static function enumChoice(string $enumChoiceClass, string $name, string $column = ''): static
     {
-        $r = (new static($name, $column))
-            ->setEnumChoiceClass($enumChoiceClass)
-            ->setAllowedOptions(enumToArray($enumChoiceClass));
-        $r->optionsSource = ChoiceFieldSource::Enum;
-        return $r;
+        $ins = new static($name, $column);
+        $ins->enumChoiceClass = $enumChoiceClass;
+        $ins->allowedOptions = enumToArray($enumChoiceClass);
+        $ins->optionsSource = ChoiceFieldSource::Enum;
+        return $ins;
     }
 
     final public function addComparatorIn(string $name, array $values): static

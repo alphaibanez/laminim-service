@@ -3,11 +3,11 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -23,29 +23,32 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(StringField::define('slug')->setIsI18nJson())
-        ->addField(AssocJSONField::define('slugData', 'slug')->setIsI18nJson())
-        ->addField(StringField::define('keywords')->setIsI18nJson())
-        ->addField(AssocJSONField::define('keywordsData', 'keywords')->setIsI18nJson())
-        ->addField(StringField::define('description')->setIsI18nJson())
-        ->addField(AssocJSONField::define('descriptionData', 'description')->setIsI18nJson())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::WebPage->value, 'webPage', 'page_id')->setDefaultValue(0))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::WebPageCategory->value, 'webCategory', 'category_id')->setDefaultValue(0))
-        ->addField(BooleanField::define('preventRobotsIndex', 'prevent_robots_index'))
-        ->addField(BooleanField::define('preventRobotsFollow', 'prevent_robots_follow'))
+                ->setCurrentTimeStampOnUpdate(),
+
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+
+            StringField::i18n('slug'),
+            JSONField::associativeI18n('slugData', 'slug'),
+            StringField::i18n('keywords'),
+            JSONField::associativeI18n('keywordsData', 'keywords'),
+            StringField::i18n('description'),
+            JSONField::associativeI18n('descriptionData', 'description'),
+
+            ForeignKeyField::defineRelation(LaminimComponent::WebPage->value, 'webPage', 'page_id')->setDefaultValue(0),
+            ForeignKeyField::defineRelation(LaminimComponent::WebPageCategory->value, 'webCategory', 'category_id')->setDefaultValue(0),
+            BooleanField::define('preventRobotsIndex', 'prevent_robots_index'),
+            BooleanField::define('preventRobotsFollow', 'prevent_robots_follow'),
+        ])
 
         ->addAccessPolicy('admin', [
             'id',

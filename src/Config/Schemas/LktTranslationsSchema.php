@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -34,23 +34,26 @@ Schema::add(
             'value',
             'valueData',
         ])
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(StringChoiceField::choice(TranslationType::getChoiceOptions(), 'type'))
-        ->addField(StringField::define('property'))
-        ->addField(StringField::define('value')->setIsI18nJson())
-        ->addField(AssocJSONField::define('valueData', 'value')->setIsI18nJson())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Translation->value, 'parent', 'parent_id'))
-        ->addField(RelatedField::defineRelation(LaminimComponent::Translation->value, 'children', 'parent_id')->setOrder(LktTranslationOrderBy::propertyASC()))
+                ->setCurrentTimeStampOnUpdate(),
+
+            StringChoiceField::choice(TranslationType::getChoiceOptions(), 'type'),
+            StringField::define('property'),
+
+            StringField::i18n('value'),
+            JSONField::associativeI18n('valueData', 'value'),
+            ForeignKeyField::defineRelation(LaminimComponent::Translation->value, 'parent', 'parent_id'),
+            RelatedField::defineRelation(LaminimComponent::Translation->value, 'children', 'parent_id')->setOrder(LktTranslationOrderBy::propertyASC()),
+        ])
         ->addAccessPolicy('write', ['type', 'property', 'valueData', 'parent', 'children'])
 );

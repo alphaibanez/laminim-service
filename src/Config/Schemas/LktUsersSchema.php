@@ -30,45 +30,44 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(IntegerChoiceField::enumChoice(UserStatus::class, 'status')->setDefaultValue(UserStatus::Active->value))
-        ->addField(StringField::define('firstName', 'firstname'))
-        ->addField(StringField::define('lastName', 'lastname'))
-        ->addField(ConcatField::concat('fullName', ['firstName', 'lastName'], ' '))
-        ->addField(ConcatField::concat('name', ['firstName', 'lastName'], ' '))
-        ->addField(EmailField::define('email'))
-        ->addField(EncryptField::sha256Hash(UserSettings::$passwordSecureSeed, 'password'))
-        ->addField(StringField::define('preferredLanguage', 'preferred_language')->setDefaultValue(function () {
-            return trim(Locale::getLangCode());
-        }))
-        ->addField(IntegerChoiceField::enumChoice(ThemeMode::class, 'preferredThemeMode', 'preferred_theme_mode'))
-        ->addField(StringField::define('credentialIdentifier', 'credential_id'))
-        ->addField(ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'appRoles', 'app_roles'))
-        ->addField(ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'adminRoles', 'admin_roles'))
-        ->addField(BooleanField::define('isAdministrator', 'is_administrator'))
-        ->addField(BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true))
-        ->addField(BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true))
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(RelatedField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupons', 'owned_by'))
+            IntegerChoiceField::enumChoice(UserStatus::class, 'status')->setDefaultValue(UserStatus::Active->value),
+            StringField::define('firstName', 'firstname'),
+            StringField::define('lastName', 'lastname'),
+            ConcatField::concat('fullName', ['firstName', 'lastName'], ' '),
+            ConcatField::concat('name', ['firstName', 'lastName'], ' '),
+            EmailField::define('email'),
+            EncryptField::sha256Hash(UserSettings::$passwordSecureSeed, 'password'),
 
+            StringField::define('preferredLanguage', 'preferred_language')->setDefaultValue(function () {
+                return trim(Locale::getLangCode());
+            }),
+
+            IntegerChoiceField::enumChoice(ThemeMode::class, 'preferredThemeMode', 'preferred_theme_mode'),
+            StringField::define('credentialIdentifier', 'credential_id'),
+            ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'appRoles', 'app_roles'),
+            ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'adminRoles', 'admin_roles'),
+            BooleanField::define('isAdministrator', 'is_administrator'),
+            BooleanField::define('canReceivePushNotifications', 'can_receive_push_notifications')->setDefaultValue(true),
+            BooleanField::define('canReceiveMailNotifications', 'can_receive_mail_notifications')->setDefaultValue(true),
+            RelatedField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupons', 'owned_by'),
+        ])
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'fullName' => 'label',
         ])
-
         ->addAccessPolicy('change-password', ['password'])
-
         ->addAccessPolicy('admin', [
             'id',
             'firstName',
@@ -85,7 +84,6 @@ Schema::add(
             'coupons',
             'status',
         ])
-
         ->addAccessPolicy('create', [
             'id',
             'firstName',

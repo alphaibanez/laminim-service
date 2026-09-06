@@ -20,21 +20,22 @@ Schema::add(
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingOrderPayment::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('paidAt', 'paid_at')
-                ->setDefaultReadFormat('Y-m-d')
-        )
-        ->addField(IntegerChoiceField::enumChoice(PaymentStatus::class, 'status')->setDefaultValue(PaymentStatus::Pending->value))
-        ->addField(IntegerChoiceField::enumChoice(PaymentMethod::class, 'paymentMethod', 'payment_method'))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id')->setOnReadIncludeOptions())
-        ->addField(FloatField::define('amount')->setDefaultValue(0))
-        ->addField(StringField::define('transactionID', 'transaction_id')->setDefaultValue(''))
+                ->setDefaultReadFormat('Y-m-d'),
+
+            IntegerChoiceField::enumChoice(PaymentStatus::class, 'status')->setDefaultValue(PaymentStatus::Pending->value),
+            IntegerChoiceField::enumChoice(PaymentMethod::class, 'paymentMethod', 'payment_method'),
+            ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id')->setOnReadIncludeOptions(),
+            FloatField::define('amount')->setDefaultValue(0),
+            StringField::define('transactionID', 'transaction_id')->setDefaultValue(''),
+        ])
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'amount' => 'label',

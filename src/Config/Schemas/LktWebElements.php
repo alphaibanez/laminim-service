@@ -3,11 +3,11 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -35,26 +35,25 @@ Schema::add(
             'children',
             'subElements',
         ])
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(IntegerField::define('type'))
-        ->addField(StringField::define('component'))
-        ->addField(AssocJSONField::define('props'))
-        ->addField(AssocJSONField::define('config'))
-        ->addField(AssocJSONField::define('layout'))
-        ->addField(AssocJSONField::define('subElements', 'sub_elements'))
-        ->addField(
-            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'children')
-        )
+                ->setCurrentTimeStampOnUpdate(),
+
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            IntegerField::define('type'),
+            StringField::define('component'),
+            JSONField::associative('props'),
+            JSONField::associative('config'),
+            JSONField::associative('layout'),
+            JSONField::associative('subElements', 'sub_elements'),
+            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'children'),
+        ])
 );

@@ -3,13 +3,13 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -20,36 +20,33 @@ use Lkt\Shop\Enums\TaxType;
 
 Schema::add(
     Schema::table('lkt_shopping_taxes', LaminimComponent::ShoppingTax->value)
-
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingTax::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
-
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
+            BooleanField::define('isActive', 'is_active')->setDefaultValue(false),
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
 
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions(),
+            ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
 
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions())
-        ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
-        ->addField(IntegerChoiceField::enumChoice(TaxType::class, 'taxType', 'tax_type')->setDefaultValue(TaxType::PercentualAdd->value))
-        ->addField(IntegerChoiceField::enumChoice(TaxTarget::class, 'taxTarget', 'tax_target')->setDefaultValue(TaxTarget::NaturalPerson->value))
-
+            FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
+            IntegerChoiceField::enumChoice(TaxType::class, 'taxType', 'tax_type')->setDefaultValue(TaxType::PercentualAdd->value),
+            IntegerChoiceField::enumChoice(TaxTarget::class, 'taxTarget', 'tax_target')->setDefaultValue(TaxTarget::NaturalPerson->value),
+        ])
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'name' => 'label',
@@ -58,7 +55,6 @@ Schema::add(
             'country',
             'taxAmount',
         ])
-
         ->addAccessPolicy('admin', [
             'id',
             'createdAt',
@@ -70,7 +66,6 @@ Schema::add(
             'taxType',
             'taxTarget',
         ])
-
         ->addAccessPolicy('w:admin', [
             'nameData',
             'isActive',
@@ -80,7 +75,6 @@ Schema::add(
             'taxType',
             'taxTarget',
         ])
-
         ->addAccessPolicy('admin-ls', [
             'id',
             'createdAt',

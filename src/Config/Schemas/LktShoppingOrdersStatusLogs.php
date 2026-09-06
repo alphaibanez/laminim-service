@@ -19,12 +19,14 @@ Schema::add(
 
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-        ->addField(IntegerChoiceField::enumChoice(OrderStatus::class, 'status'))
+                ->setCurrentTimeStampAsDefaultValue(),
+
+            ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+            IntegerChoiceField::enumChoice(OrderStatus::class, 'status'),
+        ])
 );

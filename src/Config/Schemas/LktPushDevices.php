@@ -18,7 +18,9 @@ Schema::add(
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )
-        ->addField(DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue())
-        ->addField(IntegerField::identifier('id'))
-        ->addField(IntegerChoiceField::enumChoice(DevicePlatform::class, 'platform'))
+        ->setFields([
+            IntegerField::identifier('id'),
+            DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
+            IntegerChoiceField::enumChoice(DevicePlatform::class, 'platform')
+        ])
 );

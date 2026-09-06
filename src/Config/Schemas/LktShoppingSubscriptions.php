@@ -27,35 +27,32 @@ Schema::add(
         ->setItemsPerPage(20)
         ->setOwnershipField('user')
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(IntegerChoiceField::enumChoice(SubscriptionStatus::class, 'status')->setDefaultValue(SubscriptionStatus::Inactive->value))
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
+            IntegerChoiceField::enumChoice(SubscriptionStatus::class, 'status')->setDefaultValue(SubscriptionStatus::Inactive->value),
+            MethodGetterField::define('getComponentIdAssociatedWebItemPublicName', 'webItemName'),
+            IntegerField::define('componentId', 'component_id'),
+            ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions(),
+            DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
+            DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
 
-        ->addField(MethodGetterField::define('getComponentIdAssociatedWebItemPublicName', 'webItemName'))
-        ->addField(IntegerField::define('componentId', 'component_id'))
-        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
-
-        ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
-        ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
-
-        ->addField(PivotField::definePivot(LaminimComponent::ShoppingOrder->value, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LaminimComponent::ShoppingOrderPivotShoppingSubscription->value)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'))
-            ->setPivotPositionField(PivotPositionField::define('position'))
-            ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-        )
+            PivotField::definePivot(LaminimComponent::ShoppingOrder->value, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LaminimComponent::ShoppingOrderPivotShoppingSubscription->value)
+                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
+                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'))
+                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated'),
+        ])
 
     ->setRelatedAccessPolicy([
         'id' => 'value',

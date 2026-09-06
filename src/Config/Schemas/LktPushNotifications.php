@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -22,14 +22,16 @@ Schema::add(
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )
-        ->addField(DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue())
-        ->addField(IntegerField::identifier('id'))
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(StringField::define('description')->setIsI18nJson())
-        ->addField(AssocJSONField::define('descriptionData', 'description')->setIsI18nJson())
-        ->addField(AssocJSONField::define('payload', 'data'))
-        ->addField(IntegerChoiceField::enumChoice(NotificationStatus::class, 'status'))
-        ->addField(IntegerChoiceField::enumChoice(QueuePriority::class, 'priority'))
-        ->addField(IntegerChoiceField::enumChoice(NotificationTargetType::class, 'targetType', 'target_type'))
+        ->setFields([
+            IntegerField::identifier('id'),
+            DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
+            StringField::i18n('description'),
+            JSONField::associativeI18n('descriptionData', 'description'),
+            JSONField::associative('payload', 'data'),
+            IntegerChoiceField::enumChoice(NotificationStatus::class, 'status'),
+            IntegerChoiceField::enumChoice(QueuePriority::class, 'priority'),
+            IntegerChoiceField::enumChoice(NotificationTargetType::class, 'targetType', 'target_type'),
+        ])
 );

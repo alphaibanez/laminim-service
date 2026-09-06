@@ -23,32 +23,30 @@ Schema::add(
 
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
-
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingTax->value, 'shoppingTax', 'shopping_tax_id')->setOnReadIncludeOptions())
-        ->addField(IntegerField::define('componentId', 'component_id'))
-        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
-
-        ->addField(FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0))
-        ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
-        ->addField(MethodGetterField::define('getFinalPricePerUnit', 'finalPricePerUnit'))
-        ->addField(IntegerChoiceField::enumChoice(PriceType::class, 'type', 'price_type')->setDefaultValue(PriceType::Override->value))
-        ->addField(IntegerChoiceField::enumChoice(PriceCriteria::class, 'attachedCriteria', 'attached_criteria')->setDefaultValue(PriceCriteria::ByCountry->value))
+            BooleanField::define('isActive', 'is_active')->setDefaultValue(false),
+            ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
+            ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions(),
+            ForeignKeyField::defineRelation(LaminimComponent::ShoppingTax->value, 'shoppingTax', 'shopping_tax_id')->setOnReadIncludeOptions(),
+            IntegerField::define('componentId', 'component_id'),
+            ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions(),
+            FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0),
+            FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
+            MethodGetterField::define('getFinalPricePerUnit', 'finalPricePerUnit'),
+            IntegerChoiceField::enumChoice(PriceType::class, 'type', 'price_type')->setDefaultValue(PriceType::Override->value),
+            IntegerChoiceField::enumChoice(PriceCriteria::class, 'attachedCriteria', 'attached_criteria')->setDefaultValue(PriceCriteria::ByCountry->value),
+        ])
 
         ->setRelatedAccessPolicy([
             'id' => 'value',

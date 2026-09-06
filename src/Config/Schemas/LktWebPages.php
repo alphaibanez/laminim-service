@@ -3,12 +3,12 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -16,7 +16,6 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktWebPage;
 use Lkt\WebPages\Enums\WebPageStatus;
-
 
 Schema::add(
     Schema::table('lkt_web_pages', LaminimComponent::WebPage->value)
@@ -38,31 +37,28 @@ Schema::add(
             'layout',
             'children',
         ])
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(
+                ->setCurrentTimeStampOnUpdate(),
+
             DateTimeField::define('publishedAt', 'published_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(IntegerChoiceField::enumChoice(WebPageStatus::class, 'status'))
-        ->addField(IntegerField::define('type'))
+                ->setCurrentTimeStampAsDefaultValue(),
 
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            IntegerChoiceField::enumChoice(WebPageStatus::class, 'status'),
+            IntegerField::define('type'),
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
 
-        ->addField(
             RelatedField::single(LaminimComponent::WebPageMetas->value, 'metas', 'webPage')
                 ->setCompositionContent([
                     'slug' => 'slug',
@@ -74,12 +70,11 @@ Schema::add(
                     'preventRobotsIndex' => 'preventRobotsIndex',
                     'preventRobotsFollow' => 'preventRobotsFollow',
                 ])
-                ->setCompositionValue('webCategory', 'id')
-        )
+                ->setCompositionValue('webCategory', 'id'),
 
-        ->addField(
-            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'webElements', 'web_elements')
-        )
+            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'webElements', 'web_elements'),
+        ])
+
         ->addAccessPolicy('public-read', [
             'name',
             'webElements',

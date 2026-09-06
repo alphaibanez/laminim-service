@@ -10,6 +10,7 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
 use Lkt\Factory\Schemas\Fields\PivotPositionField;
@@ -31,46 +32,45 @@ Schema::add(
         ->setItemsPerPage(20)
         ->setOwnershipField('owner')
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions())
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'owner', 'owned_by')->setOnReadIncludeOptions())
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(StringField::define('code')->setIsUnique())
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'owner', 'owned_by')->setOnReadIncludeOptions(),
 
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
+            StringField::define('code')->setIsUnique(),
 
-        ->addField(IntegerChoiceField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global))
-        ->addField(IntegerChoiceField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent))
-        ->addField(FloatField::define('value', 'value')->setDefaultValue(0))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'))
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
+            IntegerChoiceField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global),
+            IntegerChoiceField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent),
+            FloatField::define('value', 'value')->setDefaultValue(0),
+            ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'),
+            DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
+            DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
 
-        ->addField(DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
-        ->addField(DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable())
+            FloatField::define('usageLimit', 'usage_limit')->setDefaultValue(0),
+            FloatField::define('usageLimitPerUser', 'usage_limit_per_user')->setDefaultValue(0),
+            FloatField::define('minimumOrderAmount', 'minimum_order_amount')->setDefaultValue(0),
+            BooleanField::define('isActive', 'is_active')->setDefaultValue(false),
+            BooleanField::define('stackable', 'stackable')->setDefaultValue(false),
 
-        ->addField(FloatField::define('usageLimit', 'usage_limit')->setDefaultValue(0))
-        ->addField(FloatField::define('usageLimitPerUser', 'usage_limit_per_user')->setDefaultValue(0))
-        ->addField(FloatField::define('minimumOrderAmount', 'minimum_order_amount')->setDefaultValue(0))
-        ->addField(BooleanField::define('isActive', 'is_active')->setDefaultValue(false))
-        ->addField(BooleanField::define('stackable', 'stackable')->setDefaultValue(false))
+            PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'orders', 'coupon_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
+                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
+                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
+                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
 
-        ->addField(PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'orders', 'coupon_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
-            ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-            ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
-            ->setPivotPositionField(PivotPositionField::define('position'))
-            ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-        )
+        ])
 
     ->setRelatedAccessPolicy([
         'id' => 'value',

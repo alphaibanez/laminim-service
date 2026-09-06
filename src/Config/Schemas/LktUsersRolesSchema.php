@@ -3,9 +3,9 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -28,21 +28,22 @@ Schema::add(
         ->setItemsPerPage(20)
         ->setCountableField('id')
         ->setIncludeDuplicatedTextInField('nameData')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(StringField::define('name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('permissions'))
+                ->setCurrentTimeStampOnUpdate(),
+
+            StringField::i18n('name'),
+            JSONField::associativeI18n('nameData', 'name'),
+            JSONField::associative('permissions'),
+        ])
         ->addAccessPolicy('admin', ['id', 'nameData', 'permissions'])
         ->addAccessPolicy('duplicate', ['nameData', 'permissions'])
 );

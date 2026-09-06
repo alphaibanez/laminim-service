@@ -19,10 +19,12 @@ Schema::add(
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )
-        ->addField(DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue())
-        ->addField(DateTimeField::define('sentAt', 'sent_at'))
-        ->addField(IntegerField::identifier('id'))
-        ->addField(IntegerChoiceField::enumChoice(DeliveryStatus::class, 'status'))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::PushDevice->value, 'device', 'device_id'))
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::PushNotification->value, 'notification', 'notification_id'))
+        ->setFields([
+            IntegerField::identifier('id'),
+            DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
+            DateTimeField::define('sentAt', 'sent_at'),
+            IntegerChoiceField::enumChoice(DeliveryStatus::class, 'status'),
+            ForeignKeyField::defineRelation(LaminimComponent::PushDevice->value, 'device', 'device_id'),
+            ForeignKeyField::defineRelation(LaminimComponent::PushNotification->value, 'notification', 'notification_id')
+        ])
 );

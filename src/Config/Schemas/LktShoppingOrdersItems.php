@@ -14,37 +14,32 @@ use Lkt\Instances\LktShoppingOrderItem;
 
 Schema::add(
     Schema::table('lkt_shopping_orders__items', LaminimComponent::ShoppingOrderItem->value)
-
         ->setInstanceSettings(InstanceSettings::simple(LktShoppingOrderItem::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
-
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-        ->addField(IntegerField::define('componentId', 'component_id'))
-        ->addField(ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions())
-
-        ->addField(StringField::define('SKU', 'sku'))
-        ->addField(StringField::define('name'))
-
-        ->addField(FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0))
-        ->addField(IntegerField::define('quantity')->setDefaultValue(1))
-        ->addField(FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0))
-        ->addField(FloatField::define('discountAmount', 'discount_amount')->setDefaultValue(0))
-        ->addField(FloatField::define('total')->setDefaultValue(0))
-
+            ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+            IntegerField::define('componentId', 'component_id'),
+            ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions(),
+            StringField::define('SKU', 'sku'),
+            StringField::define('name'),
+            FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0),
+            IntegerField::define('quantity')->setDefaultValue(1),
+            FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
+            FloatField::define('discountAmount', 'discount_amount')->setDefaultValue(0),
+            FloatField::define('total')->setDefaultValue(0),
+        ])
         ->setRelatedAccessPolicy([
             'id' => 'value',
             'name' => 'label',

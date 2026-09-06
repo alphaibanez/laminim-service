@@ -3,10 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -23,24 +23,25 @@ Schema::add(
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->addField(IntegerField::identifier('id'))
-        ->addField(
+        ->setFields([
+            IntegerField::identifier('id'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
-                ->setCurrentTimeStampAsDefaultValue()
-        )
-        ->addField(
+                ->setCurrentTimeStampAsDefaultValue(),
+
+
             DateTimeField::define('updatedAt', 'updated_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue()
-                ->setCurrentTimeStampOnUpdate()
-        )
-        ->addField(ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']))
-        ->addField(StringField::define('name')->setIsI18nJson()->setIsUnique())
-        ->addField(AssocJSONField::define('nameData', 'name')->setIsI18nJson())
-        ->addField(AssocJSONField::define('config'))
+                ->setCurrentTimeStampOnUpdate(),
 
-        ->addField(
+            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+
+            StringField::i18n('name')->setIsUnique(),
+            JSONField::associativeI18n('nameData', 'name'),
+            JSONField::associative('config'),
+
             RelatedField::single(LaminimComponent::WebPageMetas->value, 'metas', 'webCategory')
                 ->setCompositionContent([
                     'slug' => 'slug',
@@ -52,8 +53,9 @@ Schema::add(
                     'preventRobotsIndex' => 'preventRobotsIndex',
                     'preventRobotsFollow' => 'preventRobotsFollow',
                 ])
-                ->setCompositionValue('webCategory', 'id')
-        )
+                ->setCompositionValue('webCategory', 'id'),
+
+        ])
 
         ->addAccessPolicy('admin', [
             'id',

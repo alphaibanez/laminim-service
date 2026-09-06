@@ -60,7 +60,7 @@ final class DateDataController
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getKindOfDateTimeField($key);
+        $f = $this->schema->getDateTimeField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
         }

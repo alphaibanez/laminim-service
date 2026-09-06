@@ -4,12 +4,9 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Traits\ItemWithDateDataTrait;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\JSONField;
-use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 
 class DateTimeFieldGenerator implements FieldGenerator
 {
@@ -22,7 +19,7 @@ class DateTimeFieldGenerator implements FieldGenerator
         $r[] = "public function get{$this->data->methodName}Formatted(string \$format = null):string|null { return \$this->dateData->format('{$this->data->fieldName}', \$format); }";
         $r[] = "public function get{$this->data->methodName}IntlFormatted(string \$format = null):string|null { return \$this->dateData->intlFormat('{$this->data->fieldName}', \$format); }";
 
-        if ($this->data->field instanceof DateTimeField || $this->data->field instanceof UnixTimeStampField) {
+        if ($this->data->field instanceof DateTimeField) {
             $formats = $this->data->field->getFormats();
 
             foreach ($formats as $name => $cfg) {

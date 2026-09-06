@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Enums\DateTimeFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Schemas\Traits\DateFieldWithDefaultValueTrait;
 use Lkt\Factory\Schemas\Traits\DateFieldWithFormattedValueTrait;
@@ -14,4 +15,18 @@ class DateTimeField extends AbstractField implements NonRelationalField
         FieldWithFormatsOptionTrait,
         DateFieldWithFormattedValueTrait,
         DateFieldWithDefaultValueTrait;
+
+    protected DateTimeFieldType $fieldType = DateTimeFieldType::DateTime;
+
+    public static function unixTimeStamp(string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->fieldType = DateTimeFieldType::UnixTimeStamp;
+        return $ins;
+    }
+
+    public function isUnixTimeStamp(): bool
+    {
+        return $this->fieldType === DateTimeFieldType::UnixTimeStamp;
+    }
 }

@@ -2,15 +2,10 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\DateFieldWithDefaultValueTrait;
-use Lkt\Factory\Schemas\Traits\DateFieldWithFormattedValueTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithFormatsOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
-
-class UnixTimeStampField extends AbstractField
+class UnixTimeStampField extends DateTimeField
 {
-    use FieldWithNullOptionTrait,
-        FieldWithFormatsOptionTrait,
-        DateFieldWithFormattedValueTrait,
-        DateFieldWithDefaultValueTrait;
+    public static function define(string $name, string $column = ''): static
+    {
+        return parent::unixTimeStamp($name, $column);
+    }
 }

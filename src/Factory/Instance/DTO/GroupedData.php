@@ -16,7 +16,6 @@ use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Fields\StringField;
-use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -106,7 +105,7 @@ final readonly class GroupedData
             elseif ($field instanceof BooleanField) {
                 $booleanData[$k] = $data[$dataKey];
             }
-            elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+            elseif ($field instanceof DateTimeField) {
                 $dateData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ColorField) {

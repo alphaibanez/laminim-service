@@ -34,7 +34,6 @@ use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringField;
-use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
@@ -780,7 +779,7 @@ trait ItemWithDataTrait
         } elseif ($field instanceof BooleanField) {
             $this->booleanData->set($key, $value);
 
-        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+        } elseif ($field instanceof DateTimeField) {
             $this->dateData->set($key, $value);
 
         } elseif ($field instanceof JSONField) {
@@ -864,7 +863,7 @@ trait ItemWithDataTrait
         } elseif ($field instanceof BooleanField) {
             return $this->booleanData->get($key);
 
-        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+        } elseif ($field instanceof DateTimeField) {
             return $this->dateData->get($key);
 
         } elseif ($field instanceof JSONField) {
@@ -943,7 +942,7 @@ trait ItemWithDataTrait
         } elseif ($field instanceof BooleanField) {
             return $this->booleanData->has($key);
 
-        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+        } elseif ($field instanceof DateTimeField) {
             return $this->dateData->has($key);
 
         } elseif ($field instanceof JSONField) {
@@ -1036,7 +1035,7 @@ trait ItemWithDataTrait
         } elseif ($field instanceof BooleanField) {
             return [$responseKey => $this->booleanData->get($key)];
 
-        } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+        } elseif ($field instanceof DateTimeField) {
             return [$responseKey => $this->dateData->get($key)];
 
         } elseif ($field instanceof JSONField) {

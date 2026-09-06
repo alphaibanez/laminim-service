@@ -20,7 +20,6 @@ use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringField;
-use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
@@ -450,20 +449,20 @@ class MariaDBConnector extends DatabaseConnector
                     $value = (float)$value;
                 }
 
-                if ($field instanceof UnixTimeStampField) {
-                    if ($value instanceof \DateTime) {
-                        $value = strtotime($value->format('Y-m-d H:i:s'));
-                    } else {
-                        $value = 0;
-                    }
-                }
-
                 if ($field instanceof DateTimeField) {
-                    if ($value instanceof \DateTime) {
-                        $value = $value->format('Y-m-d H:i:s');
+                    if ($field->isUnixTimeStamp()) {
+                        if ($value instanceof \DateTime) {
+                            $value = strtotime($value->format('Y-m-d H:i:s'));
+                        } else {
+                            $value = 0;
+                        }
                     } else {
-                        if ($nullable) $value = 'null';
-                        else $value = '0000-00-00 00:00:00';
+                        if ($value instanceof \DateTime) {
+                            $value = $value->format('Y-m-d H:i:s');
+                        } else {
+                            if ($nullable) $value = 'null';
+                            else $value = '0000-00-00 00:00:00';
+                        }
                     }
                 }
 

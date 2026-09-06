@@ -39,7 +39,6 @@ use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Fields\StringField;
-use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
@@ -138,7 +137,7 @@ class FieldsCodeHelper
                 $methods[] = FloatFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = FloatFieldGenerator::generateTraitsUsageCode($field);
 
-            } elseif ($field instanceof DateTimeField || $field instanceof UnixTimeStampField) {
+            } elseif ($field instanceof DateTimeField) {
                 $methods[] = DateTimeFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = DateTimeFieldGenerator::generateTraitsUsageCode($field);
 
@@ -359,7 +358,7 @@ class FieldsCodeHelper
                     $composedPrimitiveReturnType = '?float';
                     $composedPrimitiveInputType = 'float';
 
-                } elseif ($composedField instanceof DateTimeField || $composedField instanceof UnixTimeStampField) {
+                } elseif ($composedField instanceof DateTimeField) {
                     $composedPrimitiveReturnType = '?\Carbon\Carbon';
                     $composedPrimitiveInputType = '\Carbon\Carbon|\DateTime|string|int|null';
 

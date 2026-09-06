@@ -39,7 +39,6 @@ use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
@@ -583,15 +582,14 @@ final class Schema
     }
 
     /**
-     * @return array<StringChoiceField|IntegerField>
+     * @return array<StringField|IntegerField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     public function getChoiceFields(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            if ($field instanceof StringChoiceField
-                || ($field instanceof IntegerField && $field->ableToChoose())) {
+            if (($field instanceof StringField || $field instanceof IntegerField) && $field->ableToChoose()) {
                 return true;
             }
             return false;
@@ -599,18 +597,14 @@ final class Schema
     }
 
     /**
-     * @return array<StringChoiceField|IntegerField>
+     * @return array<StringField|IntegerField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     public function getChoiceFieldsWithDefaultValue(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            if ($field instanceof StringChoiceField
-                || ($field instanceof IntegerField && $field->ableToChoose())) {
-                return $field->hasEmptyDefault();
-            }
-            return false;
+        return array_filter($this->getChoiceFields(), function (StringField|IntegerField $field) {
+            return $field->hasEmptyDefault();
         });
     }
 

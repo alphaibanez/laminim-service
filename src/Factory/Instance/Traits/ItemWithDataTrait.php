@@ -33,7 +33,6 @@ use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
@@ -1022,6 +1021,16 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->ableToChoose()) {
+                $r = [];
+                $value = $this->stringData->get($field->getName());
+                $r[$responseKey] = $value;
+                $i18nOptions = $field->getI18nViewOptions();
+                if ($i18nOptions !== '') {
+                    $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
+                }
+                return $r;
+            }
             return [$responseKey => $this->stringData->get($key)];
 
         } elseif ($field instanceof BooleanField) {
@@ -1248,16 +1257,6 @@ trait ItemWithDataTrait
 
             } elseif ($field->readModeIsArray()) {
                 $r[$responseKey] = $this->multipleStringData->get($field->getName());
-            }
-            return $r;
-
-        } elseif ($field instanceof StringChoiceField) {
-            $r = [];
-            $value = $this->stringData->get($field->getName());
-            $r[$responseKey] = $value;
-            $i18nOptions = $field->getI18nViewOptions();
-            if ($i18nOptions !== '') {
-                $r[$responseKey . 'Text'] = Translations::get($i18nOptions . ".{$value}", Locale::getLangCode());
             }
             return $r;
 

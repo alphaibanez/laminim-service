@@ -6,7 +6,6 @@ use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -122,7 +121,7 @@ final class MultipleStringDataController
             }
         }
 
-        if ($f instanceof StringChoiceField) {
+        if ($f->ableToChoose()) {
             $availableOptions = $f->getAllowedOptions();
 
             foreach ($value as $val) {

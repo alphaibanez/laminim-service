@@ -9,7 +9,6 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
@@ -56,7 +55,7 @@ class FieldsSelectBuilderHelper
             if ($field instanceof StringField) {
                 $templateData['canBeNull'] =  $field->isNullable();
 
-                if ($field instanceof StringChoiceField) {
+                if ($field->ableToChoose()) {
                     $options = $field->getAllowedOptions();
 
                     $optionsMethods = array_map(function ($option) {

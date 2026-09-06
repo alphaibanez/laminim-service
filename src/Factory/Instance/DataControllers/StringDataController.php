@@ -11,7 +11,6 @@ use Lkt\Factory\Instantiator\Exceptions\MaxLengthRequiredException;
 use Lkt\Factory\Instantiator\Exceptions\MinLengthRequiredException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
 final class StringDataController
@@ -122,7 +121,7 @@ final class StringDataController
             $value = trim(str_replace('\"', '"', $value));
         }
 
-        if ($field instanceof StringChoiceField) {
+        if ($field->ableToChoose()) {
             $availableOptions = $field->getAllowedOptions();
 
             if (!in_array($value, $availableOptions, true)) {

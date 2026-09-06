@@ -2,9 +2,9 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldWithChoiceOptionTrait;
-
+/**
+ * @deprecated Use StringField instead
+ */
 class StringChoiceField extends StringField
 {
-    use FieldWithChoiceOptionTrait;
 }

@@ -2,9 +2,10 @@
 
 namespace Lkt\Factory\Instantiator\Process;
 
+use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Interfaces\RelationalField;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\Values\ComponentValue;
@@ -53,7 +54,7 @@ final class ProcessQueryCallerData
         $filterRules = $this->filterRules;
         $caller = $this->queryCaller;
 
-        array_reduce($fields, function (&$result, AbstractField $field) use ($caller, $data, $processRules, $filterRules) {
+        array_reduce($fields, function (&$result, AbstractField|NonRelationalField|RelationalField $field) use ($caller, $data, $processRules, $filterRules) {
             $key = $field->getName();
             $column = $field->getColumn();
             if (!array_key_exists($key, $data)) {
@@ -74,49 +75,51 @@ final class ProcessQueryCallerData
                 $filterRule = $filterRules[$key];
             }
 
-            if ($field instanceof StringChoiceField) {
-                $value = $data[$key];
-                if (is_array($value)) {
-                    $value = array_map(function ($datum) { return clearInput($datum);}, $value);
-                } else {
-                    $value = clearInput($value);
-                }
-                if (!$processRule) {
-                    $processRule = ProcessRule::equal;
+            if ($field instanceof StringField) {
+                if ($field->ableToChoose()) {
+
+                    $value = $data[$key];
                     if (is_array($value)) {
-                        $processRule = ProcessRule::in;
+                        $value = array_map(function ($datum) { return clearInput($datum);}, $value);
+                    } else {
+                        $value = clearInput($value);
                     }
-                }
+                    if (!$processRule) {
+                        $processRule = ProcessRule::equal;
+                        if (is_array($value)) {
+                            $processRule = ProcessRule::in;
+                        }
+                    }
 
-                if (!$filterRule) {
-                    $filterRule = FilterRule::notEmpty;
-                }
+                    if (!$filterRule) {
+                        $filterRule = FilterRule::notEmpty;
+                    }
 
-                if ($this->validFilterRule($value, $filterRule)) {
-                    $caller->addStringProcessRule($column, $value, $processRule);
-                }
-            }
-
-            elseif ($field instanceof StringField) {
-                $value = $data[$key];
-                if (is_array($value)) {
-                    $value = array_map(function ($datum) { return clearInput($datum);}, $value);
+                    if ($this->validFilterRule($value, $filterRule)) {
+                        $caller->addStringProcessRule($column, $value, $processRule);
+                    }
                 } else {
-                    $value = clearInput($value);
-                }
-                if (!$processRule) {
-                    $processRule = ProcessRule::like;
+
+                    $value = $data[$key];
                     if (is_array($value)) {
-                        $processRule = ProcessRule::in;
+                        $value = array_map(function ($datum) { return clearInput($datum);}, $value);
+                    } else {
+                        $value = clearInput($value);
                     }
-                }
+                    if (!$processRule) {
+                        $processRule = ProcessRule::like;
+                        if (is_array($value)) {
+                            $processRule = ProcessRule::in;
+                        }
+                    }
 
-                if (!$filterRule) {
-                    $filterRule = FilterRule::notEmpty;
-                }
+                    if (!$filterRule) {
+                        $filterRule = FilterRule::notEmpty;
+                    }
 
-                if ($this->validFilterRule($value, $filterRule)) {
-                    $caller->addStringProcessRule($column, $value, $processRule);
+                    if ($this->validFilterRule($value, $filterRule)) {
+                        $caller->addStringProcessRule($column, $value, $processRule);
+                    }
                 }
             }
 

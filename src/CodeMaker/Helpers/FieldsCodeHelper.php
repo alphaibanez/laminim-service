@@ -38,7 +38,6 @@ use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
@@ -102,15 +101,6 @@ class FieldsCodeHelper
                     $traitsUsage[] = IntegerFieldGenerator::generateTraitsUsageCode($field);
                 }
 
-            } elseif ($field instanceof StringChoiceField) {
-                $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
-                $fieldGeneratorData->options = $field->getAllowedOptions();
-                $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
-                $fieldGeneratorData->isMultiple = false;
-                $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
-                $methods[] = StringChoiceFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = StringChoiceFieldGenerator::generateTraitsUsageCode($field);
-
             } elseif ($field instanceof ValueListField) {
                 $fieldGeneratorData->isMultiple = true;
                 $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
@@ -118,7 +108,16 @@ class FieldsCodeHelper
 
 
             } elseif ($field instanceof StringField) {
-                if ($field->isEmail()) {
+                if ($field->ableToChoose()) {
+                    $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
+                    $fieldGeneratorData->options = $field->getAllowedOptions();
+                    $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
+                    $fieldGeneratorData->isMultiple = false;
+                    $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
+                    $methods[] = StringChoiceFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = StringChoiceFieldGenerator::generateTraitsUsageCode($field);
+
+                } elseif ($field->isEmail()) {
                     $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
                     $traitsUsage[] = EmailFieldGenerator::generateTraitsUsageCode($field);
                 } else {

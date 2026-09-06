@@ -11,7 +11,6 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
-use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
@@ -65,7 +64,7 @@ class FieldsQueryCallerHelper
                 $templateData['canBeNull'] =  $field->isNullable();
                 $templateData['isI18n'] = method_exists($field, 'isI18nJson') ? $field->isI18nJson() : false;
 
-                if ($field instanceof StringChoiceField) {
+                if ($field->ableToChoose()) {
                     $options = $field->getAllowedOptions();
 
                     $optionsMethods = array_map(function ($option) {

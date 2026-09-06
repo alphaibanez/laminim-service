@@ -7,6 +7,7 @@ use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Fields\Traits\FieldWithLengthLimits;
 use Lkt\Factory\Fields\Traits\FieldWithTrimMode;
 use Lkt\Factory\Fields\Traits\FieldWithUniqueValue;
+use Lkt\Factory\Schemas\Traits\FieldWithChoiceOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithJsonI18nStorageTrait;
@@ -26,7 +27,8 @@ class StringField extends AbstractField implements NonRelationalField
         FieldWithEmptyDataModeTrait,
         FieldWithUniqueValue,
         FieldWithTrimMode,
-        FieldWithLengthLimits;
+        FieldWithLengthLimits,
+        FieldWithChoiceOptionTrait;
 
     protected StringFieldType $fieldType = StringFieldType::String;
 

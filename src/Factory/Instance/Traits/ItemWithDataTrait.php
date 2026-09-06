@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -23,7 +22,6 @@ use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -764,7 +762,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
+        if ($field instanceof StringField || $field instanceof HTMLField) {
             $this->stringData->set($key, $value);
 
         } elseif ($field instanceof IntegerField) {
@@ -855,7 +853,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
+        if ($field instanceof StringField || $field instanceof HTMLField) {
             return $this->stringData->get($key);
 
         } elseif ($field instanceof FloatField) {
@@ -934,7 +932,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
+        if ($field instanceof StringField || $field instanceof HTMLField) {
             return $this->stringData->has($key);
 
         } elseif ($field instanceof FloatField) {
@@ -1024,7 +1022,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof EmailField) {
+        if ($field instanceof StringField) {
             return [$responseKey => $this->stringData->get($key)];
 
         } elseif ($field instanceof BooleanField) {

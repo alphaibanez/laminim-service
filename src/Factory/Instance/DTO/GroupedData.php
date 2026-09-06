@@ -5,7 +5,6 @@ namespace Lkt\Factory\Instance\DTO;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -82,7 +81,7 @@ final readonly class GroupedData
             if ($field instanceof ValueListField) {
                 $multipleStringData[$k] = $data[$dataKey];
             }
-            elseif ($field instanceof StringField || $field instanceof EmailField || $field instanceof HTMLField) {
+            elseif ($field instanceof StringField || $field instanceof HTMLField) {
                 $stringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ForeignKeyField) {

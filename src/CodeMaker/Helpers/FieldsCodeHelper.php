@@ -27,7 +27,6 @@ use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -119,13 +118,14 @@ class FieldsCodeHelper
                 $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
 
 
-            } elseif ($field instanceof EmailField) {
-                $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = EmailFieldGenerator::generateTraitsUsageCode($field);
-
             } elseif ($field instanceof StringField || $field instanceof HTMLField) {
-                $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
+                if ($field instanceof StringField && $field->isEmail()) {
+                    $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = EmailFieldGenerator::generateTraitsUsageCode($field);
+                } else {
+                    $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
+                }
 
             } elseif ($field instanceof EncryptField) {
                 $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);

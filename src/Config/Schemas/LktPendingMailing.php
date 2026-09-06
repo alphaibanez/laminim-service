@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
@@ -26,7 +25,7 @@ Schema::add(
             IntegerField::identifier('id'),
             DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
-            EmailField::define('email'),
+            StringField::email('email'),
             StringField::define('subject'),
             HTMLField::define('message'),
             IntegerField::enumChoice(QueuePriority::class, 'priority')->setDefaultValue(QueuePriority::Medium->value),

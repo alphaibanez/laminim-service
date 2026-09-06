@@ -4,7 +4,6 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -13,7 +12,6 @@ use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
@@ -413,10 +411,7 @@ class MariaDBConnector extends DatabaseConnector
                     continue;
                 }
 
-                if ($field instanceof StringField
-                    || $field instanceof EmailField
-                    || $field instanceof RelatedKeysField
-                ) {
+                if ($field instanceof StringField || $field instanceof RelatedKeysField) {
                     $r = trim($value);
                     if ($compress) {
                         $value = "COMPRESS('{$r}')";

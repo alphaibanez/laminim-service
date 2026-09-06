@@ -23,7 +23,7 @@ trait NonRelationalFieldInstantiation
     /**
      * @throws InvalidFieldNameException
      */
-    final public static function define(string $name, string $column = ''): static
+    public static function define(string $name, string $column = ''): static
     {
         return new static($name, $column);
     }

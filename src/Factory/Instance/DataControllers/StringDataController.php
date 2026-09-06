@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
@@ -12,7 +11,6 @@ use Lkt\Factory\Instantiator\Exceptions\MaxLengthRequiredException;
 use Lkt\Factory\Instantiator\Exceptions\MinLengthRequiredException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Schema;
@@ -134,7 +132,7 @@ final class StringDataController
 
             return $value;
 
-        } elseif ($field instanceof EmailField) {
+        } elseif ($field->isEmail()) {
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 return $value;
             }

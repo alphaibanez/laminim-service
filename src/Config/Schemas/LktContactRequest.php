@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -35,7 +34,7 @@ Schema::add(
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
 
             StringField::define('name'),
-            EmailField::define('email'),
+            StringField::email('email'),
             StringField::define('phone'),
             StringField::define('message'),
             ForeignKeyField::defineRelation(LaminimComponent::ContactReason->value, 'contactReason', 'contact_reason_id'),

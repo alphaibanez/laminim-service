@@ -4,7 +4,6 @@ namespace Lkt\CodeMaker\Helpers;
 
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -54,7 +53,7 @@ class FieldsGroupByHelper
                 continue;
             }
 
-            if ($field instanceof StringField || $field instanceof HTMLField || $field instanceof EmailField) {
+            if ($field instanceof StringField || $field instanceof HTMLField) {
                 $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof StringChoiceField) {

@@ -6,7 +6,6 @@ use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -63,7 +62,7 @@ class FieldsQueryCallerHelper
                 continue;
             }
 
-            if ($field instanceof StringField || $field instanceof HTMLField || $field instanceof EmailField) {
+            if ($field instanceof StringField || $field instanceof HTMLField) {
                 $templateData['canBeNull'] =  $field->isNullable();
                 $templateData['isI18n'] = method_exists($field, 'isI18nJson') ? $field->isI18nJson() : false;
 

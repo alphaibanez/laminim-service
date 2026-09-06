@@ -37,6 +37,7 @@ class StringField extends AbstractField implements NonRelationalField
         return $ins;
     }
 
+
     public static function url(string $name, string $column = ''): static
     {
         $ins = new static($name, $column);
@@ -56,5 +57,10 @@ class StringField extends AbstractField implements NonRelationalField
         $ins = new static($name, $column);
         $ins->fieldType = StringFieldType::HTML;
         return $ins;
+    }
+
+    public function isEmail(): bool
+    {
+        return $this->fieldType === StringFieldType::Email;
     }
 }

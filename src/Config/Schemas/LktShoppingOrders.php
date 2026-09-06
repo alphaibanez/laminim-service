@@ -6,7 +6,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
@@ -41,7 +40,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            IntegerChoiceField::enumChoice(OrderStatus::class, 'status')->setDefaultValue(OrderStatus::Pending),
+            IntegerField::enumChoice(OrderStatus::class, 'status')->setDefaultValue(OrderStatus::Pending),
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
             ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'),
             FloatField::define('subTotal', 'subtotal')->setDefaultValue(0),

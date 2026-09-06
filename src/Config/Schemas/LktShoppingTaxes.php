@@ -7,7 +7,6 @@ use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -44,8 +43,8 @@ Schema::add(
             ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
 
             FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
-            IntegerChoiceField::enumChoice(TaxType::class, 'taxType', 'tax_type')->setDefaultValue(TaxType::PercentualAdd->value),
-            IntegerChoiceField::enumChoice(TaxTarget::class, 'taxTarget', 'tax_target')->setDefaultValue(TaxTarget::NaturalPerson->value),
+            IntegerField::enumChoice(TaxType::class, 'taxType', 'tax_type')->setDefaultValue(TaxType::PercentualAdd->value),
+            IntegerField::enumChoice(TaxTarget::class, 'taxTarget', 'tax_target')->setDefaultValue(TaxTarget::NaturalPerson->value),
         ])
         ->setRelatedAccessPolicy([
             'id' => 'value',

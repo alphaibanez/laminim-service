@@ -6,7 +6,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -54,7 +53,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue(),
 
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
-            IntegerChoiceField::enumChoice(WebPageStatus::class, 'status'),
+            IntegerField::enumChoice(WebPageStatus::class, 'status'),
             IntegerField::define('type'),
             StringField::i18n('name'),
             JSONField::associativeI18n('nameData', 'name'),

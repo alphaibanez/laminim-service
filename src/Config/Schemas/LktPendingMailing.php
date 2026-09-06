@@ -7,7 +7,6 @@ use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -30,6 +29,6 @@ Schema::add(
             EmailField::define('email'),
             StringField::define('subject'),
             HTMLField::define('message'),
-            IntegerChoiceField::enumChoice(QueuePriority::class, 'priority')->setDefaultValue(QueuePriority::Medium->value),
+            IntegerField::enumChoice(QueuePriority::class, 'priority')->setDefaultValue(QueuePriority::Medium->value),
         ])
 );

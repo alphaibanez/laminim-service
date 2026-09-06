@@ -3,13 +3,13 @@
 namespace Lkt\Factory\Schemas\PrefabFields;
 
 use Lkt\Factory\Schemas\Enums\PrefabRole;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\WebPages\Enums\WebPageStatus;
 
 class VisibilityStatusField
 {
-    final public static function define(string $name = 'status', string $column = 'status'): IntegerChoiceField
+    final public static function define(string $name = 'status', string $column = 'status'): IntegerField
     {
-        return IntegerChoiceField::enumChoice(WebPageStatus::class, $name, $column)->setPrefabRole(PrefabRole::VisibilityStatus);
+        return IntegerField::enumChoice(WebPageStatus::class, $name, $column)->setPrefabRole(PrefabRole::VisibilityStatus);
     }
 }

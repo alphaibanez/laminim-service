@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -21,6 +20,6 @@ Schema::add(
         ->setFields([
             IntegerField::identifier('id'),
             DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
-            IntegerChoiceField::enumChoice(DevicePlatform::class, 'platform')
+            IntegerField::enumChoice(DevicePlatform::class, 'platform')
         ])
 );

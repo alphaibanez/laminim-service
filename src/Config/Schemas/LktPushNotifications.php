@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -30,8 +29,8 @@ Schema::add(
             StringField::i18n('description'),
             JSONField::associativeI18n('descriptionData', 'description'),
             JSONField::associative('payload', 'data'),
-            IntegerChoiceField::enumChoice(NotificationStatus::class, 'status'),
-            IntegerChoiceField::enumChoice(QueuePriority::class, 'priority'),
-            IntegerChoiceField::enumChoice(NotificationTargetType::class, 'targetType', 'target_type'),
+            IntegerField::enumChoice(NotificationStatus::class, 'status'),
+            IntegerField::enumChoice(QueuePriority::class, 'priority'),
+            IntegerField::enumChoice(NotificationTargetType::class, 'targetType', 'target_type'),
         ])
 );

@@ -34,7 +34,6 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -90,19 +89,20 @@ class FieldsCodeHelper
                 $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = ForeignKeyFieldGenerator::generateTraitsUsageCode($field);
 
-            } elseif ($field instanceof IntegerChoiceField) {
-                $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
-                $fieldGeneratorData->options = $field->getAllowedOptions();
-                $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
-                $fieldGeneratorData->isMultiple = $field->isMultiple();
-                $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
-                $methods[] = IntegerChoiceFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = IntegerChoiceFieldGenerator::generateTraitsUsageCode($field);
-
             } elseif ($field instanceof IntegerField) {
-                $fieldGeneratorData->isMultiple = $field->isMultiple();
-                $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = IntegerFieldGenerator::generateTraitsUsageCode($field);
+                if ($field->ableToChoose()) {
+                    $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
+                    $fieldGeneratorData->options = $field->getAllowedOptions();
+                    $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
+                    $fieldGeneratorData->isMultiple = $field->isMultiple();
+                    $fieldGeneratorData->enumChoiceClass = $field->getEnumChoiceClass();
+                    $methods[] = IntegerChoiceFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = IntegerChoiceFieldGenerator::generateTraitsUsageCode($field);
+                } else {
+                    $fieldGeneratorData->isMultiple = $field->isMultiple();
+                    $methods[] = IntegerFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = IntegerFieldGenerator::generateTraitsUsageCode($field);
+                }
 
             } elseif ($field instanceof StringChoiceField) {
                 $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();

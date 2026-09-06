@@ -7,7 +7,6 @@ use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
 final class IntegerDataController
@@ -89,7 +88,7 @@ final class IntegerDataController
             };
         }
 
-        if ($f instanceof IntegerChoiceField) {
+        if ($f->ableToChoose()) {
             $availableOptions = $f->getAllowedOptions();
 
             if (!in_array($value, $availableOptions, true)) {

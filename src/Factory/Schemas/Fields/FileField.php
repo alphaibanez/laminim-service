@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Enums\TimeInSeconds;
+use Lkt\Factory\Fields\Enums\FileFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
 use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
@@ -29,6 +30,15 @@ class FileField extends AbstractField implements NonRelationalField
      */
     protected array $supportedFormats = [];
     protected string|null $fileName = null;
+
+    protected FileFieldType $fieldType = FileFieldType::File;
+
+    public static function image(string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->fieldType = FileFieldType::Image;
+        return $ins;
+    }
 
 
     /**

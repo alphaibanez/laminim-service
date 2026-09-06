@@ -10,7 +10,6 @@ use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\EmailField;
 use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -42,7 +41,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            IntegerChoiceField::enumChoice(UserStatus::class, 'status')->setDefaultValue(UserStatus::Active->value),
+            IntegerField::enumChoice(UserStatus::class, 'status')->setDefaultValue(UserStatus::Active->value),
             StringField::define('firstName', 'firstname'),
             StringField::define('lastName', 'lastname'),
             ConcatField::concat('fullName', ['firstName', 'lastName'], ' '),
@@ -54,7 +53,7 @@ Schema::add(
                 return trim(Locale::getLangCode());
             }),
 
-            IntegerChoiceField::enumChoice(ThemeMode::class, 'preferredThemeMode', 'preferred_theme_mode'),
+            IntegerField::enumChoice(ThemeMode::class, 'preferredThemeMode', 'preferred_theme_mode'),
             StringField::define('credentialIdentifier', 'credential_id'),
             ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'appRoles', 'app_roles'),
             ForeignKeysField::defineRelation(LaminimComponent::UserRole->value, 'adminRoles', 'admin_roles'),

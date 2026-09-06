@@ -3,12 +3,10 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -51,8 +49,8 @@ Schema::add(
 
             StringField::i18n('name'),
             JSONField::associativeI18n('nameData', 'name'),
-            IntegerChoiceField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global),
-            IntegerChoiceField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent),
+            IntegerField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global),
+            IntegerField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent),
             FloatField::define('value', 'value')->setDefaultValue(0),
             ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'),
             DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),

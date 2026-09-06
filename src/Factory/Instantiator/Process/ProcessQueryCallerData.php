@@ -3,7 +3,6 @@
 namespace Lkt\Factory\Instantiator\Process;
 
 use Lkt\Factory\Schemas\Fields\AbstractField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -121,49 +120,49 @@ final class ProcessQueryCallerData
                 }
             }
 
-            elseif ($field instanceof IntegerChoiceField) {
-                $value = $data[$key];
-                if (is_array($value)) {
-                    $value = array_map(function ($datum) { return (int)clearInput($datum);}, $value);
-                } else {
-                    $value = (int)clearInput($value);
-                }
-                if (!$processRule) {
-                    $processRule = ProcessRule::equal;
-                    if (is_array($value)) {
-                        $processRule = ProcessRule::in;
-                    }
-                }
-
-                if (!$filterRule) {
-                    $filterRule = FilterRule::greaterThanZero;
-                }
-
-                if ($this->validFilterRule($value, $filterRule)) {
-                    $caller->addIntegerProcessRule($column, $value, $processRule);
-                }
-            }
-
             elseif ($field instanceof IntegerField) {
-                $value = $data[$key];
-                if (is_array($value)) {
-                    $value = array_map(function ($datum) { return (int)clearInput($datum);}, $value);
-                } else {
-                    $value = (int)clearInput($value);
-                }
-                if (!$processRule) {
-                    $processRule = ProcessRule::greaterThan;
+                if ($field->ableToChoose()) {
+                    $value = $data[$key];
                     if (is_array($value)) {
-                        $processRule = ProcessRule::in;
+                        $value = array_map(function ($datum) { return (int)clearInput($datum);}, $value);
+                    } else {
+                        $value = (int)clearInput($value);
                     }
-                }
+                    if (!$processRule) {
+                        $processRule = ProcessRule::equal;
+                        if (is_array($value)) {
+                            $processRule = ProcessRule::in;
+                        }
+                    }
 
-                if (!$filterRule) {
-                    $filterRule = FilterRule::greaterThanZero;
-                }
+                    if (!$filterRule) {
+                        $filterRule = FilterRule::greaterThanZero;
+                    }
 
-                if ($this->validFilterRule($value, $filterRule)) {
-                    $caller->addIntegerProcessRule($column, $value, $processRule);
+                    if ($this->validFilterRule($value, $filterRule)) {
+                        $caller->addIntegerProcessRule($column, $value, $processRule);
+                    }
+                } else {
+                    $value = $data[$key];
+                    if (is_array($value)) {
+                        $value = array_map(function ($datum) { return (int)clearInput($datum);}, $value);
+                    } else {
+                        $value = (int)clearInput($value);
+                    }
+                    if (!$processRule) {
+                        $processRule = ProcessRule::greaterThan;
+                        if (is_array($value)) {
+                            $processRule = ProcessRule::in;
+                        }
+                    }
+
+                    if (!$filterRule) {
+                        $filterRule = FilterRule::greaterThanZero;
+                    }
+
+                    if ($this->validFilterRule($value, $filterRule)) {
+                        $caller->addIntegerProcessRule($column, $value, $processRule);
+                    }
                 }
             }
             return $result;

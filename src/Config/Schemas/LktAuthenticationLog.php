@@ -6,7 +6,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -33,7 +32,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            IntegerChoiceField::enumChoice(PerformedAuthAction::class, 'performedAction', 'performed_action'),
+            IntegerField::enumChoice(PerformedAuthAction::class, 'performedAction', 'performed_action'),
             StringField::define('attemptedCredential', 'attempted_credential'),
             StringField::define('attemptedPassword', 'attempted_password'),
             BooleanField::define('attemptedSuccessfully', 'attempted_successfully'),
@@ -45,7 +44,7 @@ Schema::add(
             StringField::define('clientBrowser', 'client_browser'),
             StringField::define('clientBrowserVersion', 'client_browser_version'),
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'),
-            IntegerChoiceField::enumChoice(UserStatus::class, 'userStatus', 'user_status')->setDefaultValue(UserStatus::Undefined->value)
+            IntegerField::enumChoice(UserStatus::class, 'userStatus', 'user_status')->setDefaultValue(UserStatus::Undefined->value)
         ])
 
         ->addAccessPolicy('sign-in-history', [

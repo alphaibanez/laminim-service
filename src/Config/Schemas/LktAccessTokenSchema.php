@@ -7,7 +7,7 @@ use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -32,8 +32,8 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue(),
 
-            IntegerChoiceField::enumChoice(AccessTokenDuration::class, 'duration'),
-            IntegerChoiceField::enumChoice(AccessTokenPurpose::class, 'purpose'),
+            IntegerField::enumChoice(AccessTokenDuration::class, 'duration'),
+            IntegerField::enumChoice(AccessTokenPurpose::class, 'purpose'),
             ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'),
             StringField::define('token'),
         ])

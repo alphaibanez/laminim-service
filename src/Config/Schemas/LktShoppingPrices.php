@@ -7,7 +7,6 @@ use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -44,8 +43,8 @@ Schema::add(
             FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0),
             FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
             MethodGetterField::define('getFinalPricePerUnit', 'finalPricePerUnit'),
-            IntegerChoiceField::enumChoice(PriceType::class, 'type', 'price_type')->setDefaultValue(PriceType::Override->value),
-            IntegerChoiceField::enumChoice(PriceCriteria::class, 'attachedCriteria', 'attached_criteria')->setDefaultValue(PriceCriteria::ByCountry->value),
+            IntegerField::enumChoice(PriceType::class, 'type', 'price_type')->setDefaultValue(PriceType::Override->value),
+            IntegerField::enumChoice(PriceCriteria::class, 'attachedCriteria', 'attached_criteria')->setDefaultValue(PriceCriteria::ByCountry->value),
         ])
 
         ->setRelatedAccessPolicy([

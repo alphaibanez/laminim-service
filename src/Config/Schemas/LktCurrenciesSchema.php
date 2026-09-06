@@ -3,7 +3,6 @@
 namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
-use Lkt\Factory\Schemas\Fields\AssocJSONField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;

@@ -33,7 +33,6 @@ use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\ImageField;
-use Lkt\Factory\Schemas\Fields\IntegerChoiceField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
@@ -47,7 +46,6 @@ use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\UnixTimeStampField;
-use Lkt\Factory\Schemas\Fields\UrlField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
@@ -128,7 +126,7 @@ final class Schema
     }
 
     /**
-     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|EmailField|EncryptField|FileField|FloatField|ForeignKeyField|ForeignKeysField|HTMLField|IdField|ImageField|IntegerChoiceField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|UnixTimeStampField|UrlField|ValueListField|null
+     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|EmailField|EncryptField|FileField|FloatField|ForeignKeyField|ForeignKeysField|HTMLField|IdField|ImageField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|UnixTimeStampField|ValueListField|null
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -465,7 +463,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField|ConstantValueField>
+     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
      */
     public function getFields(): array
     {
@@ -483,7 +481,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField|ConstantValueField>
+     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -519,7 +517,7 @@ final class Schema
     }
 
     /**
-     * @return array<StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField|ConstantValueField>
+     * @return array<StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -559,7 +557,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField>
+     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|MethodGetterField|UnixTimeStampField|ValueListField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -589,7 +587,7 @@ final class Schema
     }
 
     /**
-     * @return array<StringChoiceField|IntegerChoiceField>
+     * @return array<StringChoiceField|IntegerField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -597,7 +595,7 @@ final class Schema
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
             if ($field instanceof StringChoiceField
-                || $field instanceof IntegerChoiceField) {
+                || ($field instanceof IntegerField && $field->ableToChoose())) {
                 return true;
             }
             return false;
@@ -605,7 +603,7 @@ final class Schema
     }
 
     /**
-     * @return array<StringChoiceField|IntegerChoiceField>
+     * @return array<StringChoiceField|IntegerField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -613,7 +611,7 @@ final class Schema
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
             if ($field instanceof StringChoiceField
-                || $field instanceof IntegerChoiceField) {
+                || ($field instanceof IntegerField && $field->ableToChoose())) {
                 return $field->hasEmptyDefault();
             }
             return false;
@@ -685,7 +683,7 @@ final class Schema
     /**
      * @param string $field
      * @param bool $searchComposed
-     * @return null|AbstractField|ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|IntegerChoiceField|MethodGetterField|UnixTimeStampField|UrlField|ValueListField|ConstantValueField
+     * @return null|AbstractField|ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EmailField|EncryptField|FileField|FloatField|IntegerField|HTMLField|IdField|ImageField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -1617,7 +1615,7 @@ final class Schema
                     }
                 }
 
-            } else if ($field instanceof IntegerChoiceField || $field instanceof IntegerField) {
+            } else if ($field instanceof IntegerField) {
                 if (is_array($value)) {
                     if (count($value) > 0) $builder->andIntegerIn($field->getColumn(), $value);
 

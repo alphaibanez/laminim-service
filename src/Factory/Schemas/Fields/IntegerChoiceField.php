@@ -2,11 +2,9 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldWithChoiceOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
-
+/**
+ * @deprecated Use IntegerField instead
+ */
 class IntegerChoiceField extends IntegerField
 {
-    use FieldWithChoiceOptionTrait,
-        FieldWithPrefabRoleTrait;
 }

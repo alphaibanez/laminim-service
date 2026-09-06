@@ -2,8 +2,10 @@
 
 namespace Lkt\Factory\Schemas\Enums;
 
-enum ChoiceFieldSource: int
+enum ChoiceFieldSource
 {
-    case Array = 0;
-    case Enum = 1;
+    case None;
+    case Array;
+    case Enum;
+    case I18n;
 }

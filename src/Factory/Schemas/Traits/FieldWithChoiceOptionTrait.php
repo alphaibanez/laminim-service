@@ -16,7 +16,7 @@ trait FieldWithChoiceOptionTrait
     protected string $i18nViewOptions = '';
     protected string $enumChoiceClass = '';
 
-    protected ChoiceFieldSource $optionsSource = ChoiceFieldSource::Array;
+    protected ChoiceFieldSource $optionsSource = ChoiceFieldSource::None;
 
     /**
      * @deprecated
@@ -50,6 +50,7 @@ trait FieldWithChoiceOptionTrait
     {
         $ins = new static($name, $column);
         $ins->allowedOptions = $options;
+        $ins->optionsSource = ChoiceFieldSource::Array;
         return $ins;
     }
 
@@ -60,6 +61,11 @@ trait FieldWithChoiceOptionTrait
         $ins->allowedOptions = enumToArray($enumChoiceClass);
         $ins->optionsSource = ChoiceFieldSource::Enum;
         return $ins;
+    }
+
+    public function ableToChoose(): bool
+    {
+        return $this->optionsSource !== ChoiceFieldSource::None;
     }
 
     final public function addComparatorIn(string $name, array $values): static

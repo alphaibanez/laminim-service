@@ -63,4 +63,9 @@ class StringField extends AbstractField implements NonRelationalField
     {
         return $this->fieldType === StringFieldType::Email;
     }
+
+    public function isHTML(): bool
+    {
+        return $this->fieldType === StringFieldType::HTML;
+    }
 }

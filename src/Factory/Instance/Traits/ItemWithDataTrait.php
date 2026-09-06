@@ -27,7 +27,6 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
@@ -762,7 +761,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof HTMLField) {
+        if ($field instanceof StringField) {
             $this->stringData->set($key, $value);
 
         } elseif ($field instanceof IntegerField) {
@@ -853,7 +852,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof HTMLField) {
+        if ($field instanceof StringField) {
             return $this->stringData->get($key);
 
         } elseif ($field instanceof FloatField) {
@@ -932,7 +931,7 @@ trait ItemWithDataTrait
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
-        if ($field instanceof StringField || $field instanceof HTMLField) {
+        if ($field instanceof StringField) {
             return $this->stringData->has($key);
 
         } elseif ($field instanceof FloatField) {

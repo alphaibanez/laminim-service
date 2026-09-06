@@ -2,14 +2,16 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Enums\StringFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
-use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 
-class HTMLField extends AbstractField implements NonRelationalField
+/** @deprecated Use StringField::html instead */
+class HTMLField extends StringField implements NonRelationalField
 {
-    use FieldWithNullOptionTrait,
-        FieldWithEmptyDataModeTrait,
-        FieldWithInvalidDataModeTrait;
+    public static function define(string $name, string $column = ''): static
+    {
+        $ins = parent::define($name, $column);
+        $ins->fieldType = StringFieldType::Url;
+        return $ins;
+    }
 }

@@ -11,7 +11,6 @@ use Lkt\Factory\Instantiator\Exceptions\MaxLengthRequiredException;
 use Lkt\Factory\Instantiator\Exceptions\MinLengthRequiredException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
-use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -47,7 +46,7 @@ final class StringDataController
     {
         $v = $this->get($key);
 
-        $f = $this->schema->getKindOfStringField($key);
+        $f = $this->schema->getStringField($key);
         $mode = $f->getEmptyDataMode();
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
@@ -56,7 +55,7 @@ final class StringDataController
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getKindOfStringField($key);
+        $f = $this->schema->getStringField($key);
         if (!$f) {
             throw InvalidItemDataAssignException::missingField($key);
         }
@@ -84,7 +83,7 @@ final class StringDataController
     {
         if ($value === null) return null;
 
-        $field = $this->schema->getKindOfStringField($key);
+        $field = $this->schema->getStringField($key);
         $trimMode = method_exists($field, 'getTrimMode') ? $field->getTrimMode() : TrimMode::None;
 
         if (is_object($value) && property_exists($value, 'value') && isset($value->value)) {
@@ -114,7 +113,7 @@ final class StringDataController
 //            $value = str_replace(':LKT_SINGLE_QUOTE:', "'", $value);
 //            $value = trim(str_replace('\"', '"', $value));
 
-        } else if ($field instanceof HTMLField) {
+        } else if ($field->isHTML()) {
             // Decodes legacy escape patters previous to tables encoded as utf8mb4_unicode_ci
             // @todo someday should be removed
             $value = str_replace(':LKT_SLASH:', '\\', $value);

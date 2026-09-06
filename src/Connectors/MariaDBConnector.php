@@ -14,7 +14,6 @@ use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -85,7 +84,7 @@ class MariaDBConnector extends DatabaseConnector
         return $this;
     }
 
-    public function query(string $query, array $replacements = []):? array
+    public function query(string $query, array $replacements = []): ?array
     {
         $this->connect();
         $sql = ConnectionHelper::sanitizeQuery($query);
@@ -170,7 +169,7 @@ class MariaDBConnector extends DatabaseConnector
         $field = $schema->getField($alias);
         if (!$field) $field = $schema->getField($key);
 
-        if ($field instanceOf StringField && method_exists($field, 'isI18nJson') && $field->isI18nJson()) {
+        if ($field instanceof StringField && method_exists($field, 'isI18nJson') && $field->isI18nJson()) {
             $lang = $field->hasFixedLangKey() ? $field->getFixedLangKey() : Locale::getLangCode();
             if (!$lang) $lang = 'en';
 
@@ -185,9 +184,7 @@ class MariaDBConnector extends DatabaseConnector
             } else {
                 $r = $key;
             }
-        }
-
-        elseif (str_starts_with($key, $prependTable)) {
+        } elseif (str_starts_with($key, $prependTable)) {
             if ($alias !== '') {
                 $r = "{$key} AS `{$alias}`";
             } else {
@@ -204,11 +201,11 @@ class MariaDBConnector extends DatabaseConnector
         return $r;
     }
 
-    public function makeUpdateParams(array $params = [], string $type = 'insert') :string
+    public function makeUpdateParams(array $params = [], string $type = 'insert'): string
     {
         $r = [];
         $parsed = $this->makeUpdateParamsArray($params, $type);
-        foreach ( $parsed as $field => $value) {
+        foreach ($parsed as $field => $value) {
             $r[] = "`{$field}`={$value}";
         }
 //        foreach ($params as $field => $value) {
@@ -231,7 +228,7 @@ class MariaDBConnector extends DatabaseConnector
         return trim(implode(',', $r));
     }
 
-    public function makeUpdateParamsArray(array $params = [], string $type = 'insert') :array
+    public function makeUpdateParamsArray(array $params = [], string $type = 'insert'): array
     {
         $r = [];
         foreach ($params as $field => $value) {
@@ -242,14 +239,11 @@ class MariaDBConnector extends DatabaseConnector
                     $value = str_replace($field, '"{}"', $value);
                 }
                 $r[$field] = "{$value}";
-            }
-            elseif (strpos($value, 'COMPRESS(') === 0){
+            } elseif (strpos($value, 'COMPRESS(') === 0) {
                 $r[$field] = "{$value}";
-            }
-            elseif (is_null($value)){
+            } elseif (is_null($value)) {
                 $r[$field] = 'NULL';
-            }
-            else {
+            } else {
                 $r[$field] = "'{$v}'";
             }
         }
@@ -296,9 +290,7 @@ class MariaDBConnector extends DatabaseConnector
                 if ($type === 'selectDistinct') {
                     $distinct = 'DISTINCT';
                     $type = 'select';
-                }
-
-                elseif ($type === 'count') {
+                } elseif ($type === 'count') {
                     $distinct = 'DISTINCT';
                 }
 
@@ -328,7 +320,7 @@ class MariaDBConnector extends DatabaseConnector
                         $r = "SELECT {$distinct} {$columns} FROM {$builder->getTable()}{$asTableAlias} {$fromString} WHERE 1 {$whereString} {$orderBy} {$groupBy} {$pagination}";
                     }
 
-                    $r = str_replace('DISTINCT DISTINCT',  'DISTINCT', $r);
+                    $r = str_replace('DISTINCT DISTINCT', 'DISTINCT', $r);
                     return $r;
                 }
 
@@ -388,7 +380,7 @@ class MariaDBConnector extends DatabaseConnector
 //                $columnKey .= 'Id';
 //            }
 
-            if (array_key_exists($columnKey, $data)){
+            if (array_key_exists($columnKey, $data)) {
                 $value = $data[$columnKey];
 
                 if (is_null($value) && $field->isNullable()) {
@@ -412,16 +404,13 @@ class MariaDBConnector extends DatabaseConnector
                 }
 
                 if ($field instanceof StringField || $field instanceof RelatedKeysField) {
-                    $r = trim($value);
-                    if ($compress) {
-                        $value = "COMPRESS('{$r}')";
-                    } else {
-                        $value = $r;
-                    }
-                }
 
-                if ($field instanceof HTMLField) {
-                    $r = $this->escapeDatabaseCharacters($value);
+                    if ($field instanceof StringField && $field->isHTML()) {
+                        $r = $this->escapeDatabaseCharacters($value);
+                    } else {
+                        $r = trim($value);
+                    }
+
                     if ($compress) {
                         $value = "COMPRESS('{$r}')";
                     } else {
@@ -443,9 +432,7 @@ class MariaDBConnector extends DatabaseConnector
                         }
                     }
                     $value = implode(';', $valueAux);
-                }
-
-                else if ($field instanceof IntegerField) {
+                } else if ($field instanceof IntegerField) {
                     $value = (int)$value;
                 }
 
@@ -459,9 +446,7 @@ class MariaDBConnector extends DatabaseConnector
                         }
                     }
                     $value = implode(';', $valueAux);
-                }
-
-                else if ($field instanceof FloatField) {
+                } else if ($field instanceof FloatField) {
                     $value = (float)$value;
                 }
 
@@ -477,7 +462,7 @@ class MariaDBConnector extends DatabaseConnector
                     if ($value instanceof \DateTime) {
                         $value = $value->format('Y-m-d H:i:s');
                     } else {
-                        if ($nullable) $value =  'null';
+                        if ($nullable) $value = 'null';
                         else $value = '0000-00-00 00:00:00';
                     }
                 }
@@ -488,8 +473,7 @@ class MariaDBConnector extends DatabaseConnector
                         $valueAux[] = $item;
                     }
                     $value = implode(';', $valueAux);
-                }
-                else if ($field instanceof FileField) {
+                } else if ($field instanceof FileField) {
                     if (is_object($value)) {
                         $value = $value->name;
                     } else {
@@ -498,16 +482,16 @@ class MariaDBConnector extends DatabaseConnector
                 }
 
                 if ($field instanceof JSONField) {
-                    if (is_array($value)){
+                    if (is_array($value)) {
                         if (!$field->isI18nJson()) {
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);
                             $v = $this->escapeDatabaseCharacters($v);
-                            $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+                            $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE | ENT_QUOTES, 'UTF-8');
 
                         } else {
                             foreach ($value as $k => &$v) {
                                 $v = $this->escapeDatabaseCharacters($v);
-                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE|ENT_QUOTES, 'UTF-8');
+                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE | ENT_QUOTES, 'UTF-8');
                             }
 
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);
@@ -563,7 +547,7 @@ class MariaDBConnector extends DatabaseConnector
                 $col = "JSON_UNQUOTE(LOWER(JSON_EXTRACT({$col}, \"$.{$lang}\")))";
                 $whereConstraint->setValue(strtolower($v));
 
-            }  else {
+            } else {
                 $col = "JSON_UNQUOTE(JSON_EXTRACT({$col}, \"$.{$lang}\"))";
             }
 
@@ -602,7 +586,9 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         $valuesKeys = '(' . implode(',', array_keys($values[0])) . ')';
-        $values = array_map(function (array $v) { return implode(', ', $v); }, $values);
+        $values = array_map(function (array $v) {
+            return implode(', ', $v);
+        }, $values);
         $valuesString = '(' . implode('),(', $values) . ')';
 
         $query = $mode === BatchInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
@@ -611,8 +597,12 @@ class MariaDBConnector extends DatabaseConnector
 
         if ($mode === BatchInsertMode::onDuplicatedUpdate) {
             $updateKeys = [];
-            $identifiers = array_map(function (AbstractField $f) { return $f->getColumn();}, $schema->getIdentifiers());
-            $fields = array_map(function (AbstractField $f) { return $f->getColumn();}, $schema->getSameTableFields());
+            $identifiers = array_map(function (AbstractField $f) {
+                return $f->getColumn();
+            }, $schema->getIdentifiers());
+            $fields = array_map(function (AbstractField $f) {
+                return $f->getColumn();
+            }, $schema->getSameTableFields());
             $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {
                 return !in_array($f, $identifiers);
             }));

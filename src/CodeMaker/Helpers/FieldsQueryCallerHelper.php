@@ -10,7 +10,6 @@ use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringChoiceField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -62,7 +61,7 @@ class FieldsQueryCallerHelper
                 continue;
             }
 
-            if ($field instanceof StringField || $field instanceof HTMLField) {
+            if ($field instanceof StringField) {
                 $templateData['canBeNull'] =  $field->isNullable();
                 $templateData['isI18n'] = method_exists($field, 'isI18nJson') ? $field->isI18nJson() : false;
 

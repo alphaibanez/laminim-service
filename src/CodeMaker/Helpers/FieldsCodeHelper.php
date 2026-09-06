@@ -32,7 +32,6 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -118,8 +117,8 @@ class FieldsCodeHelper
                 $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
 
 
-            } elseif ($field instanceof StringField || $field instanceof HTMLField) {
-                if ($field instanceof StringField && $field->isEmail()) {
+            } elseif ($field instanceof StringField) {
+                if ($field->isEmail()) {
                     $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
                     $traitsUsage[] = EmailFieldGenerator::generateTraitsUsageCode($field);
                 } else {
@@ -349,7 +348,7 @@ class FieldsCodeHelper
                         $composedPrimitiveInputType = 'int';
                     }
 
-                } elseif ($composedField instanceof StringField || $composedField instanceof HTMLField || $composedField instanceof EncryptField || $composedField instanceof ColorField || $composedField instanceof ConcatField) {
+                } elseif ($composedField instanceof StringField || $composedField instanceof EncryptField || $composedField instanceof ColorField || $composedField instanceof ConcatField) {
                     $composedPrimitiveReturnType = '?string';
                     $composedPrimitiveInputType = 'string';
 

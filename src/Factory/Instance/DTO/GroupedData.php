@@ -10,7 +10,6 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\HTMLField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -81,7 +80,7 @@ final readonly class GroupedData
             if ($field instanceof ValueListField) {
                 $multipleStringData[$k] = $data[$dataKey];
             }
-            elseif ($field instanceof StringField || $field instanceof HTMLField) {
+            elseif ($field instanceof StringField) {
                 $stringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof ForeignKeyField) {

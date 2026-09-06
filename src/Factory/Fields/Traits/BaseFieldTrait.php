@@ -2,8 +2,6 @@
 
 namespace Lkt\Factory\Fields\Traits;
 
-use Lkt\Factory\Schemas\Fields\BooleanField;
-
 trait BaseFieldTrait
 {
     protected string $name = '';
@@ -41,17 +39,5 @@ trait BaseFieldTrait
     final public function isIdentifier(): bool
     {
         return $this->isIdentifier;
-    }
-
-    /**
-     * @deprecated
-     * @return string
-     */
-    public function getGetterForComputed(): string
-    {
-        if ($this instanceof BooleanField) {
-            return $this->getName();
-        }
-        return 'get'. ucfirst($this->getName());
     }
 }

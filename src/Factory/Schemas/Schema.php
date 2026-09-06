@@ -29,7 +29,6 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
-use Lkt\Factory\Schemas\Fields\IdField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
@@ -123,7 +122,7 @@ final class Schema
     }
 
     /**
-     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|EncryptField|FileField|FloatField|ForeignKeyField|ForeignKeysField|IdField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|UnixTimeStampField|ValueListField|null
+     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|EncryptField|FileField|FloatField|ForeignKeyField|ForeignKeysField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|UnixTimeStampField|ValueListField|null
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -460,7 +459,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|IdField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
+     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
      */
     public function getFields(): array
     {
@@ -478,7 +477,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|IdField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
+     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -514,7 +513,7 @@ final class Schema
     }
 
     /**
-     * @return array<StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|IdField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
+     * @return array<StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -554,7 +553,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|IdField|MethodGetterField|UnixTimeStampField|ValueListField>
+     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|MethodGetterField|UnixTimeStampField|ValueListField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -680,7 +679,7 @@ final class Schema
     /**
      * @param string $field
      * @param bool $searchComposed
-     * @return null|AbstractField|ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|IdField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField
+     * @return null|AbstractField|ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|EncryptField|FileField|FloatField|IntegerField|MethodGetterField|UnixTimeStampField|ValueListField|ConstantValueField
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -1115,7 +1114,7 @@ final class Schema
 
         } else {
             $fields = array_filter($stack, function (AbstractField|NonRelationalField|RelationalField $field) {
-                return $field->isIdentifier() || $field instanceof IdField;
+                return $field->isIdentifier();
             });
         }
 

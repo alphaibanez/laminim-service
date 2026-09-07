@@ -879,6 +879,17 @@ trait ItemWithDataTrait
             if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->fileData->get($key);
             }
+
+            $index = 0;
+            if ($field->isMultiple() && array_key_exists('index', $additionalData)) {
+                $index = (int)$additionalData['index'];
+            }
+            if ($dataMode === RetrieveDataMode::FileContent) return $this->fileData->getFileContent($key, $index);
+            if ($dataMode === RetrieveDataMode::FileExtension) return $this->fileData->getFileExtension($key, $index);
+            if ($dataMode === RetrieveDataMode::FileLastModified) return $this->fileData->getFileLastModified($key, $index);
+            if ($dataMode === RetrieveDataMode::FileName) return $this->fileData->getFileName($key, $index);
+            if ($dataMode === RetrieveDataMode::FileSize) return $this->fileData->getFileSize($key, $index);
+            if ($dataMode === RetrieveDataMode::FileInternalPath) return $this->fileData->getInternalPath($key);
             return $this->fileData->getPublicPath($key);
 
         } elseif ($field instanceof ForeignKeyField) {

@@ -5,6 +5,7 @@ namespace Lkt\CodeMaker\FieldGeneration;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Instance\Traits\ItemWithComposedDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeysDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
@@ -137,7 +138,8 @@ class RelatedFieldGenerator implements FieldGenerator
 
         if ($field instanceof RelatedField && $field->isSingleMode()) {
             return [
-                ItemWithRelatedItemDataTrait::class
+                ItemWithRelatedItemDataTrait::class,
+                ItemWithComposedDataTrait::class,
             ];
         }
 

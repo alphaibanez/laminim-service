@@ -844,7 +844,7 @@ trait ItemWithDataTrait
 
             $composedInstance = $this->composedData->getComposedInstance($key);
 
-            return $composedInstance->retrieveValue($key, $additionalData);
+            return $composedInstance->retrieveValue($key, $additionalData, $dataMode);
         }
 
         $field = $this->getSchema()->getField($key);

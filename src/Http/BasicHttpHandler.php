@@ -3,6 +3,7 @@
 namespace Lkt\Http;
 
 use Lkt\Controllers\LktPermissionController;
+use Lkt\Debug\VarDumper;
 use Lkt\Enums\Permission;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Schema;

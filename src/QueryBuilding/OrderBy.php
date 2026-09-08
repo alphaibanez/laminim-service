@@ -5,20 +5,22 @@ namespace Lkt\QueryBuilding;
 class OrderBy
 {
     protected array $data = [];
+    protected string $component = '';
 
-    public function __construct(string $field, bool $asc = true)
+    public function __construct(string $field, string $component, bool $asc = true)
     {
         $this->data[] = [$field, $asc];
+        $this->component = $component;
     }
 
-    public static function ASC(string $field): static
+    public static function ASC(string $field, string $component = ''): static
     {
-        return new static($field, true);
+        return new static($field, $component, true);
     }
 
-    public static function DESC(string $field): static
+    public static function DESC(string $field, string $component = ''): static
     {
-        return new static($field, false);
+        return new static($field, $component, false);
     }
 
     public function toString(): string

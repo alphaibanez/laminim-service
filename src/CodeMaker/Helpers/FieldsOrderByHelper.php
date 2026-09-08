@@ -26,6 +26,7 @@ class FieldsOrderByHelper
         $returnSelf = '\\' . $className;
 
         $methods = [];
+        $component = $schema->getComponent();
 
         foreach ($schema->getAllFields() as $field) {
             
@@ -36,6 +37,7 @@ class FieldsOrderByHelper
                 'fieldMethod' => $fieldMethod,
                 'returnSelf' => $returnSelf,
                 'canBeNull' => false,
+                'component' => $component,
             ];
 
             if ($field instanceof ForeignKeyField || $field instanceof IntegerField) {

@@ -195,15 +195,15 @@ trait ItemWithDataTrait
                         $field = $pivotField;
                     }
                 }
+
+                // Pivot table data linking
+                if ($isPivotDatumFeed) {
+                    $this->pivotData->prepareToLink($field->getName(), $value);
+                    continue;
+                }
             }
 
             if (!$field || $field instanceof MethodGetterField || $field instanceof ConcatField) continue;
-
-            // Pivot table data linking
-            if ($isPivotDatumFeed) {
-                $this->pivotData->prepareToLink($field->getName(), $value);
-                continue;
-            }
 
             // Composed related data
             $composedDatum = !$schema->hasFieldDefined($param);

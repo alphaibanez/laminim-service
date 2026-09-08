@@ -2,21 +2,22 @@
 
 namespace Lkt\Factory\Schemas\Traits;
 
-use Lkt\Factory\Schemas\Values\SecureSeedValue;
+use Lkt\Factory\Schemas\Exceptions\InvalidSecureSeedException;
 
 trait FieldWithSecureSeedTrait
 {
-    protected ?SecureSeedValue $secureSeed = null;
+    protected string|null $secureSeed = null;
 
     public function setSecureSeed(string $secureSeed): static
     {
-        $this->secureSeed = new SecureSeedValue($secureSeed);
+        if (!$secureSeed) throw new InvalidSecureSeedException();
+        $this->secureSeed = $secureSeed;
         return $this;
     }
 
     public function getSecureSeed(): string
     {
-        return $this->secureSeed->getValue();
+        return $this->secureSeed;
     }
 
 }

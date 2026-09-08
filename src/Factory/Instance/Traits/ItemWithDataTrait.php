@@ -22,7 +22,6 @@ use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -760,7 +759,11 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
-            $this->stringData->set($key, $value);
+            if ($field->isEncrypted()) {
+                $this->encryptData->set($key, $value);
+            } else {
+                $this->stringData->set($key, $value);
+            }
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isMultiple()) {
@@ -784,9 +787,6 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof JSONField) {
             $this->jsonData->set($key, $value);
-
-        } elseif ($field instanceof EncryptField) {
-            $this->encryptData->set($key, $value);
 
         } elseif ($field instanceof ColorField) {
             $this->colorData->set($key, $value);
@@ -851,6 +851,7 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isEncrypted()) return $this->encryptData->get($key);
             return $this->stringData->get($key);
 
         } elseif ($field instanceof FloatField) {
@@ -869,8 +870,6 @@ trait ItemWithDataTrait
         } elseif ($field instanceof JSONField) {
             return $this->jsonData->get($key);
 
-        } elseif ($field instanceof EncryptField) {
-            return $this->encryptData->get($key);
 
         } elseif ($field instanceof ColorField) {
             return $this->colorData->get($key);
@@ -941,6 +940,7 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isEncrypted()) return $this->encryptData->has($key);
             return $this->stringData->has($key);
 
         } elseif ($field instanceof FloatField) {
@@ -959,8 +959,6 @@ trait ItemWithDataTrait
         } elseif ($field instanceof JSONField) {
             return $this->jsonData->has($key);
 
-        } elseif ($field instanceof EncryptField) {
-            return $this->encryptData->has($key);
 
         } elseif ($field instanceof ColorField) {
             return $this->colorData->has($key);
@@ -1031,6 +1029,10 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isEncrypted()) {
+                return [$responseKey => $this->encryptData->get($key)];
+            }
+
             if ($field->ableToChoose()) {
                 $r = [];
                 $value = $this->stringData->get($field->getName());
@@ -1051,9 +1053,6 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof JSONField) {
             return [$responseKey => $this->jsonData->get($key)];
-
-        } elseif ($field instanceof EncryptField) {
-            return [$responseKey => $this->encryptData->get($key)];
 
         } elseif ($field instanceof ColorField) {
             return [$responseKey => $this->colorData->get($key)];

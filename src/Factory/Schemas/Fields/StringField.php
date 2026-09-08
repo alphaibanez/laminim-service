@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Enums\EncryptAlgorithm;
 use Lkt\Factory\Fields\Enums\StringFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Fields\Traits\FieldWithLengthLimits;
@@ -13,6 +14,7 @@ use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithJsonI18nStorageTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithMandatoryOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Schemas\Traits\FieldWithSecureSeedTrait;
 
 class StringField extends AbstractField implements NonRelationalField
 {
@@ -28,9 +30,11 @@ class StringField extends AbstractField implements NonRelationalField
         FieldWithUniqueValue,
         FieldWithTrimMode,
         FieldWithLengthLimits,
-        FieldWithChoiceOptionTrait;
+        FieldWithChoiceOptionTrait,
+        FieldWithSecureSeedTrait;
 
     protected StringFieldType $fieldType = StringFieldType::String;
+    protected EncryptAlgorithm $encryptAlgorithm = EncryptAlgorithm::None;
 
     public static function i18n(string $name, string $column = ''): static
     {
@@ -61,6 +65,22 @@ class StringField extends AbstractField implements NonRelationalField
         return $ins;
     }
 
+    public static function sha256(string $secureSeed, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->encryptAlgorithm = EncryptAlgorithm::SHA256;
+        $ins->secureSeed = $secureSeed;
+        return $ins;
+    }
+
+    public static function sha256Hash(string $secureSeed, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->encryptAlgorithm = EncryptAlgorithm::SHA256Hash;
+        $ins->secureSeed = $secureSeed;
+        return $ins;
+    }
+
     public function isEmail(): bool
     {
         return $this->fieldType === StringFieldType::Email;
@@ -69,5 +89,20 @@ class StringField extends AbstractField implements NonRelationalField
     public function isHTML(): bool
     {
         return $this->fieldType === StringFieldType::HTML;
+    }
+
+    public function isEncrypted(): bool
+    {
+        return $this->encryptAlgorithm !== EncryptAlgorithm::None;
+    }
+
+    public function isHashMode(): bool
+    {
+        return $this->encryptAlgorithm === EncryptAlgorithm::SHA256Hash;
+    }
+
+    public function hasSHA256Encryption(): bool
+    {
+        return $this->encryptAlgorithm === EncryptAlgorithm::SHA256;
     }
 }

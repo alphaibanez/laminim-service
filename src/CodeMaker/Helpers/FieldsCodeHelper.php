@@ -27,7 +27,6 @@ use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -107,7 +106,11 @@ class FieldsCodeHelper
 
 
             } elseif ($field instanceof StringField) {
-                if ($field->ableToChoose()) {
+                if ($field->isEncrypted()) {
+                    $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = EncryptFieldGenerator::generateTraitsUsageCode($field);
+
+                } elseif ($field->ableToChoose()) {
                     $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
                     $fieldGeneratorData->options = $field->getAllowedOptions();
                     $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
@@ -119,14 +122,11 @@ class FieldsCodeHelper
                 } elseif ($field->isEmail()) {
                     $methods[] = EmailFieldGenerator::generateCode($fieldGeneratorData);
                     $traitsUsage[] = EmailFieldGenerator::generateTraitsUsageCode($field);
+
                 } else {
                     $methods[] = StringFieldGenerator::generateCode($fieldGeneratorData);
                     $traitsUsage[] = StringFieldGenerator::generateTraitsUsageCode($field);
                 }
-
-            } elseif ($field instanceof EncryptField) {
-                $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = EncryptFieldGenerator::generateTraitsUsageCode($field);
 
             } elseif ($field instanceof BooleanField) {
                 $methods[] = BooleanFieldGenerator::generateCode($fieldGeneratorData);
@@ -346,7 +346,7 @@ class FieldsCodeHelper
                         $composedPrimitiveInputType = 'int';
                     }
 
-                } elseif ($composedField instanceof StringField || $composedField instanceof EncryptField || $composedField instanceof ColorField || $composedField instanceof ConcatField) {
+                } elseif ($composedField instanceof StringField || $composedField instanceof ColorField || $composedField instanceof ConcatField) {
                     $composedPrimitiveReturnType = '?string';
                     $composedPrimitiveInputType = 'string';
 

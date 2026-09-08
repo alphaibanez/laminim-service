@@ -44,7 +44,7 @@ final class EncryptDataController
         if ($value === null) return null;
 
         $field = $this->schema->getEncryptField($key);
-        if ($field->hasAlgorithmSHA256()) {
+        if ($field->hasSHA256Encryption()) {
             $secureSeed = $field->getSecureSeed();
             return EncryptFieldHelper::encryptSHA256($value, $secureSeed);
         }

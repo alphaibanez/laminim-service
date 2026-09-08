@@ -7,7 +7,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -46,7 +45,7 @@ Schema::add(
             ConcatField::concat('fullName', ['firstName', 'lastName'], ' '),
             ConcatField::concat('name', ['firstName', 'lastName'], ' '),
             StringField::email('email'),
-            EncryptField::sha256Hash(UserSettings::$passwordSecureSeed, 'password'),
+            StringField::sha256Hash(UserSettings::$passwordSecureSeed, 'password'),
 
             StringField::define('preferredLanguage', 'preferred_language')->setDefaultValue(function () {
                 return trim(Locale::getLangCode());

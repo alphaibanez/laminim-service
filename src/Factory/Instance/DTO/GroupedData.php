@@ -5,7 +5,6 @@ namespace Lkt\Factory\Instance\DTO;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
@@ -80,7 +79,11 @@ final readonly class GroupedData
                 $multipleStringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof StringField) {
-                $stringData[$k] = $data[$dataKey];
+                if ($field->isEncrypted()) {
+                    $encryptData[$k] = $data[$dataKey];
+                } else {
+                    $stringData[$k] = $data[$dataKey];
+                }
             }
             elseif ($field instanceof ForeignKeyField) {
                 $foreignKeyData[$k] = $data[$dataKey];
@@ -110,9 +113,6 @@ final readonly class GroupedData
             }
             elseif ($field instanceof ColorField) {
                 $colorData[$k] = $data[$dataKey];
-            }
-            elseif ($field instanceof EncryptField) {
-                $encryptData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof JSONField) {
                 $jsonData[$k] = $data[$dataKey];

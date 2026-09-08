@@ -4,11 +4,9 @@ namespace Lkt\CodeMaker\FieldGeneration;
 
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
-use Lkt\Factory\Instance\Traits\ItemWithColorDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
 use Lkt\Factory\Schemas\Fields\AbstractField;
-use Lkt\Factory\Schemas\Fields\EncryptField;
-use Lkt\Factory\Schemas\Fields\ValueListField;
+use Lkt\Factory\Schemas\Fields\StringField;
 
 class EncryptFieldGenerator implements FieldGenerator
 {
@@ -25,7 +23,7 @@ class EncryptFieldGenerator implements FieldGenerator
         } else {
             $r[] = "public function get{$this->data->methodName}():string|null { return \$this->encryptData->get('{$this->data->fieldName}'); }";
 
-            if ($this->data->field instanceof EncryptField && $this->data->field->isHashMode()) {
+            if ($this->data->field instanceof StringField && $this->data->field->isHashMode()) {
                 $r[] = "public function get{$this->data->methodName}Decrypted():string|null { return \$this->encryptData->decrypt('{$this->data->fieldName}'); }";
             }
         }

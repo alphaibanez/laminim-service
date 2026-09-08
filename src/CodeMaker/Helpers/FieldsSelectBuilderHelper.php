@@ -4,7 +4,6 @@ namespace Lkt\CodeMaker\Helpers;
 
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\EncryptField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
@@ -55,6 +54,13 @@ class FieldsSelectBuilderHelper
             if ($field instanceof StringField) {
                 $templateData['canBeNull'] =  $field->isNullable();
 
+                if ($field->isEncrypted()) {
+                    $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
+                        ->setData($templateData)
+                        ->parse();
+                    continue;
+                }
+
                 if ($field->ableToChoose()) {
                     $options = $field->getAllowedOptions();
 
@@ -67,14 +73,6 @@ class FieldsSelectBuilderHelper
                     $templateData['comparatorsIn'] = $field->getComparatorsIn();
                 }
 
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
-                    ->setData($templateData)
-                    ->parse();
-                continue;
-            }
-
-            if ($field instanceof EncryptField) {
-                $templateData['canBeNull'] =  $field->isNullable();
                 $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/select-builder/select-builder.phtml')
                     ->setData($templateData)
                     ->parse();

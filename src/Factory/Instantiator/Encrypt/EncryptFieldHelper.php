@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Encrypt;
 
-use Lkt\Factory\Schemas\Fields\EncryptField;
+use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 
 class EncryptFieldHelper
@@ -12,8 +12,8 @@ class EncryptFieldHelper
         $schema = Schema::get($component);
         $field = $schema->getField($fieldName);
 
-        if ($field instanceof EncryptField) {
-            if ($field->hasAlgorithmSHA256()) {
+        if ($field instanceof StringField && $field->isEncrypted()) {
+            if ($field->hasSHA256Encryption()) {
                 $secureSeed = $field->getSecureSeed();
 
                 if ($field->isHashMode()) {

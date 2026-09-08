@@ -16,6 +16,7 @@ use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\JSONField;
+use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
@@ -228,6 +229,10 @@ trait ItemWithCrudTrait
         $connection->query($connection->getDeleteQuery($caller));
         $id = $this->getIdColumnValue();
 
+        /**
+         * @laminim
+         * Automatically unlink refs for foreign keys fields pointing this instance
+         */
         foreach ($schema->getFieldsWithAppendForeignKeysName() as $relatedField) {
             /** @var AbstractInstance[] $relatedElements */
             $relatedElements = $this->retrieveValue($relatedField->getName(), [], RetrieveDataMode::Item);
@@ -235,9 +240,27 @@ trait ItemWithCrudTrait
             $relatedElementsField = $relatedSchema->getField($relatedField->getColumn());
             $relatedElementsFieldKey = $relatedElementsField->getName();
             foreach ($relatedElements as $element) {
-//                $element->_removeForeignListIds($relatedElementsField->getName(), [$id])->save();
                 $element->foreignKeysData->removeIds($relatedElementsFieldKey, [$id])->save();
             }
+        }
+
+        /**
+         * @laminim
+         * On delete, cascade
+         */
+        foreach ($schema->getOnParentDropCascadeFields() as $field) {
+            if ($field instanceof RelatedField && $field->isSingleMode()) {
+                $items = [$this->retrieveValue($field->getName())];
+
+            } elseif ($field instanceof ForeignKeyField) {
+                $items = [$this->retrieveValue($field->getName())];
+            } else {
+                $items = $this->retrieveValue($field->getName());
+            }
+
+            $relatedSchema = $field->getTargetSchema($this->getSchema(), $this);
+            $batchActions = $relatedSchema->getBatchActions($items);
+            $batchActions->drop();
         }
 
         $cacheCode = $schema->getInstanceCode($this->getOriginalData());

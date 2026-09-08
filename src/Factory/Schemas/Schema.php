@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Factory\Fields\Enums\OnParentDrop;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Fields\Interfaces\RelationalField;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
@@ -544,6 +545,26 @@ final class Schema
                 || $field instanceof RelatedKeysField
                 || $field instanceof RelatedKeysMergeField) {
                 return true;
+            }
+            return false;
+        });
+    }
+
+    /**
+     * @return array<NonRelationalField|RelationalField>
+     * @throws InvalidComponentException
+     * @throws SchemaNotDefinedException
+     */
+    public function getOnParentDropCascadeFields(): array
+    {
+        return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
+            if ($field instanceof ForeignKeyField
+                || $field instanceof ForeignKeysField
+                || $field instanceof PivotField
+                || $field instanceof RelatedField
+                || $field instanceof RelatedKeysField
+                || $field instanceof RelatedKeysMergeField) {
+                return $field?->getOnInstanceUpdateValue() === OnParentDrop::Cascade;
             }
             return false;
         });

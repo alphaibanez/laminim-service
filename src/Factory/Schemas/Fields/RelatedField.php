@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Traits\FieldWithOnParentDrop;
 use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithCompositionOptionTrait;
 use Lkt\Factory\Schemas\Traits\FieldWithMultipleReferencesTrait;
@@ -24,7 +25,8 @@ class RelatedField extends AbstractField
         FieldWithPaginationOptionTrait,
         FieldWithRelatedComponentFeedsTrait,
         FieldWithCompositionOptionTrait,
-        FieldWithRelatedAccessPolicyOptionTrait;
+        FieldWithRelatedAccessPolicyOptionTrait,
+        FieldWithOnParentDrop;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {

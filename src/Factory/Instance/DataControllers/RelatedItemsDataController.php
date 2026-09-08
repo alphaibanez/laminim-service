@@ -284,6 +284,9 @@ final class RelatedItemsDataController
             /** @var AbstractInstance $relatedClass */
             $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
+            $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
+            $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
+
             $currentIds = $this->getItemsIds($key, null, null, null, [], true);
             $updatedIds = [];
 
@@ -293,6 +296,10 @@ final class RelatedItemsDataController
             $itemsToDelete = [];
 
             foreach ($items as $item) {
+                if (!$item->hasAssignedValue($relatedFieldPointingMeKey)) {
+                    $item->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
+                }
+
                 if ($item->isAnonymous()) {
                     $itemsToCreate[] = $item;
 

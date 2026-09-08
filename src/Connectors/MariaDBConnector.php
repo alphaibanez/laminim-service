@@ -102,7 +102,6 @@ class MariaDBConnector extends DatabaseConnector
         }
 
         // fetch
-//        VarDumper::dump($sql);
         $result = $this->connection->query($sql, \PDO::FETCH_ASSOC);
 
         if ($this->forceRefresh) $this->forceRefreshFinished();

@@ -126,6 +126,8 @@ trait ItemWithDataTrait
             $this->initConcatData($schema, $this);
         }
 
+        $this->clearIdentifierValue();
+
         return $this;
     }
 
@@ -147,6 +149,9 @@ trait ItemWithDataTrait
 
     public function feed(array $data, array $internalMethodsArguments = []): static
     {
+        $operation = $this->isAnonymous() ? CrudOperation::Create : CrudOperation::Update;
+        $data = $this->prepareCrudData($data, $operation);
+
         $schema = $this->getSchema();
         $accessPolicyUsage = $this->getAccessPolicyUsage();
         $accessPolicy = null;
@@ -244,8 +249,7 @@ trait ItemWithDataTrait
 
     public function feedAndSave(array $data, array $internalMethodsArguments = []): static
     {
-        $operation = $this->isAnonymous() ? CrudOperation::Create : CrudOperation::Update;
-        return $this->feed($this->prepareCrudData($data, $operation), $internalMethodsArguments)->save();
+        return $this->feed($data, $internalMethodsArguments)->save();
     }
 
 
@@ -352,11 +356,6 @@ trait ItemWithDataTrait
                 $query = $connection->getInsertQuery($queryBuilder);
             }
 
-//            VarDumper::dump([
-//                $schema->getComponent(),
-//                $this->getIdColumnValue(),
-//                $query,
-//            ]);
             $queryResponse = $connection->query($query);
 
             $id = (int)$connection->getLastInsertedId();
@@ -376,6 +375,7 @@ trait ItemWithDataTrait
                 if ($id > 0) {
                     $updatedData[$origIdColumn] = $id;
                 }
+
                 $this->initialFeed($updatedData, true);
             }
         }

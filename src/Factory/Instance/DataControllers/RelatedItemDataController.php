@@ -135,7 +135,7 @@ final class RelatedItemDataController
             $instance = $item;
         }
 
-        if ($instance instanceof  $relatedClass) {
+        if ($instance instanceof $relatedClass) {
             if ($accessPolicy) $instance->setAccessPolicy($accessPolicy);
             $instance->feed($item);
 

@@ -3,24 +3,20 @@
 namespace Lkt\Factory\Schemas\Traits;
 
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldNameException;
-use Lkt\Factory\Schemas\Values\BooleanValue;
 
 trait FieldWithMultipleOptionTrait
 {
-    protected ?BooleanValue $allowMultiple = null;
+    protected bool|null $allowMultiple = null;
 
     final public function setMultiple(bool $allow = true): self
     {
-        $this->allowMultiple = new BooleanValue($allow);
+        $this->allowMultiple = $allow;
         return $this;
     }
 
     final public function isMultiple(): bool
     {
-        if ($this->allowMultiple instanceof BooleanValue) {
-            return $this->allowMultiple->getValue();
-        }
-        return false;
+        return $this->allowMultiple === true;
     }
 
     /**

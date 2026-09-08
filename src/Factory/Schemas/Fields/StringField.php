@@ -43,7 +43,6 @@ class StringField extends AbstractField implements NonRelationalField
         return $ins;
     }
 
-
     public static function url(string $name, string $column = ''): static
     {
         $ins = new static($name, $column);

@@ -240,6 +240,9 @@ final class ForeignKeysDataController
             /** @var AbstractInstance $relatedClass */
             $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
+            $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
+            $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
+
             $currentIds = $this->getIds($key);
             $updatedIds = [];
 
@@ -249,6 +252,21 @@ final class ForeignKeysDataController
                 /** @var Item $ins */
                 $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
                 $ins->feed($item);
+
+                if (!$ins->hasAssignedValue($relatedFieldPointingMeKey)) {
+                    $ins->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
+                }
+
+                foreach ($field->getRelatedComponentFeeds() as $feedColumn => $feed) {
+                    if (!$ins->hasAssignedValue($feedColumn)) {
+                        if (is_callable($feed)) {
+                            $feed = call_user_func_array($feed, ['referrer' => $this->item]);
+                        }
+                        $ins->assignValue($feedColumn, $feed);
+                    }
+                }
+
+
                 $updatedInstances[] = $ins;
                 $updatedIds[] = $ins->getIdColumnValue();
             }

@@ -155,7 +155,36 @@ final class RelatedItemDataController
          * @var string $key
          * @var Item[] $items
          */
-        foreach ($this->needsUpdate as $key => $item) $item->save();
+        foreach ($this->needsUpdate as $key => $item) {
+
+            $field = $this->schema->getKindOfRelatedField($key);
+            if (!$field) continue;
+
+            $relatedComponent = $field->getComponent($this->schema, $this->item);
+            if ($relatedComponent === '') continue;
+
+            $relatedSchema = Schema::get($relatedComponent);
+
+            $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
+            $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
+
+
+            if (!$item->hasAssignedValue($relatedFieldPointingMeKey)) {
+                $item->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
+            }
+
+            foreach ($field->getRelatedComponentFeeds() as $feedColumn => $feed) {
+
+                if (!$item->hasAssignedValue($feedColumn)) {
+                    if (is_callable($feed)) {
+                        $feed = call_user_func_array($feed, ['referrer' => $this->item]);
+                    }
+                    $item->assignValue($feedColumn, $feed);
+                }
+            }
+
+            $item->save();
+        }
 
         $this->needsUpdate = [];
         $this->payload = [];

@@ -300,6 +300,15 @@ final class RelatedItemsDataController
                     $item->assignValue($relatedFieldPointingMeKey, $this->item->getIdColumnValue());
                 }
 
+                foreach ($field->getRelatedComponentFeeds() as $feedColumn => $feed) {
+                    if (!$item->hasAssignedValue($feedColumn)) {
+                        if (is_callable($feed)) {
+                            $feed = call_user_func_array($feed, ['referrer' => $this->item]);
+                        }
+                        $item->assignValue($feedColumn, $feed);
+                    }
+                }
+
                 if ($item->isAnonymous()) {
                     $itemsToCreate[] = $item;
 

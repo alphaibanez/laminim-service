@@ -1085,7 +1085,7 @@ trait ItemWithDataTrait
             $r[$responseKey] = $item;
             $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
             if ($field->hasOnReadIncludeOptions()) {
-                $r[$responseKey . 'Opts'] = [$item];
+                $r[$responseKey . 'Opts'] = count($item) > 0 ? [$item] : [];
             }
 
             return $r;

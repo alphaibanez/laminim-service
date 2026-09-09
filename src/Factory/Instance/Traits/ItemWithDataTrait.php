@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -765,7 +766,7 @@ trait ItemWithDataTrait
                 $this->stringData->set($key, $value);
             }
 
-        } elseif ($field instanceof IntegerField) {
+        } elseif ($field instanceof IntegerField && !$field instanceof ForeignKeyField) {
             if ($field->isMultiple()) {
                 $this->multipleIntegerData->set($key, $value);
             } else {

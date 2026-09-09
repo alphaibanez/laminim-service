@@ -3,8 +3,8 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 
 class ConcatField extends AbstractField implements NonRelationalField
 {

@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
 class ConstantValueField extends AbstractField
 {

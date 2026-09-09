@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Factory\Schemas\Traits;
+namespace Lkt\Factory\Fields\Traits;
 
 use Lkt\Factory\Schemas\Enums\ChoiceFieldSource;
 use function Lkt\Tools\Enums\enumToArray;

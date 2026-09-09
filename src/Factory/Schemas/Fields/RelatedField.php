@@ -2,17 +2,17 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithCompositionOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithMultipleReferencesTrait;
 use Lkt\Factory\Fields\Traits\FieldWithOnParentDrop;
-use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithCompositionOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithMultipleReferencesTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPaginationOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedComponentFeedsTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSingleModeOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSoftTypedOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithPaginationOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedAccessPolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedComponentFeedsTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSingleModeOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
 class RelatedField extends AbstractField
 {

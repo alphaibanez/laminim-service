@@ -2,14 +2,14 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Traits\FieldWithMultipleReferencesTrait;
+use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithPaginationOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSingleModeOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Relations\RelatedRelation;
-use Lkt\Factory\Schemas\Traits\FieldWithMultipleReferencesTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPaginationOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSingleModeOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSoftTypedOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
 
 class RelatedKeysMergeField extends AbstractField
 {

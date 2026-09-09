@@ -2,12 +2,12 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldWithChoiceOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithMultipleOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
+use Lkt\Factory\Fields\Traits\FieldWithChoiceOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithMultipleOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithPrefabRoleTrait;
 
 class IntegerField extends AbstractField
 {

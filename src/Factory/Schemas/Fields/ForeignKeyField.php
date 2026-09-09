@@ -2,18 +2,18 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldRelatedClonePolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithAvailableOptionsFilterOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithCompositionOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithDynamicComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithOnReadIncludeOptionsTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSoftTypedOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithAvailableOptionsFilterOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithCompositionOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDynamicComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithOnReadIncludeOptionsTrait;
+use Lkt\Factory\Fields\Traits\FieldWithPrefabRoleTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedAccessPolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedClonePolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
 class ForeignKeyField extends IntegerField
 {
@@ -26,7 +26,7 @@ class ForeignKeyField extends IntegerField
         FieldWithRelatedAccessPolicyOptionTrait,
         FieldWithPrefabRoleTrait,
         FieldWithOnReadIncludeOptionsTrait,
-        FieldRelatedClonePolicyOptionTrait,
+        FieldWithRelatedClonePolicyOptionTrait,
         FieldWithInvalidDataModeTrait,
         FieldWithEmptyDataModeTrait;
 

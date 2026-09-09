@@ -1,6 +1,6 @@
 <?php
 
-namespace Lkt\Factory\Schemas\Traits;
+namespace Lkt\Factory\Fields\Traits;
 
 trait FieldWithFormatsOptionTrait
 {

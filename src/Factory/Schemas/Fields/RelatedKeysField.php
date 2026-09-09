@@ -2,14 +2,14 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldRelatedClonePolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithAppendForeignKeysNameOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSoftTypedOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithAppendForeignKeysNameOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedAccessPolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedClonePolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
 class RelatedKeysField extends AbstractField
 {
@@ -19,7 +19,7 @@ class RelatedKeysField extends AbstractField
         FieldWithSoftTypedOptionTrait,
         FieldWithRelatedAccessPolicyOptionTrait,
         FieldWithAppendForeignKeysNameOptionTrait,
-        FieldRelatedClonePolicyOptionTrait,
+        FieldWithRelatedClonePolicyOptionTrait,
         FieldWithNullOptionTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static

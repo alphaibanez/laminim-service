@@ -4,10 +4,10 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Enums\DateTimeFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
-use Lkt\Factory\Schemas\Traits\DateFieldWithDefaultValueTrait;
-use Lkt\Factory\Schemas\Traits\DateFieldWithFormattedValueTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithFormatsOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\DateFieldWithDefaultValueTrait;
+use Lkt\Factory\Fields\Traits\DateFieldWithFormattedValueTrait;
+use Lkt\Factory\Fields\Traits\FieldWithFormatsOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
 class DateTimeField extends AbstractField implements NonRelationalField
 {

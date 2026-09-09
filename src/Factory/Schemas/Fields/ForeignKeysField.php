@@ -2,17 +2,17 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldRelatedClonePolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithAllowAnonymousOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithDynamicComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPrefabRoleTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedComponentFeedsTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSoftTypedOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithAllowAnonymousOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDynamicComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithPrefabRoleTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedAccessPolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedClonePolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedComponentFeedsTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
 class ForeignKeysField extends AbstractField
 {
@@ -26,7 +26,7 @@ class ForeignKeysField extends AbstractField
         FieldWithRelatedComponentFeedsTrait,
         FieldWithRelatedAccessPolicyOptionTrait,
         FieldWithPrefabRoleTrait,
-        FieldRelatedClonePolicyOptionTrait;
+        FieldWithRelatedClonePolicyOptionTrait;
 
     public static function defineRelation(string $component, string $name, string $column = ''): static
     {

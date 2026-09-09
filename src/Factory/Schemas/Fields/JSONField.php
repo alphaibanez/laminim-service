@@ -2,9 +2,9 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Schemas\Traits\FieldWithCompressOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithCompressOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
 class JSONField extends AbstractField
 {

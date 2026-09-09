@@ -5,16 +5,16 @@ namespace Lkt\Factory\Schemas\Fields;
 use Lkt\Factory\Fields\Enums\EncryptAlgorithm;
 use Lkt\Factory\Fields\Enums\StringFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Traits\FieldWithChoiceOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithJsonI18nStorageTrait;
 use Lkt\Factory\Fields\Traits\FieldWithLengthLimits;
+use Lkt\Factory\Fields\Traits\FieldWithMandatoryOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithSecureSeedTrait;
 use Lkt\Factory\Fields\Traits\FieldWithTrimMode;
 use Lkt\Factory\Fields\Traits\FieldWithUniqueValue;
-use Lkt\Factory\Schemas\Traits\FieldWithChoiceOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithInvalidDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithJsonI18nStorageTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithMandatoryOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithSecureSeedTrait;
 
 class StringField extends AbstractField implements NonRelationalField
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Lkt\Factory\Schemas\Traits;
+namespace Lkt\Factory\Fields\Traits;
 
 use Lkt\Factory\Schemas\Enums\RelatedFieldClonePolicy;
 
-trait FieldRelatedClonePolicyOptionTrait
+trait FieldWithRelatedClonePolicyOptionTrait
 {
     protected RelatedFieldClonePolicy $relatedFieldClonePolicy = RelatedFieldClonePolicy::Ignore;
 

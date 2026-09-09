@@ -5,10 +5,10 @@ namespace Lkt\Factory\Schemas\Fields;
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Factory\Fields\Enums\FileFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
+use Lkt\Factory\Fields\Traits\FieldWithMultipleOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
-use Lkt\Factory\Schemas\Traits\FieldWithEmptyDataModeTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithMultipleOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Values\FieldFilePathValue;
 use Lkt\MIME;
 

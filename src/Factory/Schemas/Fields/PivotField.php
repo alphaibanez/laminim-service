@@ -2,14 +2,14 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithPivotOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithRelatedAccessPolicyOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Factory\Schemas\Traits\FieldWithComponentOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithOrderOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithPivotOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithRelatedAccessPolicyOptionTrait;
-use Lkt\Factory\Schemas\Traits\FieldWithWhereOptionTrait;
 use Lkt\Factory\Schemas\Values\ComponentValue;
 
 class PivotField extends AbstractField

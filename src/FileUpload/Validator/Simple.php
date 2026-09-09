@@ -4,6 +4,7 @@ namespace Lkt\FileUpload\Validator;
 
 use Lkt\FileUpload\File;
 use Lkt\FileUpload\Util;
+use function Lkt\Tools\Parse\humanReadableToBytes;
 
 class Simple implements Validator
 {
@@ -51,7 +52,7 @@ class Simple implements Validator
         if (is_numeric($max_size)) {
             $this->max_size = $max_size;
         } else {
-            $this->max_size = Util::humanReadableToBytes($max_size);
+            $this->max_size = humanReadableToBytes($max_size);
         }
 
         if ($this->max_size < 0 || $this->max_size == null) {

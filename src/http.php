@@ -93,17 +93,17 @@ GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}/{component}', BasicHttpHandler::
     ->setTargetAccessPolicy('lkt-related')
     ->setTargetAccessPolicyAttempts(['opt', 'pg', 'ls']);
 
-GetRoute::onlyLoggedUsers('/api/r-{id}/{component}', BasicHttpHandler::Read)
-    ->setWebItemValueParamsExtractionKey('component')
-    ->setIdColumnValueParamsExtractionKey('id')
-    ->setRequiredPermissions(['r'])
-    ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
-    ->setTargetAccessPolicy('app');
-
 GetRoute::onlyLoggedUsers('/api/r-{id}-{accessPolicy}/{component}', BasicHttpHandler::Read)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setTargetAccessPolicyExtractionKey('accessPolicy')
+    ->setRequiredPermissions(['r'])
+    ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
+    ->setTargetAccessPolicy('app');
+
+GetRoute::onlyLoggedUsers('/api/r-{id}/{component}', BasicHttpHandler::Read)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])
     ->setGrantedPermsAttempt(['up' => ['update', 'duplicate', 'switch-edit-mode'], 'rm' => 'drop'])
     ->setTargetAccessPolicy('app');

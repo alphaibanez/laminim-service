@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Fields\AbstractField;
@@ -39,7 +40,9 @@ final class ComposedDataController
         $ins = $this->getItem($key, $additionalData);
         if (!$ins) return null;
 
-        return $ins->assignValue($property, $value);
+        $ins->assignValue($property, $value);
+        $this->setComposedInstance($key, $ins);
+        return $ins;
     }
 
     public function has(string $key, string $property, array $additionalData = []): bool

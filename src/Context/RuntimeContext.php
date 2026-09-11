@@ -9,4 +9,5 @@ class RuntimeContext
 {
     public static RuntimeEntryContext $entryContext = RuntimeEntryContext::None;
     public static RuntimeEntryPoint $entryPoint = RuntimeEntryPoint::Unknown;
+    public static string|null $rootDir = null;
 }

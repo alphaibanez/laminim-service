@@ -201,6 +201,12 @@ class Request
     {
         $policy = null;
 
+        $extractTargetAccessPolicyKey = $this->route->getTargetAccessPolicyExtractionKey();
+        if ($extractTargetAccessPolicyKey) {
+            $targetAccessPolicy = $this->params[$extractTargetAccessPolicyKey];
+            return $targetAccessPolicy;
+        }
+
         if (count($this->targetAccessPolicyAttempts) > 0 && $this->targetComponent) {
             $schema = Schema::get($this->targetComponent);
             foreach ($this->targetAccessPolicyAttempts as $policyAttempt) {

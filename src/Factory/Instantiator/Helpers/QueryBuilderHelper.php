@@ -32,6 +32,7 @@ class QueryBuilderHelper
 
         $identifierValue = $item->getIdentifierValue();
         $idColumnValue = $identifierValue[array_keys($identifierValue)[0]];
+        if (!$idColumnValue) return $query;
 
         if ($relatedSchema->hasComplexPrimaryKey()) {
             $identifiers = $relatedSchema->getIdentifiers();

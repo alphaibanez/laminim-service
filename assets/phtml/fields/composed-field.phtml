@@ -94,13 +94,13 @@ public function has<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) :b
     }
 <?php elseif($additionalFields === 'foreign-key'): ?>
     public function get<?php echo $fieldMethod;?>Id() :?int {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>Id');
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>');
     }
     public function set<?php echo $fieldMethod;?>Id(<?php echo $composedPrimitiveInputType; ?> $<?php echo $fieldName;?><?php echo $additionalInput ? ", $additionalInput" : '';?>)  {
-        $additionalData = $this->composedData->prepareAdditionalData([
-        <?php echo $additionalInputDetection;?>
-        ], null, null, null);
-        $this<?php echo $nestedCompositionCalls?>->composedData->set('<?php echo $fieldName;?>Id', $<?php echo $fieldName;?>, $additionalData);
+        $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [
+            <?php echo $additionalInputDetection;?>
+        ]);
+        $this<?php echo $nestedCompositionCalls?>->composedData->set('<?php echo $compositionFieldName;?>', '<?php echo $fieldName;?>', $<?php echo $fieldName;?>, $additionalData);
         return $this;
     }
 <?php endif; ?>

@@ -9,4 +9,5 @@ enum WebItemActionHook: int
     case Fail = 3;
     case BeforeAction = 4;
     case TweakResponseData = 5;
+    case CustomResponseData = 6;
 }

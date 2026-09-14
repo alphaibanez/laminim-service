@@ -52,6 +52,7 @@ use Lkt\WebItems\Enums\WebItemAction;
 use Lkt\WebItems\Enums\WebItemActionHook;
 use Lkt\WebItems\WebItemActionHookHandler;
 use function Lkt\Tools\Arrays\getArrayFirstPosition;
+use function Lkt\Tools\Pagination\getTotalPages;
 use function Lkt\Tools\Parse\clearInput;
 
 final class Schema
@@ -1449,6 +1450,24 @@ final class Schema
         if ($limit <= 0) $limit = $this->getItemsPerPage();
         if ($limit >= 0) $query->pagination($page, $limit);
         return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
+    }
+
+    public function getAmountOfPages(Query|null $query = null, string|null $countableField = null, int|null $itemsPerPage = null): int
+    {
+        $total = $this->getAmountOfItems($query, $countableField);
+        if ($total === 0) return 0;
+        if ($itemsPerPage <= 0) $itemsPerPage = $this->getItemsPerPage();
+        if ($itemsPerPage <= 0) return 0;
+        return getTotalPages($total, $itemsPerPage);
+    }
+
+    public function getAmountOfItems(Query|null $query = null, string|null $countableField = null, int|null $itemsPerPage = null): int
+    {
+        if (!$query) $query = $this->getQueryBuilder();
+        if (!$countableField) $countableField = $this->getCountableField();
+        if (!$countableField) return 0;
+
+        return $query->count($countableField);
     }
 
     public function getQueryBuilder(): Query

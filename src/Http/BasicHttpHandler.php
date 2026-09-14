@@ -218,8 +218,7 @@ class BasicHttpHandler
         }
 
         $schema = Schema::get($request->targetComponent);
-        $helperInstance = $schema->getItemInstance();
-        $builder = $helperInstance::getQueryBuilder();
+        $builder = $schema->getQueryBuilder();
 
         if ($capability && $capability === RoleCapability::Owned) {
             $ownershipField = $schema->getOwnershipField();
@@ -246,9 +245,24 @@ class BasicHttpHandler
 
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        $rawResults = $helperInstance::getPage($request->page, $builder);
-        $batchActions = $schema->getBatchActions($rawResults);
-        $results = $batchActions->read($accessPolicy);
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::CustomResponseData, [
+            'query' => $builder,
+            'request' => $request,
+        ]);
+
+        if ($hookHandlerResponse) {
+            $rawResults = $hookHandlerResponse->getResponseData();
+            $results = $rawResults['results'];
+            $batchActions = $schema->getBatchActions($results);
+            $results = $batchActions->read($accessPolicy);
+            $maxPage = (int)$rawResults['maxPage'];
+
+        } else {
+            $rawResults = $schema->getPage($builder, $request->page);
+            $batchActions = $schema->getBatchActions($rawResults);
+            $results = $batchActions->read($accessPolicy);
+            $maxPage = $schema->getAmountOfPages($builder);
+        }
 
         $perm = [];
         if ($request->loggedUser) {
@@ -262,7 +276,7 @@ class BasicHttpHandler
 
         $perm = array_unique($perm);
 
-        $responseData = ['results' => $results,'perm' => $perm, 'maxPage' => $helperInstance::getAmountOfPages($builder)];
+        $responseData = ['results' => $results,'perm' => $perm, 'maxPage' => $maxPage];
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
@@ -307,15 +321,24 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        $rawResults = $schema->getMany($builder);
-        $batchActions = $schema->getBatchActions($rawResults);
-        $results = $batchActions->read($accessPolicy);
-//        foreach ($rawResults as $rawResult) {
-//            if ($accessPolicy) {
-//                $rawResult->setAccessPolicy($accessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-//            }
-//            $results[] = $rawResult->autoRead();
-//        }
+
+
+        $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::CustomResponseData, [
+            'query' => $builder,
+            'request' => $request,
+        ]);
+
+        if ($hookHandlerResponse) {
+            $rawResults = $hookHandlerResponse->getResponseData();
+            $results = $rawResults['results'];
+            $batchActions = $schema->getBatchActions($results);
+            $results = $batchActions->read($accessPolicy);
+
+        } else {
+            $rawResults = $schema->getMany($builder);
+            $batchActions = $schema->getBatchActions($rawResults);
+            $results = $batchActions->read($accessPolicy);
+        }
 
         $perm = [];
         if ($request->loggedUser) {

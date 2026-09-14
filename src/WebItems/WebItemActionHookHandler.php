@@ -79,4 +79,14 @@ class WebItemActionHookHandler
     {
         return new static(WebItemAction::Read, WebItemActionHook::TweakResponseData, $handler);
     }
+
+    public static function customPageResponseData(callable $handler): static
+    {
+        return new static(WebItemAction::Page, WebItemActionHook::CustomResponseData, $handler);
+    }
+
+    public static function customListResponseData(callable $handler): static
+    {
+        return new static(WebItemAction::List, WebItemActionHook::CustomResponseData, $handler);
+    }
 }

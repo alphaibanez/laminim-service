@@ -3,6 +3,7 @@
 namespace Lkt\Http;
 
 use Lkt\Enums\TimeInSeconds;
+use Lkt\Http\Enums\HttpStatus;
 use Lkt\Http\Traits\ContentTypeTrait;
 use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 
@@ -10,7 +11,7 @@ class Response
 {
     use ContentTypeTrait;
 
-    protected int $code = 1;
+    protected HttpStatus $code = HttpStatus::NotDefined;
     protected array|string|BaseWriter $responseData = [];
 
     protected int $headerCacheControlMaxAge = -1;
@@ -23,7 +24,7 @@ class Response
 
     protected array $customHeaders = [];
 
-    public function __construct(int $code = 1, array|string|BaseWriter $responseData = [])
+    protected function __construct(HttpStatus $code = HttpStatus::NotDefined, array|string|BaseWriter $responseData = [])
     {
         $this->code = $code;
         $this->responseData = $responseData;
@@ -33,7 +34,7 @@ class Response
         }
     }
 
-    public function getCode(): int
+    public function getCode(): HttpStatus
     {
         return $this->code;
     }
@@ -186,7 +187,7 @@ class Response
             header("Content-Disposition: {$this->headerContentDisposition}");
         }
 
-        if ($this->code === -1 || $this->code === 301 || $this->code === 302 || $this->code === 303) {
+        if ($this->code === HttpStatus::UnknownRedirect || $this->code === HttpStatus::MovedPermanently || $this->code === HttpStatus::Found || $this->code === HttpStatus::SeeOther) {
             header('Location: ' . $this->responseData);
         }
 
@@ -201,415 +202,415 @@ class Response
     {
         $protocol = $_SERVER['SERVER_PROTOCOL'];
 
-        if ($this->code === 200) {
-            header("{$protocol} {$this->code} OK");
+        if ($this->code === HttpStatus::Ok) {
+            header("{$protocol} {$this->code->value} OK");
             return true;
         }
 
-        if ($this->code === 201) {
-            header("{$protocol} {$this->code} Created");
+        if ($this->code === HttpStatus::Created) {
+            header("{$protocol} {$this->code->value} Created");
             return true;
         }
 
-        if ($this->code === 202) {
-            header("{$protocol} {$this->code} Accepted");
+        if ($this->code === HttpStatus::Accepted) {
+            header("{$protocol} {$this->code->value} Accepted");
             return true;
         }
 
-        if ($this->code === 203) {
-            header("{$protocol} {$this->code} Non-Authoritative Information");
+        if ($this->code === HttpStatus::NonAuthoritativeInformation) {
+            header("{$protocol} {$this->code->value} Non-Authoritative Information");
             return true;
         }
 
-        if ($this->code === 204) {
-            header("{$protocol} {$this->code} No Content");
+        if ($this->code === HttpStatus::NoContent) {
+            header("{$protocol} {$this->code->value} No Content");
             return true;
         }
 
-        if ($this->code === 205) {
-            header("{$protocol} {$this->code} Reset Content");
+        if ($this->code === HttpStatus::ResetContent) {
+            header("{$protocol} {$this->code->value} Reset Content");
             return true;
         }
 
-        if ($this->code === 206) {
-            header("{$protocol} {$this->code} Partial Content");
+        if ($this->code === HttpStatus::PartialContent) {
+            header("{$protocol} {$this->code->value} Partial Content");
             return true;
         }
 
-        if ($this->code === 300) {
-            header("{$protocol} {$this->code} Multiple Choices");
+        if ($this->code === HttpStatus::MultipleChoices) {
+            header("{$protocol} {$this->code->value} Multiple Choices");
             return true;
         }
 
-        if ($this->code === 301) {
-            header("{$protocol} {$this->code} Moved Permanently");
+        if ($this->code === HttpStatus::MovedPermanently) {
+            header("{$protocol} {$this->code->value} Moved Permanently");
             return true;
         }
 
-        if ($this->code === 302) {
-            header("{$protocol} {$this->code} Found");
+        if ($this->code === HttpStatus::Found) {
+            header("{$protocol} {$this->code->value} Found");
             return true;
         }
 
-        if ($this->code === 303) {
-            header("{$protocol} {$this->code} See Other");
+        if ($this->code === HttpStatus::SeeOther) {
+            header("{$protocol} {$this->code->value} See Other");
             return true;
         }
 
-        if ($this->code === 304) {
-            header("{$protocol} {$this->code} Not Modified");
+        if ($this->code === HttpStatus::NotModified) {
+            header("{$protocol} {$this->code->value} Not Modified");
             return true;
         }
 
-        if ($this->code === 400) {
-            header("{$protocol} {$this->code} Bad Request");
+        if ($this->code === HttpStatus::BadRequest) {
+            header("{$protocol} {$this->code->value} Bad Request");
             return true;
         }
 
-        if ($this->code === 401) {
-            header("{$protocol} {$this->code} Unauthorized");
+        if ($this->code === HttpStatus::Unauthorized) {
+            header("{$protocol} {$this->code->value} Unauthorized");
             return true;
         }
 
-        if ($this->code === 403) {
-            header("{$protocol} {$this->code} Forbidden");
+        if ($this->code === HttpStatus::Forbidden) {
+            header("{$protocol} {$this->code->value} Forbidden");
             return true;
         }
 
-        if ($this->code === 404) {
-            header("{$protocol} {$this->code} Not Found");
+        if ($this->code === HttpStatus::NotFound) {
+            header("{$protocol} {$this->code->value} Not Found");
             return true;
         }
 
-        if ($this->code === 405) {
-            header("{$protocol} {$this->code} Method Not Allowed");
+        if ($this->code === HttpStatus::MethodNotAllowed) {
+            header("{$protocol} {$this->code->value} Method Not Allowed");
             return true;
         }
 
-        if ($this->code === 406) {
-            header("{$protocol} {$this->code} Not Acceptable");
+        if ($this->code === HttpStatus::NotAcceptable) {
+            header("{$protocol} {$this->code->value} Not Acceptable");
             return true;
         }
 
-        if ($this->code === 407) {
-            header("{$protocol} {$this->code} Proxy Authentication Required");
+        if ($this->code === HttpStatus::ProxyAuthenticationRequired) {
+            header("{$protocol} {$this->code->value} Proxy Authentication Required");
             return true;
         }
 
-        if ($this->code === 408) {
-            header("{$protocol} {$this->code} Request Timeout");
+        if ($this->code === HttpStatus::RequestTimeout) {
+            header("{$protocol} {$this->code->value} Request Timeout");
             return true;
         }
 
-        if ($this->code === 409) {
-            header("{$protocol} {$this->code} Conflict");
+        if ($this->code === HttpStatus::Conflict) {
+            header("{$protocol} {$this->code->value} Conflict");
             return true;
         }
 
-        if ($this->code === 410) {
-            header("{$protocol} {$this->code} Gone");
+        if ($this->code === HttpStatus::Gone) {
+            header("{$protocol} {$this->code->value} Gone");
             return true;
         }
 
-        if ($this->code === 411) {
-            header("{$protocol} {$this->code} Length Required");
+        if ($this->code === HttpStatus::LengthRequired) {
+            header("{$protocol} {$this->code->value} Length Required");
             return true;
         }
 
-        if ($this->code === 412) {
-            header("{$protocol} {$this->code} Precondition Failed");
+        if ($this->code === HttpStatus::PreconditionFailed) {
+            header("{$protocol} {$this->code->value} Precondition Failed");
             return true;
         }
 
-        if ($this->code === 413) {
-            header("{$protocol} {$this->code} Content Too Large");
+        if ($this->code === HttpStatus::ContentTooLarge) {
+            header("{$protocol} {$this->code->value} Content Too Large");
             return true;
         }
 
-        if ($this->code === 414) {
-            header("{$protocol} {$this->code} URI Too Long");
+        if ($this->code === HttpStatus::UriTooLong) {
+            header("{$protocol} {$this->code->value} URI Too Long");
             return true;
         }
 
-        if ($this->code === 415) {
-            header("{$protocol} {$this->code} Unsupported Media Type");
+        if ($this->code === HttpStatus::UnsupportedMediaType) {
+            header("{$protocol} {$this->code->value} Unsupported Media Type");
             return true;
         }
 
-        if ($this->code === 416) {
-            header("{$protocol} {$this->code} Range Not Satisfiable");
+        if ($this->code === HttpStatus::RangeNotSatisfiable) {
+            header("{$protocol} {$this->code->value} Range Not Satisfiable");
             return true;
         }
 
-        if ($this->code === 417) {
-            header("{$protocol} {$this->code} Expectation Failed");
+        if ($this->code === HttpStatus::ExpectationFailed) {
+            header("{$protocol} {$this->code->value} Expectation Failed");
             return true;
         }
 
-        if ($this->code === 422) {
-            header("{$protocol} {$this->code} Unprocessable Content");
+        if ($this->code === HttpStatus::UnprocessableContent) {
+            header("{$protocol} {$this->code->value} Unprocessable Content");
             return true;
         }
 
-        if ($this->code === 425) {
-            header("{$protocol} {$this->code} Too Early");
+        if ($this->code === HttpStatus::TooEarly) {
+            header("{$protocol} {$this->code->value} Too Early");
             return true;
         }
 
-        if ($this->code === 426) {
-            header("{$protocol} {$this->code} Upgrade Required");
+        if ($this->code === HttpStatus::UpgradeRequired) {
+            header("{$protocol} {$this->code->value} Upgrade Required");
             return true;
         }
 
-        if ($this->code === 428) {
-            header("{$protocol} {$this->code} Precondition Required");
+        if ($this->code === HttpStatus::PreconditionRequired) {
+            header("{$protocol} {$this->code->value} Precondition Required");
             return true;
         }
 
-        if ($this->code === 429) {
-            header("{$protocol} {$this->code} Too Many Requests");
+        if ($this->code === HttpStatus::TooManyRequests) {
+            header("{$protocol} {$this->code->value} Too Many Requests");
             return true;
         }
 
-        if ($this->code === 431) {
-            header("{$protocol} {$this->code} Request Header Fields Too Large");
+        if ($this->code === HttpStatus::RequestHeaderFieldsTooLarge) {
+            header("{$protocol} {$this->code->value} Request Header Fields Too Large");
             return true;
         }
 
-        if ($this->code === 451) {
-            header("{$protocol} {$this->code} Unavailable For Legal Reasons");
+        if ($this->code === HttpStatus::UnavailableForLegalReasons) {
+            header("{$protocol} {$this->code->value} Unavailable For Legal Reasons");
             return true;
         }
 
-        if ($this->code === 500) {
-            header("{$protocol} {$this->code} Internal Server Error");
+        if ($this->code === HttpStatus::InternalServerError) {
+            header("{$protocol} {$this->code->value} Internal Server Error");
             return true;
         }
 
-        if ($this->code === 501) {
-            header("{$protocol} {$this->code} Not Implemented");
+        if ($this->code === HttpStatus::NotImplemented) {
+            header("{$protocol} {$this->code->value} Not Implemented");
             return true;
         }
 
-        if ($this->code === 502) {
-            header("{$protocol} {$this->code} Bad Gateway");
+        if ($this->code === HttpStatus::BadGateway) {
+            header("{$protocol} {$this->code->value} Bad Gateway");
             return true;
         }
 
-        if ($this->code === 503) {
-            header("{$protocol} {$this->code} Service Unavailable");
+        if ($this->code === HttpStatus::ServiceUnavailable) {
+            header("{$protocol} {$this->code->value} Service Unavailable");
             return true;
         }
         return false;
     }
 
-    public static function status(int $code = 200, array|string|BaseWriter $responseData = []): static
+    public static function status(HttpStatus $code = HttpStatus::Ok, array|string|BaseWriter $responseData = []): static
     {
         return new static($code, $responseData);
     }
 
     public static function redirect(string $responseData = ''): static
     {
-        return static::status(-1, $responseData);
+        return static::status(HttpStatus::UnknownRedirect, $responseData);
     }
 
     public static function ok(array|string|BaseWriter $responseData = []): static
     {
-        return static::status(200, $responseData);
+        return static::status(HttpStatus::Ok, $responseData);
     }
 
     public static function created(array|string $responseData = []): static
     {
-        return static::status(201, $responseData);
+        return static::status(HttpStatus::Created, $responseData);
     }
 
     public static function accepted(array|string $responseData = []): static
     {
-        return static::status(202, $responseData);
+        return static::status(HttpStatus::Accepted, $responseData);
     }
 
     public static function nonAuthoritativeInformation(array|string $responseData = []): static
     {
-        return static::status(203, $responseData);
+        return static::status(HttpStatus::NonAuthoritativeInformation, $responseData);
     }
 
     public static function noContent(array|string $responseData = []): static
     {
-        return static::status(204, $responseData);
+        return static::status(HttpStatus::NoContent, $responseData);
     }
 
     public static function resetContent(array|string $responseData = []): static
     {
-        return static::status(205, $responseData);
+        return static::status(HttpStatus::ResetContent, $responseData);
     }
 
     public static function partialContent(array|string $responseData = []): static
     {
-        return static::status(206, $responseData);
+        return static::status(HttpStatus::PartialContent, $responseData);
     }
 
     public static function multipleChoices(array|string $responseData = []): static
     {
-        return static::status(300, $responseData);
+        return static::status(HttpStatus::MultipleChoices, $responseData);
     }
 
     public static function movedPermanently(array|string $responseData = []): static
     {
-        return static::status(301, $responseData);
+        return static::status(HttpStatus::MovedPermanently, $responseData);
     }
 
     public static function found(array|string $responseData = []): static
     {
-        return static::status(302, $responseData);
+        return static::status(HttpStatus::Found, $responseData);
     }
 
     public static function seeOther(array|string $responseData = []): static
     {
-        return static::status(303, $responseData);
+        return static::status(HttpStatus::SeeOther, $responseData);
     }
 
     public static function notModified(array|string $responseData = []): static
     {
-        return static::status(304, $responseData);
+        return static::status(HttpStatus::NotModified, $responseData);
     }
 
     public static function badRequest(array|string $responseData = []): static
     {
-        return static::status(400, $responseData);
+        return static::status(HttpStatus::BadRequest, $responseData);
     }
 
     public static function unauthorized(array|string $responseData = []): static
     {
-        return static::status(401, $responseData);
+        return static::status(HttpStatus::Unauthorized, $responseData);
     }
 
     public static function forbidden(array|string $responseData = []): static
     {
-        return static::status(403, $responseData);
+        return static::status(HttpStatus::Forbidden, $responseData);
     }
 
     public static function notFound(array|string $responseData = []): static
     {
-        return static::status(404, $responseData);
+        return static::status(HttpStatus::NotFound, $responseData);
     }
 
     public static function methodNotAllowed(array|string $responseData = []): static
     {
-        return static::status(405, $responseData);
+        return static::status(HttpStatus::MethodNotAllowed, $responseData);
     }
 
     public static function notAcceptable(array|string $responseData = []): static
     {
-        return static::status(406, $responseData);
+        return static::status(HttpStatus::NotAcceptable, $responseData);
     }
 
     public static function proxyAuthenticationRequired(array|string $responseData = []): static
     {
-        return static::status(407, $responseData);
+        return static::status(HttpStatus::ProxyAuthenticationRequired, $responseData);
     }
 
     public static function requestTimeout(array|string $responseData = []): static
     {
-        return static::status(408, $responseData);
+        return static::status(HttpStatus::RequestTimeout, $responseData);
     }
 
     public static function conflict(array|string $responseData = []): static
     {
-        return static::status(409, $responseData);
+        return static::status(HttpStatus::Conflict, $responseData);
     }
 
     public static function gone(array|string $responseData = []): static
     {
-        return static::status(410, $responseData);
+        return static::status(HttpStatus::Gone, $responseData);
     }
 
     public static function lengthRequired(array|string $responseData = []): static
     {
-        return static::status(411, $responseData);
+        return static::status(HttpStatus::LengthRequired, $responseData);
     }
 
     public static function preconditionFailed(array|string $responseData = []): static
     {
-        return static::status(412, $responseData);
+        return static::status(HttpStatus::PreconditionFailed, $responseData);
     }
 
     public static function contentTooLarge(array|string $responseData = []): static
     {
-        return static::status(413, $responseData);
+        return static::status(HttpStatus::ContentTooLarge, $responseData);
     }
 
     public static function uriTooLong(array|string $responseData = []): static
     {
-        return static::status(414, $responseData);
+        return static::status(HttpStatus::UriTooLong, $responseData);
     }
 
     public static function unsupportedMediaType(array|string $responseData = []): static
     {
-        return static::status(415, $responseData);
+        return static::status(HttpStatus::UnsupportedMediaType, $responseData);
     }
 
     public static function rangeNotSatisfiable(array|string $responseData = []): static
     {
-        return static::status(416, $responseData);
+        return static::status(HttpStatus::RangeNotSatisfiable, $responseData);
     }
 
     public static function expectationFailed(array|string $responseData = []): static
     {
-        return static::status(417, $responseData);
+        return static::status(HttpStatus::ExpectationFailed, $responseData);
     }
 
     public static function unprocessableContent(array|string $responseData = []): static
     {
-        return static::status(422, $responseData);
+        return static::status(HttpStatus::UnprocessableContent, $responseData);
     }
 
     public static function tooEarly(array|string $responseData = []): static
     {
-        return static::status(425, $responseData);
+        return static::status(HttpStatus::TooEarly, $responseData);
     }
 
     public static function upgradeRequired(array|string $responseData = []): static
     {
-        return static::status(426, $responseData);
+        return static::status(HttpStatus::UpgradeRequired, $responseData);
     }
 
     public static function preconditionRequired(array|string $responseData = []): static
     {
-        return static::status(428, $responseData);
+        return static::status(HttpStatus::PreconditionRequired, $responseData);
     }
 
     public static function tooManyRequests(array|string $responseData = []): static
     {
-        return static::status(429, $responseData);
+        return static::status(HttpStatus::TooManyRequests, $responseData);
     }
 
     public static function requestHeaderFieldsTooLarge(array|string $responseData = []): static
     {
-        return static::status(431, $responseData);
+        return static::status(HttpStatus::RequestHeaderFieldsTooLarge, $responseData);
     }
 
     public static function unavailableForLegalReasons(array|string $responseData = []): static
     {
-        return static::status(451, $responseData);
+        return static::status(HttpStatus::UnavailableForLegalReasons, $responseData);
     }
 
     public static function internalServerError(array|string $responseData = []): static
     {
-        return static::status(500, $responseData);
+        return static::status(HttpStatus::InternalServerError, $responseData);
     }
 
     public static function notImplemented(array|string $responseData = []): static
     {
-        return static::status(501, $responseData);
+        return static::status(HttpStatus::NotImplemented, $responseData);
     }
 
     public static function badGateway(array|string $responseData = []): static
     {
-        return static::status(502, $responseData);
+        return static::status(HttpStatus::BadGateway, $responseData);
     }
 
     public static function serviceUnavailable(array|string $responseData = []): static
     {
-        return static::status(503, $responseData);
+        return static::status(HttpStatus::ServiceUnavailable, $responseData);
     }
 }

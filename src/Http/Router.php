@@ -7,6 +7,7 @@ use FastRoute\RouteCollector;
 use Lkt\Exceptions\SilentHttpException;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Enums\AccessLevel;
+use Lkt\Http\Enums\HttpStatus;
 use Lkt\Http\Networking\Networking;
 use Lkt\Http\Routes\AbstractRoute;
 use Lkt\Http\Routes\GetRoute;
@@ -179,7 +180,7 @@ class Router
 
                 if (!$request->hasValidAccess) {
                     if ($request->hasValidAccessStatus) {
-                        return new Response($request->hasValidAccessStatus->value);
+                        return Response::status($request->hasValidAccessStatus);
                     }
                     return Response::forbidden();
                 }
@@ -220,7 +221,7 @@ class Router
                         ->feedAndSave([
                             'route' => $route->getRoute(),
                             'method' => $route->getMethod(),
-                            'responseStatus' => $response instanceof Response ? $response->getCode() : 0,
+                            'responseStatus' => $response instanceof Response ? $response->getCode()->value : HttpStatus::NotDefined->value,
                             'payload' => [
                                 'params' => $request->params,
                                 'files' => $_FILES,

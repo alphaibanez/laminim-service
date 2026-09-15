@@ -2,9 +2,12 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Attributes\Deprecated;
+
 /**
  * @deprecated use RelatedField::single instead
  */
+#[Deprecated]
 class SingleRelatedField extends RelatedField
 {
     public static function defineRelation(string $component, string $name, string $column = ''): static

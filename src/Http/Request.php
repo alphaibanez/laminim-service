@@ -98,7 +98,11 @@ class Request
         $extractTargetAccessPolicyKey = $route->getTargetAccessPolicyExtractionKey();
         if ($extractTargetAccessPolicyKey) {
             $targetAccessPolicy = $this->params[$extractTargetAccessPolicyKey];
-            $this->targetAccessPolicy = TargetAccessPolicy::simple($targetAccessPolicy);
+            if ($targetAccessPolicy) {
+                $this->targetAccessPolicy = TargetAccessPolicy::simple($targetAccessPolicy);
+            } else {
+                $this->targetAccessPolicy = $route->getTargetAccessPolicy();
+            }
 
         } else {
             $this->targetAccessPolicy = $route->getTargetAccessPolicy();
@@ -204,7 +208,7 @@ class Request
         $extractTargetAccessPolicyKey = $this->route->getTargetAccessPolicyExtractionKey();
         if ($extractTargetAccessPolicyKey) {
             $targetAccessPolicy = $this->params[$extractTargetAccessPolicyKey];
-            return $targetAccessPolicy;
+            if ($targetAccessPolicy) return $targetAccessPolicy;
         }
 
         if (count($this->targetAccessPolicyAttempts) > 0 && $this->targetComponent) {

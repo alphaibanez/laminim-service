@@ -2,6 +2,11 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Attributes\AppUse;
+use Lkt\Attributes\Deprecated;
+use Lkt\Attributes\LaminimUse;
+use Lkt\Attributes\Recommended;
+use Lkt\Attributes\Stable;
 use Lkt\Factory\Fields\Enums\OnParentDrop;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Fields\Interfaces\RelationalField;
@@ -103,17 +108,20 @@ final class Schema
 
     protected SchemaContext $context;
 
+    #[LaminimUse]
     public function hasCodedDataContext(): bool
     {
         return $this->context === SchemaContext::CodedData;
     }
 
+    #[AppUse]
     public function setOwnershipField(string $fieldName): static
     {
         $this->ownershipField = $fieldName;
         return $this;
     }
 
+    #[LaminimUse]
     public function getOwnershipField(): AbstractField|null
     {
         if (!$this->ownershipField) return null;
@@ -125,6 +133,7 @@ final class Schema
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
+    #[LaminimUse]
     public function getUniqueFields(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField $field) {
@@ -132,12 +141,14 @@ final class Schema
         });
     }
 
+    #[AppUse]
     public function setIncludeDuplicatedTextInField(string $fieldName): static
     {
         $this->includeDuplicatedTextInField = $fieldName;
         return $this;
     }
 
+    #[LaminimUse]
     public function getIncludeDuplicatedTextInField(): StringField|JSONField|null
     {
         if (!$this->includeDuplicatedTextInField) return null;
@@ -147,11 +158,13 @@ final class Schema
     /**
      * @return Schema[]
      */
+    #[LaminimUse]
     public static function getStack(): array
     {
         return self::$stack;
     }
 
+    #[Deprecated]
     public static function getCount(): int
     {
         return count(self::$stack);
@@ -161,6 +174,8 @@ final class Schema
      * @param Schema $schema
      * @return void
      */
+    #[Stable]
+    #[AppUse]
     public static function add(Schema $schema): void
     {
         $code = $schema->getComponent();
@@ -170,6 +185,9 @@ final class Schema
     /**
      * @throws SchemaNotDefinedException
      */
+    #[Stable]
+    #[AppUse]
+    #[LaminimUse]
     public static function get(string $code): self
     {
         if (!self::$stack[$code] instanceof Schema) {
@@ -181,6 +199,8 @@ final class Schema
     /**
      * @throws SchemaNotDefinedException
      */
+    #[AppUse]
+    #[LaminimUse]
     public static function getFromTable(string $table): self
     {
         $result = array_filter(self::$stack, function (Schema $schema) use ($table) {
@@ -283,16 +303,22 @@ final class Schema
         $this->registeredAsLib = str_contains($path, '/vendor');
     }
 
-    public function addAccessPolicy(string|AccessPolicy $policy, array $availableFields = [], array $availableCompositionFields = []): static
+    public function addAccessPolicy(string|AccessPolicy|array $policy, array $availableFields = [], array $availableCompositionFields = []): static
     {
-        if (isset($this->accessPolicies[$policy])) {
-            throw DuplicatedAccessPolicyDefinitionException::getInstance($this->getComponent(), $policy);
+        $policies = $policy;
+        if (!is_array($policies)) {
+            $policies = [$policies];
         }
+        foreach ($policies as $policy) {
+            if (isset($this->accessPolicies[$policy])) {
+                throw DuplicatedAccessPolicyDefinitionException::getInstance($this->getComponent(), $policy);
+            }
 
-        if (is_string($policy)) {
-            $this->accessPolicies[$policy] = new AccessPolicy($policy, $availableFields, $availableCompositionFields);
-        } else {
-            $this->accessPolicies[$policy->name] = $policy;
+            if (is_string($policy)) {
+                $this->accessPolicies[$policy] = AccessPolicy::define($policy, $availableFields, $availableCompositionFields);
+            } else {
+                $this->accessPolicies[$policy->name] = $policy;
+            }
         }
 
         return $this;
@@ -322,10 +348,11 @@ final class Schema
         return $this->registeredAsLib;
     }
 
+    #[AppUse]
     public function setRelatedAccessPolicy(array $availableFields = [], array $availableCompositionFields = []): static
     {
         $policy = 'lkt-related';
-        $this->accessPolicies[$policy] = new AccessPolicy($policy, $availableFields, $availableCompositionFields);
+        $this->accessPolicies[$policy] = AccessPolicy::define($policy, $availableFields, $availableCompositionFields);
         return $this;
     }
 
@@ -342,22 +369,27 @@ final class Schema
         return null;
     }
 
+
+    #[AppUse]
     public function setCountableField(string $fieldName): self
     {
         $this->countableField = $fieldName;
         return $this;
     }
 
+    #[LaminimUse]
     public function getCountableField(): string
     {
         return $this->countableField;
     }
 
+    #[LaminimUse]
     public function hasCountableField(): bool
     {
         return $this->countableField !== '';
     }
 
+    #[AppUse]
     public function setItemsPerPage(int $itemsPerPage): self
     {
         $this->itemsPerPage = $itemsPerPage;
@@ -392,6 +424,7 @@ final class Schema
         return $this->instanceSettings;
     }
 
+    #[Recommended('0.1.20')]
     public function setFields(array $fields): self
     {
         $payload = [];
@@ -418,25 +451,6 @@ final class Schema
         }
         $this->fields[$name] = $field;
         return $this;
-    }
-
-    /**
-     * @return array
-     * @throws Exceptions\InvalidSchemaAppClassException
-     * @throws Exceptions\InvalidSchemaClassNameForGeneratedClassException
-     * @throws Exceptions\InvalidSchemaNamespaceForGeneratedClassException
-     * @throws InvalidComponentException
-     */
-    public function toArray(): array
-    {
-        return [
-            'table' => $this->table,
-            'idColumn' => $this->pivot ? $this->idFields : $this->idFields[0],
-            'pivot' => $this->pivot,
-            'instance' => $this->instanceSettings->toArray(),
-            'base' => $this->instanceSettings->hasBaseComponent() ? $this->instanceSettings->getBaseComponent() : '',
-            'fields' => $this->fields,
-        ];
     }
 
     /**

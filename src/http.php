@@ -73,18 +73,41 @@ DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
 /**
  * Setup app web items routes
  */
+GetRoute::onlyLoggedUsers('/api/ls/{component}-{accessPolicy}', BasicHttpHandler::List)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setTargetAccessPolicyExtractionKey('accessPolicy')
+    ->setRequiredPermissions(['ls'])
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+    ->setTargetAccessPolicyAttempts('ls');
+
 GetRoute::onlyLoggedUsers('/api/ls/{component}', BasicHttpHandler::List)
     ->setWebItemValueParamsExtractionKey('component')
     ->setRequiredPermissions(['ls'])
     ->setGrantedPermsAttempt(['mk' => 'create'])
     ->setTargetAccessPolicyAttempts('ls');
 
-GetRoute::onlyLoggedUsers('/api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
+GetRoute::onlyLoggedUsers('/api/page-{page:\d+}-{accessPolicy}/{component}', BasicHttpHandler::Page)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
     ->setGrantedPermsAttempt(['mk' => 'create'])
     ->setTargetAccessPolicyAttempts(['pg', 'ls']);
+
+GetRoute::onlyLoggedUsers('/api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setPageValueParamsExtractionKey('page')
+    ->setTargetAccessPolicyExtractionKey('accessPolicy')
+    ->setRequiredPermissions(['ls'])
+    ->setGrantedPermsAttempt(['mk' => 'create'])
+    ->setTargetAccessPolicyAttempts(['pg', 'ls']);
+
+GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}-{accessPolicy}/{component}', BasicHttpHandler::Page)
+    ->setWebItemValueParamsExtractionKey('component')
+    ->setPageValueParamsExtractionKey('page')
+    ->setTargetAccessPolicyExtractionKey('accessPolicy')
+    ->setRequiredPermissions(['ls'])
+    ->setTargetAccessPolicy('lkt-related')
+    ->setTargetAccessPolicyAttempts(['opt', 'pg', 'ls']);
 
 GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}/{component}', BasicHttpHandler::Page)
     ->setWebItemValueParamsExtractionKey('component')

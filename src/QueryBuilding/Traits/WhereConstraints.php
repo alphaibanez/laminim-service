@@ -111,6 +111,18 @@ trait WhereConstraints
         return $whereString;
     }
 
+    public function clearAnd(): static
+    {
+        $this->and = [];
+        return $this;
+    }
+
+    public function clearOr(): static
+    {
+        $this->or = [];
+        return $this;
+    }
+
     protected function getConstraintString(AbstractConstraint|Where|callable|string|int $constraint, DatabaseConnector $databaseConnector = null): string
     {
         if ($constraint instanceof AbstractConstraint) {

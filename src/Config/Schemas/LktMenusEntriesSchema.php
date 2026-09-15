@@ -88,4 +88,17 @@ Schema::add(
             'itemId',
             'children',
         ])
+        ->addAccessPolicy('mk:admin', [
+            'id',
+            'nameData',
+            'includeAvailableAdminRoutes',
+            'url',
+            'route',
+            'type',
+            'component',
+            'accessLevel',
+            'itemId',
+            'menuId',
+            'children',
+        ])
 );

@@ -233,6 +233,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
@@ -241,6 +242,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ], $customRouteHooks);
 
         if ($hookHandlerResponse) return $hookHandlerResponse;
@@ -248,6 +250,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::CustomResponseData, [
             'query' => $builder,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ]);
 
         if ($hookHandlerResponse) {
@@ -280,6 +283,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Page, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
@@ -318,6 +322,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::PrepareQueryBuilder, [
             'query' => $builder,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
@@ -326,6 +331,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::CustomResponseData, [
             'query' => $builder,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ]);
 
         if ($hookHandlerResponse) {
@@ -356,6 +362,7 @@ class BasicHttpHandler
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::List, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
+            'accessPolicy' => $accessPolicy,
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 

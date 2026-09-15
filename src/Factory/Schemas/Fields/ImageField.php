@@ -2,11 +2,13 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Attributes\Deprecated;
 use Lkt\Factory\Fields\Enums\FileFieldType;
 
 /**
  * @deprecated use FileField::image instead
  */
+#[Deprecated]
 class ImageField extends FileField
 {
     public static function define(string $name, string $column = ''): static

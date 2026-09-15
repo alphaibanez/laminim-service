@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Attributes\Deprecated;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleReferencesTrait;
 use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithPaginationOptionTrait;
@@ -11,6 +12,23 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Relations\RelatedRelation;
 
+/**
+ * @deprecated
+ *
+ * This field it's considered an anti-pattern
+ * and it's usage should be avoid.
+ *
+ * Due to it's inherit nature, causes a negative impact on
+ * database queries.
+ *
+ * Only kept due to backward compatibility on legacy projects,
+ * but it will be removed in the future.
+ * Considerer using PivotField instead
+ * or adjust the database structure in order to match the app logic.
+ *
+ * PivotField it's the most direct replacement.
+ */
+#[Deprecated]
 class RelatedKeysMergeField extends AbstractField
 {
     use FieldWithWhereOptionTrait,

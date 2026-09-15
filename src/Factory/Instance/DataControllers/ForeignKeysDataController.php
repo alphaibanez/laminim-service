@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -237,10 +238,9 @@ final class ForeignKeysDataController
 
             $relatedComponent = $field->getComponent($this->schema, $this->item);
             $relatedSchema = Schema::get($relatedComponent);
-            /** @var AbstractInstance $relatedClass */
-            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
-            $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
+            $relatedFieldPointingMe = $relatedSchema->getIdentifiers()[0];
+            if (!$relatedFieldPointingMe) throw new \Exception("Missing pointer field {$field->getColumn()} at {$relatedSchema->getComponent()} from {$this->schema->getComponent()}.{$key}");
             $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
 
             $currentIds = $this->getIds($key);
@@ -250,7 +250,7 @@ final class ForeignKeysDataController
 
             foreach ($items as $item) {
                 /** @var Item $ins */
-                $ins = is_array($item) ? $relatedClass::getInstance($item) : $item;
+                $ins = is_array($item) ? $relatedSchema->getItemInstance($item) : $item;
                 $ins->feed($item);
 
                 if (!$ins->hasAssignedValue($relatedFieldPointingMeKey)) {
@@ -281,7 +281,7 @@ final class ForeignKeysDataController
             // Delete
             if (count($diff['deleted']) > 0 && method_exists($field, 'hasToAutoRemoveUnlinked') && $field->hasToAutoRemoveUnlinked()) {
                 foreach ($diff['deleted'] as $deletedId) {
-                    $ins = $relatedClass::getInstance($relatedSchema->decodeInstanceCode($deletedId));
+                    $ins = $relatedSchema->getItemInstance($relatedSchema->decodeInstanceCode($deletedId));
                     $ins->delete();
                 }
             }

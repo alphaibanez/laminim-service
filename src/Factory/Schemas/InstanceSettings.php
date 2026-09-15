@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas;
 
+use Lkt\Attributes\Recommended;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaClassNameForGeneratedClassException;
@@ -119,6 +120,7 @@ final class InstanceSettings
      * @return InstanceSettings
      * @throws InvalidSchemaAppClassException
      */
+    #[Recommended]
     public static function simple(string $appClass, string $generatedNamespace, string $generatedStoreDir): InstanceSettings
     {
         return (new InstanceSettings($appClass))
@@ -340,24 +342,5 @@ final class InstanceSettings
     public function hasBaseComponent(): bool
     {
         return trim($this->baseComponent) !== '';
-    }
-
-    /**
-     * @return array
-     * @throws InvalidSchemaAppClassException
-     * @throws InvalidSchemaClassNameForGeneratedClassException
-     * @throws InvalidSchemaNamespaceForGeneratedClassException
-     */
-    public function toArray(): array
-    {
-        return [
-            'class' => $this->getAppClass(),
-            'namespace' => $this->getNamespaceForGeneratedClass(),
-            'classname' => $this->getClassNameForGeneratedClass(),
-            'storePath' => $this->getWhereStoreGeneratedClass(),
-            'extends' => $this->getClassToBeExtended(),
-            'implements' => $this->implementsInterfaces,
-            'traits' => $this->traits,
-        ];
     }
 }

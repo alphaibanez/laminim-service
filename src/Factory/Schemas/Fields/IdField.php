@@ -2,10 +2,13 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Attributes\Deprecated;
+
 /**
  * @deprecated
  * Use IntegerField::identifier insted
  */
+#[Deprecated]
 class IdField extends IntegerField
 {
     protected bool $isIdentifier = true;

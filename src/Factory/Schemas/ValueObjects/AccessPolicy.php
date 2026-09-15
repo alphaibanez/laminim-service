@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Schemas\ValueObjects;
 
+use Lkt\Attributes\Experimental;
+use Lkt\Attributes\Recommended;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -29,11 +31,152 @@ class AccessPolicy
      */
     public array $availableCompositionFields;
 
-    public function __construct(string $name, array $availableFields, array $availableCompositionFields)
+    public array $additionalFieldsOnWrite = [];
+    public array $additionalFieldsOnCreate = [];
+    public array $additionalFieldsOnUpdate = [];
+    public array $additionalFieldsOnRead = [];
+
+    public array $excludedFieldsOnWrite = [];
+    public array $excludedFieldsOnCreate = [];
+    public array $excludedFieldsOnUpdate = [];
+    public array $excludedFieldsOnRead = [];
+
+    public array $aliases = [];
+    public array $extends = [];
+
+    protected function __construct(string $name, array $availableFields, array $availableCompositionFields)
     {
         $this->name = $name;
         $this->availableFields = $availableFields;
         $this->availableCompositionFields = $availableCompositionFields;
+    }
+
+    #[Recommended('0.1.21')]
+    public static function define(string $name, array $availableFields, array $availableCompositionFields): static
+    {
+        return new static($name, $availableFields, $availableCompositionFields);
+    }
+
+    #[Experimental('0.1.21')]
+    public function setAliases(array $aliases): static
+    {
+        $this->aliases = $aliases;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setExtendedAccessPolicies(array $policies): static
+    {
+        $this->extends = $policies;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setAdditionalFieldsOnWrite(array $fields): static
+    {
+        $this->additionalFieldsOnWrite = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setAdditionalFieldsOnCreate(array $fields): static
+    {
+        $this->additionalFieldsOnCreate = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setAdditionalFieldsOnUpdate(array $fields): static
+    {
+        $this->additionalFieldsOnUpdate = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setAdditionalFieldsOnRead(array $fields): static
+    {
+        $this->additionalFieldsOnRead = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setExcludedFieldsOnWrite(array $fields): static
+    {
+        $this->excludedFieldsOnWrite = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setExcludedFieldsOnCreate(array $fields): static
+    {
+        $this->excludedFieldsOnCreate = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setExcludedFieldsOnUpdate(array $fields): static
+    {
+        $this->excludedFieldsOnUpdate = $fields;
+        return $this;
+    }
+
+    #[Experimental('0.1.21')]
+    public function setExcludedFieldsOnRead(array $fields): static
+    {
+        $this->excludedFieldsOnRead = $fields;
+        return $this;
+    }
+
+    /**
+     * @laminim
+     *
+     * Modifier can be 'mk', 'up', 'w', 'r'
+     * used on file 'ItemWithAccessPolicyTrait', method 'setAccessPolicy'
+     * @param string $modifier
+     * @return array
+     */
+    #[Experimental('0.1.21')]
+    public function getAvailableFields(string $modifier): array
+    {
+        switch ($modifier) {
+            case 'w':
+                return $this->buildAvailableFields($this->availableFields, $this->additionalFieldsOnWrite, $this->excludedFieldsOnWrite);
+
+            case 'mk':
+                return $this->buildAvailableFields($this->availableFields, $this->additionalFieldsOnCreate, $this->excludedFieldsOnCreate);
+
+            case 'up':
+                return $this->buildAvailableFields($this->availableFields, $this->additionalFieldsOnUpdate, $this->excludedFieldsOnUpdate);
+
+            case 'r':
+                return $this->buildAvailableFields($this->availableFields, $this->additionalFieldsOnRead, $this->excludedFieldsOnRead);
+
+            default:
+                return $this->availableFields;
+        }
+    }
+
+    private function buildAvailableFields(array $haystack, array $additional, array $excluded): array
+    {
+        $r = [
+            ...$haystack,
+            ...$additional,
+        ];
+
+        foreach ($excluded as $k => $f) {
+
+            if (array_key_exists($k, $r)) {
+                unset($haystack[$k]);
+            }
+
+            elseif (in_array($k, $r)) {
+                $keys = array_keys($r, $k);
+                $key = reset($keys);
+                unset($haystack[$key]);
+            }
+        }
+
+        return $r;
     }
 
     public function includesField(AbstractField $field): bool

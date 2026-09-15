@@ -2,10 +2,12 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Attributes\Deprecated;
 use Lkt\Factory\Fields\Enums\StringFieldType;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 
 /** @deprecated Use StringField::html instead */
+#[Deprecated]
 class HTMLField extends StringField implements NonRelationalField
 {
     public static function define(string $name, string $column = ''): static

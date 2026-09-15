@@ -27,7 +27,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public function hasAdminAccess(): bool
     {
-        return $this->isAdministrator() || count($this->getAdminRolesData()) > 0;
+        return $this->isAdministrator() || count($this->getAdminRoles()) > 0;
     }
 
     public function signIn(): static
@@ -157,7 +157,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public function hasAppPermission(string $component, string $permission, AbstractInstance|Item|null $instance = null): bool
     {
-        $roles = $this->getAppRolesData();
+        $roles = $this->getAppRoles();
         // Use anonymous role in order to check for ensured perms
         if (count($roles) === 0) return LktUserRole::getInstance()->hasPermission($component, $permission, $instance, false);
 
@@ -171,7 +171,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     {
         if ($this->isAdministrator()) return true;
         if (!$this->hasAdminAccess()) return false;
-        foreach ($this->getAdminRolesData() as $role) {
+        foreach ($this->getAdminRoles() as $role) {
             if ($role->hasPermission($component, $permission, $instance, true)) return true;
         }
         return false;
@@ -179,7 +179,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public function getAppCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null):? RoleCapability
     {
-        $roles = $this->getAppRolesData();
+        $roles = $this->getAppRoles();
         // Use anonymous role in order to check for ensured perms
         if (count($roles) === 0) return LktUserRole::getInstance()->getDefinedRoleCapability($component, $permission, $instance, false);
 
@@ -193,7 +193,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
     public function getAdminCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null):? RoleCapability
     {
         if (!$this->hasAdminAccess()) return null;
-        foreach ($this->getAdminRolesData() as $role) {
+        foreach ($this->getAdminRoles() as $role) {
             $capability = $role->getDefinedRoleCapability($component, $permission, $instance, true);
             if ($capability) return $capability;
         }

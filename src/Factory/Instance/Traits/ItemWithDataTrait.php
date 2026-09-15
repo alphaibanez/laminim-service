@@ -1253,6 +1253,7 @@ trait ItemWithDataTrait
 
             }
             $r[$responseKey] = $t;
+            $r[$responseKey . 'Ids'] = $this->pivotData->getItemsIds($key);
             return $r;
 
         } elseif ($field instanceof ValueListField) {

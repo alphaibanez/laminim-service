@@ -36,6 +36,8 @@ enum LaminimComponent: string
     case Translation = 'lkt-i18n';
     case UserRole = 'lkt-user-role';
     case User = 'lkt-user';
+    case UserPivotAppRole = 'lkt-user-pivot-app-role';
+    case UserPivotAdminRole = 'lkt-user-pivot-admin-role';
     case WebElement = 'lkt-web-element';
     case WebPage = 'lkt-web-page';
     case WebPageCategory = 'lkt-web-page-category';

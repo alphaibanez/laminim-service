@@ -1263,11 +1263,26 @@ final class Schema
      * @return AbstractField|null
      * @throws InvalidComponentException|SchemaNotDefinedException
      */
-    public function getOneFieldPointingToComponent(string $component): AbstractField|null|NonRelationalField|RelationalField
+    public function getOneFieldPointingToComponent(string $component, Schema|null $pivotSchema = null): AbstractField|null|NonRelationalField|RelationalField
     {
         $r = $this->getFieldsPointingToComponent($component);
         if (count($r) > 0) {
             return getArrayFirstPosition($r);
+        }
+
+        if ($pivotSchema) {
+            $schema = Schema::get($component);
+            $instanceSettings = $schema->getInstanceSettings();
+            $extendedClass = $instanceSettings->getClassToBeExtended();
+            if ($extendedClass) {
+                try {
+                    $helperInstance = $extendedClass::getInstance();
+                    $ownComponent = $helperInstance->getSchema()->getComponent();
+                    return $pivotSchema->getOneFieldPointingToComponent($ownComponent);
+                } catch (\Exception $e) {
+
+                }
+            }
         }
         return null;
     }

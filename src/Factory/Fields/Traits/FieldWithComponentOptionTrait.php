@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Fields\Traits;
 
+use Lkt\Attributes\NotRecommended;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\ComponentId;
@@ -21,6 +22,7 @@ trait FieldWithComponentOptionTrait
      * @return $this
      * @throws InvalidComponentException
      */
+    #[NotRecommended("define component through constructor", since: "0.1.20")]
     final public function setComponent(string $component = ''): static
     {
         $this->component = $component;

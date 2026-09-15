@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
@@ -55,7 +56,7 @@ final class PivotDataController
 
         return array_map(function (Item $item){
             return $item->getIdentifierValue();
-        }, $items);
+        }, $items ?? []);
     }
 
     public function getItemsIds(
@@ -68,7 +69,7 @@ final class PivotDataController
     ): array|null
     {
         $ids = $this->getItemsIdentifiers($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
-        if (count($ids[0]) === 0) {
+        if ($ids && count($ids[0]) === 1) {
             $k = array_keys($ids[0])[0];
             $ids = array_map(function (array $id) use ($k) {
                 return $id[$k];
@@ -236,13 +237,27 @@ final class PivotDataController
             // Pivot table fields (intermediate table)
             $pivotSchema = $field->getPivotSchema();
 
-            $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent());
+            $pointingField = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent(), $pivotSchema);
 
             if ($pointingField instanceof PivotLeftIdField) {
                 $referencedField = $pivotSchema->getPivotRightIdField();
             } else {
                 $referencedField = $pivotSchema->getPivotLeftIdField();
             }
+
+//            if (!$pointingField) {
+//                $instanceSettings = $this->schema->getInstanceSettings();
+//                $extendedClass = $instanceSettings->getClassToBeExtended();
+//                if ($extendedClass) {
+//                    try {
+//                        $helperInstance = $extendedClass::getInstance();
+//                        $ownComponent = $helperInstance->getSchema()->getComponent();
+//                        $pointingField = $pivotSchema->getOneFieldPointingToComponent($ownComponent);
+//                    } catch (\Exception $e) {
+//
+//                    }
+//                }
+//            }
 
             /** @var PivotPositionField $positionField */
             $positionField = $pivotSchema->getOnePositionField();
@@ -397,7 +412,7 @@ final class PivotDataController
         $pivotedSchema = $field->getPivotSchema();
 
         /** @var AbstractField $pivotedField */
-        $pivotedField = $pivotedSchema->getOneFieldPointingToComponent($this->schema->getComponent());
+        $pivotedField = $pivotedSchema->getOneFieldPointingToComponent($this->schema->getComponent(), $pivotedSchema);
 
         $pivotedFieldColumn = trim($pivotedField->getColumn());
 

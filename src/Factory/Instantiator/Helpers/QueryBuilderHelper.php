@@ -156,8 +156,22 @@ class QueryBuilderHelper
         if ($sameTablePivot) {
             $pivotOwnField = $pivotSchema->getField($field->getColumn());
         } else {
-            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($schema->getComponent());
+            $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($schema->getComponent(), $pivotSchema);
         }
+
+//        if (!$pivotOwnField) {
+//            $instanceSettings = $schema->getInstanceSettings();
+//            $extendedClass = $instanceSettings->getClassToBeExtended();
+//            if ($extendedClass) {
+//                try {
+//                    $helperInstance = $extendedClass::getInstance();
+//                    $ownComponent = $helperInstance->getSchema()->getComponent();
+//                    $pivotOwnField = $pivotSchema->getOneFieldPointingToComponent($ownComponent);
+//                } catch (\Exception $e) {
+//
+//                }
+//            }
+//        }
 
         $pivotOrderField = $pivotSchema->getOnePositionField();
 

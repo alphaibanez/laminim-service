@@ -41,6 +41,7 @@ enum LaminimComponent: string
     case WebElement = 'lkt-web-element';
     case WebElementPivotWebElement = 'lkt-web-element-pivot-web-element';
     case WebPage = 'lkt-web-page';
+    case WebPagePivotWebElement = 'lkt-web-page-pivot-web-element';
     case WebPageCategory = 'lkt-web-page-category';
     case WebPageMetas = 'lkt-web-page-metas';
 }

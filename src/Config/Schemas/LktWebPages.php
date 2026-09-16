@@ -5,14 +5,18 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
+use Lkt\Factory\Schemas\Fields\PivotField;
+use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
+use Lkt\Factory\Schemas\Fields\PivotPositionField;
+use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUser;
+use Lkt\Instances\LktWebElementPivotWebElement;
 use Lkt\Instances\LktWebPage;
 use Lkt\WebPages\Enums\WebPageStatus;
 
@@ -71,7 +75,14 @@ Schema::add(
                 ])
                 ->setCompositionValue('webCategory', 'id'),
 
-            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'webElements', 'web_elements'),
+            PivotField::definePivot(LaminimComponent::WebElement->value, 'lkt_web_pages__web_elements', 'webElements', 'web_page_id', LaminimComponent::WebPagePivotWebElement->value)
+                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::WebPage->value, 'user', 'web_page_id'))
+                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::WebElement->value, 'role', 'web_element_id'))
+                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotInstanceConfig(LktWebElementPivotWebElement::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+                ->setRelatedAccessPolicies([
+                    'r-app-menu' => 'r-app-menu'
+                ]),
         ])
 
         ->addAccessPolicy('public-read', [

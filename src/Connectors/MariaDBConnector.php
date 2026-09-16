@@ -4,6 +4,7 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
@@ -666,9 +667,11 @@ class MariaDBConnector extends DatabaseConnector
             if (count($idValues) !== count($identifiers)) continue;
 
             $parsed = $this->prepareDataToStore($schema, $idValues);
-            $builder->updateData($parsed);
-
-            $values[] = $this->makeUpdateParams($builder->getData(), 'create');
+            $where = $schema->getWhereBuilder();
+            foreach ($parsed as $key => $val) {
+                $where->andRaw("{$key} = '{$val}'");
+            }
+            $values[] = $where;
         }
 
         if (count($values) === 0) return $this;

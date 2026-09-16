@@ -3,9 +3,7 @@
 namespace Lkt\Factory\Instantiator\Helpers;
 
 use Lkt\Connectors\DatabaseConnections;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
@@ -15,7 +13,6 @@ use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
-use Lkt\QueryBuilding\Where;
 
 class QueryBuilderHelper
 {

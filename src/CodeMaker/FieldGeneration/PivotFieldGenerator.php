@@ -19,6 +19,7 @@ class PivotFieldGenerator implements FieldGenerator
 
         if ($returnAnnotation) $r[] = "/** {$returnAnnotation}[] */";
         $r[] = "public function get{$this->data->methodName}(): array|null { return \$this->pivotData->getItems('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Ids(): array|null { return \$this->pivotData->getItemsIds('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

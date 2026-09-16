@@ -2,9 +2,9 @@
 
 namespace Lkt\Instances;
 
-use Lkt\Generated\GeneratedLktMenuPivotEntry;
+use Lkt\Generated\GeneratedLktWebElementPivotWebElement;
 
-class LktWebElementPivotWebElement
+class LktWebElementPivotWebElement extends GeneratedLktWebElementPivotWebElement
 {
     const COMPONENT = 'lkt-web-element-pivot-web-element';
 }

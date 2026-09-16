@@ -2,9 +2,12 @@
 
 namespace Lkt\Templates;
 
+use Lkt\Templates\Traits\BaseTemplate;
 
-class Template extends BaseTemplate
+class Template
 {
+    use BaseTemplate;
+
     /**
      * @param string $templatePath
      * @return static

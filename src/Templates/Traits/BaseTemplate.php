@@ -1,13 +1,13 @@
 <?php
 
-namespace Lkt\Templates;
+namespace Lkt\Templates\Traits;
 
 use function Lkt\Tools\System\isAbsolutePath;
 
-abstract class BaseTemplate
+trait BaseTemplate
 {
-    protected $file = '';
-    protected $data = [];
+    protected string $file = '';
+    protected array $data = [];
 
     /**
      * @param string|null $templatePath

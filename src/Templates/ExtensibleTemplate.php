@@ -2,8 +2,12 @@
 
 namespace Lkt\Templates;
 
-class ExtensibleTemplate extends BaseTemplate
+use Lkt\Templates\Traits\BaseTemplate;
+
+class ExtensibleTemplate
 {
+    use BaseTemplate;
+
     /**
      * @param array $data
      * @return static

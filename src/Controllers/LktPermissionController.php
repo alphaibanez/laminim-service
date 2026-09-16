@@ -6,10 +6,10 @@ use Lkt\Users\Enums\RoleCapability;
 
 class LktPermissionController
 {
-    protected static $permissionsManagement = [];
-    protected static $ensuredPublicPermissions = [];
-    protected static $ensuredAppPermissions = [];
-    protected static $ensuredAdminPermissions = [];
+    protected static array $permissionsManagement = [];
+    protected static array $ensuredPublicPermissions = [];
+    protected static array $ensuredAppPermissions = [];
+    protected static array $ensuredAdminPermissions = [];
 
     public static function hasComponentRegistered(string $component): bool
     {

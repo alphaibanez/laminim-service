@@ -2,12 +2,14 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Factory\Instance\Traits\ItemWithJSONDataTrait;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 
+#[LaminimUse]
 class JsonFieldGenerator implements FieldGenerator
 {
     use FieldGeneratorCommon;

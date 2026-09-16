@@ -2,11 +2,13 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Factory\Instance\Traits\ItemWithConstantDataTrait;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 
+#[LaminimUse]
 class ConstantValueFieldGenerator implements FieldGenerator
 {
     use FieldGeneratorCommon;

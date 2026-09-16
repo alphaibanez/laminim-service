@@ -10,7 +10,6 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Factory\Schemas\Values\ComponentValue;
 
 class PivotField extends AbstractField
 {
@@ -56,11 +55,7 @@ class PivotField extends AbstractField
     final public function getPivotComponent(): string
     {
         if ($this->pivotSchema !== null) return $this->pivotSchema->getComponent();
-
-        if ($this->pivotComponent instanceof ComponentValue) {
-            return $this->pivotComponent->getValue();
-        }
-        return '';
+        return $this->pivotComponent;
     }
 
     public function setPivotInstanceConfig($class, $generatedInstanceNamespace, $generatedStorageDir): static

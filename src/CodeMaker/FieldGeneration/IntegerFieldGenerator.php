@@ -2,6 +2,7 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Factory\Instance\Traits\ItemWithFloatDataTrait;
@@ -12,6 +13,7 @@ use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 
+#[LaminimUse]
 class IntegerFieldGenerator implements FieldGenerator
 {
     use FieldGeneratorCommon;

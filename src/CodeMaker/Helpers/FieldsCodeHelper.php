@@ -2,6 +2,7 @@
 
 namespace Lkt\CodeMaker\Helpers;
 
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\DTO\FieldGeneratorData;
 use Lkt\CodeMaker\FieldGeneration\BooleanFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\ColorFieldGenerator;
@@ -42,6 +43,7 @@ use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
 
+#[LaminimUse]
 class FieldsCodeHelper
 {
     public static function makeFieldsCode(Schema $schema): array

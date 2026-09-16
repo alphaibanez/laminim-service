@@ -2,19 +2,13 @@
 
 namespace Lkt\Factory\Fields\Traits;
 
-use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
-use Lkt\Factory\Schemas\Values\ComponentValue;
-
 trait FieldWithPivotOptionTrait
 {
-    protected ?ComponentValue $pivotComponent = null;
+    protected string|null $pivotComponent = null;
 
-    /**
-     * @throws InvalidComponentException
-     */
     final public function setPivotComponent(string $component = ''): static
     {
-        $this->pivotComponent = new ComponentValue($component);
+        $this->pivotComponent = $component;
         return $this;
     }
 }

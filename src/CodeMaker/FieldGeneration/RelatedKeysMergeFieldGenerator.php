@@ -2,6 +2,8 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Attributes\Deprecated;
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Factory\Instance\Traits\ItemWithRelatedItemsDataTrait;
@@ -10,6 +12,11 @@ use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 
+/**
+ * @deprecated
+ */
+#[LaminimUse]
+#[Deprecated]
 class RelatedKeysMergeFieldGenerator implements FieldGenerator
 {
     use FieldGeneratorCommon;

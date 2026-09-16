@@ -3,12 +3,11 @@
 namespace Lkt\Factory\Schemas\Relations;
 
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
-use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\QueryBuilding\Query;
 
 class RelatedRelation
 {
-    protected ComponentValue $component;
+    protected string $component;
     protected string $fieldPointingMe;
     protected array $additionalColumns = [];
     protected $queryConfigurator = null;
@@ -18,7 +17,7 @@ class RelatedRelation
      */
     public function __construct(string $component, string $fieldPointingMe, array $additionalColumns = [], ?callable $queryConfigurator = null)
     {
-        $this->component = new ComponentValue($component);
+        $this->component = $component;
         $this->fieldPointingMe = $fieldPointingMe;
         $this->additionalColumns = $additionalColumns;
         $this->queryConfigurator = $queryConfigurator;
@@ -26,7 +25,7 @@ class RelatedRelation
 
     public function getComponent(): string
     {
-        return $this->component->getValue();
+        return $this->component;
     }
 
     public function getPointerField(): string

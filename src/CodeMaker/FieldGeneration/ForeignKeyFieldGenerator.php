@@ -2,12 +2,15 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Attributes\Deprecated;
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Factory\Instance\Traits\ItemWithComposedDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 
+#[LaminimUse]
 class ForeignKeyFieldGenerator implements FieldGenerator
 {
     use FieldGeneratorCommon;

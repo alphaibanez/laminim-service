@@ -2,6 +2,7 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
+use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Debug\VarDumper;
@@ -14,6 +15,7 @@ use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 
+#[LaminimUse]
 class RelatedFieldGenerator implements FieldGenerator
 {
     use FieldGeneratorCommon;

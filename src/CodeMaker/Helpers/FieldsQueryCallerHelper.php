@@ -2,6 +2,7 @@
 
 namespace Lkt\CodeMaker\Helpers;
 
+use Lkt\Attributes\LaminimUse;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
@@ -14,6 +15,7 @@ use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
 
+#[LaminimUse]
 class FieldsQueryCallerHelper
 {
     public static function makeFieldsCode(Schema $schema, bool $includeStatic = false): string

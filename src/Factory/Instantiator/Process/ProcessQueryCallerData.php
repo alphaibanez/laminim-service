@@ -8,7 +8,6 @@ use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Factory\Schemas\Values\ComponentValue;
 use Lkt\QueryBuilding\Enums\FilterRule;
 use Lkt\QueryBuilding\Enums\ProcessRule;
 use Lkt\QueryBuilding\Query;
@@ -25,8 +24,8 @@ final class ProcessQueryCallerData
 
     public function __construct(string $component, Query $caller, array $data = null, array $processRules = null, array $filterRules = null)
     {
-        $this->component = new ComponentValue($component);
-        $this->schema = Schema::get($this->component->getValue());
+        $this->component = $component;
+        $this->schema = Schema::get($this->component);
         $this->queryCaller = $caller;
         $this->data = $data;
         $this->processRules = $processRules;

@@ -5,36 +5,26 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\ForeignKeyField;
-use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
+use Lkt\Factory\Schemas\Fields\PivotField;
+use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
+use Lkt\Factory\Schemas\Fields\PivotPositionField;
+use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktUser;
 use Lkt\Instances\LktWebElement;
+use Lkt\Instances\LktWebElementPivotWebElement;
 
 Schema::add(
     Schema::table('lkt_web_elements', LaminimComponent::WebElement->value)
-        ->setInstanceSettings(
-            InstanceSettings::define(LktWebElement::class)
-                ->setNamespaceForGeneratedClass('Lkt\Generated')
-                ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-        )
+        ->setInstanceSettings(InstanceSettings::simple(LktWebElement::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
+
         ->setItemsPerPage(20)
         ->setCountableField('id')
-        ->setRelatedAccessPolicy([
-            'id' => 'value',
-            'component' => 'label',
-            'id',
-            'component',
-            'type',
-            'props',
-            'config',
-            'layout',
-            'children',
-            'subElements',
-        ])
+
         ->setFields([
             IntegerField::identifier('id'),
 
@@ -54,6 +44,27 @@ Schema::add(
             JSONField::associative('config'),
             JSONField::associative('layout'),
             JSONField::associative('subElements', 'sub_elements'),
-            ForeignKeysField::defineRelation(LaminimComponent::WebElement->value, 'children'),
+
+            PivotField::definePivot(LaminimComponent::WebElement->value, 'lkt_web_elements__web_elements', 'children', 'parent_id', LaminimComponent::WebElementPivotWebElement->value)
+                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::WebElement->value, 'user', 'parent_id'))
+                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::WebElement->value, 'role', 'child_id'))
+                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotInstanceConfig(LktWebElementPivotWebElement::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
+                ->setRelatedAccessPolicies([
+                    'r-app-menu' => 'r-app-menu'
+                ]),
+        ])
+
+        ->setRelatedAccessPolicy([
+            'id' => 'value',
+            'component' => 'label',
+            'id',
+            'component',
+            'type',
+            'props',
+            'config',
+            'layout',
+            'children',
+            'subElements',
         ])
 );

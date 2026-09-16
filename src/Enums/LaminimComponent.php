@@ -39,6 +39,7 @@ enum LaminimComponent: string
     case UserPivotAppRole = 'lkt-user-pivot-app-role';
     case UserPivotAdminRole = 'lkt-user-pivot-admin-role';
     case WebElement = 'lkt-web-element';
+    case WebElementPivotWebElement = 'lkt-web-element-pivot-web-element';
     case WebPage = 'lkt-web-page';
     case WebPageCategory = 'lkt-web-page-category';
     case WebPageMetas = 'lkt-web-page-metas';

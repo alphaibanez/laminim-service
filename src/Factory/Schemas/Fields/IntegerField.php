@@ -69,6 +69,50 @@ class IntegerField extends AbstractField
         return $ins;
     }
 
+    public static function leftPivot(string $component, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->component = $component;
+        $ins->fieldType = IntegerFieldType::LeftPivot;
+        $ins->isIdentifier = true;
+        return $ins;
+    }
+
+    public static function dynamicLeftPivot(string $dynamicComponentField, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->dynamicComponentField = $dynamicComponentField;
+        $ins->fieldType = IntegerFieldType::LeftPivot;
+        $ins->isIdentifier = true;
+        return $ins;
+    }
+
+    public static function rightPivot(string $component, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->component = $component;
+        $ins->fieldType = IntegerFieldType::RightPivot;
+        $ins->isIdentifier = true;
+        return $ins;
+    }
+
+    public static function dynamicRightPivot(string $dynamicComponentField, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->dynamicComponentField = $dynamicComponentField;
+        $ins->fieldType = IntegerFieldType::RightPivot;
+        $ins->isIdentifier = true;
+        return $ins;
+    }
+
+    public static function position(string $component, string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->component = $component;
+        $ins->fieldType = IntegerFieldType::Position;
+        return $ins;
+    }
+
     public function keyIsId(string $key): bool
     {
         return $key === $this->getName() . 'Id';
@@ -77,5 +121,15 @@ class IntegerField extends AbstractField
     public function isForeignKey(): bool
     {
         return $this->fieldType === IntegerFieldType::ForeignKey;
+    }
+
+    public function isLeftPivot(): bool
+    {
+        return $this->fieldType === IntegerFieldType::LeftPivot;
+    }
+
+    public function isRightPivot(): bool
+    {
+        return $this->fieldType === IntegerFieldType::RightPivot;
     }
 }

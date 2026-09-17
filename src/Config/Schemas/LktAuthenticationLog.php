@@ -5,7 +5,6 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -43,7 +42,7 @@ Schema::add(
             StringField::define('clientOS', 'client_os'),
             StringField::define('clientBrowser', 'client_browser'),
             StringField::define('clientBrowserVersion', 'client_browser_version'),
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'user', 'user_id'),
             IntegerField::enumChoice(UserStatus::class, 'userStatus', 'user_status')->setDefaultValue(UserStatus::Undefined->value)
         ])
 

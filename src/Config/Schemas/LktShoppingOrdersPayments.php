@@ -5,7 +5,6 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -31,7 +30,7 @@ Schema::add(
 
             IntegerField::enumChoice(PaymentStatus::class, 'status')->setDefaultValue(PaymentStatus::Pending->value),
             IntegerField::enumChoice(PaymentMethod::class, 'paymentMethod', 'payment_method'),
-            ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::ShoppingOrder->value, 'order', 'order_id')->setOnReadIncludeOptions(),
             FloatField::define('amount')->setDefaultValue(0),
             StringField::define('transactionID', 'transaction_id')->setDefaultValue(''),
         ])

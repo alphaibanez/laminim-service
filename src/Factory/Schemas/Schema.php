@@ -32,7 +32,6 @@ use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
@@ -129,7 +128,7 @@ final class Schema
     }
 
     /**
-     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|FileField|FloatField|ForeignKeyField|ForeignKeysField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|ValueListField|null
+     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|FileField|FloatField|ForeignKeysField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|ValueListField|null
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -356,7 +355,7 @@ final class Schema
         return $this;
     }
 
-    public function getAccessPolicyForRelationalField(string|AccessPolicyUsage|AccessPolicy $accessPolicy, RelatedField|ForeignKeyField|ForeignKeysField|PivotField|RelatedKeysField $field): ?AccessPolicy
+    public function getAccessPolicyForRelationalField(string|AccessPolicyUsage|AccessPolicy $accessPolicy, IntegerField|RelatedField|ForeignKeysField|PivotField|RelatedKeysField $field): ?AccessPolicy
     {
         if (is_string($accessPolicy)) $accessPolicy = $this->getAccessPolicy($accessPolicy);
         elseif ($accessPolicy instanceof AccessPolicyUsage) $accessPolicy = $this->getAccessPolicy($accessPolicy->name);
@@ -472,7 +471,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField>
+     * @return array<ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField>
      */
     public function getFields(): array
     {
@@ -490,7 +489,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField>
+     * @return array<ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -533,7 +532,7 @@ final class Schema
     public function getNonRelationalFields(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            if ($field instanceof ForeignKeyField
+            if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof PivotField
                 || $field instanceof RelatedField
@@ -546,14 +545,14 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField>
+     * @return array<ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     public function getRelationalFields(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            if ($field instanceof ForeignKeyField
+            if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof PivotField
                 || $field instanceof RelatedField
@@ -573,7 +572,7 @@ final class Schema
     public function getOnParentDropCascadeFields(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            if ($field instanceof ForeignKeyField
+            if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof PivotField
                 || $field instanceof RelatedField
@@ -586,7 +585,7 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField>
+     * @return array<ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -660,14 +659,14 @@ final class Schema
     }
 
     /**
-     * @return array<ForeignKeyField|PivotField|RelatedField>
+     * @return array<PivotField|RelatedField>
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     public function getFilterableFields(): array
     {
         return array_filter($this->getAllFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            if ($field instanceof ForeignKeyField
+            if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof PivotField
                 || $field instanceof RelatedField) {
                 return false;
@@ -707,7 +706,7 @@ final class Schema
     /**
      * @param string $field
      * @param bool $searchComposed
-     * @return null|AbstractField|ForeignKeyField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField
+     * @return null|AbstractField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -727,7 +726,7 @@ final class Schema
         $endsWithId = substr($field, $l - 2, 2) === 'Id';
         if ($endsWithId) {
             $keyWithoutId = substr($field, 0, $l - 2);
-            if (isset($haystack[$keyWithoutId]) && $haystack[$keyWithoutId] instanceof ForeignKeyField) {
+            if (isset($haystack[$keyWithoutId]) && $haystack[$keyWithoutId] instanceof IntegerField && $haystack[$keyWithoutId]->isForeignKey()) {
                 return $haystack[$keyWithoutId];
             }
         }
@@ -737,10 +736,10 @@ final class Schema
         $endsWithIds = substr($field, $l - 3, 3) === 'Ids';
         if ($endsWithIds) {
             $keyWithoutIds = substr($field, 0, $l - 3);
-            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof ForeignKeysField) {
+            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof IntegerField && $haystack[$keyWithoutIds]->isForeignKey()) {
                 return $haystack[$keyWithoutIds];
             }
-            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof RelatedKeysField) {
+            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof IntegerField && $haystack[$keyWithoutIds]->isForeignKey()) {
                 return $haystack[$keyWithoutIds];
             }
         }
@@ -773,7 +772,7 @@ final class Schema
         $endsWithId = substr($fieldName, $l - 2, 2) === 'Id';
         if ($endsWithId) {
             $keyWithoutId = substr($fieldName, 0, $l - 2);
-            if (isset($this->fields[$keyWithoutId]) && $this->fields[$keyWithoutId] instanceof ForeignKeyField) {
+            if (isset($this->fields[$keyWithoutId]) && $this->fields[$keyWithoutId] instanceof IntegerField && $this->fields[$keyWithoutId]->isForeignKey()) {
                 return $this->fields[$keyWithoutId] !== null;
             }
         }
@@ -815,7 +814,7 @@ final class Schema
         if (!$endsWithId) return null;
 
         $keyWithoutId = substr($field, 0, $l - 2);
-        if (isset($haystack[$keyWithoutId]) && $haystack[$keyWithoutId] instanceof ForeignKeyField) {
+        if (isset($haystack[$keyWithoutId]) && $haystack[$keyWithoutId] instanceof IntegerField && $haystack[$keyWithoutId]->isForeignKey()) {
             return $haystack[$keyWithoutId];
         }
         return null;
@@ -932,10 +931,10 @@ final class Schema
         return null;
     }
 
-    public function getForeignKeyField(string $field): ?ForeignKeyField
+    public function getForeignKeyField(string $field): IntegerField|null
     {
         $r = $this->getField($field);
-        if ($r instanceof ForeignKeyField) return $r;
+        if ($field instanceof IntegerField && $field->isForeignKey()) return $r;
         return null;
     }
 
@@ -978,22 +977,22 @@ final class Schema
     }
 
     /**
-     * @return array<RelatedField|ForeignKeyField>
+     * @return array<RelatedField|IntegerField>
      */
     public function getCompositionFields(): array
     {
         return array_filter($this->getFields(), function ($field) {
-            if ($field instanceof RelatedField || $field instanceof ForeignKeyField) {
+            if ($field instanceof RelatedField || ($field instanceof IntegerField && $field->isForeignKey())) {
                 return $field->hasCompositionContent();
             }
             return false;
         });
     }
 
-    public function getCompositionField(string $fieldName): null|ForeignKeyField|RelatedField
+    public function getCompositionField(string $fieldName): null|RelatedField
     {
         $field = $this->getField($fieldName);
-        if (!$field instanceof RelatedField && !$field instanceof ForeignKeyField) return null;
+        if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) return null;
         if (!$field->hasCompositionContent()) return null;
         return $field;
     }
@@ -1002,7 +1001,7 @@ final class Schema
     {
         $field = $this->getField($fieldName);
 
-        if (!$field instanceof RelatedField && !$field instanceof ForeignKeyField) return [];
+        if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) return [];
         if (!$field->hasCompositionContent()) return [];
 
         $r = [];
@@ -1017,7 +1016,7 @@ final class Schema
     {
         $r = [];
         foreach ($this->getCompositionFields() as $field) {
-            if (!$field instanceof RelatedField && !$field instanceof ForeignKeyField) continue;
+            if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) continue;
             if (!$field->hasCompositionContent()) continue;
 
             foreach ($field->getCompositionValues() as $paramName => $compositionValue) {
@@ -1030,7 +1029,7 @@ final class Schema
 
     public function getFieldComposedFields(AbstractField|NonRelationalField|RelationalField $field): array
     {
-        if (!$field instanceof RelatedField && !$field instanceof ForeignKeyField) {
+        if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) {
             return [];
         }
 
@@ -1081,7 +1080,7 @@ final class Schema
         return is_object($this->getComposedField($fieldName));
     }
 
-    public function getCompositionFieldComposingThisField(string $fieldName): null|RelatedField|ForeignKeyField
+    public function getCompositionFieldComposingThisField(string $fieldName): null|RelatedField|IntegerField
     {
         foreach ($this->getCompositionFields() as $compositionField) {
             $compositionContent = $compositionField->getCompositionContent();
@@ -1134,7 +1133,7 @@ final class Schema
 
         $this->idColumns = array_values(array_map(function (AbstractField|NonRelationalField|RelationalField $field) {
             $r = $field->getName();
-            if ($field instanceof ForeignKeyField) $r .= 'Id';
+            if ($field instanceof IntegerField && $field->isForeignKey()) $r .= 'Id';
             return $r;
         }, $fields));
         $this->idFields = array_values($fields);
@@ -1247,7 +1246,7 @@ final class Schema
         /** @var AbstractField[] $fields */
         $fields = $this->getRelationalFields();
         return array_filter($fields, function ($field) use ($component) {
-            if ($field instanceof ForeignKeyField
+            if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof RelatedKeysField
                 || $field instanceof PivotField
@@ -1312,7 +1311,7 @@ final class Schema
         $results = array_map(function ($item) {
             return $item->getColumn();
         }, array_filter($fields, function ($field) use ($component) {
-            if ($field instanceof ForeignKeyField
+            if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof RelatedKeysField
                 || $field instanceof PivotField

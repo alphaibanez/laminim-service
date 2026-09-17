@@ -24,7 +24,6 @@ use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
@@ -466,7 +465,7 @@ trait ItemWithDataTrait
                     if ($relatedMode) {
                         $relatedForeignKeyColumn = $relatedSchema->getField($field->getColumn());
                         $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
-                        if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
+                        if ($relatedForeignKeyColumn instanceof IntegerField && $relatedForeignKeyColumn->isForeignKey()) {
                             if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
                                 $relatedForeignKeyKey .= 'Id';
                             }
@@ -479,7 +478,7 @@ trait ItemWithDataTrait
                             $relatedForeignKeyKey = $relatedForeignKeyColumn?->getAppendForeignKeysName();
                             if (!$relatedForeignKeyKey) $relatedForeignKeyKey = $relatedForeignKeyColumn->getName();
 
-                            if ($relatedForeignKeyColumn instanceof ForeignKeyField) {
+                            if ($relatedForeignKeyColumn instanceof IntegerField && $relatedForeignKeyColumn->isForeignKey()) {
                                 if (!$relatedForeignKeyColumn->keyIsId($relatedForeignKeyKey)) {
                                     $relatedForeignKeyKey .= 'Id';
                                 }
@@ -765,8 +764,11 @@ trait ItemWithDataTrait
                 $this->stringData->set($key, $value);
             }
 
-        } elseif ($field instanceof IntegerField && !$field instanceof ForeignKeyField) {
-            if ($field->isMultiple()) {
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isForeignKey()) {
+                $this->foreignKeyData->set($key, $value);
+            }
+            elseif ($field->isMultiple()) {
                 $this->multipleIntegerData->set($key, $value);
             } else {
                 $this->integerData->set($key, $value);
@@ -793,9 +795,6 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof FileField) {
             $this->fileData->set($key, $value);
-
-        } elseif ($field instanceof ForeignKeyField) {
-            $this->foreignKeyData->set($key, $value);
 
         } elseif ($field instanceof ForeignKeysField) {
             $this->foreignKeysData->set($key, $value);
@@ -891,13 +890,6 @@ trait ItemWithDataTrait
             if ($dataMode === RetrieveDataMode::FileInternalPath) return $this->fileData->getInternalPath($key);
             return $this->fileData->getPublicPath($key);
 
-        } elseif ($field instanceof ForeignKeyField) {
-            if ($dataMode === RetrieveDataMode::Raw) {
-                return $this->foreignKeyData->get($key);
-            }
-            if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
-            return $this->foreignKeyData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
-
         } elseif ($field instanceof ForeignKeysField) {
             if ($dataMode === RetrieveDataMode::Raw) {
                 return $this->foreignKeysData->get($key);
@@ -925,7 +917,15 @@ trait ItemWithDataTrait
             return $this->pivotData->getItems($key);
 
         } elseif ($field instanceof IntegerField) {
-            if ($field->isMultiple()) {
+            if ($field->isForeignKey()) {
+
+                if ($dataMode === RetrieveDataMode::Raw) {
+                    return $this->foreignKeyData->get($key);
+                }
+                if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
+                return $this->foreignKeyData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
+
+            } elseif ($field->isMultiple()) {
                 return $this->multipleIntegerData->get($key);
             } else {
                 return $this->integerData->get($key);
@@ -966,9 +966,6 @@ trait ItemWithDataTrait
         } elseif ($field instanceof FileField) {
             return $this->fileData->has($key);
 
-        } elseif ($field instanceof ForeignKeyField) {
-            return $this->foreignKeyData->has($key);
-
         } elseif ($field instanceof ForeignKeysField) {
             return $this->foreignKeysData->has($key);
 
@@ -989,7 +986,9 @@ trait ItemWithDataTrait
             return $this->pivotData->has($key);
 
         } elseif ($field instanceof IntegerField) {
-            if ($field->isMultiple()) {
+            if ($field->isForeignKey()){
+                return $this->foreignKeyData->has($key);
+            } elseif ($field->isMultiple()) {
                 return $this->multipleIntegerData->has($key);
             } else {
                 return $this->integerData->has($key);
@@ -1059,36 +1058,6 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof FileField) {
             return [$responseKey => $this->fileData->getPublicPath($key)];
-
-        } elseif ($field instanceof ForeignKeyField) {
-
-            $relatedAccessPolicy = null;
-            $accessPolicyUsage = $this->getAccessPolicyUsage();
-            $schema = $this->getSchema();
-
-            if ($accessPolicyUsage) {
-                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-            }
-
-            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
-                $relatedAccessPolicy = 'lkt-related';
-            }
-
-            $item = $this->foreignKeyData->getItem($key, $additionalData);
-            if ($item instanceof Item) {
-                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                $item = $item->autoRead();
-            }
-
-            $r = [];
-            if (!is_array($item)) $item = [];
-            $r[$responseKey] = $item;
-            $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
-            if ($field->hasOnReadIncludeOptions()) {
-                $r[$responseKey . 'Opts'] = count($item) > 0 ? [$item] : [];
-            }
-
-            return $r;
 
         } elseif ($field instanceof ForeignKeysField) {
 
@@ -1205,7 +1174,36 @@ trait ItemWithDataTrait
             return $r;
 
         } elseif ($field instanceof IntegerField) {
-            if ($field->isMultiple()) {
+            if ($field->isForeignKey()) {
+                $relatedAccessPolicy = null;
+                $accessPolicyUsage = $this->getAccessPolicyUsage();
+                $schema = $this->getSchema();
+
+                if ($accessPolicyUsage) {
+                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+                }
+
+                if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                    $relatedAccessPolicy = 'lkt-related';
+                }
+
+                $item = $this->foreignKeyData->getItem($key, $additionalData);
+                if ($item instanceof Item) {
+                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                    $item = $item->autoRead();
+                }
+
+                $r = [];
+                if (!is_array($item)) $item = [];
+                $r[$responseKey] = $item;
+                $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
+                if ($field->hasOnReadIncludeOptions()) {
+                    $r[$responseKey . 'Opts'] = count($item) > 0 ? [$item] : [];
+                }
+
+                return $r;
+
+            } elseif ($field->isMultiple()) {
                 return [$responseKey => $this->multipleIntegerData->get($key)];
             } else {
                 return [$responseKey => $this->integerData->get($key)];

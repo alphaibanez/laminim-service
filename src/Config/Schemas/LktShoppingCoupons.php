@@ -6,7 +6,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -42,8 +41,8 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'owner', 'owned_by')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'creator', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'owner', 'owned_by')->setOnReadIncludeOptions(),
 
             StringField::define('code')->setIsUnique(),
 
@@ -52,7 +51,7 @@ Schema::add(
             IntegerField::enumChoice(CouponType::class, 'type')->setDefaultValue(CouponType::Global),
             IntegerField::enumChoice(CouponDiscountType::class, 'discountType', 'discount_type')->setDefaultValue(CouponDiscountType::Percent),
             FloatField::define('value', 'value')->setDefaultValue(0),
-            ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id'),
+            IntegerField::foreignKey(LaminimComponent::Currency->value, 'currency', 'currency_id'),
             DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
             DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
 

@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -23,7 +22,7 @@ Schema::add(
         ->setFields([
             IntegerField::identifier('id'),
             DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
             StringField::email('email'),
             StringField::define('subject'),
             StringField::html('message'),

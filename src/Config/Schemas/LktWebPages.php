@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -56,7 +55,7 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
             IntegerField::enumChoice(WebPageStatus::class, 'status'),
             IntegerField::define('type'),
             StringField::i18n('name'),

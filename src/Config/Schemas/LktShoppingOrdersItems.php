@@ -5,7 +5,6 @@ namespace Lkt\Config\Schemas;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -29,9 +28,9 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+            IntegerField::foreignKey(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
             IntegerField::define('componentId', 'component_id'),
-            ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions(),
+            IntegerField::dynamicForeignKey('componentId', 'product', 'product_id')->setOnReadIncludeOptions(),
             StringField::define('SKU', 'sku'),
             StringField::define('name'),
             FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0),

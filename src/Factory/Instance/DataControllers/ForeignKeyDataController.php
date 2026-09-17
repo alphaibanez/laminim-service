@@ -2,12 +2,11 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 
 final class ForeignKeyDataController
@@ -41,8 +40,8 @@ final class ForeignKeyDataController
 
     public function getItem(string $key, array $additionalData = [], bool $retrieveAnonymous = false): Item|null
     {
-        $field = $this->schema->getForeignKeyField($key);
-        if (!$field) return null;
+        $field = $this->schema->getField($key);
+        if (!($field instanceof IntegerField && $field->isForeignKey())) return null;
 
         if (array_key_exists($key, $this->items)) return $this->items[$key];
 
@@ -97,7 +96,7 @@ final class ForeignKeyDataController
     {
         $v = $this->get($key);
 
-        $f = $this->schema->getForeignKeyField($key);
+        $f = $this->schema->getField($key);
         $mode = $f->getEmptyDataMode();
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;
@@ -106,8 +105,8 @@ final class ForeignKeyDataController
 
     public function set(string $key, $value): self
     {
-        $f = $this->schema->getForeignKeyField($key);
-        if (!$f) {
+        $f = $this->schema->getField($key);
+        if (!($f instanceof IntegerField && $f->isForeignKey())) {
             throw InvalidItemDataAssignException::missingField($key);
         }
 
@@ -140,7 +139,7 @@ final class ForeignKeyDataController
     {
         if ($value === null) return null;
 
-        $f = $this->schema->getForeignKeyField($key);
+        $f = $this->schema->getField($key);
 
         if (is_int($value)) {
             return $value;
@@ -190,7 +189,8 @@ final class ForeignKeyDataController
         return $this->data;
     }
 
-    public function __debugInfo() {
+    public function __debugInfo()
+    {
         return [
             'data' => $this->data,
             'payload' => $this->payload,

@@ -6,7 +6,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -38,9 +37,9 @@ Schema::add(
             StringField::i18n('name'),
             JSONField::associativeI18n('nameData', 'name'),
 
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
-            ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions(),
-            ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'createdBy', 'created_by')->setOnReadIncludeOptions()->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            IntegerField::foreignKey(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
 
             FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
             IntegerField::enumChoice(TaxType::class, 'taxType', 'tax_type')->setDefaultValue(TaxType::PercentualAdd->value),

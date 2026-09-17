@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -38,11 +37,11 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'user', 'user_id')->setDefaultValue([LktUser::class, 'getSignedInUserId'])->setOnReadIncludeOptions(),
             IntegerField::enumChoice(SubscriptionStatus::class, 'status')->setDefaultValue(SubscriptionStatus::Inactive->value),
             MethodGetterField::define('getComponentIdAssociatedWebItemPublicName', 'webItemName'),
             IntegerField::define('componentId', 'component_id'),
-            ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions(),
+            IntegerField::dynamicForeignKey('componentId', 'product', 'product_id')->setOnReadIncludeOptions(),
             DateTimeField::define('startsAt', 'starts_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
             DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
 

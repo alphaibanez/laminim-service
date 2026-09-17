@@ -6,7 +6,6 @@ use Lkt\Attributes\LaminimUse;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -39,7 +38,7 @@ class FieldsGroupByHelper
                 'canBeNull' => false,
             ];
 
-            if ($field instanceof ForeignKeyField || $field instanceof IntegerField) {
+            if ($field instanceof IntegerField) {
                 $templateData['canBeNull'] =  $field->isNullable();
 
                 if ($field instanceof IntegerField && $field->ableToChoose()) {

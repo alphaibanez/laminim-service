@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
@@ -31,7 +30,7 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id'),
+            IntegerField::foreignKey(LaminimComponent::Country->value, 'country', 'country_id'),
 
             StringField::i18n('name'),
             JSONField::associativeI18n('nameData', 'name'),

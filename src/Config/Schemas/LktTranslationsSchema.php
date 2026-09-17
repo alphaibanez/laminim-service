@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -51,7 +50,7 @@ Schema::add(
 
             StringField::i18n('value'),
             JSONField::associativeI18n('valueData', 'value'),
-            ForeignKeyField::defineRelation(LaminimComponent::Translation->value, 'parent', 'parent_id'),
+            IntegerField::foreignKey(LaminimComponent::Translation->value, 'parent', 'parent_id'),
             RelatedField::defineRelation(LaminimComponent::Translation->value, 'children', 'parent_id')->setOrder(LktTranslationOrderBy::propertyASC()),
         ])
         ->addAccessPolicy('write', ['type', 'property', 'valueData', 'parent', 'children'])

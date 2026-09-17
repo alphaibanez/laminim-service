@@ -4,7 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithIntegerDataTrait;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 
 trait ColumnIntegerTrait
 {
@@ -14,7 +14,7 @@ trait ColumnIntegerTrait
     protected function _getIntegerVal(string $fieldName): int|array|null
     {
         $field = $this->getSchema()->getField($fieldName);
-        if ($field instanceof ForeignKeyField) {
+        if ($field instanceof IntegerField && $field->isForeignKey()) {
             return (int)$this->foreignKeyData->get($field->getName());
         }
         if ($field->isMultiple()) {

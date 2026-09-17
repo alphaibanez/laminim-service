@@ -30,7 +30,6 @@ use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
@@ -73,21 +72,21 @@ class FieldsCodeHelper
                 'returnSelf' => $returnSelf,
             ];
 
-            if ($field instanceof ForeignKeyField) {
-                $relatedComponent = $field->getComponent();
-                $relatedClassName = '';
-                if ($relatedComponent) {
-                    $relatedSchema = Schema::get($relatedComponent);
-                    $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
-                }
-                $fieldGeneratorData->relatedComponent = $relatedComponent;
-                $fieldGeneratorData->relatedReturnType = $relatedClassName;
-                $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
-                $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = ForeignKeyFieldGenerator::generateTraitsUsageCode($field);
+            if ($field instanceof IntegerField) {
+                if ($field->isForeignKey()) {
+                    $relatedComponent = $field->getComponent();
+                    $relatedClassName = '';
+                    if ($relatedComponent) {
+                        $relatedSchema = Schema::get($relatedComponent);
+                        $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
+                    }
+                    $fieldGeneratorData->relatedComponent = $relatedComponent;
+                    $fieldGeneratorData->relatedReturnType = $relatedClassName;
+                    $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
+                    $methods[] = ForeignKeyFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = ForeignKeyFieldGenerator::generateTraitsUsageCode($field);
 
-            } elseif ($field instanceof IntegerField) {
-                if ($field->ableToChoose()) {
+                } elseif ($field->ableToChoose()) {
                     $fieldGeneratorData->enabledEmptyPreset = $field->hasEnabledEmptyPreset();
                     $fieldGeneratorData->options = $field->getAllowedOptions();
                     $fieldGeneratorData->comparatorsIn = $field->getComparatorsIn();
@@ -335,11 +334,11 @@ class FieldsCodeHelper
                     $additionalInputDetection = implode(', ', $_additionalInputDetection);
                 }
 
-                if ($composedField instanceof ForeignKeyField) {
-                    $additionalFields = 'foreign-key';
+                if ($composedField instanceof IntegerField) {
+                    if ($composedField->isForeignKey()) {
+                        $additionalFields = 'foreign-key';
 
-                } elseif ($composedField instanceof IntegerField) {
-                    if ($composedField->isMultiple()) {
+                    } elseif ($composedField->isMultiple()) {
                         $composedInstanceReturnType = '@return int[]';
                         $composedPrimitiveReturnType = '?array';
                         $composedPrimitiveInputType = 'array';

@@ -5,7 +5,6 @@ namespace Lkt\Factory\Instantiator\Helpers;
 use Lkt\Connectors\DatabaseConnections;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -38,7 +37,7 @@ class QueryBuilderHelper
                 $identifierName = $identifier->getName();
 
                 if ($field instanceof RelatedField) {
-                    if ($identifier instanceof ForeignKeyField && $additionalData[$identifierName] instanceof Item) {
+                    if ($identifier instanceof IntegerField && $identifier->isForeignKey() && $additionalData[$identifierName] instanceof Item) {
 
                         if ($relatedField->getColumn() === $identifier->getColumn()) {
                             $query->andIntegerEqual($relatedField->getColumn(), $idColumnValue);

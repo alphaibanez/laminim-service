@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -31,13 +30,13 @@ Schema::add(
                 ->setCurrentTimeStampAsDefaultValue()
                 ->setCurrentTimeStampOnUpdate(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
+            IntegerField::foreignKey(LaminimComponent::User->value, 'createdBy', 'created_by')->setDefaultValue([LktUser::class, 'getSignedInUserId']),
 
             StringField::define('name'),
             StringField::email('email'),
             StringField::define('phone'),
             StringField::define('message'),
-            ForeignKeyField::defineRelation(LaminimComponent::ContactReason->value, 'contactReason', 'contact_reason_id'),
+            IntegerField::foreignKey(LaminimComponent::ContactReason->value, 'contactReason', 'contact_reason_id'),
             StringField::define('clientProtocol', 'client_protocol'),
             StringField::define('clientUserAgent', 'client_useragent'),
             StringField::define('clientIPAddress', 'client_ip_address'),

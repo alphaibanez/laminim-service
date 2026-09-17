@@ -126,7 +126,7 @@ final class ForeignKeysDataController
     {
         $v = $this->get($key);
 
-        $f = $this->schema->getForeignKeyField($key);
+        $f = $this->schema->getForeignKeysField($key);
         $mode = $f->getEmptyDataMode();
 
         if ($mode === EmptyDataMode::OnlyNull) return $v !== null;

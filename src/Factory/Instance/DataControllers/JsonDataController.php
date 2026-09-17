@@ -104,7 +104,7 @@ final class JsonDataController
         }
 
         if ($r !== null) {
-            if ($associative) {
+            if ($associative && $f->isI18nJson()) {
                 $availableLanguages = Locale::getAvailableLangCodesValues();
                 foreach ($availableLanguages as $language) {
                     if (!isset($r[$language])) $r[$language] = '';

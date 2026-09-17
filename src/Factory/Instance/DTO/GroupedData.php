@@ -7,7 +7,6 @@ use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
@@ -62,7 +61,7 @@ final readonly class GroupedData
             $k = $field->getName();
             $dataKey = $k;
 
-            if ($field instanceof ForeignKeyField) {
+            if ($field instanceof IntegerField && $field->isForeignKey()) {
                 if (!array_key_exists($dataKey, $data)) {
                     $dataKey = "{$k}Id";
                 }
@@ -85,14 +84,14 @@ final readonly class GroupedData
                     $stringData[$k] = $data[$dataKey];
                 }
             }
-            elseif ($field instanceof ForeignKeyField) {
-                $foreignKeyData[$k] = $data[$dataKey];
-            }
             elseif ($field instanceof ForeignKeysField) {
                 $foreignKeysData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof IntegerField) {
-                if ($field->isMultiple()) {
+                if ($field->isForeignKey()) {
+                    $foreignKeyData[$k] = $data[$dataKey];
+                }
+                elseif ($field->isMultiple()) {
                     $multipleIntegerData[$k] = $data[$dataKey];
                 } else {
                     $integerData[$k] = $data[$dataKey];

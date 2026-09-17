@@ -5,7 +5,7 @@ namespace Lkt\Factory\Instance\DataControllers;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Fields\AbstractField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Schema;
 
@@ -109,7 +109,7 @@ final class ComposedDataController
 
             $item->save();
 
-            if ($field instanceof ForeignKeyField) {
+            if ($field instanceof IntegerField && $field->isForeignKey()) {
                 if (!$this->item->hasAssignedValue($field->getName())) {
                     $item->assignValue($field->getName(), $item->getIdColumnValue());
                 }

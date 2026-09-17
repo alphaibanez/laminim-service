@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -25,7 +24,7 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue(),
 
-            ForeignKeyField::defineRelation(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+            IntegerField::foreignKey(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
             IntegerField::enumChoice(OrderStatus::class, 'status'),
         ])
 );

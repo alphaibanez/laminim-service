@@ -8,8 +8,8 @@ use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 
@@ -84,7 +84,7 @@ class BatchActions
 
         foreach ($fields as $field) {
             if (!$accessPolicy || $accessPolicy->includesField($field)) {
-                if ($field instanceof ForeignKeyField) {
+                if ($field instanceof IntegerField && $field->isForeignKey()) {
                     $component = $field->getComponent();
                     if (!$component) continue;
 

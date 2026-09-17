@@ -13,8 +13,8 @@ use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Enums\RelatedFieldClonePolicy;
 use Lkt\Factory\Schemas\Fields\AbstractField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
@@ -131,7 +131,7 @@ trait ItemWithCrudTrait
                 $addToPayload = true;
                 $addToPayloadValue = $value;
 
-                if ($field instanceof ForeignKeyField) {
+                if ($field instanceof IntegerField && $field->isForeignKey()) {
                     $clonePolicy = $field->getRelatedFieldClonePolicy();
                     switch ($clonePolicy) {
                         case RelatedFieldClonePolicy::KeepReferences:
@@ -252,7 +252,7 @@ trait ItemWithCrudTrait
             if ($field instanceof RelatedField && $field->isSingleMode()) {
                 $items = [$this->retrieveValue($field->getName())];
 
-            } elseif ($field instanceof ForeignKeyField) {
+            } elseif ($field instanceof IntegerField && $field->isForeignKey()) {
                 $items = [$this->retrieveValue($field->getName())];
             } else {
                 $items = $this->retrieveValue($field->getName());

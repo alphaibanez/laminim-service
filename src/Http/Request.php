@@ -4,7 +4,7 @@ namespace Lkt\Http;
 
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Instances\AbstractInstance;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
+use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\DTO\TargetAccessPolicy;
@@ -134,7 +134,7 @@ class Request
 
                     foreach ($identifiers  as $i => $identifier) {
                         $name = $identifier->getName();
-                        if ($identifier instanceof ForeignKeyField && isset($idValues[$name. 'Id'])) {
+                        if ($identifier instanceof IntegerField && $identifier->isForeignKey() && isset($idValues[$name. 'Id'])) {
                             $tmp[$name] = $idValues[$name. 'Id'];
 
                         } else {

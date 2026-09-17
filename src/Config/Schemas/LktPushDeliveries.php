@@ -4,7 +4,6 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -23,7 +22,7 @@ Schema::add(
             DateTimeField::define('createdAt', 'created_at')->setCurrentTimeStampAsDefaultValue(),
             DateTimeField::define('sentAt', 'sent_at'),
             IntegerField::enumChoice(DeliveryStatus::class, 'status'),
-            ForeignKeyField::defineRelation(LaminimComponent::PushDevice->value, 'device', 'device_id'),
-            ForeignKeyField::defineRelation(LaminimComponent::PushNotification->value, 'notification', 'notification_id')
+            IntegerField::foreignKey(LaminimComponent::PushDevice->value, 'device', 'device_id'),
+            IntegerField::foreignKey(LaminimComponent::PushNotification->value, 'notification', 'notification_id')
         ])
 );

@@ -6,7 +6,6 @@ use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
-use Lkt\Factory\Schemas\Fields\ForeignKeyField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -35,11 +34,11 @@ Schema::add(
                 ->setCurrentTimeStampOnUpdate(),
 
             BooleanField::define('isActive', 'is_active')->setDefaultValue(false),
-            ForeignKeyField::defineRelation(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
-            ForeignKeyField::defineRelation(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions(),
-            ForeignKeyField::defineRelation(LaminimComponent::ShoppingTax->value, 'shoppingTax', 'shopping_tax_id')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::Country->value, 'country', 'country_id')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::Currency->value, 'currency', 'currency_id')->setOnReadIncludeOptions(),
+            IntegerField::foreignKey(LaminimComponent::ShoppingTax->value, 'shoppingTax', 'shopping_tax_id')->setOnReadIncludeOptions(),
             IntegerField::define('componentId', 'component_id'),
-            ForeignKeyField::define('product', 'product_id')->setDynamicComponentField('componentId')->setOnReadIncludeOptions(),
+            IntegerField::dynamicForeignKey('componentId', 'product', 'product_id')->setOnReadIncludeOptions(),
             FloatField::define('pricePerUnit', 'price_unit')->setDefaultValue(0),
             FloatField::define('taxAmount', 'tax_amount')->setDefaultValue(0),
             MethodGetterField::define('getFinalPricePerUnit', 'finalPricePerUnit'),

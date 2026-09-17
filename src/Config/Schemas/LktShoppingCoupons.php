@@ -9,7 +9,6 @@ use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
-use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -62,7 +61,7 @@ Schema::add(
             PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'orders', 'coupon_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
                 ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
                 ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
-                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotPositionField(IntegerField::position('position'))
                 ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
 
         ])

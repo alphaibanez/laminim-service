@@ -9,7 +9,6 @@ use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\PivotField;
-use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -60,7 +59,7 @@ Schema::add(
             PivotField::definePivot(LaminimComponent::UserRole->value, 'lkt_users__roles_app', 'appRoles', 'user_id', LaminimComponent::UserPivotAppRole->value)
                 ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::User->value, 'user', 'user_id'))
                 ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::UserRole->value, 'role', 'role_id'))
-                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotPositionField(IntegerField::position('position'))
                 ->setPivotInstanceConfig(LktUserPivotAppRole::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'
@@ -69,7 +68,7 @@ Schema::add(
             PivotField::definePivot(LaminimComponent::UserRole->value, 'lkt_users__roles_admin', 'adminRoles', 'user_id', LaminimComponent::UserPivotAdminRole->value)
                 ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::User->value, 'user', 'user_id'))
                 ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::UserRole->value, 'role', 'role_id'))
-                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotPositionField(IntegerField::position('position'))
                 ->setPivotInstanceConfig(LktUserPivotAdminRole::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'

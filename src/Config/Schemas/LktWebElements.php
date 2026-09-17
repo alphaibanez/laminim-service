@@ -7,7 +7,6 @@ use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
-use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
@@ -45,7 +44,7 @@ Schema::add(
             PivotField::definePivot(LaminimComponent::WebElement->value, 'lkt_web_elements__web_elements', 'children', 'parent_id', LaminimComponent::WebElementPivotWebElement->value)
                 ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::WebElement->value, 'user', 'parent_id'))
                 ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::WebElement->value, 'role', 'child_id'))
-                ->setPivotPositionField(PivotPositionField::define('position'))
+                ->setPivotPositionField(IntegerField::position('position'))
                 ->setPivotInstanceConfig(LktWebElementPivotWebElement::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'

@@ -9,7 +9,6 @@ use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
-use Lkt\Factory\Schemas\Fields\PivotPositionField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
 use Lkt\QueryBuilding\Where;
@@ -257,7 +256,7 @@ final class PivotDataController
 //                }
 //            }
 
-            /** @var PivotPositionField $positionField */
+            /** @var IntegerField $positionField */
             $positionField = $pivotSchema->getOnePositionField();
 
             $positionKey = $positionField->getName();
@@ -452,7 +451,7 @@ final class PivotDataController
             $referencedField = $pivotSchema->getPivotLeftIdField();
         }
 
-        /** @var PivotPositionField $positionField */
+        /** @var IntegerField $positionField */
         $positionField = $pivotSchema->getOnePositionField();
 
         $pivotQueryBuilder = QueryBuilderHelper::getComponentQuery($component);

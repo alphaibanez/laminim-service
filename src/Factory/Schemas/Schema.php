@@ -7,6 +7,7 @@ use Lkt\Attributes\Deprecated;
 use Lkt\Attributes\LaminimUse;
 use Lkt\Attributes\Recommended;
 use Lkt\Attributes\Stable;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Enums\OnParentDrop;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Fields\Interfaces\RelationalField;
@@ -37,9 +38,7 @@ use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\MethodGetterField;
 use Lkt\Factory\Schemas\Fields\PivotField;
-use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
 use Lkt\Factory\Schemas\Fields\PivotPositionField;
-use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
@@ -67,6 +66,9 @@ final class Schema
 
     protected string $slugPattern = '';
 
+    /**
+     * @deprecated
+     */
     protected array $complexPrimaryKey = [];
 
     /** @var AccessPolicy[] */
@@ -596,19 +598,19 @@ final class Schema
         });
     }
 
-    public function getPivotLeftIdField(): PivotLeftIdField
+    public function getPivotLeftIdField(): IntegerField
     {
         $r = array_values(array_filter($this->getFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            return $field instanceof PivotLeftIdField;
+            return $field instanceof IntegerField && $field->isLeftPivot();
         }));
 
         return reset($r);
     }
 
-    public function getPivotRightIdField(): PivotRightIdField
+    public function getPivotRightIdField(): IntegerField
     {
         $r = array_values(array_filter($this->getFields(), function (AbstractField|NonRelationalField|RelationalField $field) {
-            return $field instanceof PivotRightIdField;
+            return $field instanceof IntegerField && $field->isRightPivot();
         }));
 
         return reset($r);
@@ -1117,7 +1119,7 @@ final class Schema
 
         if ($this->isPivot()) {
             $fields = array_filter($stack, function (AbstractField|NonRelationalField|RelationalField $field) {
-                return $field instanceof PivotLeftIdField || $field instanceof PivotRightIdField;
+                return $field instanceof IntegerField && $field->isPivot();
             });
 
         } elseif ($this->hasComplexPrimaryKey()) {
@@ -1160,6 +1162,10 @@ final class Schema
         }, $this->getIdentifiers());
     }
 
+    /**
+     * @deprecated
+     */
+    #[Deprecated]
     public function hasComplexPrimaryKey(): bool
     {
         return count($this->complexPrimaryKey) > 1;
@@ -1173,6 +1179,7 @@ final class Schema
      * @param array $fieldNames
      * @return $this
      */
+    #[Deprecated]
     public function setComplexPrimaryKey(array $fieldNames): static
     {
         $this->complexPrimaryKey = $fieldNames;
@@ -1180,10 +1187,12 @@ final class Schema
     }
 
     /**
+     * @deprecated
      * @return AbstractField[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
+    #[Deprecated]
     public function getComplexPrimaryKeyFields(): array
     {
         if ($this->hasComplexPrimaryKey()) {

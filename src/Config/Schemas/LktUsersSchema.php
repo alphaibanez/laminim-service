@@ -9,9 +9,7 @@ use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\PivotField;
-use Lkt\Factory\Schemas\Fields\PivotLeftIdField;
 use Lkt\Factory\Schemas\Fields\PivotPositionField;
-use Lkt\Factory\Schemas\Fields\PivotRightIdField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
@@ -60,8 +58,8 @@ Schema::add(
             StringField::define('credentialIdentifier', 'credential_id'),
 
             PivotField::definePivot(LaminimComponent::UserRole->value, 'lkt_users__roles_app', 'appRoles', 'user_id', LaminimComponent::UserPivotAppRole->value)
-                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'))
-                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::UserRole->value, 'role', 'role_id'))
+                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::User->value, 'user', 'user_id'))
+                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::UserRole->value, 'role', 'role_id'))
                 ->setPivotPositionField(PivotPositionField::define('position'))
                 ->setPivotInstanceConfig(LktUserPivotAppRole::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
@@ -69,8 +67,8 @@ Schema::add(
                 ]),
 
             PivotField::definePivot(LaminimComponent::UserRole->value, 'lkt_users__roles_admin', 'adminRoles', 'user_id', LaminimComponent::UserPivotAdminRole->value)
-                ->setPivotLeftIdField(PivotLeftIdField::defineRelation(LaminimComponent::User->value, 'user', 'user_id'))
-                ->setPivotRightIdField(PivotRightIdField::defineRelation(LaminimComponent::UserRole->value, 'role', 'role_id'))
+                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::User->value, 'user', 'user_id'))
+                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::UserRole->value, 'role', 'role_id'))
                 ->setPivotPositionField(PivotPositionField::define('position'))
                 ->setPivotInstanceConfig(LktUserPivotAdminRole::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([

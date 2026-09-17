@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithPivotOptionTrait;
@@ -74,19 +75,19 @@ class PivotField extends AbstractField
         return $this;
     }
 
-    public function setPivotLeftIdField(PivotLeftIdField $field): static
+    public function setPivotLeftIdField(IntegerField $field): static
     {
         $this->pivotSchema->addField($field);
         return $this;
     }
 
-    public function setPivotRightIdField(PivotRightIdField $field): static
+    public function setPivotRightIdField(IntegerField $field): static
     {
         $this->pivotSchema->addField($field);
         return $this;
     }
 
-    public function setPivotPositionField(PivotPositionField $field): static
+    public function setPivotPositionField(IntegerField $field): static
     {
         $this->pivotSchema->addField($field);
         return $this;
@@ -99,14 +100,14 @@ class PivotField extends AbstractField
         $pivotIdentifiers = $pivotSchema->getIdentifiers();
         $pivotForeignColumn = null;
         foreach ($pivotIdentifiers as $identifier) {
-            if ($identifier instanceof PivotLeftIdField || $identifier instanceof PivotRightIdField) {
+            if ($identifier instanceof IntegerField && $identifier->isPivot()) {
                 if ($identifier->getComponent() === $this->getComponent($schema, $item)) {
                     $pivotForeignColumn = $identifier;
                     break;
                 }
             }
-        }
+        };
 
-        return $pivotForeignColumn->getComponent();
+        return $pivotForeignColumn?->getComponent();
     }
 }

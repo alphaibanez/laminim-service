@@ -120,6 +120,7 @@ class IntegerField extends AbstractField
 
     public function isForeignKey(): bool
     {
+        return in_array($this->fieldType, [IntegerFieldType::ForeignKey, IntegerFieldType::LeftPivot, IntegerFieldType::RightPivot]);
         return $this->fieldType === IntegerFieldType::ForeignKey;
     }
 
@@ -131,5 +132,10 @@ class IntegerField extends AbstractField
     public function isRightPivot(): bool
     {
         return $this->fieldType === IntegerFieldType::RightPivot;
+    }
+
+    public function isPivot(): bool
+    {
+        return in_array($this->fieldType, [IntegerFieldType::LeftPivot, IntegerFieldType::RightPivot]);
     }
 }

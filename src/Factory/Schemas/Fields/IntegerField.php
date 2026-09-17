@@ -28,6 +28,7 @@ class IntegerField extends AbstractField
         FieldWithChoiceOptionTrait,
         FieldWithPrefabRoleTrait,
 
+        // Foreign key additional traits
         FieldWithComponentOptionTrait,
         FieldWithDynamicComponentOptionTrait,
         FieldWithWhereOptionTrait,

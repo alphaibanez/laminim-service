@@ -105,10 +105,9 @@ class IntegerField extends AbstractField
         return $ins;
     }
 
-    public static function position(string $component, string $name, string $column = ''): static
+    public static function position(string $name, string $column = ''): static
     {
         $ins = new static($name, $column);
-        $ins->component = $component;
         $ins->fieldType = IntegerFieldType::Position;
         return $ins;
     }
@@ -137,5 +136,10 @@ class IntegerField extends AbstractField
     public function isPivot(): bool
     {
         return in_array($this->fieldType, [IntegerFieldType::LeftPivot, IntegerFieldType::RightPivot]);
+    }
+
+    public function isPosition(): bool
+    {
+        return $this->fieldType === IntegerFieldType::Position;
     }
 }

@@ -1300,7 +1300,7 @@ final class Schema
         /** @var AbstractField[] $fields */
         $fields = $this->getFields();
         $r = array_values(array_filter($fields, function ($field) {
-            return $field instanceof PivotPositionField;
+            return ($field instanceof IntegerField && $field->isPosition()) || $field instanceof PivotPositionField;
         }));
 
         return reset($r);

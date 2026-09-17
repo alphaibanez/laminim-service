@@ -21,8 +21,12 @@ Schema::add(
                 ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
-        ->setComplexPrimaryKey(['user', 'purpose'])
+//        ->setComplexPrimaryKey(['user', 'purpose'])
         ->setFields([
+            IntegerField::foreignKey(LaminimComponent::User->value, 'user', 'user_id')->setIsIdentifier(),
+            IntegerField::enumChoice(AccessTokenPurpose::class, 'purpose')->setIsIdentifier(),
+            IntegerField::enumChoice(AccessTokenDuration::class, 'duration'),
+
             DateTimeField::define('createdAt', 'created_at')
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue(),
@@ -31,9 +35,6 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue(),
 
-            IntegerField::enumChoice(AccessTokenDuration::class, 'duration'),
-            IntegerField::enumChoice(AccessTokenPurpose::class, 'purpose'),
-            IntegerField::foreignKey(LaminimComponent::User->value, 'user', 'user_id'),
             StringField::define('token'),
         ])
 );

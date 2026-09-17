@@ -22,14 +22,14 @@ public function <?php echo lcfirst($fieldMethod);?>(<?php echo $additionalInput;
     $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [
         <?php echo $additionalInputDetection;?>
     ]);
-    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $fieldName;?>', $additionalData);
+    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', $additionalData);
 }
 <?php else: ?>
 public function get<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) <?php echo $composedPrimitiveReturnType;?> {
     $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [
         <?php echo $additionalInputDetection;?>
     ]);
-    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $fieldName;?>', $additionalData);
+    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', $additionalData);
 }
 <?php endif;?>
 /** @return <?php echo $returnSelf;?>
@@ -50,7 +50,7 @@ public function has<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) :b
 
 <?php if ($additionalFields === 'files'): ?>
     public function get<?php echo $fieldMethod;?>InternalPath() :?array {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileInternalPath);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileInternalPath);
     }
     public function get<?php echo $fieldMethod;?>Name(int $index = 0) :?string {
         return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', ['index' => $index], , \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileName);
@@ -68,29 +68,29 @@ public function has<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) :b
         return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', ['index' => $index], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileSize);
     }
     public function get<?php echo $fieldMethod;?>PublicPath() :?array {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FilePublicPath);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FilePublicPath);
     }
 <?php elseif($additionalFields === 'file'): ?>
     public function get<?php echo $fieldMethod;?>InternalPath() :?string {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileInternalPath);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileInternalPath);
     }
     public function get<?php echo $fieldMethod;?>Name() :?string {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileName);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileName);
     }
     public function get<?php echo $fieldMethod;?>Extension() :?string {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileExtension);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileExtension);
     }
     public function get<?php echo $fieldMethod;?>Content() :?string {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileContent);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileContent);
     }
     public function get<?php echo $fieldMethod;?>LastModified() :int|false|null {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileLastModified);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileLastModified);
     }
     public function get<?php echo $fieldMethod;?>Size() :int|false|null {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileSize);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FileSize);
     }
     public function get<?php echo $fieldMethod;?>PublicPath() :?string {
-        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', \Lkt\Factory\Instance\Enums\RetrieveDataMode::FilePublicPath);
+        return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', [], \Lkt\Factory\Instance\Enums\RetrieveDataMode::FilePublicPath);
     }
 <?php elseif($additionalFields === 'foreign-key'): ?>
     public function get<?php echo $fieldMethod;?>Id() :?int {

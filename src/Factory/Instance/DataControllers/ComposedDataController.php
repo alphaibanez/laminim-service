@@ -11,8 +11,6 @@ use Lkt\Factory\Schemas\Schema;
 
 final class ComposedDataController
 {
-    private array $data = [];
-    private array $payload = [];
     private array $additionalData = [];
 
     private array $needsUpdate = [];
@@ -54,6 +52,7 @@ final class ComposedDataController
 
     public function getItem(string $key, array $additionalData = []): Item|null
     {
+        $additionalData = $this->prepareAdditionalData($key, $additionalData);
         return $this->item->retrieveValue($key, $additionalData, RetrieveDataMode::ItemOrAnonymous);
     }
 
@@ -93,7 +92,7 @@ final class ComposedDataController
          */
         foreach ($this->needsUpdate as $key => $item) {
 
-            $field = $this->schema->getCompositionFieldComposingThisField($key);
+            $field = $this->schema->getField($key);
 
             if ($field instanceof RelatedField) {
                 $relatedComponent = $field->getComponent($this->schema, $this->item);
@@ -105,15 +104,25 @@ final class ComposedDataController
                         $item->assignValue($pointerToMe->getName(), $this->item->getIdColumnValue());
                     }
                 }
-            }
 
-            $item->save();
+                foreach ($field->getRelatedComponentFeeds() as $feedColumn => $feed) {
+
+                    if (!$item->hasAssignedValue($feedColumn)) {
+                        if (is_callable($feed)) {
+                            $feed = call_user_func_array($feed, ['referrer' => $this->item]);
+                        }
+                        $item->assignValue($feedColumn, $feed);
+                    }
+                }
+            }
 
             if ($field instanceof IntegerField && $field->isForeignKey()) {
                 if (!$this->item->hasAssignedValue($field->getName())) {
                     $item->assignValue($field->getName(), $item->getIdColumnValue());
                 }
             }
+
+            $item->save();
         }
         return $this;
     }
@@ -137,8 +146,6 @@ final class ComposedDataController
 
     public function __debugInfo() {
         return [
-            'data' => $this->data,
-            'payload' => $this->payload,
             'needsUpdate' => $this->needsUpdate,
         ];
     }

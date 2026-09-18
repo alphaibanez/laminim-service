@@ -12,7 +12,7 @@ trait ItemWithComposedDataTrait
 
     protected function initComposedData(Schema $schema, Item $item, bool $refreshing = false): static
     {
-        if ($refreshing && isset($this->pivotData)) return $this;
+        if ($refreshing && isset($this->composedData)) return $this;
 
         $this->composedData = new ComposedDataController($schema, $item);
         return $this;

@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Attributes\Warning;
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -25,6 +26,22 @@ use Lkt\Translations\Translations;
 trait ItemWithCrudTrait
 {
 
+    /**
+     * @laminim
+     *
+     * Some considerations for this method if you're using data composition:
+     *      1. Keep in mind you should avoid to return a full array with all the available data
+     *      without checking if data wasn't present or originally given in the array.
+     *      This behaviur can create many inconsistences in databse data.
+     *      Composition works with incremental data, which means only modified data will be
+     *      added to 'feed' method and 'prepareCrudData' should return only that incremental data,
+     *      not all fields with empty data.
+     *
+     * @param array $data
+     * @param CrudOperation|null $operation
+     * @return array
+     */
+    #[Warning("Avoid return all fields data without checking if was originally present in the array. It may break nested compositions.")]
     protected function prepareCrudData(array $data, CrudOperation|null $operation = null): array
     {
         return $data;

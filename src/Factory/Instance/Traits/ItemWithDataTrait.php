@@ -219,17 +219,28 @@ trait ItemWithDataTrait
                     $composedKey = substr($param, 0, $l - 2);
                 }
 
+                $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
+                if (!$fieldComposingThisField) continue;
+
+                $associatedAccessPolicy = $accessPolicyUsage ? $fieldComposingThisField->getAssociatedAccessPolicy($accessPolicyUsage->name) : '';
+
+                $composedInstanceKey = $fieldComposingThisField?->getName();
+
+                $additionalData = $this->composedData->prepareAdditionalData($composedKey, $internalMethodsArguments);
                 if (!$composedInstances[$composedKey]) {
-                    $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
-                    if (!$fieldComposingThisField) continue;
                     /** @var Item $composedInstance */
-                    $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $internalMethodsArguments);
-                    $composedInstances[$composedKey] = $composedInstance;
+                    $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
+                    $composedInstances[$composedInstanceKey] = $composedInstance;
+                    $this->composedData->setComposedInstance($composedInstanceKey, $composedInstance);
                 }
 
-                $composedInstances[$composedKey]->feed([
+                if ($associatedAccessPolicy) {
+                    $composedInstances[$composedInstanceKey]->setAccessPolicy($associatedAccessPolicy);
+                }
+
+                $composedInstances[$composedInstanceKey]->feed([
                     $composedKey => $value,
-                ], $internalMethodsArguments);
+                ], $additionalData);
 
                 continue;
             }
@@ -752,7 +763,7 @@ trait ItemWithDataTrait
      * @throws SchemaNotDefinedException
      * @throws \Lkt\Factory\Schemas\Exceptions\DuplicatedValueException
      */
-    public function assignValue(string $key, mixed $value, RetrieveDataMode $mode = RetrieveDataMode::Auto): static
+    public function assignValue(string $key, mixed $value, RetrieveDataMode $mode = RetrieveDataMode::Auto, array $internalMethodsArguments = []): static
     {
         $field = $this->getSchema()->getField($key);
         if (!$field) throw InvalidItemDataAssignException::missingField($key);

@@ -165,8 +165,8 @@ class FieldsCodeHelper
                         $templateData['relatedQueryCaller'] = '\\' . $relatedQueryCaller;
                     }
 
-                    if ($relatedSchema->hasComplexPrimaryKey()) {
-                        $relatedIdentifiers = $relatedSchema->getIdentifiers();
+                    $relatedIdentifiers = $relatedSchema->getIdentifiers();
+                    if (count($relatedIdentifiers) > 1) {
                         $additionalInput = [];
                         $additionalInputDetection = [];
                         foreach ($relatedIdentifiers as $relatedIdentifier) {
@@ -303,8 +303,8 @@ class FieldsCodeHelper
                 }
 
 
-                if ($nestedComposedSchema?->hasComplexPrimaryKey()) {
-                    $relatedIdentifiers = $nestedComposedSchema->getIdentifiers();
+                $relatedIdentifiers = $nestedComposedSchema->getIdentifiers();
+                if (count($relatedIdentifiers) > 1) {
                     $_additionalInput = [];
                     $_additionalInputDetection = [];
                     foreach ($relatedIdentifiers as $relatedIdentifier) {

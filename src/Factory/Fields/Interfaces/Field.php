@@ -30,4 +30,13 @@ interface Field
      */
     public function setIsIdentifier(bool $status = true): static;
     public function isIdentifier(): bool;
+
+    /**
+     * @laminim
+     * Field constructors
+     */
+    public static function define(string $name, string $column = ''): static;
+    public static function identifier(string $name, string|null $column = null): static;
+
+
 }

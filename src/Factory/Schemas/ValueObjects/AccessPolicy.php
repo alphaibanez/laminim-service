@@ -4,7 +4,7 @@ namespace Lkt\Factory\Schemas\ValueObjects;
 
 use Lkt\Attributes\Experimental;
 use Lkt\Attributes\Recommended;
-use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Schemas\Schema;
 
 class AccessPolicy
@@ -179,12 +179,12 @@ class AccessPolicy
         return $r;
     }
 
-    public function includesField(AbstractField $field): bool
+    public function includesField(Field $field): bool
     {
         return in_array($field->getName(), $this->availableFields);
     }
 
-    public function includesCompositionField(AbstractField $field, string|null $aliasKey = null): bool
+    public function includesCompositionField(Field $field, string|null $aliasKey = null): bool
     {
         if ($aliasKey && in_array($aliasKey, $this->availableCompositionFields)) {
             return true;
@@ -217,7 +217,7 @@ class AccessPolicy
             || array_key_exists($foreignIdMatcher, $this->availableCompositionFields);
     }
 
-    public function getSchemaField(Schema $schema, string $fieldName): \Lkt\Factory\Schemas\Fields\IntegerField|\Lkt\Factory\Schemas\Fields\MethodGetterField|\Lkt\Factory\Schemas\Fields\RelatedKeysField|AbstractField|\Lkt\Factory\Schemas\Fields\StringField|\Lkt\Factory\Schemas\Fields\PivotField|\Lkt\Factory\Schemas\Fields\ForeignKeysField|\Lkt\Factory\Schemas\Fields\DateTimeField|\Lkt\Factory\Schemas\Fields\ColorField|\Lkt\Factory\Schemas\Fields\RelatedField|\Lkt\Factory\Schemas\Fields\FloatField|\Lkt\Factory\Schemas\Fields\RelatedKeysMergeField|\Lkt\Factory\Schemas\Fields\ConcatField|\Lkt\Factory\Schemas\Fields\JSONField|\Lkt\Factory\Schemas\Fields\BooleanField|\Lkt\Factory\Schemas\Fields\FileField|\Lkt\Factory\Schemas\Fields\ValueListField|null
+    public function getSchemaField(Schema $schema, string $fieldName): \Lkt\Factory\Schemas\Fields\IntegerField|\Lkt\Factory\Schemas\Fields\MethodGetterField|\Lkt\Factory\Schemas\Fields\RelatedKeysField|Field|\Lkt\Factory\Schemas\Fields\StringField|\Lkt\Factory\Schemas\Fields\PivotField|\Lkt\Factory\Schemas\Fields\ForeignKeysField|\Lkt\Factory\Schemas\Fields\DateTimeField|\Lkt\Factory\Schemas\Fields\ColorField|\Lkt\Factory\Schemas\Fields\RelatedField|\Lkt\Factory\Schemas\Fields\FloatField|\Lkt\Factory\Schemas\Fields\RelatedKeysMergeField|\Lkt\Factory\Schemas\Fields\ConcatField|\Lkt\Factory\Schemas\Fields\JSONField|\Lkt\Factory\Schemas\Fields\BooleanField|\Lkt\Factory\Schemas\Fields\FileField|\Lkt\Factory\Schemas\Fields\ValueListField|null
     {
         if (array_key_exists($fieldName, $this->availableFields)) {
             $key = $fieldName;
@@ -250,7 +250,7 @@ class AccessPolicy
         return $schema->getField($key);
     }
 
-    public function getSchemaCompositionField(Schema $schema, string $fieldName): \Lkt\Factory\Schemas\Fields\IntegerField|\Lkt\Factory\Schemas\Fields\MethodGetterField|\Lkt\Factory\Schemas\Fields\RelatedKeysField|AbstractField|\Lkt\Factory\Schemas\Fields\StringField|\Lkt\Factory\Schemas\Fields\PivotField|\Lkt\Factory\Schemas\Fields\ForeignKeysField|\Lkt\Factory\Schemas\Fields\DateTimeField|\Lkt\Factory\Schemas\Fields\ColorField|\Lkt\Factory\Schemas\Fields\RelatedField|\Lkt\Factory\Schemas\Fields\FloatField|\Lkt\Factory\Schemas\Fields\RelatedKeysMergeField|\Lkt\Factory\Schemas\Fields\ConcatField|\Lkt\Factory\Schemas\Fields\JSONField|\Lkt\Factory\Schemas\Fields\BooleanField|\Lkt\Factory\Schemas\Fields\FileField|\Lkt\Factory\Schemas\Fields\ValueListField|null
+    public function getSchemaCompositionField(Schema $schema, string $fieldName): \Lkt\Factory\Schemas\Fields\IntegerField|\Lkt\Factory\Schemas\Fields\MethodGetterField|\Lkt\Factory\Schemas\Fields\RelatedKeysField|Field|\Lkt\Factory\Schemas\Fields\StringField|\Lkt\Factory\Schemas\Fields\PivotField|\Lkt\Factory\Schemas\Fields\ForeignKeysField|\Lkt\Factory\Schemas\Fields\DateTimeField|\Lkt\Factory\Schemas\Fields\ColorField|\Lkt\Factory\Schemas\Fields\RelatedField|\Lkt\Factory\Schemas\Fields\FloatField|\Lkt\Factory\Schemas\Fields\RelatedKeysMergeField|\Lkt\Factory\Schemas\Fields\ConcatField|\Lkt\Factory\Schemas\Fields\JSONField|\Lkt\Factory\Schemas\Fields\BooleanField|\Lkt\Factory\Schemas\Fields\FileField|\Lkt\Factory\Schemas\Fields\ValueListField|null
     {
         $foreignIdMatcher = "{$fieldName}Id";
         if (substr($fieldName, -2) === 'Id') {
@@ -279,7 +279,7 @@ class AccessPolicy
         return $schema->getCompositionFieldComposingThisField($key);
     }
 
-    public function getFieldPublicName(AbstractField $field): ?string
+    public function getFieldPublicName(Field $field): ?string
     {
         $fieldName = $field->getName();
         if (array_key_exists($fieldName, $this->availableFields)) return $fieldName;

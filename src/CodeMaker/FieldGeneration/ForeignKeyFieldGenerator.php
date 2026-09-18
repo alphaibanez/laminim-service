@@ -2,13 +2,12 @@
 
 namespace Lkt\CodeMaker\FieldGeneration;
 
-use Lkt\Attributes\Deprecated;
 use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Traits\ItemWithComposedDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 
 #[LaminimUse]
 class ForeignKeyFieldGenerator implements FieldGenerator
@@ -58,7 +57,7 @@ class ForeignKeyFieldGenerator implements FieldGenerator
         ]);
     }
 
-    public static function generateTraitsUsageCode(AbstractField $field): array
+    public static function generateTraitsUsageCode(Field $field): array
     {
         return [
             ItemWithForeignKeyDataTrait::class,

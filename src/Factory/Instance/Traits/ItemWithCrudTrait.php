@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instance\Traits;
 
 use Lkt\Attributes\Warning;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
@@ -12,7 +13,6 @@ use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Enums\RelatedFieldClonePolicy;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\JSONField;
@@ -76,7 +76,7 @@ trait ItemWithCrudTrait
     }
 
     /**
-     * @param AbstractField[] $fields
+     * @param Field[] $fields
      * @return array
      */
     public function readFields(array $fields = [], array $internalMethodsArguments = []): array

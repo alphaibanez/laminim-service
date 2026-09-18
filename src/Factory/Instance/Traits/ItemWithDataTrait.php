@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -15,7 +16,6 @@ use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
@@ -279,7 +279,7 @@ trait ItemWithDataTrait
         }
 
         // Assign default values
-        /** @var AbstractField[] $fieldsWithDefaultValue */
+        /** @var Field[] $fieldsWithDefaultValue */
         $fieldsWithDefaultValue = $isUpdate ? $schema->getFieldsToUpdateOnInstanceUpdate() : $schema->getFieldsWithDefaultValue();
         foreach ($fieldsWithDefaultValue as $fieldWithDefaultValue) {
             $defaultValueKey = $fieldWithDefaultValue->getName();
@@ -331,7 +331,7 @@ trait ItemWithDataTrait
 
         foreach ($schema->getMandatoryFields() as $mandatoryField) {
             if (!$this->hasAssignedValue($mandatoryField->getName())) {
-                $additionalFieldsToColumn = array_filter($schema->getFields(), function (AbstractField $field) use ($mandatoryField) {
+                $additionalFieldsToColumn = array_filter($schema->getFields(), function (Field $field) use ($mandatoryField) {
                     return $field->getName() !== $mandatoryField->getName()
                         && $field->getColumn() === $mandatoryField->getColumn();
                 });

@@ -3,7 +3,7 @@
 namespace Lkt\QueryBuilding\Traits;
 
 use Lkt\Connectors\DatabaseConnector;
-use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Constraints\BooleanFalseConstraint;
@@ -991,7 +991,7 @@ trait WhereConstraints
         if ($table) {
             $tmp[] = $table;
         }
-        if ($remoteFieldAux instanceof AbstractField) {
+        if ($remoteFieldAux instanceof Field) {
             $tmp[] = $remoteFieldAux->getColumn();
         } else {
             $tmp[] = $remoteField;
@@ -1013,7 +1013,7 @@ trait WhereConstraints
         if ($table) {
             $tmp[] = $table;
         }
-        if ($remoteFieldAux instanceof AbstractField) {
+        if ($remoteFieldAux instanceof Field) {
             $tmp[] = $remoteFieldAux->getColumn();
         } else {
             $tmp[] = $remoteField;

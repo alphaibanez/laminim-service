@@ -22,7 +22,6 @@ use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidTableException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Exceptions\UndefinedAccessPolicyException;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
@@ -76,12 +75,12 @@ final class Schema
 
     protected $databaseConnector = '';
 
-    /** @var AbstractField[] */
+    /** @var Field[] */
     protected $idFields = [];
     protected $idColumns = [];
     protected $idColumnsInTable = [];
 
-    /** @var AbstractField[] */
+    /** @var Field[] */
     protected $fields = [];
 
     // Pivot exclusive data
@@ -119,21 +118,21 @@ final class Schema
     }
 
     #[LaminimUse]
-    public function getOwnershipField(): AbstractField|null
+    public function getOwnershipField(): Field|null
     {
         if (!$this->ownershipField) return null;
         return $this->getField($this->ownershipField);
     }
 
     /**
-     * @return array|AbstractField|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|FileField|FloatField|ForeignKeysField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|ValueListField|null
+     * @return array|Field|BooleanField|ColorField|ConcatField|ConstantValueField|DateTimeField|FileField|FloatField|ForeignKeysField|IntegerField|JSONField|MethodGetterField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|ValueListField|null
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     #[LaminimUse]
     public function getUniqueFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             return method_exists($field, 'isUnique') && $field->isUnique();
         });
     }
@@ -436,14 +435,14 @@ final class Schema
 
 
     /**
-     * @param AbstractField $field
+     * @param Field $field
      * @return $this
      * @throws \Exception
      */
-    public function addField(AbstractField|Field $field): self
+    public function addField(Field $field): self
     {
         $name = $field->getName();
-        if (isset($this->fields[$name]) && $this->fields[$name] instanceof AbstractField) {
+        if (isset($this->fields[$name]) && $this->fields[$name] instanceof Field) {
             throw new \Exception("Field '{$name}' already registered in schema '{$this->getComponent()}'");
         }
         $this->fields[$name] = $field;
@@ -477,11 +476,12 @@ final class Schema
     }
 
     /**
+     * @deprecated 
      * @return array<RelatedKeysField>
      */
     public function getFieldsWithAppendForeignKeysName(): array
     {
-        return array_filter($this->fields, function (AbstractField|Field $field) {
+        return array_filter($this->fields, function (Field $field) {
             return $field instanceof RelatedKeysField && $field->getAppendForeignKeysName() !== '';
         });
     }
@@ -529,7 +529,7 @@ final class Schema
      */
     public function getNonRelationalFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof PivotField
@@ -549,7 +549,7 @@ final class Schema
      */
     public function getRelationalFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof PivotField
@@ -569,7 +569,7 @@ final class Schema
      */
     public function getOnParentDropCascadeFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof ForeignKeysField
                 || $field instanceof PivotField
@@ -589,14 +589,14 @@ final class Schema
      */
     public function getMandatoryFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             return method_exists($field, 'isMandatory') ? $field->isMandatory() : false;
         });
     }
 
     public function getPivotLeftIdField(): IntegerField
     {
-        $r = array_values(array_filter($this->getFields(), function (AbstractField|Field $field) {
+        $r = array_values(array_filter($this->getFields(), function (Field $field) {
             return $field instanceof IntegerField && $field->isLeftPivot();
         }));
 
@@ -605,7 +605,7 @@ final class Schema
 
     public function getPivotRightIdField(): IntegerField
     {
-        $r = array_values(array_filter($this->getFields(), function (AbstractField|Field $field) {
+        $r = array_values(array_filter($this->getFields(), function (Field $field) {
             return $field instanceof IntegerField && $field->isRightPivot();
         }));
 
@@ -619,7 +619,7 @@ final class Schema
      */
     public function getChoiceFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if (($field instanceof StringField || $field instanceof IntegerField) && $field->ableToChoose()) {
                 return true;
             }
@@ -640,11 +640,11 @@ final class Schema
     }
 
     /**
-     * @return AbstractField[]
+     * @return Field[]
      */
     public function getSameTableFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if ($field instanceof PivotField
                 || $field instanceof RelatedField
                 || $field instanceof RelatedKeysMergeField
@@ -663,7 +663,7 @@ final class Schema
      */
     public function getFilterableFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if (($field instanceof IntegerField && $field->isForeignKey())
                 || $field instanceof PivotField
                 || $field instanceof RelatedField) {
@@ -674,25 +674,25 @@ final class Schema
     }
 
     /**
-     * @return AbstractField[]
+     * @return Field[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     public function getFieldsWithDefaultValue(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             return $field->hasDefaultValue();
         });
     }
 
     /**
-     * @return AbstractField[]
+     * @return Field[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
     public function getFieldsToUpdateOnInstanceUpdate(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if (method_exists($field, 'hasToSetCurrentTimeStampOnUpdate') && $field->hasToSetCurrentTimeStampOnUpdate() === true) {
                 return true;
             }
@@ -704,17 +704,17 @@ final class Schema
     /**
      * @param string $field
      * @param bool $searchComposed
-     * @return null|AbstractField|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField
+     * @return null|Field|ForeignKeysField|PivotField|RelatedField|RelatedKeysField|RelatedKeysMergeField|StringField|BooleanField|ColorField|JSONField|ConcatField|DateTimeField|FileField|FloatField|IntegerField|MethodGetterField|ValueListField|ConstantValueField
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
-    public function getField(string $field, bool $searchComposed = true): null|AbstractField|Field
+    public function getField(string $field, bool $searchComposed = true): null|Field
     {
         $haystack = $this->getAllFields();
         if (isset($haystack[$field])) return $haystack[$field];
 
         // Check if column is configured
-        $found = array_filter($this->getFields(), function (AbstractField|Field $f) use ($field) {
+        $found = array_filter($this->getFields(), function (Field $f) use ($field) {
             return $f->getColumn() === $field;
         });
         if (count($found) > 0) return reset($found);
@@ -794,7 +794,7 @@ final class Schema
         return $this->fields[$fieldName] !== null;
     }
 
-    public function getFeedField(string $field): null|AbstractField|Field
+    public function getFeedField(string $field): null|Field
     {
         $haystack = $this->getAllFields();
 
@@ -966,7 +966,7 @@ final class Schema
      */
     public function getPivotFields(): array
     {
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) {
+        return array_filter($this->getAllFields(), function (Field $field) {
             if ($field instanceof PivotField) {
                 return true;
             }
@@ -1025,7 +1025,7 @@ final class Schema
         return $r;
     }
 
-    public function getFieldComposedFields(AbstractField|Field $field): array
+    public function getFieldComposedFields(Field $field): array
     {
         if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) {
             return [];
@@ -1064,7 +1064,7 @@ final class Schema
         return $r;
     }
 
-    public function getComposedField(string $fieldName): null|AbstractField|Field
+    public function getComposedField(string $fieldName): null|Field
     {
         $r = array_filter($this->getComposedFields(), function ($field) use ($fieldName) {
             return $field?->getName() === $fieldName;
@@ -1102,7 +1102,7 @@ final class Schema
     }
 
     /**
-     * @return AbstractField[]
+     * @return Field[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -1110,26 +1110,26 @@ final class Schema
     {
         if (count($this->idFields) > 0) return $this->idFields;
 
-        /** @var AbstractField[] $stack */
+        /** @var Field[] $stack */
         $stack = $this->getAllFields();
 
         if ($this->isPivot()) {
-            $fields = array_filter($stack, function (AbstractField|Field $field) {
+            $fields = array_filter($stack, function (Field $field) {
                 return $field instanceof IntegerField && $field->isPivot();
             });
 
         } elseif ($this->hasComplexPrimaryKey()) {
-            $fields = array_filter($stack, function (AbstractField|Field $field) {
+            $fields = array_filter($stack, function (Field $field) {
                 return in_array($field->getName(), $this->complexPrimaryKey);
             });
 
         } else {
-            $fields = array_filter($stack, function (AbstractField|Field $field) {
+            $fields = array_filter($stack, function (Field $field) {
                 return $field->isIdentifier();
             });
         }
 
-        $this->idColumns = array_values(array_map(function (AbstractField|Field $field) {
+        $this->idColumns = array_values(array_map(function (Field $field) {
             $r = $field->getName();
             if ($field instanceof IntegerField && $field->isForeignKey()) $r .= 'Id';
             return $r;
@@ -1141,7 +1141,7 @@ final class Schema
         return $this->idFields;
     }
 
-    public function getIdentifier(string $name): AbstractField|null|Field
+    public function getIdentifier(string $name): null|Field
     {
         $haystack = $this->getIdentifiers();
         foreach ($haystack as $field) {
@@ -1153,7 +1153,7 @@ final class Schema
 
     public function getIdentifiersNames(): array
     {
-        return array_map(function (AbstractField|Field $field) {
+        return array_map(function (Field $field) {
             return $field->getName();
         }, $this->getIdentifiers());
     }
@@ -1184,7 +1184,7 @@ final class Schema
 
     /**
      * @deprecated
-     * @return AbstractField[]
+     * @return Field[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
@@ -1248,7 +1248,7 @@ final class Schema
      */
     public function getFieldsPointingToComponent(string $component): array
     {
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $this->getRelationalFields();
         return array_filter($fields, function ($field) use ($component) {
             if (($field instanceof IntegerField && $field->isForeignKey())
@@ -1264,10 +1264,10 @@ final class Schema
 
     /**
      * @param string $component
-     * @return AbstractField|null
+     * @return Field|null
      * @throws InvalidComponentException|SchemaNotDefinedException
      */
-    public function getOneFieldPointingToComponent(string $component, Schema|null $pivotSchema = null): AbstractField|null|Field
+    public function getOneFieldPointingToComponent(string $component, Schema|null $pivotSchema = null): Field|null
     {
         $r = $this->getFieldsPointingToComponent($component);
         if (count($r) > 0) {
@@ -1291,9 +1291,9 @@ final class Schema
         return null;
     }
 
-    public function getOnePositionField(): AbstractField|Field|null
+    public function getOnePositionField(): Field|null
     {
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $this->getFields();
         $r = array_values(array_filter($fields, function ($field) {
             return ($field instanceof IntegerField && $field->isPosition());
@@ -1311,7 +1311,7 @@ final class Schema
      */
     public function getColumnsPointingToComponent(string $component, bool $matchOne = false)
     {
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $this->getAllFields();
         $results = array_map(function ($item) {
             return $item->getColumn();
@@ -1381,7 +1381,7 @@ final class Schema
 
     /**
      * @param string|AccessPolicyUsage $accessPolicy
-     * @return AbstractField[]
+     * @return Field[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      * @throws UndefinedAccessPolicyException
@@ -1390,14 +1390,14 @@ final class Schema
     {
         $accessPolicy = $accessPolicy instanceof AccessPolicyUsage ? $this->getAccessPolicy($accessPolicy->name) : $this->getAccessPolicy($accessPolicy);
 
-        return array_filter($this->getAllFields(), function (AbstractField|Field $field) use ($accessPolicy) {
+        return array_filter($this->getAllFields(), function (Field $field) use ($accessPolicy) {
             return !$accessPolicy->includesFieldName($field->getName());
         });
     }
 
     /**
      * @param string|AccessPolicyUsage $accessPolicy
-     * @return AbstractField[]
+     * @return Field[]
      * @throws UndefinedAccessPolicyException
      */
     public function getAccessPolicyComposedFields(string|AccessPolicyUsage $accessPolicy): array
@@ -1412,7 +1412,7 @@ final class Schema
             }
 
             if ($included) {
-                /** @var AbstractField $f */
+                /** @var Field $f */
                 $f = clone $field;
                 $f->setName($key);
                 $r[$key] = $f;
@@ -1760,7 +1760,7 @@ final class Schema
 
     public function applyIdentifierConstraintsToQueryFromInstance(Query $query, Item $instance): static
     {
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $this->getIdentifiers();
 
         foreach ($fields as $field) {
@@ -1781,7 +1781,7 @@ final class Schema
 
     public function applyIdentifierConstraintsToQueryFromData(Query $query, array|int|string $data): static
     {
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $this->getIdentifiers();
 
         if (!is_array($data)) {

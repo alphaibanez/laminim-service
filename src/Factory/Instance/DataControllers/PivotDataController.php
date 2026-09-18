@@ -3,11 +3,11 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instantiator;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
@@ -408,7 +408,7 @@ final class PivotDataController
         /** @var Schema $pivotedSchema */
         $pivotedSchema = $field->getPivotSchema();
 
-        /** @var AbstractField $pivotedField */
+        /** @var Field $pivotedField */
         $pivotedField = $pivotedSchema->getOneFieldPointingToComponent($this->schema->getComponent(), $pivotedSchema);
 
         $pivotedFieldColumn = trim($pivotedField->getColumn());

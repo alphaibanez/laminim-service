@@ -5,8 +5,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Traits\ItemWithEncryptDataTrait;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\StringField;
 
 #[LaminimUse]
@@ -77,7 +77,7 @@ class EncryptFieldGenerator implements FieldGenerator
         ]);
     }
 
-    public static function generateTraitsUsageCode(AbstractField $field): array
+    public static function generateTraitsUsageCode(Field $field): array
     {
         return [
             ItemWithEncryptDataTrait::class

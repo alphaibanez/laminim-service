@@ -5,8 +5,8 @@ namespace Lkt\CodeMaker\FieldGeneration;
 use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Traits\ItemWithFileDataTrait;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 
 #[LaminimUse]
 class FileFieldGenerator implements FieldGenerator
@@ -83,7 +83,7 @@ class FileFieldGenerator implements FieldGenerator
         ]);
     }
 
-    public static function generateTraitsUsageCode(AbstractField $field): array
+    public static function generateTraitsUsageCode(Field $field): array
     {
         return [
             ItemWithFileDataTrait::class

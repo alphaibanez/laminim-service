@@ -3,7 +3,6 @@
 namespace Lkt\Factory\Instantiator\Process;
 
 use Lkt\Factory\Fields\Interfaces\Field;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
@@ -52,7 +51,7 @@ final class ProcessQueryCallerData
         $filterRules = $this->filterRules;
         $caller = $this->queryCaller;
 
-        array_reduce($fields, function (&$result, AbstractField|Field $field) use ($caller, $data, $processRules, $filterRules) {
+        array_reduce($fields, function (&$result, Field $field) use ($caller, $data, $processRules, $filterRules) {
             $key = $field->getName();
             $column = $field->getColumn();
             if (!array_key_exists($key, $data)) {

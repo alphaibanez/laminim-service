@@ -2,7 +2,7 @@
 
 namespace Lkt\CodeMaker\DTO;
 
-use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Fields\Interfaces\Field;
 
 class FieldGeneratorData
 {
@@ -25,5 +25,5 @@ class FieldGeneratorData
 
     public string $getterReturnType = '';
     public string $enumChoiceClass = '';
-    public AbstractField $field;
+    public Field $field;
 }

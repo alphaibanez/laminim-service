@@ -2,9 +2,10 @@
 
 namespace Lkt\Factory\Schemas\ComputedFields;
 
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 
-abstract class AbstractComputedField extends AbstractField
+abstract class AbstractComputedField extends AbstractField implements Field
 {
     protected $value;
     protected string $field = '';

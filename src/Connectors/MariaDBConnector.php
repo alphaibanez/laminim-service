@@ -4,10 +4,10 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -123,7 +123,7 @@ class MariaDBConnector extends DatabaseConnector
     {
         $table = $schema->getTable();
 
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $schema->getSameTableFields();
 
         $r = [];
@@ -357,7 +357,7 @@ class MariaDBConnector extends DatabaseConnector
         $fields = $schema->getAllFields();
         $parsed = [];
 
-        $fixedLangFields = array_filter($fields, function (AbstractField $field) {
+        $fixedLangFields = array_filter($fields, function (Field $field) {
             return $field instanceof StringField && $field->isI18nJson() && $field->getFixedLangKey();
         });
 
@@ -594,10 +594,10 @@ class MariaDBConnector extends DatabaseConnector
 
         if ($mode === BatchInsertMode::onDuplicatedUpdate) {
             $updateKeys = [];
-            $identifiers = array_map(function (AbstractField $f) {
+            $identifiers = array_map(function (Field $f) {
                 return $f->getColumn();
             }, $schema->getIdentifiers());
-            $fields = array_map(function (AbstractField $f) {
+            $fields = array_map(function (Field $f) {
                 return $f->getColumn();
             }, $schema->getSameTableFields());
             $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {

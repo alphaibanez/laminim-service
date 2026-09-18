@@ -9,9 +9,9 @@ use InfluxDB2\Model\WritePrecision;
 use InfluxDB2\Service\BucketsService;
 use InfluxDB2\Service\OrganizationsService;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
-use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
@@ -257,7 +257,7 @@ class InfluxConnector extends DatabaseConnector
     {
         $table = $schema->getTable();
 
-        /** @var AbstractField[] $fields */
+        /** @var Field[] $fields */
         $fields = $schema->getSameTableFields();
 
         $r = [];

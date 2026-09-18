@@ -32,7 +32,7 @@ trait ColumnRelatedTrait
      * @param string $type
      * @param $column
      * @param $forceRefresh
-     * @return null|\Lkt\Factory\Instantiator\Instances\AbstractInstance|Item
+     * @return null|Item
      * @throws InvalidComponentException
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException

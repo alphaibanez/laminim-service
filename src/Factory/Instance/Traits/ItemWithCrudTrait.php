@@ -8,7 +8,6 @@ use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
@@ -251,7 +250,7 @@ trait ItemWithCrudTrait
          * Automatically unlink refs for foreign keys fields pointing this instance
          */
         foreach ($schema->getFieldsWithAppendForeignKeysName() as $relatedField) {
-            /** @var AbstractInstance[] $relatedElements */
+            /** @var Item[] $relatedElements */
             $relatedElements = $this->retrieveValue($relatedField->getName(), [], RetrieveDataMode::Item);
             $relatedSchema = Schema::get($relatedField->getComponent());
             $relatedElementsField = $relatedSchema->getField($relatedField->getColumn());

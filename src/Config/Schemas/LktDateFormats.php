@@ -18,7 +18,6 @@ Schema::add(
             InstanceSettings::define(LktDateFormat::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
-                ->setAbstractInstanceExtends(false)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')

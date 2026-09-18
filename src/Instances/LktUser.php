@@ -6,7 +6,6 @@ use Lkt\Config\Settings\UserSettings;
 use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Generated\GeneratedLktUser;
 use Lkt\Generated\LktUserWhere;
@@ -155,7 +154,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
             ->save();
     }
 
-    public function hasAppPermission(string $component, string $permission, AbstractInstance|Item|null $instance = null): bool
+    public function hasAppPermission(string $component, string $permission, Item|null $instance = null): bool
     {
         $roles = $this->getAppRoles();
         // Use anonymous role in order to check for ensured perms
@@ -167,7 +166,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         return false;
     }
 
-    public function hasAdminPermission(string $component, string $permission, AbstractInstance|Item|null $instance = null): bool
+    public function hasAdminPermission(string $component, string $permission, Item|null $instance = null): bool
     {
         if ($this->isAdministrator()) return true;
         if (!$this->hasAdminAccess()) return false;
@@ -177,7 +176,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         return false;
     }
 
-    public function getAppCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null):? RoleCapability
+    public function getAppCapability(string $component, string $permission, Item|null $instance = null):? RoleCapability
     {
         $roles = $this->getAppRoles();
         // Use anonymous role in order to check for ensured perms
@@ -190,7 +189,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         return null;
     }
 
-    public function getAdminCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null):? RoleCapability
+    public function getAdminCapability(string $component, string $permission, Item|null $instance = null):? RoleCapability
     {
         if (!$this->hasAdminAccess()) return null;
         foreach ($this->getAdminRoles() as $role) {
@@ -200,7 +199,7 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
         return null;
     }
 
-    public function attemptToGrantPermissions(AccessLevel $accessLevel, string $component, GrantedPermsAttempt $grantedPermsAttempt, AbstractInstance|Item|null $instance = null): array
+    public function attemptToGrantPermissions(AccessLevel $accessLevel, string $component, GrantedPermsAttempt $grantedPermsAttempt, Item|null $instance = null): array
     {
         $r = [];
 

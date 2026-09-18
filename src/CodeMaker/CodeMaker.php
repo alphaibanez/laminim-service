@@ -3,7 +3,6 @@
 namespace Lkt\CodeMaker;
 
 use Lkt\CodeMaker\Helpers\FieldsCodeHelper;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithAccessPolicyTrait;
 use Lkt\Factory\Instance\Traits\ItemWithCrudTrait;
@@ -12,7 +11,6 @@ use Lkt\Factory\Instance\Traits\ItemWithIdentifierValueTrait;
 use Lkt\Factory\Instance\Traits\ItemWithInstanceFactoryTrait;
 use Lkt\Factory\Instance\Traits\ItemWithSchemaStorePathTrait;
 use Lkt\Factory\Instance\Traits\ItemWithSchemaTrait;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
 use function Lkt\Tools\Strings\removeDuplicatedWhiteSpaces;
@@ -44,19 +42,13 @@ class CodeMaker
                 ? $instanceSettings?->getClassToBeExtended()
                 : '';
 
-            if (!$extends && $instanceSettings->hasAbstractInstanceExtends()) {
-                $extends = AbstractInstance::class;
-            }
-
             if ($extends !== '') $extends = "extends \\{$extends}";
 
             $implements = [];
             $implementsCfg = $instanceSettings?->getImplementedInterfacesAsString();
             if ($implementsCfg !== '') $implements[] = $implementsCfg;
 
-            if (!$instanceSettings->hasAbstractInstanceExtends()) {
-                $implements[] = '\\' . Item::class;
-            }
+            $implements[] = '\\' . Item::class;
 
             if (count($implements) > 0) {
                 $t = implode(',', $implements);
@@ -66,17 +58,15 @@ class CodeMaker
             }
 
             $traits = [];
-            if (!$instanceSettings->hasAbstractInstanceExtends()) {
-                $traits[] = '\\' . implode(',\\', [
-                        ItemWithIdentifierValueTrait::class,
-                        ItemWithDataTrait::class,
-                        ItemWithAccessPolicyTrait::class,
-                        ItemWithInstanceFactoryTrait::class,
-                        ItemWithCrudTrait::class,
-                        ItemWithSchemaStorePathTrait::class,
-                        ItemWithSchemaTrait::class,
-                    ]);
-            }
+            $traits[] = '\\' . implode(',\\', [
+                ItemWithIdentifierValueTrait::class,
+                ItemWithDataTrait::class,
+                ItemWithAccessPolicyTrait::class,
+                ItemWithInstanceFactoryTrait::class,
+                ItemWithCrudTrait::class,
+                ItemWithSchemaStorePathTrait::class,
+                ItemWithSchemaTrait::class,
+            ]);
             $instanceTraits = $instanceSettings?->getUsedTraitsAsString();
             if ($instanceTraits !== ''){
                 $traits[] = $instanceTraits;
@@ -91,10 +81,8 @@ class CodeMaker
                 $traits[] = $methodsTraits;
             }
 
-            if (!$instanceSettings->hasAbstractInstanceExtends()) {
-                $methods = ['public function __construct(array $initialData = []){$this->initialFeed($initialData);}', $methods];
-                $methods = implode('', $methods);
-            }
+            $methods = ['public function __construct(array $initialData = []){$this->initialFeed($initialData);}', $methods];
+            $methods = implode('', $methods);
 
             if (count($traits) > 0) {
                 $traitsStr = 'use ' . implode(',', $traits) . ';';

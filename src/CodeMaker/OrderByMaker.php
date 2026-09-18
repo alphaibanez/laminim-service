@@ -3,7 +3,6 @@
 namespace Lkt\CodeMaker;
 
 use Lkt\CodeMaker\Helpers\FieldsOrderByHelper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
 use function Lkt\Tools\Strings\removeDuplicatedWhiteSpaces;
@@ -40,14 +39,7 @@ class OrderByMaker
             $className .= 'OrderBy';
             $returnSelf = '\\' . $className;
 
-            $extends = $instanceSettings?->hasLegalExtendClass()
-                ? $instanceSettings?->getClassToBeExtended()
-                : AbstractInstance::class;
-
-            $extends = '\\'. $extends;
-
             $namespace = $instanceSettings?->getNamespaceForGeneratedClass();
-
 
             $relatedQueryCaller = [$instanceSettings?->getNamespaceForGeneratedClass(), $className];
             $relatedQueryCaller = implode('\\', $relatedQueryCaller);

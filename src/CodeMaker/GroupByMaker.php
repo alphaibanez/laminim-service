@@ -3,7 +3,6 @@
 namespace Lkt\CodeMaker;
 
 use Lkt\CodeMaker\Helpers\FieldsGroupByHelper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
 use function Lkt\Tools\Strings\removeDuplicatedWhiteSpaces;
@@ -39,12 +38,6 @@ class GroupByMaker
             $className = $className[count($className) - 1];
             $className .= 'GroupBy';
             $returnSelf = '\\' . $className;
-
-            $extends = $instanceSettings?->hasLegalExtendClass()
-                ? $instanceSettings?->getClassToBeExtended()
-                : AbstractInstance::class;
-
-            $extends = '\\'. $extends;
 
             $namespace = $instanceSettings?->getNamespaceForGeneratedClass();
 

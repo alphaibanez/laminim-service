@@ -23,12 +23,18 @@ final class InstanceSettings
 
     protected bool $abstractInstanceExtends = false;
 
+    /**
+     * @deprecated
+     */
     public function setAbstractInstanceExtends(bool $status = true): static
     {
         $this->abstractInstanceExtends = $status;
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     public function hasAbstractInstanceExtends(): bool
     {
         return $this->abstractInstanceExtends;

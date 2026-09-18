@@ -3,7 +3,6 @@
 namespace Lkt\CodeMaker;
 
 use Lkt\CodeMaker\Helpers\FieldsQueryCallerHelper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
 use function Lkt\Tools\Strings\removeDuplicatedWhiteSpaces;
@@ -42,17 +41,6 @@ class QueryCallerMaker
                 $className .= 'QueryBuilder';
             }
             $returnSelf = '\\' . $className;
-
-            $extends = $instanceSettings?->hasLegalExtendClass()
-                ? $instanceSettings?->getClassToBeExtended()
-                : AbstractInstance::class;
-
-            $extends = '\\'. $extends;
-
-            $implements = $instanceSettings?->getImplementedInterfacesAsString();
-            if ($implements !== ''){
-                $implements = "implements {$implements};";
-            }
 
             $traits = $instanceSettings?->getUsedTraitsAsString();
             if ($traits !== ''){

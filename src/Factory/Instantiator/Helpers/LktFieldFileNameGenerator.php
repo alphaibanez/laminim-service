@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Helpers;
 
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileUpload\FileNameGenerator\FileNameGenerator;
@@ -14,9 +14,9 @@ class LktFieldFileNameGenerator implements FileNameGenerator
 {
     protected FileField|null $field = null;
     protected Schema|null $schema = null;
-    protected AbstractInstance|null $instance = null;
+    protected Item|null $instance = null;
 
-    public function __construct(FileField $field, Schema $schema, AbstractInstance $instance)
+    public function __construct(FileField $field, Schema $schema, Item $instance)
     {
         $this->field = $field;
         $this->schema = $schema;

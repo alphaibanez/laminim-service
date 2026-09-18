@@ -238,23 +238,23 @@ abstract class AbstractInstance implements Item
 
     /**
      * @deprecated
-     * @param AbstractInstance $instance
+     * @param static $instance
      * @param array $params
      * @return static
      */
-    public static function update(AbstractInstance $instance, array $params): static
+    public static function update(Item $instance, array $params): static
     {
         return $instance->feedAndSave($params);
     }
 
     /**
      * @deprecated
-     * @param AbstractInstance $instance
+     * @param static $instance
      * @param array $params
      * @param array $internalMethodsArguments
      * @return static
      */
-    public static function feedInstance(AbstractInstance $instance, array $params, array $internalMethodsArguments = []): static
+    public static function feedInstance(Item $instance, array $params, array $internalMethodsArguments = []): static
     {
         return $instance->feed($params, $internalMethodsArguments);
     }

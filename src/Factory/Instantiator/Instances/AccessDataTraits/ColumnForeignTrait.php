@@ -2,8 +2,8 @@
 
 namespace Lkt\Factory\Instantiator\Instances\AccessDataTraits;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instance\Traits\ItemWithForeignKeyDataTrait;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidSchemaAppClassException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 
@@ -13,11 +13,11 @@ trait ColumnForeignTrait
 
     /**
      * @param string $fieldName
-     * @return AbstractInstance|null
+     * @return Item|null
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException
      */
-    protected function _getForeignVal($type = '', $id = 0, string $fieldName = ''): ?AbstractInstance
+    protected function _getForeignVal($type = '', $id = 0, string $fieldName = ''): ?Item
     {
         return $this->foreignKeyData->getItem($fieldName);
     }

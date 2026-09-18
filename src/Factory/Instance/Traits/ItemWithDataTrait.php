@@ -8,7 +8,6 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
@@ -431,7 +430,7 @@ trait ItemWithDataTrait
                     $relatedSchema = Schema::get($relatedComponent);
 
                     $relatedIdColumn = $relatedSchema->getIdColumn()[0];
-                    /** @var AbstractInstance $relatedClass */
+                    /** @var Item $relatedClass */
                     $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
                     $relatedMode = false;
@@ -451,7 +450,7 @@ trait ItemWithDataTrait
 
                     $currentIds = [];
 
-                    /** @var AbstractInstance[] $currentItems */
+                    /** @var Item[] $currentItems */
                     foreach ($currentItems as $currentItem) {
                         $code = $relatedSchema->getInstanceCode($currentItem);
                         if (!in_array($code, $currentIds, true)) $currentIds[] = $code;

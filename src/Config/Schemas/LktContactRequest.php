@@ -13,9 +13,7 @@ use Lkt\Instances\LktUser;
 
 Schema::add(
     Schema::table('lkt_contact_requests', LaminimComponent::ContactRequest->value)
-        ->setInstanceSettings(InstanceSettings::simple(LktContactRequest::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-            ->setAbstractInstanceExtends(false)
-        )
+        ->setInstanceSettings(InstanceSettings::simple(LktContactRequest::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
         ->setItemsPerPage(20)
         ->setCountableField('id')
         ->setFields([

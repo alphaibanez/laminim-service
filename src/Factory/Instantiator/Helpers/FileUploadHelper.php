@@ -4,7 +4,6 @@ namespace Lkt\Factory\Instantiator\Helpers;
 
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileUpload\File;
@@ -17,12 +16,12 @@ class FileUploadHelper
     /**
      * @param FileField $field
      * @param array $file
-     * @param AbstractInstance $instance
+     * @param Item $instance
      * @param Schema $schema
      * @return array|null
      * @throws UnsetFieldStorePathException
      */
-    public static function uploadFileField(FileField $field, array $file, AbstractInstance|Item $instance, Schema $schema): ?array
+    public static function uploadFileField(FileField $field, array $file, Item $instance, Schema $schema): ?array
     {
         $storePath = $field->getStorePath($instance);
         if (!$storePath) $instance::getSchemaStorePath($instance);

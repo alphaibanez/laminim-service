@@ -16,9 +16,7 @@ use Lkt\WebPages\Enums\WebPageStatus;
 
 Schema::add(
     Schema::table('lkt_contact_reasons', LaminimComponent::ContactReason->value)
-        ->setInstanceSettings(InstanceSettings::simple(LktContactReason::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-            ->setAbstractInstanceExtends(false)
-        )
+        ->setInstanceSettings(InstanceSettings::simple(LktContactReason::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
         ->setItemsPerPage(20)
         ->setCountableField('id')
         ->setFields([

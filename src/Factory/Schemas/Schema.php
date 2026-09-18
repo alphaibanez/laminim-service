@@ -7,7 +7,6 @@ use Lkt\Attributes\Deprecated;
 use Lkt\Attributes\LaminimUse;
 use Lkt\Attributes\Recommended;
 use Lkt\Attributes\Stable;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Enums\OnParentDrop;
 use Lkt\Factory\Fields\Interfaces\NonRelationalField;
 use Lkt\Factory\Fields\Interfaces\RelationalField;
@@ -15,7 +14,6 @@ use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\FieldFilterMode;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -1584,7 +1582,7 @@ final class Schema
         return null;
     }
 
-    public function getInstanceCode(array|AbstractInstance|Item $instanceData, string|int|array|null $instanceId = null): string
+    public function getInstanceCode(array|Item $instanceData, string|int|array|null $instanceId = null): string
     {
         if (is_array($instanceId)) $instanceId = implode('-', $instanceId);
 
@@ -1762,7 +1760,7 @@ final class Schema
         });
     }
 
-    public function applyIdentifierConstraintsToQueryFromInstance(Query $query, AbstractInstance|Item $instance): static
+    public function applyIdentifierConstraintsToQueryFromInstance(Query $query, Item $instance): static
     {
         /** @var AbstractField[] $fields */
         $fields = $this->getIdentifiers();

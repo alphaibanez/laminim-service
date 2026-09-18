@@ -6,7 +6,6 @@ use Lkt\Connectors\DatabaseConnections;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\Relations\RelatedKeysMergeHelper;
 use Lkt\Factory\Schemas\Fields\RelatedKeysMergeField;
@@ -280,7 +279,7 @@ final class RelatedItemsDataController
 
             $relatedComponent = $field->getComponent($this->schema, $this->item);
             $relatedSchema = Schema::get($relatedComponent);
-            /** @var AbstractInstance $relatedClass */
+            /** @var Item $relatedClass */
             $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
 
             $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());

@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Export\DTO;
 
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
+use Lkt\Factory\Instance\Interfaces\Item;
 
 class SchemaDataExport extends AbstractDataExport
 {
@@ -10,7 +10,7 @@ class SchemaDataExport extends AbstractDataExport
     readonly public array $rows;
 
     /**
-     * @param AbstractInstance[] $items
+     * @param Item[] $items
      * @param string $accessPolicy
      */
     protected function __construct(array $items, string $accessPolicy = '')
@@ -26,7 +26,7 @@ class SchemaDataExport extends AbstractDataExport
     }
 
     /**
-     * @param AbstractInstance[] $items
+     * @param Item[] $items
      * @param string $accessPolicy
      * @return static
      */

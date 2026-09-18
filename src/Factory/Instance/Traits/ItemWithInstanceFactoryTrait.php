@@ -2,9 +2,9 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Instantiator\ValueObjects\MonthlyAccuratePages;
@@ -133,7 +133,7 @@ trait ItemWithInstanceFactoryTrait
     }
 
     /**
-     * @return AbstractInstance|null
+     * @return Item|null
      * @throws InvalidComponentException
      * @throws InvalidSchemaAppClassException
      * @throws SchemaNotDefinedException

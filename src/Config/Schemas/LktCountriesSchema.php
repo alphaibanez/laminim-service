@@ -16,9 +16,7 @@ use Lkt\Instances\LktCountry;
 
 Schema::add(
     Schema::table('lkt_countries', LaminimComponent::Country->value)
-        ->setInstanceSettings(InstanceSettings::simple(LktCountry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-            ->setAbstractInstanceExtends(false)
-        )
+        ->setInstanceSettings(InstanceSettings::simple(LktCountry::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
         ->setItemsPerPage(20)
         ->setCountableField('id')
         ->setFields([

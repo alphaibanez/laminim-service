@@ -6,7 +6,6 @@ use Lkt\Attributes\NotRecommended;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\ComponentId;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Schema;
 
@@ -29,7 +28,7 @@ trait FieldWithComponentOptionTrait
         return $this;
     }
 
-    final public function getComponent(Schema|null $schema = null, AbstractInstance|Item|null $instance = null): string
+    final public function getComponent(Schema|null $schema = null, Item|null $instance = null): string
     {
         if ($schema && $instance && method_exists($this, 'getDynamicComponentField')) {
             $dynamicComponentFieldName = $this->getDynamicComponentField();
@@ -47,7 +46,7 @@ trait FieldWithComponentOptionTrait
         return '';
     }
 
-    public function getTargetSchema(Schema|null $schema = null, AbstractInstance|Item|null $instance = null): Schema|null
+    public function getTargetSchema(Schema|null $schema = null, Item|null $instance = null): Schema|null
     {
         $component = $this->getComponent($schema, $instance);
         if (!$component) return null;

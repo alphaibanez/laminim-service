@@ -4,10 +4,8 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Fields\AbstractField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
@@ -569,7 +567,7 @@ class MariaDBConnector extends DatabaseConnector
     public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static
     {
         $values = [];
-        /** @var AbstractInstance $item */
+        /** @var Item $item */
         foreach ($items as $item) {
             $payload = $item->getUpdatePayload();
             if (count($payload) === 0) continue;
@@ -624,7 +622,7 @@ class MariaDBConnector extends DatabaseConnector
     {
         $values = ['START TRANSACTION'];
 
-        /** @var AbstractInstance $item */
+        /** @var Item $item */
         foreach ($items as $item) {
             $builder = $schema->getQueryBuilder();
             $payload = $item->getUpdatePayload();

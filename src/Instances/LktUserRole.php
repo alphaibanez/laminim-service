@@ -6,7 +6,6 @@ use Lkt\Controllers\LktPermissionController;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktUserRole;
 use Lkt\Users\Enums\RoleCapability;
@@ -15,7 +14,7 @@ class LktUserRole extends GeneratedLktUserRole
 {
     const COMPONENT = 'lkt-user-role';
 
-    public function getDefinedRoleCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null, bool $adminAccess = false): ?RoleCapability
+    public function getDefinedRoleCapability(string $component, string $permission, Item|null $instance = null, bool $adminAccess = false): ?RoleCapability
     {
         // Firstly, check if there is a component without any kind of configuration
         // which attempts to always granted
@@ -34,7 +33,7 @@ class LktUserRole extends GeneratedLktUserRole
         return $capability;
     }
 
-    public function hasPermission(string $component, string $permission, AbstractInstance|Item|null $instance = null, bool $adminAccess = false): bool
+    public function hasPermission(string $component, string $permission, Item|null $instance = null, bool $adminAccess = false): bool
     {
         // Firstly, check if there is a component without any kind of configuration
         // which attempts to always granted

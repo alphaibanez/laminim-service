@@ -15,9 +15,7 @@ use Lkt\Instances\LktCurrency;
 
 Schema::add(
     Schema::table('lkt_currencies', LaminimComponent::Currency->value)
-        ->setInstanceSettings(InstanceSettings::simple(LktCurrency::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
-            ->setAbstractInstanceExtends(false)
-        )
+        ->setInstanceSettings(InstanceSettings::simple(LktCurrency::class, 'Lkt\Generated', __DIR__ . '/../../Generated'))
         ->setItemsPerPage(20)
         ->setCountableField('id')
         ->setFields([

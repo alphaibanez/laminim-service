@@ -3,7 +3,6 @@
 namespace Lkt\Users\Interfaces;
 
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\Instances\AbstractInstance;
 use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\Enums\AccessLevel;
 use Lkt\Users\Enums\RoleCapability;
@@ -19,9 +18,9 @@ interface SessionUserInterface
     public static function getSignedInUser(): ?static;
     public static function signedIn(): bool;
     public function hasAdminAccess(): bool;
-    public function hasAppPermission(string $component, string $permission, AbstractInstance|Item|null $instance = null): bool;
-    public function hasAdminPermission(string $component, string $permission, AbstractInstance|Item|null $instance = null): bool;
-    public function getAppCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null):? RoleCapability;
-    public function getAdminCapability(string $component, string $permission, AbstractInstance|Item|null $instance = null):? RoleCapability;
-    public function attemptToGrantPermissions(AccessLevel $accessLevel, string $component, GrantedPermsAttempt $grantedPermsAttempt, AbstractInstance|Item|null $instance = null): array;
+    public function hasAppPermission(string $component, string $permission, Item|null $instance = null): bool;
+    public function hasAdminPermission(string $component, string $permission, Item|null $instance = null): bool;
+    public function getAppCapability(string $component, string $permission, Item|null $instance = null):? RoleCapability;
+    public function getAdminCapability(string $component, string $permission, Item|null $instance = null):? RoleCapability;
+    public function attemptToGrantPermissions(AccessLevel $accessLevel, string $component, GrantedPermsAttempt $grantedPermsAttempt, Item|null $instance = null): array;
 }

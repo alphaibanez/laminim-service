@@ -38,8 +38,8 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 class ForeignKeysField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-    use FieldWithComponentOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithComponentOptionTrait,
         FieldWithDynamicComponentOptionTrait,
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,

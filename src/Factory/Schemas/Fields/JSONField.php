@@ -12,9 +12,8 @@ use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 class JSONField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithCompressOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithCompressOptionTrait,
         FieldWithNullOptionTrait,
         FieldWithEmptyDataModeTrait;
 

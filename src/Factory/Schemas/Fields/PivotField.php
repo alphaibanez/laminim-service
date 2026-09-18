@@ -18,9 +18,8 @@ use Lkt\Factory\Schemas\Schema;
 class PivotField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithComponentOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,
         FieldWithPivotOptionTrait,

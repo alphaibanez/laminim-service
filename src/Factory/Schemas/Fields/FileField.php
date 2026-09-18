@@ -18,8 +18,8 @@ class FileField implements Field
 {
 
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-    use FieldWithNullOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
         FieldWithEmptyDataModeTrait;
 

@@ -13,8 +13,8 @@ use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 class FloatField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-    use FieldWithNullOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
         FieldWithEmptyDataModeTrait,
         FieldWithInvalidDataModeTrait;

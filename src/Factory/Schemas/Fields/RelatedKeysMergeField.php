@@ -35,9 +35,8 @@ use Lkt\Factory\Schemas\Relations\RelatedRelation;
 class RelatedKeysMergeField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithWhereOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,
         FieldWithSoftTypedOptionTrait,
         FieldWithSingleModeOptionTrait,

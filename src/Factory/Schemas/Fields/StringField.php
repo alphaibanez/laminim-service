@@ -21,9 +21,8 @@ use Lkt\Factory\Fields\Traits\FieldWithUniqueValue;
 class StringField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithNullOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait,
         FieldWithJsonI18nStorageTrait,
         FieldWithMandatoryOptionTrait,
         FieldWithInvalidDataModeTrait,

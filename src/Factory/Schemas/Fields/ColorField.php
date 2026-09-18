@@ -12,8 +12,8 @@ use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 class ColorField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-    use FieldWithNullOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait,
         FieldWithEmptyDataModeTrait,
         FieldWithInvalidDataModeTrait;
 }

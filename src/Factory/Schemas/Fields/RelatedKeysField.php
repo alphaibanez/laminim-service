@@ -35,9 +35,8 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 class RelatedKeysField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithComponentOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,
         FieldWithSoftTypedOptionTrait,

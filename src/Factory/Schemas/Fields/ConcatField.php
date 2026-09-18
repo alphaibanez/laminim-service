@@ -11,8 +11,8 @@ use Lkt\Factory\Schemas\Schema;
 class ConcatField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-    use FieldWithNullOptionTrait;
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait;
 
     protected array $fields = [];
     protected string $separator = '';

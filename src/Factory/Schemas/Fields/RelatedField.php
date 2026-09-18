@@ -20,9 +20,8 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 class RelatedField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithComponentOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,
         FieldWithSoftTypedOptionTrait,

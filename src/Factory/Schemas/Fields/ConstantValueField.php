@@ -11,8 +11,8 @@ class ConstantValueField implements Field
 {
 
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-    use FieldWithNullOptionTrait;
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait;
 
     protected string $constantValueType = 'string';
     protected mixed $constantValue;

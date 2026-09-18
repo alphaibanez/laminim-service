@@ -25,9 +25,8 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 class IntegerField implements Field
 {
     use BaseFieldTrait,
-        FieldWithDefaultValue;
-
-    use FieldWithNullOptionTrait,
+        FieldWithDefaultValue,
+        FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
         FieldWithInvalidDataModeTrait,
         FieldWithEmptyDataModeTrait,

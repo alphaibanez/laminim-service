@@ -3,12 +3,16 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
-class BooleanField extends AbstractField implements Field
+class BooleanField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
     use FieldWithNullOptionTrait,
         FieldWithEmptyDataModeTrait,
         FieldWithInvalidDataModeTrait;

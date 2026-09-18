@@ -3,10 +3,14 @@
 namespace Lkt\Factory\Schemas\ComputedFields;
 
 use Lkt\Factory\Fields\Interfaces\Field;
-use Lkt\Factory\Schemas\Fields\AbstractField;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 
-abstract class AbstractComputedField extends AbstractField implements Field
+abstract class AbstractComputedField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
+
     protected $value;
     protected string $field = '';
 

@@ -3,12 +3,17 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
 use Lkt\Factory\Fields\Traits\FieldWithCompressOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
-class JSONField extends AbstractField implements Field
+class JSONField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
+
     use FieldWithCompressOptionTrait,
         FieldWithNullOptionTrait,
         FieldWithEmptyDataModeTrait;

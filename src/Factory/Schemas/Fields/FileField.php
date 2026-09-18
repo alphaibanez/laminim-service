@@ -5,6 +5,8 @@ namespace Lkt\Factory\Schemas\Fields;
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Factory\Fields\Enums\FileFieldType;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
@@ -12,8 +14,11 @@ use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
 use Lkt\Factory\Schemas\Values\FieldFilePathValue;
 use Lkt\MIME;
 
-class FileField extends AbstractField implements Field
+class FileField implements Field
 {
+
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
         FieldWithEmptyDataModeTrait;

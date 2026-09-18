@@ -5,7 +5,9 @@ namespace Lkt\Factory\Schemas\Fields;
 use Lkt\Factory\Fields\Enums\EncryptAlgorithm;
 use Lkt\Factory\Fields\Enums\StringFieldType;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
 use Lkt\Factory\Fields\Traits\FieldWithChoiceOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithJsonI18nStorageTrait;
@@ -16,11 +18,10 @@ use Lkt\Factory\Fields\Traits\FieldWithSecureSeedTrait;
 use Lkt\Factory\Fields\Traits\FieldWithTrimMode;
 use Lkt\Factory\Fields\Traits\FieldWithUniqueValue;
 
-class StringField extends AbstractField implements Field
+class StringField implements Field
 {
-//    use BaseFieldTrait,
-//        FieldWithDefaultValue,
-//        NonRelationalFieldInstantiation;
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
 
     use FieldWithNullOptionTrait,
         FieldWithJsonI18nStorageTrait,

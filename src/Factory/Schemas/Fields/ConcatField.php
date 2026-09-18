@@ -3,11 +3,15 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Schema;
 
-class ConcatField extends AbstractField implements Field
+class ConcatField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
     use FieldWithNullOptionTrait;
 
     protected array $fields = [];

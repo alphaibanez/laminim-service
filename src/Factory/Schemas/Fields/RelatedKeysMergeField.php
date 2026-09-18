@@ -4,6 +4,8 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Attributes\Deprecated;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleReferencesTrait;
 use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithPaginationOptionTrait;
@@ -30,8 +32,11 @@ use Lkt\Factory\Schemas\Relations\RelatedRelation;
  * PivotField it's the most direct replacement.
  */
 #[Deprecated]
-class RelatedKeysMergeField extends AbstractField implements Field
+class RelatedKeysMergeField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
+
     use FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,
         FieldWithSoftTypedOptionTrait,

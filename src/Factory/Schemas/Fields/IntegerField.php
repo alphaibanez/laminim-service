@@ -4,10 +4,12 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Enums\IntegerFieldType;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
 use Lkt\Factory\Fields\Traits\FieldWithAvailableOptionsFilterOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithChoiceOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithCompositionOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithDynamicComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
@@ -20,8 +22,11 @@ use Lkt\Factory\Fields\Traits\FieldWithRelatedClonePolicyOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
-class IntegerField extends AbstractField implements Field
+class IntegerField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
+
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
         FieldWithInvalidDataModeTrait,

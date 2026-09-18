@@ -4,13 +4,17 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Enums\DateTimeFieldType;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
 use Lkt\Factory\Fields\Traits\DateFieldWithDefaultValueTrait;
 use Lkt\Factory\Fields\Traits\DateFieldWithFormattedValueTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithFormatsOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
-class DateTimeField extends AbstractField implements Field
+class DateTimeField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
     use FieldWithNullOptionTrait,
         FieldWithFormatsOptionTrait,
         DateFieldWithFormattedValueTrait,

@@ -3,8 +3,10 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Fields\Traits\BaseFieldTrait;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithCompositionOptionTrait;
+use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleReferencesTrait;
 use Lkt\Factory\Fields\Traits\FieldWithOnParentDrop;
 use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
@@ -15,8 +17,11 @@ use Lkt\Factory\Fields\Traits\FieldWithSingleModeOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
-class RelatedField extends AbstractField implements Field
+class RelatedField implements Field
 {
+    use BaseFieldTrait,
+        FieldWithDefaultValue;
+
     use FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,
         FieldWithOrderOptionTrait,

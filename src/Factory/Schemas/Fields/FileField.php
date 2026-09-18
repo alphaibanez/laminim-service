@@ -4,7 +4,7 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Enums\TimeInSeconds;
 use Lkt\Factory\Fields\Enums\FileFieldType;
-use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
@@ -12,7 +12,7 @@ use Lkt\Factory\Schemas\Exceptions\InvalidFieldFilePathException;
 use Lkt\Factory\Schemas\Values\FieldFilePathValue;
 use Lkt\MIME;
 
-class FileField extends AbstractField implements NonRelationalField
+class FileField extends AbstractField implements Field
 {
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,
@@ -37,6 +37,14 @@ class FileField extends AbstractField implements NonRelationalField
     {
         $ins = new static($name, $column);
         $ins->fieldType = FileFieldType::Image;
+        return $ins;
+    }
+
+    public static function images(string $name, string $column = ''): static
+    {
+        $ins = new static($name, $column);
+        $ins->fieldType = FileFieldType::Image;
+        $ins->allowMultiple = true;
         return $ins;
     }
 

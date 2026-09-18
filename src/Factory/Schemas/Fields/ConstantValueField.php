@@ -2,9 +2,10 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
-class ConstantValueField extends AbstractField
+class ConstantValueField extends AbstractField implements Field
 {
     use FieldWithNullOptionTrait;
 

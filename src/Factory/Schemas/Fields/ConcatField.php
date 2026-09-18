@@ -2,11 +2,11 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Schemas\Schema;
 
-class ConcatField extends AbstractField implements NonRelationalField
+class ConcatField extends AbstractField implements Field
 {
     use FieldWithNullOptionTrait;
 

@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Fields\Interfaces;
 
-interface BaseField
+interface Field
 {
     /**
      * @laminim
@@ -22,4 +22,12 @@ interface BaseField
      */
     public function getColumn(): string;
     public function getLocaleColumn(string $locale): string;
+
+
+    /**
+     * @laminim
+     * Field identity
+     */
+    public function setIsIdentifier(bool $status = true): static;
+    public function isIdentifier(): bool;
 }

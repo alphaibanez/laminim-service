@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithCompositionOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleReferencesTrait;
@@ -14,7 +15,7 @@ use Lkt\Factory\Fields\Traits\FieldWithSingleModeOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
-class RelatedField extends AbstractField
+class RelatedField extends AbstractField implements Field
 {
     use FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,

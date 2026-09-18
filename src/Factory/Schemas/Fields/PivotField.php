@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Debug\VarDumper;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithOrderOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithPivotOptionTrait;
@@ -12,7 +13,7 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
 
-class PivotField extends AbstractField
+class PivotField extends AbstractField implements Field
 {
     use FieldWithComponentOptionTrait,
         FieldWithWhereOptionTrait,

@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Attributes\Deprecated;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithAllowAnonymousOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithDynamicComponentOptionTrait;
@@ -32,7 +33,7 @@ use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
  * PivotField it's the most direct replacement.
  */
 #[Deprecated]
-class ForeignKeysField extends AbstractField
+class ForeignKeysField extends AbstractField implements Field
 {
     use FieldWithComponentOptionTrait,
         FieldWithDynamicComponentOptionTrait,

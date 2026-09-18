@@ -2,7 +2,9 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-class ValueListField extends StringField
+use Lkt\Factory\Fields\Interfaces\Field;
+
+class ValueListField extends StringField implements Field
 {
     protected string $separator = ';';
     protected string $readMode = 'both';

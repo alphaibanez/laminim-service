@@ -4,7 +4,7 @@ namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Enums\EncryptAlgorithm;
 use Lkt\Factory\Fields\Enums\StringFieldType;
-use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithChoiceOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
@@ -16,7 +16,7 @@ use Lkt\Factory\Fields\Traits\FieldWithSecureSeedTrait;
 use Lkt\Factory\Fields\Traits\FieldWithTrimMode;
 use Lkt\Factory\Fields\Traits\FieldWithUniqueValue;
 
-class StringField extends AbstractField implements NonRelationalField
+class StringField extends AbstractField implements Field
 {
 //    use BaseFieldTrait,
 //        FieldWithDefaultValue,

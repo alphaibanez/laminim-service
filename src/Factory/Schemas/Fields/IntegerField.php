@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Schemas\Fields;
 
 use Lkt\Factory\Fields\Enums\IntegerFieldType;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithAvailableOptionsFilterOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithChoiceOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithComponentOptionTrait;
@@ -19,7 +20,7 @@ use Lkt\Factory\Fields\Traits\FieldWithRelatedClonePolicyOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithSoftTypedOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithWhereOptionTrait;
 
-class IntegerField extends AbstractField
+class IntegerField extends AbstractField implements Field
 {
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,

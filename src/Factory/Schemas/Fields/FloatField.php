@@ -2,13 +2,13 @@
 
 namespace Lkt\Factory\Schemas\Fields;
 
-use Lkt\Factory\Fields\Interfaces\NonRelationalField;
+use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\FieldWithEmptyDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithInvalidDataModeTrait;
 use Lkt\Factory\Fields\Traits\FieldWithMultipleOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
-class FloatField extends AbstractField implements NonRelationalField
+class FloatField extends AbstractField implements Field
 {
     use FieldWithNullOptionTrait,
         FieldWithMultipleOptionTrait,

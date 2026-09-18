@@ -16,7 +16,6 @@ use Lkt\MIME;
 
 class FileField implements Field
 {
-
     use BaseFieldTrait,
         FieldWithDefaultValue,
         FieldWithNullOptionTrait,

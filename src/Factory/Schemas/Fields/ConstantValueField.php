@@ -9,7 +9,6 @@ use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 
 class ConstantValueField implements Field
 {
-
     use BaseFieldTrait,
         FieldWithDefaultValue,
         FieldWithNullOptionTrait;

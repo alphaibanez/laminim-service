@@ -61,11 +61,6 @@ final class Schema
 
     protected string $slugPattern = '';
 
-    /**
-     * @deprecated
-     */
-    protected array $complexPrimaryKey = [];
-
     /** @var AccessPolicy[] */
     protected array $accessPolicies = [];
 
@@ -1113,14 +1108,10 @@ final class Schema
         /** @var Field[] $stack */
         $stack = $this->getAllFields();
 
+        // @todo it can be replaced as pivot fields as marked as identifiers
         if ($this->isPivot()) {
             $fields = array_filter($stack, function (Field $field) {
                 return $field instanceof IntegerField && $field->isPivot();
-            });
-
-        } elseif ($this->hasComplexPrimaryKey()) {
-            $fields = array_filter($stack, function (Field $field) {
-                return in_array($field->getName(), $this->complexPrimaryKey);
             });
 
         } else {
@@ -1141,6 +1132,11 @@ final class Schema
         return $this->idFields;
     }
 
+    public function hasManyIdentifiers(): bool
+    {
+        return count($this->getIdentifiers()) > 1;
+    }
+
     public function getIdentifier(string $name): null|Field
     {
         $haystack = $this->getIdentifiers();
@@ -1156,46 +1152,6 @@ final class Schema
         return array_map(function (Field $field) {
             return $field->getName();
         }, $this->getIdentifiers());
-    }
-
-    /**
-     * @deprecated
-     */
-    #[Deprecated]
-    public function hasComplexPrimaryKey(): bool
-    {
-        return count($this->complexPrimaryKey) > 1;
-    }
-
-    /**
-     * @deprecated
-     *
-     * Complex primary key should be replaced with indetifier fields
-     *
-     * @param array $fieldNames
-     * @return $this
-     */
-    #[Deprecated]
-    public function setComplexPrimaryKey(array $fieldNames): static
-    {
-        $this->complexPrimaryKey = $fieldNames;
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     * @return Field[]
-     * @throws InvalidComponentException
-     * @throws SchemaNotDefinedException
-     */
-    #[Deprecated]
-    public function getComplexPrimaryKeyFields(): array
-    {
-        if ($this->hasComplexPrimaryKey()) {
-            $this->getIdentifiers();
-            return $this->idFields;
-        }
-        return [];
     }
 
     /**

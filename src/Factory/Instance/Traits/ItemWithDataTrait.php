@@ -1103,7 +1103,8 @@ trait ItemWithDataTrait
             $r = [];
             $relatedSchema = Schema::get($field->getComponent());
 
-            if ($relatedSchema->hasComplexPrimaryKey()) {
+            // @todo test this as a replacement for complex primary key. If not working, remove this code block
+            if ($relatedSchema->hasManyIdentifiers()) {
                 $relatedFieldPointingToMe = $relatedSchema->getField($field->getColumn());
 
                 if ($relatedFieldPointingToMe) {

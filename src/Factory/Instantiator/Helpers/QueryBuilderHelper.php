@@ -30,7 +30,8 @@ class QueryBuilderHelper
         $idColumnValue = $identifierValue[array_keys($identifierValue)[0]];
         if (!$idColumnValue) return $query;
 
-        if ($relatedSchema->hasComplexPrimaryKey()) {
+        // @todo test this as a replacement for complex primary key. If not working, remove this code block
+        if ($relatedSchema->hasManyIdentifiers()) {
             $identifiers = $relatedSchema->getIdentifiers();
             $relatedField = $relatedSchema->getField($field->getColumn());
             foreach ($identifiers as $identifier) {

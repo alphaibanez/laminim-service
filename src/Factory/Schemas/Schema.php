@@ -652,23 +652,6 @@ final class Schema
     }
 
     /**
-     * @return array<PivotField|RelatedField>
-     * @throws InvalidComponentException
-     * @throws SchemaNotDefinedException
-     */
-    public function getFilterableFields(): array
-    {
-        return array_filter($this->getAllFields(), function (Field $field) {
-            if (($field instanceof IntegerField && $field->isForeignKey())
-                || $field instanceof PivotField
-                || $field instanceof RelatedField) {
-                return false;
-            }
-            return true;
-        });
-    }
-
-    /**
      * @return Field[]
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
@@ -787,30 +770,6 @@ final class Schema
         }
 
         return $this->fields[$fieldName] !== null;
-    }
-
-    public function getFeedField(string $field): null|Field
-    {
-        $haystack = $this->getAllFields();
-
-        if (isset($haystack[$field])) {
-            if ($haystack[$field] instanceof RelatedKeysField) {
-                return null;
-            }
-            return $haystack[$field];
-        }
-
-        // Catch foreign keys cast to integer keys
-        $l = strlen($field);
-        $endsWithId = substr($field, $l - 2, 2) === 'Id';
-
-        if (!$endsWithId) return null;
-
-        $keyWithoutId = substr($field, 0, $l - 2);
-        if (isset($haystack[$keyWithoutId]) && $haystack[$keyWithoutId] instanceof IntegerField && $haystack[$keyWithoutId]->isForeignKey()) {
-            return $haystack[$keyWithoutId];
-        }
-        return null;
     }
 
     public function getFileField(string $field): ?FileField

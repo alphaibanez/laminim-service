@@ -5,6 +5,10 @@ namespace Lkt\Factory\Schemas\Relations;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\QueryBuilding\Query;
 
+/**
+ * @deprecated
+ * used for related keys merge field
+ */
 class RelatedRelation
 {
     protected string $component;
@@ -28,16 +32,25 @@ class RelatedRelation
         return $this->component;
     }
 
+    /**
+     * @deprecated unused
+     */
     public function getPointerField(): string
     {
         return $this->fieldPointingMe;
     }
 
+    /**
+     * @deprecated used for related keys merge field
+     */
     public function getAdditionalColumns(): array
     {
         return $this->additionalColumns;
     }
 
+    /**
+     * @deprecated used for related keys merge field
+     */
     public function hasAdditionalColumns(): bool
     {
         return count($this->additionalColumns) > 0;

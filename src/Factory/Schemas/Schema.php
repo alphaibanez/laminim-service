@@ -1073,6 +1073,7 @@ final class Schema
 
         $this->idColumns = array_values(array_map(function (Field $field) {
             $r = $field->getName();
+            // @todo maybe this should be removed
             if ($field instanceof IntegerField && $field->isForeignKey()) $r .= 'Id';
             return $r;
         }, $fields));

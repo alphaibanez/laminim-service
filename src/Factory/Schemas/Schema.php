@@ -1067,17 +1067,9 @@ final class Schema
         /** @var Field[] $stack */
         $stack = $this->getAllFields();
 
-        // @todo it can be replaced as pivot fields as marked as identifiers
-        if ($this->isPivot()) {
-            $fields = array_filter($stack, function (Field $field) {
-                return $field instanceof IntegerField && $field->isPivot();
-            });
-
-        } else {
-            $fields = array_filter($stack, function (Field $field) {
-                return $field->isIdentifier();
-            });
-        }
+        $fields = array_filter($stack, function (Field $field) {
+            return $field->isIdentifier();
+        });
 
         $this->idColumns = array_values(array_map(function (Field $field) {
             $r = $field->getName();

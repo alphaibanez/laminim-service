@@ -7,6 +7,9 @@ use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractDatabaseConnector
 {
     use BaseDatabaseConnector;

@@ -2,7 +2,7 @@
 
 namespace Lkt\QueryBuilding\Traits;
 
-use Lkt\Connectors\DatabaseConnector;
+use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;

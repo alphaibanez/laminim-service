@@ -3,7 +3,7 @@
 namespace Lkt\Factory\Instantiator\ValueObjects;
 
 use Lkt\Connectors\DatabaseConnections;
-use Lkt\Connectors\DatabaseConnector;
+use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
 

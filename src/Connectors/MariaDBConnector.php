@@ -4,6 +4,8 @@ namespace Lkt\Connectors;
 
 use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
+use Lkt\Connectors\Interfaces\DatabaseConnector;
+use Lkt\Connectors\Traits\Database\BaseDatabaseConnector;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
@@ -24,8 +26,10 @@ use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
 
-class MariaDBConnector extends DatabaseConnector
+class MariaDBConnector implements DatabaseConnector
 {
+    use BaseDatabaseConnector;
+
     protected int $port = 3306;
     protected string $charset = 'utf8mb4';
     protected string $rememberTotal = '';

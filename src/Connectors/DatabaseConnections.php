@@ -2,6 +2,7 @@
 
 namespace Lkt\Connectors;
 
+use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Context\Enums\RuntimeEntryContext;
 use Lkt\Context\RuntimeContext;
 

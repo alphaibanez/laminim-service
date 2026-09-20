@@ -9,6 +9,8 @@ use InfluxDB2\Model\WritePrecision;
 use InfluxDB2\Service\BucketsService;
 use InfluxDB2\Service\OrganizationsService;
 use Lkt\Connectors\Cache\QueryCache;
+use Lkt\Connectors\Interfaces\DatabaseConnector;
+use Lkt\Connectors\Traits\Database\BaseDatabaseConnector;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
@@ -20,8 +22,10 @@ use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
 use function Lkt\Tools\Parse\clearInput;
 
-class InfluxConnector extends DatabaseConnector
+class InfluxConnector implements DatabaseConnector
 {
+    use BaseDatabaseConnector;
+
     protected int $port = 8086;
     protected string $charset = 'utf8';
     protected string $token = '';

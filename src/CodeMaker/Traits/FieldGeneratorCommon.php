@@ -10,6 +10,7 @@ trait FieldGeneratorCommon
 {
     public FieldGeneratorData $data;
     public Field|null $field = null;
+    protected string $mode = 'field';
 
 
     public function __construct(FieldGeneratorData|null $data =  null)
@@ -67,6 +68,7 @@ trait FieldGeneratorCommon
     {
         $ins = new static();
         $ins->field = $field;
+        $ins->mode = 'query';
         return $ins;
     }
 }

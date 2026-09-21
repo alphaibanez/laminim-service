@@ -72,9 +72,11 @@ Schema::add(
                 ->setCompositionValue('webCategory', 'id'),
 
             PivotField::definePivot(LaminimComponent::WebElement->value, 'lkt_web_pages__web_elements', 'webElements', 'web_page_id', LaminimComponent::WebPagePivotWebElement->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::WebPage->value, 'user', 'web_page_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::WebElement->value, 'role', 'web_element_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::WebPage->value, 'user', 'web_page_id'),
+                    IntegerField::rightPivot(LaminimComponent::WebElement->value, 'role', 'web_element_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktWebElementPivotWebElement::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'

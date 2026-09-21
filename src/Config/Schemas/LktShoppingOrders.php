@@ -48,15 +48,19 @@ Schema::add(
             RelatedField::defineRelation(LaminimComponent::ShoppingOrderPayment->value, 'payments', 'order_id'),
 
             PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'coupons', 'order_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+                    IntegerField::rightPivot(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated'),
 
             PivotField::definePivot(LaminimComponent::ShoppingSubscription->value, 'lkt_shopping_orders__subscriptions', 'subscriptions', 'order_id', LaminimComponent::ShoppingOrderPivotShoppingSubscription->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+                    IntegerField::rightPivot(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
         ])
 

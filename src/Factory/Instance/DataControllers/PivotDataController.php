@@ -132,8 +132,37 @@ final class PivotDataController
 //        $toSchema = Schema::get($pivotForeignColumn->getComponent());
         $toSchema = Schema::get($field->getTargetComponent($this->schema, $this->item));
 
-        $query = QueryBuilderHelper::preparePivotQuery($this->item, $field, $forceRefresh);
-        $results = Instantiator::makeResults($toSchema->getComponent(), $query->select());
+        if ($toSchema->hasCodedDataContext()) {
+            $pivotSchema = $field->getPivotSchema();
+            /** @var IntegerField $pivotSchemaSameOriginField */
+            $pivotSchemaSameOriginField = $pivotSchema->getOneFieldPointingToComponent($this->schema->getComponent());
+            $pivotSchemaTargetField = $pivotSchemaSameOriginField->isLeftPivot()
+                ? $pivotSchema->getPivotRightIdField()
+                : $pivotSchema->getPivotLeftIdField();
+
+            $pivotSchemaTargetFieldName = $pivotSchemaTargetField->getName();
+
+            $query = $pivotSchema->getQueryBuilder();
+            $idColumnValue = $this->item->getIdColumnValue();
+
+            $pivotSchema->filterBuilder($query, [
+                $pivotSchemaSameOriginField->getName() => $idColumnValue
+            ]);
+
+            $pivots = Instantiator::makeResults($pivotSchema->getComponent(), $query->select());
+            $results = [];
+            $targetIdentifiers = $toSchema->getIdentifiers();
+            if (count($targetIdentifiers) === 1) {
+                $targetKey = $targetIdentifiers[0]->getName();
+                foreach ($pivots as $pivot) {
+                    $results[] = $toSchema->getItemInstance([$targetKey => $pivot->retrieveValue($pivotSchemaTargetFieldName)]);
+                }
+            }
+
+        } else {
+            $query = QueryBuilderHelper::preparePivotQuery($this->item, $field, $forceRefresh);
+            $results = Instantiator::makeResults($toSchema->getComponent(), $query->select());
+        }
 
         $this->data[$cacheKey] = $results;
         return $this->data[$cacheKey];

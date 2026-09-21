@@ -15,7 +15,7 @@ use Lkt\QueryBuilding\Query;
 
 class QueryBuilderHelper
 {
-    public static function getComponentQuery(Schema|string $component): Query
+    public static function getComponentQuery(Schema|string $component): Query|null
     {
         return (ComponentDatabaseIntegration::from($component))->query;
     }
@@ -145,6 +145,7 @@ class QueryBuilderHelper
     {
         $schema = $item->getSchema();
         $referencedComponent = $field->getComponent($schema, $item);
+        $referencedSchema = Schema::get($referencedComponent);
 
         $pivotSchema = $field->getPivotSchema();
         $pivotField = $pivotSchema->getOneFieldPointingToComponent($referencedComponent);
@@ -174,7 +175,6 @@ class QueryBuilderHelper
 
 
         // Referenced table
-        $referencedSchema = Schema::get($referencedComponent);
         $referencedField = $referencedSchema->getField($referencedSchema->getIdColumn()[0]);
 
         // Prepare query builder

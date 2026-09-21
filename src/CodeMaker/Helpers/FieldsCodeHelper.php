@@ -25,7 +25,6 @@ use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
-use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
@@ -107,7 +106,11 @@ class FieldsCodeHelper
 
 
             } elseif ($field instanceof StringField) {
-                if ($field->isEncrypted()) {
+                if ($field->isConcatenation()) {
+                    $methods[] = ConcatFieldGenerator::generateCode($fieldGeneratorData);
+                    $traitsUsage[] = ConcatFieldGenerator::generateTraitsUsageCode($field);
+
+                } elseif ($field->isEncrypted()) {
                     $methods[] = EncryptFieldGenerator::generateCode($fieldGeneratorData);
                     $traitsUsage[] = EncryptFieldGenerator::generateTraitsUsageCode($field);
 
@@ -234,10 +237,6 @@ class FieldsCodeHelper
                 $methods[] = RelatedKeysMergeFieldGenerator::generateCode($fieldGeneratorData);
                 $traitsUsage[] = RelatedKeysMergeFieldGenerator::generateTraitsUsageCode($field);
 
-            } elseif ($field instanceof ConcatField) {
-                $methods[] = ConcatFieldGenerator::generateCode($fieldGeneratorData);
-                $traitsUsage[] = ConcatFieldGenerator::generateTraitsUsageCode($field);
-
             } elseif ($field instanceof BooleansComputedField) {
                 $templateData['allRequired'] = BooleansComputedField::getAllConditionRequiredString($field, $schema);
                 if ($templateData['allRequired'] === '') continue;
@@ -347,7 +346,7 @@ class FieldsCodeHelper
                         $composedPrimitiveInputType = 'int';
                     }
 
-                } elseif ($composedField instanceof StringField || $composedField instanceof ColorField || $composedField instanceof ConcatField) {
+                } elseif ($composedField instanceof StringField || $composedField instanceof ColorField) {
                     $composedPrimitiveReturnType = '?string';
                     $composedPrimitiveInputType = 'string';
 

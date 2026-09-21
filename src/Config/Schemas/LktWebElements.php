@@ -42,9 +42,11 @@ Schema::add(
             JSONField::associative('subElements', 'sub_elements'),
 
             PivotField::definePivot(LaminimComponent::WebElement->value, 'lkt_web_elements__web_elements', 'children', 'parent_id', LaminimComponent::WebElementPivotWebElement->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::WebElement->value, 'user', 'parent_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::WebElement->value, 'role', 'child_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::WebElement->value, 'user', 'parent_id'),
+                    IntegerField::rightPivot(LaminimComponent::WebElement->value, 'role', 'child_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktWebElementPivotWebElement::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'

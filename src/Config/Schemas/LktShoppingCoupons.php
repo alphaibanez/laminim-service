@@ -59,9 +59,11 @@ Schema::add(
             BooleanField::define('stackable', 'stackable')->setDefaultValue(false),
 
             PivotField::definePivot(LaminimComponent::ShoppingCoupon->value, 'lkt_shopping_orders__coupons', 'orders', 'coupon_id', LaminimComponent::ShoppingOrderPivotShoppingCoupon->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+                    IntegerField::rightPivot(LaminimComponent::ShoppingCoupon->value, 'coupon', 'coupon_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktShoppingOrderPivotCoupon::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
 
         ])

@@ -11,7 +11,6 @@ use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
-use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Fields\FloatField;
@@ -133,9 +132,16 @@ class MariaDBConnector implements DatabaseConnector
         $r = [];
 
         foreach ($fields as $key => $field) {
-            if ($field instanceof PivotField || $field instanceof RelatedField || $field instanceof RelatedKeysField || $field instanceof AbstractComputedField || $field instanceof ConcatField) {
+            if ($field instanceof PivotField || $field instanceof RelatedField || $field instanceof RelatedKeysField || $field instanceof AbstractComputedField) {
                 continue;
             }
+
+            if ($field instanceof StringField) {
+                if ($field->isConcatenation() || $field->isTranslation()) {
+                    continue;
+                }
+            }
+
             $column = trim($field->getColumn());
             if ($field instanceof JSONField && $field->isCompressed()) {
                 $r[] = "UNCOMPRESS({$table}.{$column}) as {$key}";

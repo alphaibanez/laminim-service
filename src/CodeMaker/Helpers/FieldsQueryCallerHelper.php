@@ -5,7 +5,6 @@ namespace Lkt\CodeMaker\Helpers;
 use Lkt\Attributes\LaminimUse;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
-use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
@@ -62,6 +61,22 @@ class FieldsQueryCallerHelper
 
             if ($field instanceof StringField) {
                 $templateData['canBeNull'] =  $field->isNullable();
+
+                if ($field->isConcatenation()) {
+                    $templateData['separator'] =  $field->getSeparator();
+                    $templateData['columns'] =  $field->getConcatenatedFieldsAsString($schema);
+                    $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/concat-builder.phtml')
+                        ->setData($templateData)
+                        ->parse();
+
+                    if ($includeStatic) {
+                        $templateData['fieldMethod'] = $field->getName();
+                        $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/concat-builder-static.phtml')
+                            ->setData($templateData)
+                            ->parse();
+                    }
+                    continue;
+                }
 
                 if ($field->isEncrypted()) {
                     $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/encrypt-builder.phtml')
@@ -168,24 +183,6 @@ class FieldsQueryCallerHelper
                 if ($includeStatic) {
                     $templateData['fieldMethod'] = $field->getName();
                     $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/datetime-builder-static.phtml')
-                        ->setData($templateData)
-                        ->parse();
-                }
-                continue;
-            }
-
-
-            if ($field instanceof ConcatField) {
-                $templateData['canBeNull'] =  $field->isNullable();
-                $templateData['separator'] =  $field->getSeparator();
-                $templateData['columns'] =  $field->getConcatenatedFieldsAsString($schema);
-                $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/concat-builder.phtml')
-                    ->setData($templateData)
-                    ->parse();
-
-                if ($includeStatic) {
-                    $templateData['fieldMethod'] = $field->getName();
-                    $methods[] = Template::file(__DIR__ . '/../../../assets/phtml/query-builder/concat-builder-static.phtml')
                         ->setData($templateData)
                         ->parse();
                 }

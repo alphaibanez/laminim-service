@@ -8,6 +8,7 @@ use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Traits\ItemWithMultipleStringDataTrait;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
+use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Fields\ValueListField;
 
 #[LaminimUse]
@@ -42,6 +43,9 @@ class StringFieldGenerator implements FieldGenerator
     
     public function getSetters(): string
     {
+        if ($this->data->field instanceof StringField && $this->data->field->isTranslation()) {
+            return '';
+        }
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
@@ -58,6 +62,10 @@ class StringFieldGenerator implements FieldGenerator
 
     public function getCheckers(): string
     {
+        if ($this->data->field instanceof StringField && $this->data->field->isTranslation()) {
+            return '';
+        }
+
         $r = [];
 
         $lowerFieldMethod = lcfirst($this->data->methodName);

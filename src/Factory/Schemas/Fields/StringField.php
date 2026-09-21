@@ -17,6 +17,7 @@ use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
 use Lkt\Factory\Fields\Traits\FieldWithSecureSeedTrait;
 use Lkt\Factory\Fields\Traits\FieldWithTrimMode;
 use Lkt\Factory\Fields\Traits\FieldWithUniqueValue;
+use Lkt\Factory\Schemas\Schema;
 
 class StringField implements Field
 {
@@ -36,10 +37,26 @@ class StringField implements Field
     protected StringFieldType $fieldType = StringFieldType::String;
     protected EncryptAlgorithm $encryptAlgorithm = EncryptAlgorithm::None;
 
+    protected array $concatenatedFields = [];
+    protected string $separator = '';
+
     public static function i18n(string $name, string $column = ''): static
     {
         $ins = new static($name, $column);
         $ins->storeAsI18nJson = true;
+        return $ins;
+    }
+
+    /**
+     * Retrieve data from a given i18n
+     * Use field names between brackets in order to parse i18n key:
+     *
+     * For example: 'role.{id}' will become into i18n 'role.1' if the instance has id = 1
+     */
+    public static function translate(string $name, string $i18nKey = ''): static
+    {
+        $ins = new static($name, $i18nKey);
+        $ins->fieldType = StringFieldType::Translate;
         return $ins;
     }
 
@@ -61,6 +78,15 @@ class StringField implements Field
     {
         $ins = new static($name, $column);
         $ins->fieldType = StringFieldType::HTML;
+        return $ins;
+    }
+
+    public static function concat(string $name, array $fields, string $separator): static
+    {
+        $ins = new static($name, '');
+        $ins->fieldType = StringFieldType::Concat;
+        $ins->concatenatedFields = $fields;
+        $ins->separator = $separator;
         return $ins;
     }
 
@@ -100,8 +126,39 @@ class StringField implements Field
         return $this->encryptAlgorithm === EncryptAlgorithm::SHA256Hash;
     }
 
+    public function isTranslation(): bool
+    {
+        return $this->fieldType === StringFieldType::Translate;
+    }
+
+    public function isConcatenation(): bool
+    {
+        return $this->fieldType === StringFieldType::Concat;
+    }
+
     public function hasSHA256Encryption(): bool
     {
         return $this->encryptAlgorithm === EncryptAlgorithm::SHA256;
+    }
+
+    public function getConcatenatedFields(): array
+    {
+        return $this->concatenatedFields;
+    }
+
+    public function getConcatenatedFieldsAsString(Schema $schema): string
+    {
+        $r = [];
+        foreach ($this->concatenatedFields as $field) {
+            $f = $schema->getField($field);
+            $r[] = "'{$f->getColumn()}'";
+        }
+        $r = implode(',', $r);
+        return "[{$r}]";
+    }
+
+    public function getSeparator(): string
+    {
+        return $this->separator;
     }
 }

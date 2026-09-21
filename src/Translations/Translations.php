@@ -303,6 +303,12 @@ class Translations
 
         if (static::$lang !== null) return static::$lang;
 
+        $locale = Locale::getLangCode();
+        if ($locale) {
+            static::$lang = $locale;
+            return static::$lang;
+        }
+
         $languages = static::getAvailableLanguages();
         if (count($languages) > 0) {
             static::$lang = getArrayFirstPosition($languages);
@@ -369,7 +375,7 @@ class Translations
         return new FeedWithReferenceDataResponse($updatedTranslations, $skippedTranslations);
     }
 
-    protected static function processTranslationResult(LktTranslation $result, &$r, string $lang)
+    protected static function processTranslationResult(LktTranslation $result, &$r, string|null $lang)
     {
         $property = trim($result->getProperty());
         $isMany = $result->typeIsMany();

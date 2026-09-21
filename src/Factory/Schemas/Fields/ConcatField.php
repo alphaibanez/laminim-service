@@ -6,8 +6,10 @@ use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Fields\Traits\BaseFieldTrait;
 use Lkt\Factory\Fields\Traits\FieldWithDefaultValue;
 use Lkt\Factory\Fields\Traits\FieldWithNullOptionTrait;
-use Lkt\Factory\Schemas\Schema;
 
+/**
+ * @deprecated
+ */
 class ConcatField implements Field
 {
     use BaseFieldTrait,
@@ -18,32 +20,8 @@ class ConcatField implements Field
     protected string $separator = '';
 
 
-    final public static function concat(string $name, array $fields, string $separator): static
+    final public static function concat(string $name, array $fields, string $separator): StringField
     {
-        $r = new static($name, '');
-        $r->fields = $fields;
-        $r->separator = $separator;
-        return $r;
-    }
-
-    public function getConcatenatedFields(): array
-    {
-        return $this->fields;
-    }
-
-    public function getConcatenatedFieldsAsString(Schema $schema): string
-    {
-        $r = [];
-        foreach ($this->fields as $field) {
-            $f = $schema->getField($field);
-            $r[] = "'{$f->getColumn()}'";
-        }
-        $r = implode(',', $r);
-        return "[{$r}]";
-    }
-
-    public function getSeparator(): string
-    {
-        return $this->separator;
+        return StringField::concat($name, $fields, $separator);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
@@ -12,6 +13,7 @@ use Lkt\Factory\Instantiator\Exceptions\MinLengthRequiredException;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Translations\Translations;
 
 final class StringDataController
 {
@@ -36,6 +38,16 @@ final class StringDataController
 
         if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
+        }
+
+        $field = $this->schema->getStringField($key);
+        if ($field->isTranslation()) {
+            $i18n = $field->getColumn();
+            $replacements = $this->item->getOriginalData();
+            foreach ($replacements as $replacement => $val) $i18n = str_replace("{{$replacement}}", $val, $i18n);
+            $r = Translations::get($i18n);
+            if (!is_string($r)) return null;
+            return $r;
         }
 
         return null;

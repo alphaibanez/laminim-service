@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
@@ -18,7 +19,6 @@ use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
 use Lkt\Factory\Schemas\Exceptions\SchemaNotDefinedException;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
-use Lkt\Factory\Schemas\Fields\ConcatField;
 use Lkt\Factory\Schemas\Fields\ConstantValueField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FileField;
@@ -35,7 +35,6 @@ use Lkt\Factory\Schemas\Fields\ValueListField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Locale\Locale;
 use Lkt\Translations\Translations;
-use function Lkt\Tools\Arrays\compareArrays;
 
 trait ItemWithDataTrait
 {
@@ -205,7 +204,13 @@ trait ItemWithDataTrait
                 }
             }
 
-            if (!$field || $field instanceof MethodGetterField || $field instanceof ConcatField) continue;
+            if (!$field || $field instanceof MethodGetterField) continue;
+
+            if ($field instanceof StringField) {
+                if ($field->isConcatenation() || $field->isTranslation()) {
+                    continue;
+                }
+            }
 
             // Composed related data
             $composedDatum = !$schema->hasFieldDefined($param);
@@ -647,6 +652,10 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isTranslation()) {
+                return $this;
+            }
+
             if ($field->isEncrypted()) {
                 $this->encryptData->set($key, $value);
             } else {
@@ -739,6 +748,7 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isConcatenation()) return $this->concatData->get($key);
             if ($field->isEncrypted()) return $this->encryptData->get($key);
             return $this->stringData->get($key);
 
@@ -796,9 +806,6 @@ trait ItemWithDataTrait
         } elseif ($field instanceof RelatedKeysField) {
             return $this->relatedItemsData->getItems($key);
 
-        } elseif ($field instanceof ConcatField) {
-            return $this->concatData->get($key);
-
         } elseif ($field instanceof ConstantValueField) {
             return $this->constantData->get($key);
 
@@ -829,6 +836,7 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isConcatenation()) return $this->concatData->has($key);
             if ($field->isEncrypted()) return $this->encryptData->has($key);
             return $this->stringData->has($key);
 
@@ -864,9 +872,6 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof RelatedKeysField) {
             return $this->relatedItemsData->has($key);
-
-        } elseif ($field instanceof ConcatField) {
-            return $this->concatData->has($key);
 
         } elseif ($field instanceof ConstantValueField) {
             return $this->constantData->has($key);
@@ -917,6 +922,10 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
+            if ($field->isConcatenation()) {
+                return [$responseKey => $this->concatData->get($key)];
+            }
+
             if ($field->isEncrypted()) {
                 return [$responseKey => $this->encryptData->get($key)];
             }
@@ -1119,7 +1128,7 @@ trait ItemWithDataTrait
         } elseif ($field instanceof PivotField) {
 
             $schema = $this->getSchema();
-            /** @var static[] $items */
+            /** @var Item[] $items */
             $items = $this->pivotData->getItems($field->getName());
             if (!is_array($items)) $items = [];
             $r = [];
@@ -1137,8 +1146,8 @@ trait ItemWithDataTrait
             foreach ($items as $item) {
                 if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
                 $t[] = $item->autoRead();
-
             }
+
             $r[$responseKey] = $t;
             $r[$responseKey . 'Ids'] = $this->pivotData->getItemsIds($key);
             return $r;
@@ -1157,9 +1166,6 @@ trait ItemWithDataTrait
                 $r[$responseKey] = $this->multipleStringData->get($field->getName());
             }
             return $r;
-
-        } elseif ($field instanceof ConcatField) {
-            return [$responseKey => $this->concatData->get($key)];
 
         } elseif ($field instanceof ConstantValueField) {
             return [$responseKey => $this->constantData->get($key)];

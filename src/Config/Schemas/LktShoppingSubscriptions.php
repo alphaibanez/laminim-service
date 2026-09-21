@@ -43,9 +43,11 @@ Schema::add(
             DateTimeField::define('endsAt', 'ends_at')->setDefaultReadFormat('Y-m-d H:i:s')->setNullable(),
 
             PivotField::definePivot(LaminimComponent::ShoppingOrder->value, 'lkt_shopping_orders__subscriptions', 'orders', 'subscription_id', LaminimComponent::ShoppingOrderPivotShoppingSubscription->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::ShoppingOrder->value, 'order', 'order_id'),
+                    IntegerField::rightPivot(LaminimComponent::ShoppingSubscription->value, 'subscription', 'subscription_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktShoppingOrderPivotSubscription::class, 'Lkt\Generated', __DIR__ . '/../../Generated'),
         ])
 

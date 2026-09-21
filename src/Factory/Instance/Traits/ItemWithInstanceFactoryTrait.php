@@ -81,8 +81,20 @@ trait ItemWithInstanceFactoryTrait
         if ($schema->hasCodedDataContext()) {
             $payload = [];
             $fields = $schema->getIdentifiers();
-            if (count($fields) === 1 && !is_array($id)) {
-                $payload[$fields[0]->getName()] = $id;
+            if (count($fields) === 1){
+                $k = $fields[0]->getName();
+                if (!is_array($id)) {
+                    $payload[$k] = $id;
+                } elseif (array_key_exists($k, $id)) {
+                    $payload[$k] = $id[$k];
+                }
+            } elseif (is_array($id)) {
+                foreach ($fields as $field) {
+                    $k = $field->getName();
+                    if (array_key_exists($k, $id)) {
+                        $payload[$k] = $id[$k];
+                    }
+                }
             }
             $r = new static($payload);
             return $r;

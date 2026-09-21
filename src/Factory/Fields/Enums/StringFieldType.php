@@ -8,4 +8,6 @@ enum StringFieldType
     case Email;
     case HTML;
     case Url;
+    case Translate;
+    case Concat;
 }

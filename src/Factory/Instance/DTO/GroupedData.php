@@ -78,6 +78,9 @@ final readonly class GroupedData
                 $multipleStringData[$k] = $data[$dataKey];
             }
             elseif ($field instanceof StringField) {
+                if ($field->isTranslation()) {
+                    continue;
+                }
                 if ($field->isEncrypted()) {
                     $encryptData[$k] = $data[$dataKey];
                 } else {

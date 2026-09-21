@@ -38,14 +38,14 @@ public function set<?php echo $fieldMethod;?>(<?php echo $composedPrimitiveInput
     $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [
         <?php echo $additionalInputDetection;?>
     ]);
-    $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->assignValue('<?php echo $fieldName;?>', $<?php echo $fieldName;?>, $additionalData);
+    $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->assignValue('<?php echo $fieldName;?>', $<?php echo $fieldName;?>, \Lkt\Factory\Instance\Enums\RetrieveDataMode::Auto, $additionalData);
     return $this;
 }
 public function has<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) :bool {
     $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [
         <?php echo $additionalInputDetection;?>
     ]);
-    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->hasValue('<?php echo $fieldName;?>', $additionalData);
+    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->hasAssignedValue('<?php echo $fieldName;?>', $additionalData);
 }
 
 <?php if ($additionalFields === 'files'): ?>

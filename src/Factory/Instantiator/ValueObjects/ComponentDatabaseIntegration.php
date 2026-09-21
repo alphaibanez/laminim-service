@@ -4,6 +4,7 @@ namespace Lkt\Factory\Instantiator\ValueObjects;
 
 use Lkt\Connectors\DatabaseConnections;
 use Lkt\Connectors\Interfaces\DatabaseConnector;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Query;
 
@@ -27,7 +28,11 @@ class ComponentDatabaseIntegration
             if (class_exists($fqdn)) {
                 $query = call_user_func_array([$fqdn, 'getCaller'], []);
             } else {
-                $query = null;
+                if ($schema->isPivot()) {
+                    $query = Query::table($schema->getTable());
+                } else {
+                    $query = null;
+                }
             }
 
         } else {

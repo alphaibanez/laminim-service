@@ -53,15 +53,19 @@ Schema::add(
             MethodGetterField::define('getReadMenuTo', 'to'),
 
             PivotField::definePivot(LaminimComponent::Menu->value, 'lkt_menus__entries', 'menus', 'entry_id', LaminimComponent::MenuPivotEntry->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::Menu->value, 'menu', 'menu_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::Menu->value, 'menu', 'menu_id'),
+                    IntegerField::rightPivot(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated'),
 
             PivotField::definePivot(LaminimComponent::MenuEntry->value, 'lkt_menus_entries__children', 'children', 'parent_id', LaminimComponent::MenuEntryPivotMenuEntry->value)
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::MenuEntry->value, 'child', 'child_id'))
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::MenuEntry->value, 'parent', 'parent_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::rightPivot(LaminimComponent::MenuEntry->value, 'child', 'child_id'),
+                    IntegerField::leftPivot(LaminimComponent::MenuEntry->value, 'parent', 'parent_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktMenuEntryPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'

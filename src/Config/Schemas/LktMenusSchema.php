@@ -45,9 +45,11 @@ Schema::add(
             MethodGetterField::define('getNavigableEntries', 'navigableEntries'),
 
             PivotField::definePivot(LaminimComponent::MenuEntry->value, 'lkt_menus__entries', 'entries', 'menu_id', LaminimComponent::MenuPivotEntry->value)
-                ->setPivotLeftIdField(IntegerField::leftPivot(LaminimComponent::Menu->value, 'menu', 'menu_id'))
-                ->setPivotRightIdField(IntegerField::rightPivot(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'))
-                ->setPivotPositionField(IntegerField::position('position'))
+                ->setFields([
+                    IntegerField::leftPivot(LaminimComponent::Menu->value, 'menu', 'menu_id'),
+                    IntegerField::rightPivot(LaminimComponent::MenuEntry->value, 'entry', 'entry_id'),
+                    IntegerField::position('position'),
+                ])
                 ->setPivotInstanceConfig(LktMenuPivotEntry::class, 'Lkt\Generated', __DIR__ . '/../../Generated')
                 ->setRelatedAccessPolicies([
                     'r-app-menu' => 'r-app-menu'

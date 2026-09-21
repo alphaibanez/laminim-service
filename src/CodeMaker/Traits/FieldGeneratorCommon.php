@@ -4,13 +4,15 @@ namespace Lkt\CodeMaker\Traits;
 
 use Lkt\CodeMaker\DTO\FieldGeneratorData;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
+use Lkt\Factory\Fields\Interfaces\Field;
 
 trait FieldGeneratorCommon
 {
     public FieldGeneratorData $data;
+    public Field|null $field = null;
 
 
-    public function __construct(FieldGeneratorData $data)
+    public function __construct(FieldGeneratorData|null $data =  null)
     {
         $this->data = $data;
     }
@@ -59,5 +61,12 @@ trait FieldGeneratorCommon
         $r = $this->data->enumChoiceClass;
         if ($r !== '') $r = "|\\{$r}";
         return $r;
+    }
+
+    public static function queryBuilder(Field $field): static
+    {
+        $ins = new static();
+        $ins->field = $field;
+        return $ins;
     }
 }

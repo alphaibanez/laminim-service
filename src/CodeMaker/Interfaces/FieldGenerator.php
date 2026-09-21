@@ -19,4 +19,6 @@ interface FieldGenerator
     public function getAllowedOptionsMethods(): array;
 
     public function getEnumChoiceClass(): string;
+
+    public static function queryBuilder(Field $field): static;
 }

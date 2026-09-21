@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class BooleanTrueConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class BooleanTrueConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

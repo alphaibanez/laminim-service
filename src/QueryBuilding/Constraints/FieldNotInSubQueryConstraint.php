@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class FieldNotInSubQueryConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class FieldNotInSubQueryConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

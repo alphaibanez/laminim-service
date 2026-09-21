@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class DecimalNotInConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class DecimalNotInConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

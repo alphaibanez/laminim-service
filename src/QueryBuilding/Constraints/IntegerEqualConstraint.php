@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class IntegerEqualConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class IntegerEqualConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

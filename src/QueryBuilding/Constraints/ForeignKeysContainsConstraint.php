@@ -2,7 +2,13 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class ForeignKeysContainsConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+/**
+ * @deprecated
+ * @todo Remove after ForeignKeysField drop
+ */
+class ForeignKeysContainsConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

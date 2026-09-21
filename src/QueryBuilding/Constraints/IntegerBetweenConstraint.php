@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class IntegerBetweenConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class IntegerBetweenConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

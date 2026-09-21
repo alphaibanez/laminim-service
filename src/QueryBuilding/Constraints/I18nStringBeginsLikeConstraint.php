@@ -3,8 +3,9 @@
 namespace Lkt\QueryBuilding\Constraints;
 
 use Lkt\Locale\Locale;
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
 
-class I18nStringBeginsLikeConstraint extends AbstractConstraint
+class I18nStringBeginsLikeConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class DatetimeEqualConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class DatetimeEqualConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

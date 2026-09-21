@@ -56,7 +56,6 @@ final class Schema
 {
     /** @var Schema[] */
     private static array $stack = [];
-    protected array $excludeFieldFromViewFeed = [];
 
     protected string $slugPattern = '';
 
@@ -1340,18 +1339,6 @@ final class Schema
     public function setFieldsForRelatedMode(string $value, string $label, array $additionalFields = []): static
     {
         $this->setRelatedAccessPolicy([$value => 'value', $label => 'label', ...$additionalFields]);
-        return $this;
-    }
-
-    /**
-     * @param string $view
-     * @param array $fields
-     * @return $this
-     * @deprecated
-     */
-    public function setExcludedFieldsForViewFeed(string $view, array $fields): static
-    {
-        $this->excludeFieldFromViewFeed[$view] = $fields;
         return $this;
     }
 

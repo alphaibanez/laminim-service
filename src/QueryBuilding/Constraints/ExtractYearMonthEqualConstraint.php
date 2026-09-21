@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class ExtractYearMonthEqualConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class ExtractYearMonthEqualConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

@@ -3,9 +3,10 @@
 namespace Lkt\QueryBuilding\Constraints;
 
 use Lkt\QueryBuilding\DateIntervals\AbstractInterval;
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
 use Lkt\QueryBuilding\Traits\ConstraintWithInterval;
 
-class DatetimeLowerThanNowConstraint extends AbstractConstraint
+class DatetimeLowerThanNowConstraint extends AbstractConstraint implements QueryConstraint
 {
     use ConstraintWithInterval;
 

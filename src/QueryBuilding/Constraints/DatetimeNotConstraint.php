@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class DatetimeNotConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class DatetimeNotConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

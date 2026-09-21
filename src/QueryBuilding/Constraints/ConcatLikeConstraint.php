@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class ConcatLikeConstraint extends AbstractConcatConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class ConcatLikeConstraint extends AbstractConcatConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

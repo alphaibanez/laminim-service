@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class DatetimeEndsLikeConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class DatetimeEndsLikeConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

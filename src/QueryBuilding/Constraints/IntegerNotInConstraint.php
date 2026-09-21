@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class IntegerNotInConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class IntegerNotInConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

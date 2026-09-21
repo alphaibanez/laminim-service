@@ -44,8 +44,15 @@ class ComponentDatabaseIntegration
         if (!$schema->hasCodedDataContext()) {
             $connector = $schema->getDatabaseConnector();
             if ($connector === '') $connector = DatabaseConnections::$defaultConnector;
-            $connection = DatabaseConnections::get($connector);
-            $query->setColumns($connection->extractSchemaColumns($schema));
+
+            if ($connector && $query instanceof Query) {
+                $query->setDatabaseConnector($connector);
+
+                $connection = DatabaseConnections::get($connector);
+                if ($connection) {
+                    $query->setColumns($connection->extractSchemaColumns($schema));
+                }
+            }
         }
 
         $this->component = $component;

@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class DatetimeBetweenConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class DatetimeBetweenConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

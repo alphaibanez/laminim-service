@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class IsNotNullConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class IsNotNullConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

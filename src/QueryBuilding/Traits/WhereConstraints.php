@@ -2,8 +2,11 @@
 
 namespace Lkt\QueryBuilding\Traits;
 
+use Lkt\Connectors\DatabaseConnections;
 use Lkt\Connectors\Interfaces\DatabaseConnector;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Constraints\BooleanFalseConstraint;
@@ -65,6 +68,7 @@ use Lkt\QueryBuilding\Constraints\IntegerNotConstraint;
 use Lkt\QueryBuilding\Constraints\IntegerNotInConstraint;
 use Lkt\QueryBuilding\Constraints\IsNotNullConstraint;
 use Lkt\QueryBuilding\Constraints\IsNullConstraint;
+use Lkt\QueryBuilding\Constraints\PivotLinkedConstraint;
 use Lkt\QueryBuilding\Constraints\RawConstraint;
 use Lkt\QueryBuilding\Constraints\StringBeginsLikeConstraint;
 use Lkt\QueryBuilding\Constraints\StringEndsLikeConstraint;
@@ -131,7 +135,7 @@ trait WhereConstraints
                 $constraint = $databaseConnector->prepareWhereConstraint($constraint);
             }
 
-            return (string)$constraint;
+            return $constraint->toString($databaseConnector);
         }
 
         if ($constraint instanceof Where) return $constraint->whereConstraintsToString($databaseConnector);
@@ -145,6 +149,10 @@ trait WhereConstraints
     public function whereConstraintsToString(DatabaseConnector $databaseConnector = null): string
     {
         $r = [];
+
+        if (!$databaseConnector && $this->connector) {
+            $databaseConnector = DatabaseConnections::get($this->connector);
+        }
 
         foreach ($this->and as $constraint) {
             $toAdd = $this->getConstraintString($constraint, $databaseConnector);
@@ -1220,6 +1228,12 @@ trait WhereConstraints
     public function orExtractYearMonthEqual(string $column, string $value): self
     {
         $this->or[] = ExtractYearMonthEqualConstraint::define($column, $value);
+        return $this;
+    }
+
+    public function andAnyPivotLinked(string $field, string $component, array $values, Item|null $item = null): self
+    {
+        $this->and[] = PivotLinkedConstraint::any($field, $component, $values, $item);
         return $this;
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Lkt\QueryBuilding\Constraints;
 
-class StringNotBeginsLikeConstraint extends AbstractConstraint
+use Lkt\QueryBuilding\Interfaces\QueryConstraint;
+
+class StringNotBeginsLikeConstraint extends AbstractConstraint implements QueryConstraint
 {
     public function __toString(): string
     {

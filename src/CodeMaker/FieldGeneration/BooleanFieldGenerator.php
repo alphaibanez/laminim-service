@@ -39,10 +39,18 @@ class BooleanFieldGenerator implements FieldGenerator
 
     public function parse(): string
     {
+        if ($this->mode === 'query') {
+            return $this->getQueryBuilder();
+        }
         return implode(' ', [
             $this->getGetters(),
             $this->getSetters(),
         ]);
+    }
+
+    protected function getQueryBuilder(): string
+    {
+        return '';
     }
 
     public static function generateTraitsUsageCode(Field $field): array

@@ -1231,9 +1231,15 @@ trait WhereConstraints
         return $this;
     }
 
-    public function andAnyPivotLinked(string $field, string $component, array $values, Item|null $item = null): self
+    public function andAnyPivotLinked(string $field, string $component, array $values): self
     {
-        $this->and[] = PivotLinkedConstraint::any($field, $component, $values, $item);
+        $this->and[] = PivotLinkedConstraint::any($field, $component, $values);
+        return $this;
+    }
+
+    public function orAnyPivotLinked(string $field, string $component, array $values): self
+    {
+        $this->or[] = PivotLinkedConstraint::any($field, $component, $values);
         return $this;
     }
 }

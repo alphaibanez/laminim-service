@@ -14,7 +14,6 @@ class PivotLinkedConstraint extends AbstractConstraint implements QueryConstrain
 {
     protected string $mode = 'any';
     protected string $originComponent = '';
-    protected Item|null $item = null;
 
     public function __toString(): string
     {
@@ -56,12 +55,10 @@ class PivotLinkedConstraint extends AbstractConstraint implements QueryConstrain
             if ($prepend) $prepend = "{$prepend}.";
             $where = "{$prepend}{$pivotSchemaTargetFieldName} IN {$value}";
 
-            $idColumnValue = $this->item->getIdColumnValue();
-            if ($idColumnValue) {
-                $originPrepend = $this->getTablePrepend();
-                $idColumn = $schema->getIdentifiersNames()[0];
-                $query->andRaw("{$originPrepend}{$idColumn} = {$prepend}{$pivotSchemaSameOriginField->getColumn()}");
-            }
+            $originPrepend = $this->getTablePrepend();
+            $idColumn = $schema->getIdentifiersNames()[0];
+            $query->andRaw("{$originPrepend}{$idColumn} = {$prepend}{$pivotSchemaSameOriginField->getColumn()}");
+
             $query->andRaw($where);
 
             return "0 < ({$query->getCountQuery($pivotSchemaTargetFieldName)})";
@@ -70,11 +67,10 @@ class PivotLinkedConstraint extends AbstractConstraint implements QueryConstrain
         return '';
     }
 
-    public static function any(string $field, string $component, array $values, Item|null $item = null): static
+    public static function any(string $field, string $component, array $values): static
     {
         $ins = new static($field, $values);
         $ins->originComponent = $component;
-        $ins->item = $item;
         $ins->mode = 'any';
         return $ins;
 

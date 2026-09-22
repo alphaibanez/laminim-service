@@ -5,6 +5,7 @@ namespace Lkt\CodeMaker\FieldGeneration;
 use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Traits\ItemWithPivotDataTrait;
 
@@ -43,11 +44,31 @@ class PivotFieldGenerator implements FieldGenerator
 
     public function parse(): string
     {
+        if ($this->mode === 'query') {
+            return $this->getQueryBuilder();
+        }
+
         return implode(' ', [
             $this->getGetters(),
             $this->getSetters(),
             $this->getCheckers(),
         ]);
+    }
+
+    protected function getQueryBuilder(): string
+    {
+        $r = [];
+        $name = $this->field->getName();
+        $methodName = ucfirst($name);
+        $component = $this->schema->getComponent();
+
+        foreach (['and', 'or'] as $constraint) {
+            $r[] = "public function {$constraint}Any{$methodName}IdsLinked(array \${$name}) { return \$this->andAnyPivotLinked('{$name}', '{$component}', \${$name}); }";
+            $r[] = "public function {$constraint}None{$methodName}IdsLinked(array \${$name}) { return \$this->andNonePivotLinked('{$name}', '{$component}', \${$name}); }";
+            $r[] = "public function {$constraint}None{$methodName}Linked() { return \$this->andUnlinkedPivotLinked('{$name}', '{$component}'); }";
+        }
+
+        return implode(' ', $r);
     }
 
     public static function generateTraitsUsageCode(Field $field): array

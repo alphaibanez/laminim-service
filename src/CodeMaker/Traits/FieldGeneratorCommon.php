@@ -5,11 +5,13 @@ namespace Lkt\CodeMaker\Traits;
 use Lkt\CodeMaker\DTO\FieldGeneratorData;
 use Lkt\CodeMaker\FieldGeneration\IntegerChoiceFieldGenerator;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Schemas\Schema;
 
 trait FieldGeneratorCommon
 {
-    public FieldGeneratorData $data;
+    public FieldGeneratorData|null $data;
     public Field|null $field = null;
+    public Schema|null $schema = null;
     protected string $mode = 'field';
 
 
@@ -64,10 +66,11 @@ trait FieldGeneratorCommon
         return $r;
     }
 
-    public static function queryBuilder(Field $field): static
+    public static function queryBuilder(Field $field, Schema $schema): static
     {
         $ins = new static();
         $ins->field = $field;
+        $ins->schema = $schema;
         $ins->mode = 'query';
         return $ins;
     }

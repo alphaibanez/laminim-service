@@ -3,12 +3,14 @@
 namespace Lkt\CodeMaker\Helpers;
 
 use Lkt\Attributes\LaminimUse;
+use Lkt\CodeMaker\FieldGeneration\PivotFieldGenerator;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\FloatField;
 use Lkt\Factory\Schemas\Fields\ForeignKeysField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
+use Lkt\Factory\Schemas\Fields\PivotField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\Templates\Template;
@@ -202,6 +204,11 @@ class FieldsQueryCallerHelper
                         ->setData($templateData)
                         ->parse();
                 }
+                continue;
+            }
+
+            if ($field instanceof PivotField) {
+                $methods[] = PivotFieldGenerator::queryBuilder($field, $schema)->parse();
                 continue;
             }
 

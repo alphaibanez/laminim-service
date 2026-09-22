@@ -4,6 +4,7 @@ namespace Lkt\CodeMaker\Interfaces;
 
 use Lkt\CodeMaker\DTO\FieldGeneratorData;
 use Lkt\Factory\Fields\Interfaces\Field;
+use Lkt\Factory\Schemas\Schema;
 
 interface FieldGenerator
 {
@@ -20,5 +21,5 @@ interface FieldGenerator
 
     public function getEnumChoiceClass(): string;
 
-    public static function queryBuilder(Field $field): static;
+    public static function queryBuilder(Field $field, Schema $schema): static;
 }

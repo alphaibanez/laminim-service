@@ -2,6 +2,7 @@
 
 namespace Lkt\Connectors\Traits\Database;
 
+use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
 
@@ -149,9 +150,10 @@ trait BaseDatabaseConnector
         return $this->getQuery($builder,'count', $countableField);
     }
 
-    final public function getInsertQuery(Query $builder): string
+    final public function getInsertQuery(Query $builder, DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): string
     {
-        return $this->getQuery($builder,'insert');
+        $action = $mode === DatabaseInsertMode::onDuplicatedIgnore ? 'insert-ignore' :  'insert';
+        return $this->getQuery($builder,$action);
     }
 
     final public function getUpdateQuery(Query $builder): string

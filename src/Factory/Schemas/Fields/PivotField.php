@@ -133,4 +133,9 @@ class PivotField implements Field
 
         return $pivotForeignColumn?->getComponent();
     }
+
+    public function keyIsIds(string $key): bool
+    {
+        return $key === $this->getName() . 'Ids';
+    }
 }

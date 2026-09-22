@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Exceptions\InvalidIntegerChoiceValueException;
@@ -68,8 +69,7 @@ final class MultipleIntegerDataController
             return $this;
         }
 
-        $diff = array_diff($currentValue ?? [], $parsedValue);
-        if (count($diff) === 0) {
+        if ($currentValue !== $parsedValue) {
             $this->payload[$key] = $parsedValue;
         }
 

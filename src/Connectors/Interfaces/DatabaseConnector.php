@@ -2,7 +2,7 @@
 
 namespace Lkt\Connectors\Interfaces;
 
-use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
+use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
@@ -25,7 +25,7 @@ interface DatabaseConnector
 
     public function prepareDataToStore(Schema $schema, array $data): array;
 
-    public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static;
+    public function batchInsert(array $items, Query $builder, Schema $schema, DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): static;
 
     public function batchDrop(array $items, Query $builder, Schema $schema): static;
 
@@ -70,7 +70,7 @@ interface DatabaseConnector
 
     public function getCountQuery(Query $builder, string $countableField): string;
 
-    public function getInsertQuery(Query $builder): string;
+    public function getInsertQuery(Query $builder, DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): string;
 
     public function getUpdateQuery(Query $builder): string;
 

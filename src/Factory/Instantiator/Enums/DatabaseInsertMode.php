@@ -2,7 +2,7 @@
 
 namespace Lkt\Factory\Instantiator\Enums;
 
-enum BatchInsertMode: int
+enum DatabaseInsertMode: int
 {
     case onDuplicatedIgnore = 0;
     case onDuplicatedUpdate = 1;

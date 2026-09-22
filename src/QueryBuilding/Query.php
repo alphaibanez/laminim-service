@@ -3,6 +3,7 @@
 namespace Lkt\QueryBuilding;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\QueryBuilding\Constraints\FieldInSubQueryConstraint;
 use Lkt\QueryBuilding\Constraints\FieldNotInSubQueryConstraint;
@@ -330,7 +331,7 @@ class Query
         return getTotalPages($this->count($countableField), $this->limit);
     }
 
-    final public function insert(): bool
+    final public function insert(DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): bool
     {
         $connector = $this->connector;
         if ($connector === '') {

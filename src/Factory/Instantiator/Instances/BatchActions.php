@@ -4,7 +4,7 @@ namespace Lkt\Factory\Instantiator\Instances;
 
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
+use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
@@ -37,7 +37,7 @@ class BatchActions
         return new static(Schema::get($component), $items);
     }
 
-    public function create(BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): void
+    public function create(DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): void
     {
         if (count($this->items) === 0) return;
 

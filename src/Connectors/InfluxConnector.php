@@ -12,7 +12,7 @@ use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Connectors\Traits\Database\BaseDatabaseConnector;
 use Lkt\Factory\Fields\Interfaces\Field;
-use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
+use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\PivotField;
@@ -375,7 +375,7 @@ class InfluxConnector implements DatabaseConnector
         return $this;
     }
 
-    public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static
+    public function batchInsert(array $items, Query $builder, Schema $schema, DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): static
     {
         // TODO: Implement batchInsert() method.
     }

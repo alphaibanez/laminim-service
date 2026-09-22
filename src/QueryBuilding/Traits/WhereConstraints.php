@@ -1242,4 +1242,28 @@ trait WhereConstraints
         $this->or[] = PivotLinkedConstraint::any($field, $component, $values);
         return $this;
     }
+
+    public function andNonePivotLinked(string $field, string $component, array $values): self
+    {
+        $this->and[] = PivotLinkedConstraint::none($field, $component, $values);
+        return $this;
+    }
+
+    public function orNonePivotLinked(string $field, string $component, array $values): self
+    {
+        $this->or[] = PivotLinkedConstraint::none($field, $component, $values);
+        return $this;
+    }
+
+    public function andUnlinkedPivotLinked(string $field, string $component): self
+    {
+        $this->and[] = PivotLinkedConstraint::unlinked($field, $component);
+        return $this;
+    }
+
+    public function orUnlinkedPivotLinked(string $field, string $component): self
+    {
+        $this->or[] = PivotLinkedConstraint::unlinked($field, $component);
+        return $this;
+    }
 }

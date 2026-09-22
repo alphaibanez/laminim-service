@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -23,6 +24,7 @@ final class PivotDataController
     private array $itemsAmountOfPages = [];
 
     private array $pendingLinks = [];
+    private array $pendingChildrenLinks = [];
     private array $pivots = [];
 
     private Schema $schema;
@@ -51,7 +53,7 @@ final class PivotDataController
     {
         $items = $this->getItems($key, $where, $page, $itemsPerPage, $additionalData, $forceRefresh);
 
-        return array_map(function (Item $item){
+        return array_map(function (Item $item) {
             return $item->getIdentifierValue();
         }, $items ?? []);
     }
@@ -230,6 +232,15 @@ final class PivotDataController
         return [
             'pendingLinks' => $this->pendingLinks,
         ];
+    }
+
+    public function setItemsIds(string $key, array $items)
+    {
+        $field = $this->schema->getPivotField($key);
+        if (!$field) return null;
+
+        $this->needsUpdate[$key] = $items;
+        return $this;
     }
 
     public function setItems(string $key, array $items, string $accessPolicy = 'lkt-related')
@@ -495,8 +506,7 @@ final class PivotDataController
         $instance
             ->assignValue($pointingField->getName(), $this->item->getIdColumnValue(), RetrieveDataMode::Raw)
             ->assignValue($referencedField->getName(), $id, RetrieveDataMode::Raw)
-            ->assignValue($positionField->getName(), $nextPosition)
-        ;
+            ->assignValue($positionField->getName(), $nextPosition);
 
         $instance->save();
         return $this;

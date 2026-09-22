@@ -81,8 +81,7 @@ final class MultipleStringDataController
             return $this;
         }
 
-        $diff = array_diff($currentValue ?? [], $parsedValue);
-        if (count($diff) === 0) {
+        if ($currentValue !== $parsedValue) {
             $this->payload[$key] = $parsedValue;
         }
 

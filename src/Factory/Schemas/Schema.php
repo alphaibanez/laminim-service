@@ -712,10 +712,7 @@ final class Schema
         $endsWithIds = substr($field, $l - 3, 3) === 'Ids';
         if ($endsWithIds) {
             $keyWithoutIds = substr($field, 0, $l - 3);
-            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof IntegerField && $haystack[$keyWithoutIds]->isForeignKey()) {
-                return $haystack[$keyWithoutIds];
-            }
-            if (isset($haystack[$keyWithoutIds]) && $haystack[$keyWithoutIds] instanceof IntegerField && $haystack[$keyWithoutIds]->isForeignKey()) {
+            if (isset($haystack[$keyWithoutIds]) && (($haystack[$keyWithoutIds] instanceof IntegerField && $haystack[$keyWithoutIds]->isForeignKey()) || $haystack[$keyWithoutIds] instanceof PivotField)) {
                 return $haystack[$keyWithoutIds];
             }
         }

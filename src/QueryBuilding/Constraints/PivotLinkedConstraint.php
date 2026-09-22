@@ -28,7 +28,7 @@ class PivotLinkedConstraint extends AbstractConstraint implements QueryConstrain
 
     public function toString(DatabaseConnector $connector = null): string
     {
-        if (count($this->value) === 0) {
+        if ($this->mode !== 'unlinked' && count($this->value) === 0) {
             return '';
         }
 
@@ -49,19 +49,31 @@ class PivotLinkedConstraint extends AbstractConstraint implements QueryConstrain
 
         if ($connector instanceof MariaDBConnector) {
 
-            $values = array_map(function($v){ return addslashes(stripslashes((int)$v));}, $this->value);
-            $value = "('".implode("','", $values)."')";
-            $prepend = $query->getTable();
-            if ($prepend) $prepend = "{$prepend}.";
-            $where = "{$prepend}{$pivotSchemaTargetFieldName} IN {$value}";
+            if ($this->mode !== 'unlinked') {
+                $values = array_map(function($v){ return addslashes(stripslashes((int)$v));}, $this->value);
+                $value = "('".implode("','", $values)."')";
+                $prepend = $query->getTable();
+                if ($prepend) $prepend = "{$prepend}.";
+                $where = "{$prepend}{$pivotSchemaTargetFieldName} IN {$value}";
+                $query->andRaw($where);
+            }
 
             $originPrepend = $this->getTablePrepend();
             $idColumn = $schema->getIdentifiersNames()[0];
             $query->andRaw("{$originPrepend}{$idColumn} = {$prepend}{$pivotSchemaSameOriginField->getColumn()}");
 
-            $query->andRaw($where);
 
-            return "0 < ({$query->getCountQuery($pivotSchemaTargetFieldName)})";
+            if ($this->mode === 'any') {
+                return "0 < ({$query->getCountQuery($pivotSchemaTargetFieldName)})";
+            }
+
+            if ($this->mode === 'none') {
+                return "0 = ({$query->getCountQuery($pivotSchemaTargetFieldName)})";
+            }
+
+            if ($this->mode === 'unlinked') {
+                return "0 = ({$query->getCountQuery($pivotSchemaTargetFieldName)})";
+            }
         }
 
         return '';
@@ -73,6 +85,21 @@ class PivotLinkedConstraint extends AbstractConstraint implements QueryConstrain
         $ins->originComponent = $component;
         $ins->mode = 'any';
         return $ins;
+    }
 
+    public static function none(string $field, string $component, array $values): static
+    {
+        $ins = new static($field, $values);
+        $ins->originComponent = $component;
+        $ins->mode = 'none';
+        return $ins;
+    }
+
+    public static function unlinked(string $field, string $component): static
+    {
+        $ins = new static($field, []);
+        $ins->originComponent = $component;
+        $ins->mode = 'unlinked';
+        return $ins;
     }
 }

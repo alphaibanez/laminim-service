@@ -212,6 +212,11 @@ trait ItemWithDataTrait
                 }
             }
 
+            if ($field instanceof PivotField && $field->keyIsIds($param)) {
+                $this->assignValue($field->getName(), $value, RetrieveDataMode::Ids);
+                continue;
+            }
+
             // Composed related data
             $composedDatum = !$schema->hasFieldDefined($param);
             if ($composedDatum) {
@@ -705,7 +710,11 @@ trait ItemWithDataTrait
             }
 
         } elseif ($field instanceof PivotField) {
-            $this->pivotData->setItems($key, (array)$value);
+            if ($mode === RetrieveDataMode::Ids) {
+                $this->pivotData->setItemsIds($key, (array)$value);
+            } else {
+                $this->pivotData->setItems($key, (array)$value);
+            }
 
         } elseif ($field instanceof RelatedKeysField) {
             if ($key === $field->getAppendForeignKeysName()) {

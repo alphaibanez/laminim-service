@@ -8,7 +8,7 @@ use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Connectors\Traits\Database\BaseDatabaseConnector;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Interfaces\Item;
-use Lkt\Factory\Instantiator\Enums\BatchInsertMode;
+use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
@@ -574,7 +574,7 @@ class MariaDBConnector implements DatabaseConnector
         return $r;
     }
 
-    public function batchInsert(array $items, Query $builder, Schema $schema, BatchInsertMode $mode = BatchInsertMode::onDuplicatedIgnore): static
+    public function batchInsert(array $items, Query $builder, Schema $schema, DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): static
     {
         $values = [];
         /** @var Item $item */
@@ -598,11 +598,11 @@ class MariaDBConnector implements DatabaseConnector
         }, $values);
         $valuesString = '(' . implode('),(', $values) . ')';
 
-        $query = $mode === BatchInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
+        $query = $mode === DatabaseInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
 
         $query .= " {$schema->getTable()} $valuesKeys VALUES $valuesString";
 
-        if ($mode === BatchInsertMode::onDuplicatedUpdate) {
+        if ($mode === DatabaseInsertMode::onDuplicatedUpdate) {
             $updateKeys = [];
             $identifiers = array_map(function (Field $f) {
                 return $f->getColumn();

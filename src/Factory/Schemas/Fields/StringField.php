@@ -138,7 +138,8 @@ class StringField implements Field
 
     public function hasSHA256Encryption(): bool
     {
-        return $this->encryptAlgorithm === EncryptAlgorithm::SHA256;
+        return $this->encryptAlgorithm === EncryptAlgorithm::SHA256
+            || $this->encryptAlgorithm === EncryptAlgorithm::SHA256Hash;
     }
 
     public function getConcatenatedFields(): array

@@ -6,6 +6,7 @@ use Lkt\Connectors\Cache\QueryCache;
 use Lkt\Connectors\Exceptions\InvalidDatabaseConnectorException;
 use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Connectors\Traits\Database\BaseDatabaseConnector;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
@@ -496,9 +497,14 @@ class MariaDBConnector implements DatabaseConnector
                             $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE | ENT_QUOTES, 'UTF-8');
 
                         } else {
-                            foreach ($value as $k => &$v) {
-                                $v = $this->escapeDatabaseCharacters($v);
-                                $v = htmlspecialchars($v, JSON_UNESCAPED_UNICODE | ENT_QUOTES, 'UTF-8');
+                            foreach ($value as $k => &$val) {
+                                if (is_array($val)) {
+                                    $val = json_encode($val, JSON_UNESCAPED_UNICODE);
+                                }
+                                if (is_string($val)) {
+                                    $val = $this->escapeDatabaseCharacters($val);
+                                    $val = htmlspecialchars($val, JSON_UNESCAPED_UNICODE | ENT_QUOTES, 'UTF-8');
+                                }
                             }
 
                             $v = json_encode($value, JSON_UNESCAPED_UNICODE);

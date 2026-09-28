@@ -25,6 +25,11 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
 
         } else {
             $r[] = "public function get{$this->data->methodName}():int|null { return \$this->integerData->get('{$this->data->fieldName}'); }";
+
+            if ($this->data->field->isEnumChoice()) {
+                $enumClass = $this->data->field->getEnumChoiceClass();
+                $r[] = "public function get{$this->data->methodName}Enum():\\{$enumClass}|null { return \$this->integerData->getEnum('{$this->data->fieldName}'); }";
+            }
         }
 
 

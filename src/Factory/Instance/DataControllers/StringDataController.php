@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Enums\TrimMode;
@@ -53,6 +52,21 @@ final class StringDataController
         return null;
     }
 
+    public function getEnum(string $key): mixed
+    {
+        $f = $this->schema->getStringField($key);
+        if ($f->isEnumChoice()) {
+            $enumClass = $f->getEnumChoiceClass();
+            $v = $this->get($key);
+            if (enum_exists($enumClass)) {
+                $enum = $enumClass::tryFrom($v);
+                return $enum;
+            }
+        }
+
+        return null;
+    }
+
     public function has(string $key): bool
     {
         $v = $this->get($key);
@@ -81,7 +95,18 @@ final class StringDataController
         }
 
         $currentValue = $this->get($key);
+        if ($f->ableToChoose()) {
+            $finalChoices = $f->getFinalChoices();
+            if (in_array($currentValue, $finalChoices)) return $this;
+        }
+
         $parsedValue = $this->parse($key, $value);
+        $choiceFlow = $f->getChoiceFlow();
+        if (array_key_exists($currentValue, $choiceFlow)) {
+            if (!in_array($parsedValue, $choiceFlow[$currentValue])) {
+                return $this;
+            }
+        }
 
         if ($parsedValue !== $currentValue) {
             $this->payload[$key] = $parsedValue;

@@ -37,6 +37,21 @@ final class IntegerDataController
         return null;
     }
 
+    public function getEnum(string $key): mixed
+    {
+        $f = $this->schema->getIntegerField($key);
+        if ($f->isEnumChoice()) {
+            $enumClass = $f->getEnumChoiceClass();
+            $v = $this->get($key);
+            if (enum_exists($enumClass)) {
+                $enum = $enumClass::tryFrom($v);
+                return $enum;
+            }
+        }
+
+        return null;
+    }
+
     public function has(string $key): bool
     {
         $v = $this->get($key);
@@ -56,7 +71,18 @@ final class IntegerDataController
         }
 
         $currentValue = $this->get($key);
+        if ($f->ableToChoose()) {
+            $finalChoices = $f->getFinalChoices();
+            if (in_array($currentValue, $finalChoices)) return $this;
+        }
+
         $parsedValue = $this->parse($key, $value);
+        $choiceFlow = $f->getChoiceFlow();
+        if (array_key_exists($currentValue, $choiceFlow)) {
+            if (!in_array($parsedValue, $choiceFlow[$currentValue])) {
+                return $this;
+            }
+        }
 
         if ($parsedValue !== $currentValue) {
             $this->payload[$key] = $parsedValue;

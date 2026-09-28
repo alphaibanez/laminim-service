@@ -15,6 +15,27 @@ trait FieldWithChoiceOptionTrait
     protected string|int|null $emptyDefault = null;
     protected string $i18nViewOptions = '';
     protected string $enumChoiceClass = '';
+    protected array $finalChoices = [];
+
+    /**
+     * @laminim
+     * Expected structure:
+     *      An key-value array where 'key' indicates current value
+     *      and 'value' it's an array containing all posible values
+     *
+     *      For example:
+     *      [
+     *          'open' => ['closed', 'not-defined'],
+     *          'closed' => ['open'],
+     *          'not-defined' => ['open'],
+     *      ]
+     *
+     *      In this case, if the value it's open, it can be turned into closed or not-defined,
+     *      but both closed and not-defined can only move to open value.
+     *
+     *      Keep in mind if the initial value it's a final choice, it won't be changed.
+     */
+    protected array $choiceFlow = [];
 
     protected ChoiceFieldSource $optionsSource = ChoiceFieldSource::None;
 
@@ -66,6 +87,11 @@ trait FieldWithChoiceOptionTrait
     public function ableToChoose(): bool
     {
         return $this->optionsSource !== ChoiceFieldSource::None;
+    }
+
+    final public function isEnumChoice(): bool
+    {
+        return $this->optionsSource === ChoiceFieldSource::Enum;
     }
 
     final public function addComparatorIn(string $name, array $values): static
@@ -120,5 +146,27 @@ trait FieldWithChoiceOptionTrait
     final public function getI18nViewOptions(): string
     {
         return $this->i18nViewOptions;
+    }
+
+    final public function setFinalChoices(array $choices): static
+    {
+        $this->finalChoices = $choices;
+        return $this;
+    }
+
+    final public function getFinalChoices(): array
+    {
+        return $this->finalChoices;
+    }
+
+    final public function setChoiceFlow(array $choices): static
+    {
+        $this->choiceFlow = $choices;
+        return $this;
+    }
+
+    final public function getChoiceFlow(): array
+    {
+        return $this->choiceFlow;
     }
 }

@@ -5,6 +5,7 @@ namespace Lkt\CodeMaker\FieldGeneration;
 use Lkt\Attributes\LaminimUse;
 use Lkt\CodeMaker\Interfaces\FieldGenerator;
 use Lkt\CodeMaker\Traits\FieldGeneratorCommon;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Traits\ItemWithStringDataTrait;
 
@@ -23,6 +24,11 @@ class StringChoiceFieldGenerator implements FieldGenerator
 
         } else {
             $r[] = "public function get{$this->data->methodName}():string|null { return \$this->stringData->get('{$this->data->fieldName}'); }";
+
+            if ($this->data->field->isEnumChoice()) {
+                $enumClass = $this->data->field->getEnumChoiceClass();
+                $r[] = "public function get{$this->data->methodName}Enum():\{$enumClass}|null { return \$this->stringData->getEnum('{$this->data->fieldName}'); }";
+            }
         }
 
 

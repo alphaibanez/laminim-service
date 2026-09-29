@@ -2,12 +2,14 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Factory\Fields\Enums\ComposedValueFeedType;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Schemas\Fields\IntegerField;
 use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Instances\LktUser;
 
 final class ComposedDataController
 {
@@ -116,7 +118,7 @@ final class ComposedDataController
                 }
             }
 
-            if ($field instanceof IntegerField && $field->isForeignKey()) {
+            elseif ($field instanceof IntegerField && $field->isForeignKey()) {
                 if (!$this->item->hasAssignedValue($field->getName())) {
                     $item->assignValue($field->getName(), $item->getIdColumnValue());
                 }
@@ -135,9 +137,24 @@ final class ComposedDataController
          * @var  $key
          * @var Field $compositionValueField
          */
-        foreach ($compositionValuesFields as $key => $compositionValueField) {
-            if (!$additionalData[$key]) {
-                $additionalData[$key] = $this->item->retrieveValue($compositionValueField->getName(), $additionalData, RetrieveDataMode::Raw);
+        foreach ($compositionValuesFields as $key => $compositionConfig) {
+            if (!array_key_exists($key, $additionalData)) {
+                $compositionValueField = $compositionConfig[0];
+                $compositionType = $compositionConfig[1];
+                switch ($compositionType) {
+                    case ComposedValueFeedType::RawValue:
+                        $additionalData[$key] = $compositionConfig[0];
+                        break;
+
+                    case ComposedValueFeedType::SignedUserId:
+                        $additionalData[$key] = LktUser::getSignedInUserId();
+                        break;
+
+                    case ComposedValueFeedType::ExtractValue:
+                        $additionalData[$key] = $this->item->retrieveValue($compositionValueField->getName(), $additionalData, RetrieveDataMode::Raw);
+                        break;
+                }
+
             }
         }
 

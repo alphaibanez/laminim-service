@@ -7,6 +7,8 @@ use Lkt\Attributes\Deprecated;
 use Lkt\Attributes\LaminimUse;
 use Lkt\Attributes\Recommended;
 use Lkt\Attributes\Stable;
+use Lkt\Debug\VarDumper;
+use Lkt\Factory\Fields\Enums\ComposedValueFeedType;
 use Lkt\Factory\Fields\Enums\OnParentDrop;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
@@ -42,6 +44,7 @@ use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Factory\Schemas\ValueObjects\AccessPolicyUsage;
 use Lkt\Factory\Schemas\ValueObjects\ItemToI18nPolicy;
 use Lkt\Http\Response;
+use Lkt\Instances\LktUser;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Query;
 use Lkt\QueryBuilding\Where;
@@ -953,12 +956,7 @@ final class Schema
         if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) return [];
         if (!$field->hasCompositionContent()) return [];
 
-        $r = [];
-        foreach ($field->getCompositionValues() as $paramName => $compositionValue) {
-            $r[$paramName] = $this->getField($compositionValue);
-        }
-
-        return $r;
+        return $this->parseCompositionValueFields($field);
     }
 
     public function getAllCompositionValueFields(): array
@@ -968,11 +966,23 @@ final class Schema
             if (!$field instanceof RelatedField && !($field instanceof IntegerField && $field->isForeignKey())) continue;
             if (!$field->hasCompositionContent()) continue;
 
-            foreach ($field->getCompositionValues() as $paramName => $compositionValue) {
-                $r[$paramName] = $this->getField($compositionValue);
-            }
+            $r = [...$r, $this->parseCompositionValueFields($field)];
         }
 
+        return $r;
+    }
+
+    private function parseCompositionValueFields(IntegerField|RelatedField $field): array
+    {
+        $r = [];
+        foreach ($field->getCompositionValues() as $paramName => $compositionValue) {
+            $compositionType = $compositionValue[1];
+            if ($compositionType === ComposedValueFeedType::ExtractValue) {
+                $r[$paramName] = [$this->getField($compositionValue[0]), $compositionValue[1]];
+            } else {
+                $r[$paramName] = $compositionValue;
+            }
+        }
         return $r;
     }
 

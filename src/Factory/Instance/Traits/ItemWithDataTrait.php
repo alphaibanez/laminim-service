@@ -2,7 +2,6 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
-use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
@@ -236,7 +235,8 @@ trait ItemWithDataTrait
                 $composedInstanceKey = $fieldComposingThisField?->getName();
 
                 $additionalData = $this->composedData->prepareAdditionalData($composedKey, $internalMethodsArguments);
-                if (!$composedInstances[$composedKey]) {
+
+                if (!$composedInstances[$composedInstanceKey]) {
                     /** @var Item $composedInstance */
                     $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
                     $composedInstances[$composedInstanceKey] = $composedInstance;
@@ -250,7 +250,6 @@ trait ItemWithDataTrait
                 $composedInstances[$composedInstanceKey]->feed([
                     $composedKey => $value,
                 ], $additionalData);
-
                 continue;
             }
 
@@ -699,9 +698,6 @@ trait ItemWithDataTrait
         } elseif ($field instanceof FileField) {
             $this->fileData->set($key, $value);
 
-        } elseif ($field instanceof ForeignKeysField) {
-            $this->foreignKeysData->set($key, $value);
-
         } elseif ($field instanceof RelatedField) {
             if ($field->isSingleMode()) {
                 $this->relatedItemData->setItem($key, (array)$value);
@@ -715,6 +711,9 @@ trait ItemWithDataTrait
             } else {
                 $this->pivotData->setItems($key, (array)$value);
             }
+
+        } elseif ($field instanceof ForeignKeysField) {
+            $this->foreignKeysData->set($key, $value);
 
         } elseif ($field instanceof RelatedKeysField) {
             if ($key === $field->getAppendForeignKeysName()) {
@@ -798,21 +797,15 @@ trait ItemWithDataTrait
             if ($dataMode === RetrieveDataMode::FileInternalPath) return $this->fileData->getInternalPath($key);
             return $this->fileData->getPublicPath($key);
 
-        } elseif ($field instanceof ForeignKeysField) {
-            if ($dataMode === RetrieveDataMode::Raw) {
-                return $this->foreignKeysData->get($key);
-            }
-            if ($dataMode === RetrieveDataMode::Ids) {
-                return $this->foreignKeysData->getIds($key);
-            }
-            return $this->foreignKeysData->getItems($key);
-
         } elseif ($field instanceof RelatedField) {
-            if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
-            if ($field->isSingleMode()) return $this->relatedItemData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
-            return $this->relatedItemsData->getItems($key);
+            if (isset($this->composedData)) {
+                $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
+            }
 
-        } elseif ($field instanceof RelatedKeysField) {
+            if ($field->isSingleMode()) {
+                return $this->relatedItemData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
+            }
+
             return $this->relatedItemsData->getItems($key);
 
         } elseif ($field instanceof ConstantValueField) {
@@ -835,6 +828,18 @@ trait ItemWithDataTrait
             } else {
                 return $this->integerData->get($key);
             }
+
+        } elseif ($field instanceof ForeignKeysField) {
+            if ($dataMode === RetrieveDataMode::Raw) {
+                return $this->foreignKeysData->get($key);
+            }
+            if ($dataMode === RetrieveDataMode::Ids) {
+                return $this->foreignKeysData->getIds($key);
+            }
+            return $this->foreignKeysData->getItems($key);
+
+        } elseif ($field instanceof RelatedKeysField) {
+            return $this->relatedItemsData->getItems($key);
         }
         return null;
     }
@@ -872,14 +877,8 @@ trait ItemWithDataTrait
         } elseif ($field instanceof FileField) {
             return $this->fileData->has($key);
 
-        } elseif ($field instanceof ForeignKeysField) {
-            return $this->foreignKeysData->has($key);
-
         } elseif ($field instanceof RelatedField) {
             if ($field->isSingleMode()) return $this->relatedItemData->has($key, $additionalData);
-            return $this->relatedItemsData->has($key);
-
-        } elseif ($field instanceof RelatedKeysField) {
             return $this->relatedItemsData->has($key);
 
         } elseif ($field instanceof ConstantValueField) {
@@ -896,6 +895,12 @@ trait ItemWithDataTrait
             } else {
                 return $this->integerData->has($key);
             }
+
+        } elseif ($field instanceof ForeignKeysField) {
+            return $this->foreignKeysData->has($key);
+
+        } elseif ($field instanceof RelatedKeysField) {
+            return $this->relatedItemsData->has($key);
         }
 
         return false;
@@ -951,6 +956,46 @@ trait ItemWithDataTrait
             }
             return [$responseKey => $this->stringData->get($key)];
 
+        } elseif ($field instanceof IntegerField) {
+            if ($field->isForeignKey()) {
+                $relatedAccessPolicy = null;
+                $accessPolicyUsage = $this->getAccessPolicyUsage();
+                $schema = $this->getSchema();
+
+                if ($accessPolicyUsage) {
+                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+                }
+
+                if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                    $relatedAccessPolicy = 'lkt-related';
+                }
+
+                if ($field->hasCompositionContent()) {
+                    $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
+                }
+
+                $item = $this->foreignKeyData->getItem($key, $additionalData);
+                if ($item instanceof Item) {
+                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                    $item = $item->autoRead();
+                }
+
+                $r = [];
+                if (!is_array($item)) $item = [];
+                $r[$responseKey] = $item;
+                $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
+                if ($field->hasOnReadIncludeOptions()) {
+                    $r[$responseKey . 'Opts'] = count($item) > 0 ? [$item] : [];
+                }
+
+                return $r;
+
+            } elseif ($field->isMultiple()) {
+                return [$responseKey => $this->multipleIntegerData->get($key)];
+            } else {
+                return [$responseKey => $this->integerData->get($key)];
+            }
+
         } elseif ($field instanceof BooleanField) {
             return [$responseKey => $this->booleanData->get($key)];
 
@@ -965,35 +1010,6 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof FileField) {
             return [$responseKey => $this->fileData->getPublicPath($key)];
-
-        } elseif ($field instanceof ForeignKeysField) {
-
-            $relatedAccessPolicy = null;
-            $accessPolicyUsage = $this->getAccessPolicyUsage();
-            $schema = $this->getSchema();
-
-            if ($accessPolicyUsage) {
-                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-            }
-
-            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
-                $relatedAccessPolicy = 'lkt-related';
-            }
-
-            $items = $this->foreignKeysData->getItems($key);
-            $r = [];
-            if (!is_array($items)) $items = [];
-            $t = [];
-
-            foreach ($items as $item) {
-                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                $t[] = $item->autoRead();
-            }
-            $r[$responseKey] = $t;
-            $r[$responseKey . 'Ids'] = $this->foreignKeysData->getIds($key);
-
-
-            return $r;
 
         } elseif ($field instanceof RelatedField) {
 
@@ -1042,80 +1058,6 @@ trait ItemWithDataTrait
 
 
             return $r;
-
-        } elseif ($field instanceof RelatedKeysField) {
-
-            $r = [];
-
-            $relatedAccessPolicy = null;
-            $accessPolicyUsage = $this->getAccessPolicyUsage();
-            $schema = $this->getSchema();
-
-            if ($accessPolicyUsage) {
-                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-            }
-
-            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
-                $relatedAccessPolicy = 'lkt-related';
-            }
-
-
-            $items = $this->relatedItemsData->getItems($key);
-            if (!is_array($items)) $items = [];
-            $t = [];
-
-            foreach ($items as $item) {
-                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-
-                if ($key === $field->getAppendForeignKeysName()) {
-                    $t[] = $item->getIdColumnValue();
-                } else {
-                    $t[] = $item->autoRead();
-                }
-            }
-            $r[$responseKey] = $t;
-            if ($key !== $field->getAppendForeignKeysName()) {
-                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);;
-            }
-
-
-            return $r;
-
-        } elseif ($field instanceof IntegerField) {
-            if ($field->isForeignKey()) {
-                $relatedAccessPolicy = null;
-                $accessPolicyUsage = $this->getAccessPolicyUsage();
-                $schema = $this->getSchema();
-
-                if ($accessPolicyUsage) {
-                    $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
-                }
-
-                if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
-                    $relatedAccessPolicy = 'lkt-related';
-                }
-
-                $item = $this->foreignKeyData->getItem($key, $additionalData);
-                if ($item instanceof Item) {
-                    if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
-                    $item = $item->autoRead();
-                }
-
-                $r = [];
-                if (!is_array($item)) $item = [];
-                $r[$responseKey] = $item;
-                $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
-                if ($field->hasOnReadIncludeOptions()) {
-                    $r[$responseKey . 'Opts'] = count($item) > 0 ? [$item] : [];
-                }
-
-                return $r;
-
-            } elseif ($field->isMultiple()) {
-                return [$responseKey => $this->multipleIntegerData->get($key)];
-            } else {
-                return [$responseKey => $this->integerData->get($key)];
-            }
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
@@ -1178,6 +1120,73 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof ConstantValueField) {
             return [$responseKey => $this->constantData->get($key)];
+
+        } elseif ($field instanceof ForeignKeysField) {
+
+            $relatedAccessPolicy = null;
+            $accessPolicyUsage = $this->getAccessPolicyUsage();
+            $schema = $this->getSchema();
+
+            if ($accessPolicyUsage) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+            $items = $this->foreignKeysData->getItems($key);
+            $r = [];
+            if (!is_array($items)) $items = [];
+            $t = [];
+
+            foreach ($items as $item) {
+                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+                $t[] = $item->autoRead();
+            }
+            $r[$responseKey] = $t;
+            $r[$responseKey . 'Ids'] = $this->foreignKeysData->getIds($key);
+
+
+            return $r;
+
+        } elseif ($field instanceof RelatedKeysField) {
+
+            $r = [];
+
+            $relatedAccessPolicy = null;
+            $accessPolicyUsage = $this->getAccessPolicyUsage();
+            $schema = $this->getSchema();
+
+            if ($accessPolicyUsage) {
+                $relatedAccessPolicy = $schema->getAccessPolicyForRelationalField($this->accessPolicy, $field);
+            }
+
+            if (!$relatedAccessPolicy && Schema::get($field->getComponent($schema, $this))->hasRelatedAccessPolicy()) {
+                $relatedAccessPolicy = 'lkt-related';
+            }
+
+
+            $items = $this->relatedItemsData->getItems($key);
+            if (!is_array($items)) $items = [];
+            $t = [];
+
+            foreach ($items as $item) {
+                if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
+
+                if ($key === $field->getAppendForeignKeysName()) {
+                    $t[] = $item->getIdColumnValue();
+                } else {
+                    $t[] = $item->autoRead();
+                }
+            }
+            $r[$responseKey] = $t;
+            if ($key !== $field->getAppendForeignKeysName()) {
+                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);;
+            }
+
+
+            return $r;
         }
 
         return null;

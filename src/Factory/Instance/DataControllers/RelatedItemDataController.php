@@ -79,7 +79,7 @@ final class RelatedItemDataController
             return null;
         }
 
-        $builder = $this->getQuery($key);
+        $builder = $this->getQuery($key, null, null, null, $additionalData);
 
         $results = $relatedSchema->getMany($builder);
         if (count($results) > 0) {

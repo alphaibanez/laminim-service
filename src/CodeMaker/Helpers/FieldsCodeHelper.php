@@ -267,6 +267,7 @@ class FieldsCodeHelper
             $composedSchema = Schema::get($composedComponent);
             $nestedComposedSchema = Schema::get($composedComponent);
             $compositionValues = $compositionField->getCompositionValues();
+            $compositionValues = array_map(function ($z) {return $z[0];}, $compositionValues);
 
             foreach ($compositionField->getCompositionContent() as $fieldName => $composedFieldName) {
 

@@ -2,6 +2,8 @@
 
 namespace Lkt\Factory\Fields\Traits;
 
+use Lkt\Factory\Fields\Enums\ComposedValueFeedType;
+
 trait FieldWithCompositionOptionTrait
 {
 
@@ -24,9 +26,9 @@ trait FieldWithCompositionOptionTrait
         return count($this->compositionContent) > 0;
     }
 
-    public function setCompositionValue(string $paramName, string $extractParamValueFromFieldName): static
+    public function setCompositionValue(string $paramName, mixed $extractParamValueFromFieldName, ComposedValueFeedType $type = ComposedValueFeedType::ExtractValue): static
     {
-        $this->compositionValues[$paramName] = $extractParamValueFromFieldName;
+        $this->compositionValues[$paramName] = [$extractParamValueFromFieldName, $type];
         return $this;
     }
 

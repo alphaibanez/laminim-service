@@ -24,6 +24,20 @@ public function <?php echo lcfirst($fieldMethod);?>(<?php echo $additionalInput;
     ]);
     return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', $additionalData);
 }
+<?php
+    /**
+     * Foreign key generation
+     * Retrieve item
+     * Check additional fields at file bottom
+     */
+?>
+<?php elseif($additionalFields === 'foreign-key'): ?>
+public function get<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) <?php echo $composedPrimitiveReturnType;?> {
+    $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [
+    <?php echo $additionalInputDetection;?>
+    ]);
+    return $this<?php echo $nestedCompositionCalls?>->composedData->getItem('<?php echo $compositionFieldName;?>')?->retrieveValue('<?php echo $fieldName;?>', $additionalData, \Lkt\Factory\Instance\Enums\RetrieveDataMode::Item);
+}
 <?php else: ?>
 public function get<?php echo $fieldMethod;?>(<?php echo $additionalInput;?>) <?php echo $composedPrimitiveReturnType;?> {
     $additionalData = $this->composedData->prepareAdditionalData('<?php echo $fieldName; ?>', [

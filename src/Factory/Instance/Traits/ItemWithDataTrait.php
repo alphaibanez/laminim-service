@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Interfaces\Field;
 use Lkt\Factory\Instance\DTO\GroupedData;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
@@ -228,6 +229,11 @@ trait ItemWithDataTrait
                 }
 
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($param);
+                if (!$fieldComposingThisField) {
+                    // Field composed with an alias
+                    $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
+                    $composedKey = $field->getName();
+                }
                 if (!$fieldComposingThisField) continue;
 
                 $associatedAccessPolicy = $accessPolicyUsage ? $fieldComposingThisField->getAssociatedAccessPolicy($accessPolicyUsage->name) : '';

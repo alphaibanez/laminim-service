@@ -27,7 +27,7 @@ class StringChoiceFieldGenerator implements FieldGenerator
 
             if ($this->data->field->isEnumChoice()) {
                 $enumClass = $this->data->field->getEnumChoiceClass();
-                $r[] = "public function get{$this->data->methodName}Enum():\{$enumClass}|null { return \$this->stringData->getEnum('{$this->data->fieldName}'); }";
+                $r[] = "public function get{$this->data->methodName}Enum():\\{$enumClass}|null { return \$this->stringData->getEnum('{$this->data->fieldName}'); }";
             }
         }
 

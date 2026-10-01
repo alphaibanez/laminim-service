@@ -25,7 +25,7 @@ class GenerateCommand extends Command
             ->setName('lkt:make:code')
 
             // the short description shown while running "php bin/console list"
-            ->setDescription('Automatically generates a fresh crontab file')
+            ->setDescription('Automatically generates PHP code based on configuration')
 
             // the full command description shown when running the command with
             // the "--help" option

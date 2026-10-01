@@ -3,6 +3,7 @@
 namespace Lkt;
 
 use Lkt\Commander\Commander;
+use Lkt\Console\Commands\GenerateClientFrontCommand;
 use Lkt\Console\Commands\GenerateCommand;
 use Lkt\Console\Commands\MailDeliveryCommand;
 use Lkt\Console\Commands\MakeCrontabCommand;
@@ -62,6 +63,7 @@ if (php_sapi_name() == 'cli') {
 
     // Own commands
     Commander::register(new GenerateCommand());
+    Commander::register(new GenerateClientFrontCommand());
     Commander::register(new MailDeliveryCommand());
     Commander::register(new MakeCrontabCommand());
     Commander::register(new RunCrontabCommand());

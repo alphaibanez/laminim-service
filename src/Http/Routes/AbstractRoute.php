@@ -5,6 +5,7 @@ namespace Lkt\Http\Routes;
 use Lkt\Http\DTO\GrantedPermsAttempt;
 use Lkt\Http\DTO\TargetAccessPolicy;
 use Lkt\Http\Enums\AccessLevel;
+use Lkt\Http\Enums\ParamType;
 use Lkt\Http\Enums\RouteMethod;
 use Lkt\Http\Enums\SiteMapChangeFrequency;
 use Lkt\Http\HttpEventHandler;
@@ -18,6 +19,7 @@ abstract class AbstractRoute
 {
     protected RouteMethod $method = RouteMethod::Get;
 
+    protected string $name = '';
     protected string $route = '';
     protected $handler = null;
     protected array $accessCheckers = [];
@@ -46,8 +48,13 @@ abstract class AbstractRoute
     protected array $requiredPermissions = [];
 
     protected array $httpEventHandlers = [];
+    protected array $params = [];
 
+    protected bool $allowAnonymousParams = false;
     protected bool $logRoute = false;
+    protected string $expectedResponseDataProperty = '';
+    protected string $expectedResponsePermsProperty = '';
+    protected string $expectedResponseIdProperty = '';
 
     /**
      * @var WebItemActionHookHandler[]
@@ -305,6 +312,78 @@ abstract class AbstractRoute
     {
         $this->webItemActionHookHandlers[] = $handler;
         return $this;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setAllowAnonymousParams(bool $allow): static
+    {
+        $this->allowAnonymousParams = $allow;
+        return $this;
+    }
+
+    public function allowsAnonymousParams(): bool
+    {
+        return $this->allowAnonymousParams;
+    }
+
+    public function setExpectedResponseDataProperty(string $allow): static
+    {
+        $this->expectedResponseDataProperty = $allow;
+        return $this;
+    }
+
+    public function getExpectedResponseDataProperty(): string
+    {
+        return $this->expectedResponseDataProperty;
+    }
+
+    public function setExpectedResponsePermsProperty(string $allow): static
+    {
+        $this->expectedResponsePermsProperty = $allow;
+        return $this;
+    }
+
+    public function getExpectedResponsePermsProperty(): string
+    {
+        return $this->expectedResponsePermsProperty;
+    }
+
+    public function setExpectedResponseIdProperty(string $allow): static
+    {
+        $this->expectedResponseIdProperty = $allow;
+        return $this;
+    }
+
+    public function getExpectedResponseIdProperty(): string
+    {
+        return $this->expectedResponseIdProperty;
+    }
+
+    public function setMandatoryParam(string $key, ParamType $type, mixed $defaultValue, array $config = []): static
+    {
+        $this->params[$key] = [$type, $defaultValue, true, $config];
+        return $this;
+    }
+
+    public function setOptionalParam(string $key, ParamType $type, mixed $defaultValue, array $config = []): static
+    {
+        $this->params[$key] = [$type, $defaultValue, false, $config];
+        return $this;
+    }
+
+    public function getParams(): array
+    {
+        return $this->params;
     }
 
     /**

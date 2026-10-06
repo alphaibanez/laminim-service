@@ -4,6 +4,7 @@ namespace Lkt;
 
 use Lkt\FileBrowser\Http\FileBrowserHttp;
 use Lkt\Http\BasicHttpHandler;
+use Lkt\Http\Enums\ParamType;
 use Lkt\Http\Routes\DeleteRoute;
 use Lkt\Http\Routes\GetRoute;
 use Lkt\Http\Routes\PostRoute;
@@ -16,12 +17,23 @@ use Lkt\WebPages\Http\LktWebPageHttp;
  * Setup admin web items routes
  */
 GetRoute::admin('/admin-api/ls/{component}', BasicHttpHandler::List)
+    ->setName('admin-ls-web-items')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setRequiredPermissions(['ls'])
     ->setGrantedPermsAttempt(['mk' => 'create'])
     ->setTargetAccessPolicyAttempts('admin-ls');
 
 GetRoute::admin('/admin-api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setName('admin-pg-web-items')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('page', ParamType::Number, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
@@ -29,6 +41,12 @@ GetRoute::admin('/admin-api/page-{page:\d+}/{component}', BasicHttpHandler::Page
     ->setTargetAccessPolicyAttempts(['admin-pg', 'admin-ls']);
 
 GetRoute::admin('/admin-api/opts-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setName('admin-opts-web-items')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('page', ParamType::Number, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
@@ -36,6 +54,10 @@ GetRoute::admin('/admin-api/opts-{page:\d+}/{component}', BasicHttpHandler::Page
     ->setTargetAccessPolicyAttempts(['admin-opt', 'admin-pg', 'admin-ls']);
 
 GetRoute::admin('/admin-api/r-{id}/{component}', BasicHttpHandler::Read)
+    ->setName('admin-r-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('id', ParamType::Number, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])
@@ -43,6 +65,9 @@ GetRoute::admin('/admin-api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setTargetAccessPolicy('admin');
 
 PostRoute::admin('/admin-api/mk/{component}', BasicHttpHandler::Create)
+    ->setName('admin-mk-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
     ->setWebItemValueParamsExtractionKey('component')
     ->setAnonymousTarget()
     ->setRequiredPermissions(['mk'])
@@ -50,6 +75,10 @@ PostRoute::admin('/admin-api/mk/{component}', BasicHttpHandler::Create)
     ->setTargetAccessPolicy('admin');
 
 PutRoute::admin('/admin-api/up/{component}', BasicHttpHandler::Update)
+    ->setName('admin-up-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['up'])
@@ -57,6 +86,10 @@ PutRoute::admin('/admin-api/up/{component}', BasicHttpHandler::Update)
     ->setTargetAccessPolicy('admin');
 
 PostRoute::admin('/admin-api/dup/{component}', BasicHttpHandler::Duplicate)
+    ->setName('admin-dup-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['mk'])
@@ -64,6 +97,9 @@ PostRoute::admin('/admin-api/dup/{component}', BasicHttpHandler::Duplicate)
     ->setTargetAccessPolicy('duplicate');
 
 DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
+    ->setName('admin-rm-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setPayloadValueParamsExtractionKey('payload')

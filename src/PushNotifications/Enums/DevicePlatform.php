@@ -4,6 +4,7 @@ namespace Lkt\PushNotifications\Enums;
 
 enum DevicePlatform: int
 {
-    case Android = 0;
-    case iOS = 1;
+    case Unknown = 0;
+    case Android = 1;
+    case iOS = 2;
 }

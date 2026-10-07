@@ -110,6 +110,12 @@ DeleteRoute::admin('/admin-api/rm/{component}', BasicHttpHandler::Drop)
  * Setup app web items routes
  */
 GetRoute::onlyLoggedUsers('/api/ls/{component}-{accessPolicy}', BasicHttpHandler::List)
+    ->setName('ls-web-items-policy')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('accessPolicy', ParamType::String, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setTargetAccessPolicyExtractionKey('accessPolicy')
     ->setRequiredPermissions(['ls'])
@@ -117,12 +123,24 @@ GetRoute::onlyLoggedUsers('/api/ls/{component}-{accessPolicy}', BasicHttpHandler
     ->setTargetAccessPolicyAttempts('ls');
 
 GetRoute::onlyLoggedUsers('/api/ls/{component}', BasicHttpHandler::List)
+    ->setName('ls-web-items')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setRequiredPermissions(['ls'])
     ->setGrantedPermsAttempt(['mk' => 'create'])
     ->setTargetAccessPolicyAttempts('ls');
 
 GetRoute::onlyLoggedUsers('/api/page-{page:\d+}-{accessPolicy}/{component}', BasicHttpHandler::Page)
+    ->setName('pg-web-items-policy')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('page', ParamType::Number, null)
+    ->setMandatoryParam('accessPolicy', ParamType::String, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
@@ -130,6 +148,12 @@ GetRoute::onlyLoggedUsers('/api/page-{page:\d+}-{accessPolicy}/{component}', Bas
     ->setTargetAccessPolicyAttempts(['pg', 'ls']);
 
 GetRoute::onlyLoggedUsers('/api/page-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setName('pg-web-items')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('page', ParamType::Number, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setTargetAccessPolicyExtractionKey('accessPolicy')
@@ -138,6 +162,13 @@ GetRoute::onlyLoggedUsers('/api/page-{page:\d+}/{component}', BasicHttpHandler::
     ->setTargetAccessPolicyAttempts(['pg', 'ls']);
 
 GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}-{accessPolicy}/{component}', BasicHttpHandler::Page)
+    ->setName('opts-web-items-policy')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('page', ParamType::Number, null)
+    ->setMandatoryParam('accessPolicy', ParamType::String, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setTargetAccessPolicyExtractionKey('accessPolicy')
@@ -146,6 +177,12 @@ GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}-{accessPolicy}/{component}', Bas
     ->setTargetAccessPolicyAttempts(['opt', 'pg', 'ls']);
 
 GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}/{component}', BasicHttpHandler::Page)
+    ->setName('opts-web-items')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('page', ParamType::Number, null)
+    ->setExpectedResponseDataProperty('results')
+    ->setExpectedResponsePermsProperty('perm')
+    ->setAllowAnonymousParams(true)
     ->setWebItemValueParamsExtractionKey('component')
     ->setPageValueParamsExtractionKey('page')
     ->setRequiredPermissions(['ls'])
@@ -153,6 +190,11 @@ GetRoute::onlyLoggedUsers('/api/opts-{page:\d+}/{component}', BasicHttpHandler::
     ->setTargetAccessPolicyAttempts(['opt', 'pg', 'ls']);
 
 GetRoute::onlyLoggedUsers('/api/r-{id}-{accessPolicy}/{component}', BasicHttpHandler::Read)
+    ->setName('admin-r-web-item-policy')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('id', ParamType::Number, null)
+    ->setMandatoryParam('accessPolicy', ParamType::String, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setTargetAccessPolicyExtractionKey('accessPolicy')
@@ -161,6 +203,10 @@ GetRoute::onlyLoggedUsers('/api/r-{id}-{accessPolicy}/{component}', BasicHttpHan
     ->setTargetAccessPolicy('app');
 
 GetRoute::onlyLoggedUsers('/api/r-{id}/{component}', BasicHttpHandler::Read)
+    ->setName('admin-r-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('id', ParamType::Number, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('id')
     ->setRequiredPermissions(['r'])
@@ -168,6 +214,9 @@ GetRoute::onlyLoggedUsers('/api/r-{id}/{component}', BasicHttpHandler::Read)
     ->setTargetAccessPolicy('app');
 
 PostRoute::onlyLoggedUsers('/api/mk/{component}', BasicHttpHandler::Create)
+    ->setName('mk-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
     ->setWebItemValueParamsExtractionKey('component')
     ->setAnonymousTarget()
     ->setRequiredPermissions(['mk'])
@@ -175,6 +224,10 @@ PostRoute::onlyLoggedUsers('/api/mk/{component}', BasicHttpHandler::Create)
     ->setTargetAccessPolicy('app');
 
 PutRoute::onlyLoggedUsers('/api/up/{component}', BasicHttpHandler::Update)
+    ->setName('up-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['up'])
@@ -182,6 +235,10 @@ PutRoute::onlyLoggedUsers('/api/up/{component}', BasicHttpHandler::Update)
     ->setTargetAccessPolicy('app');
 
 PostRoute::onlyLoggedUsers('/api/dup/{component}', BasicHttpHandler::Duplicate)
+    ->setName('dup-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
+    ->setExpectedResponseIdProperty('id')
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setRequiredPermissions(['mk'])
@@ -189,6 +246,9 @@ PostRoute::onlyLoggedUsers('/api/dup/{component}', BasicHttpHandler::Duplicate)
     ->setTargetAccessPolicy('duplicate');
 
 DeleteRoute::onlyLoggedUsers('/api/rm/{component}', BasicHttpHandler::Drop)
+    ->setName('rm-web-item')
+    ->setMandatoryParam('component', ParamType::String, null, ['isWebItemIdentifier' => true])
+    ->setMandatoryParam('payload', ParamType::NotDefined, null)
     ->setWebItemValueParamsExtractionKey('component')
     ->setIdColumnValueParamsExtractionKey('payload.id')
     ->setPayloadValueParamsExtractionKey('payload')

@@ -788,7 +788,7 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Sábado',
             'en' => 'Saturday',
         ], $parentId);
-        LktTranslation::createIfMissing('7', TranslationType::Text, [
+        LktTranslation::createIfMissing('0', TranslationType::Text, [
             'es' => 'Domingo',
             'en' => 'Sunday',
         ], $parentId);
@@ -820,7 +820,7 @@ class I18nSeeder extends AbstractSeed
             'es' => 'Sa',
             'en' => 'Sa',
         ], $parentId);
-        LktTranslation::createIfMissing('7', TranslationType::Text, [
+        LktTranslation::createIfMissing('0', TranslationType::Text, [
             'es' => 'Do',
             'en' => 'Su',
         ], $parentId);

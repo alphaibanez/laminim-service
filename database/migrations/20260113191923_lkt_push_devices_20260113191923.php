@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LktPushDevices20260113191919 extends AbstractMigration
+class LktPushDevices20260113191923 extends AbstractMigration
 {
     /**
      * Change Method.

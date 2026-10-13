@@ -89,16 +89,16 @@ class IntegerChoiceFieldGenerator implements FieldGenerator
                 }
 
                 if ($this->data->isMultiple) {
-                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->multipleIntegerData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
+                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->multipleIntegerData->equal('{$this->data->fieldName}', {$optionVal}); }";
 
                     $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-                    $r[] = "public function set{$this->data->methodName}{$option}(): static { \$this->multipleIntegerData->set('{$this->data->fieldName}', '{$optionVal}'); return \$this; }";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { \$this->multipleIntegerData->set('{$this->data->fieldName}', {$optionVal}); return \$this; }";
 
                 } else {
-                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->integerData->equal('{$this->data->fieldName}', '{$optionVal}'); }";
+                    $r[] = "public function {$lowerFieldMethod}Is{$option}(): bool { return \$this->integerData->equal('{$this->data->fieldName}', {$optionVal}); }";
 
                     $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-                    $r[] = "public function set{$this->data->methodName}{$option}(): static { \$this->integerData->set('{$this->data->fieldName}', '{$optionVal}'); return \$this; }";
+                    $r[] = "public function set{$this->data->methodName}{$option}(): static { \$this->integerData->set('{$this->data->fieldName}', {$optionVal}); return \$this; }";
                 }
 
 

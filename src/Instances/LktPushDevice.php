@@ -26,7 +26,7 @@ class LktPushDevice extends GeneratedLktPushDevice
 
         if (!$ins) {
             $appVersion = trim($appVersion);
-            $devicePlatform = DevicePlatform::tryFrom(trim($devicePlatform));
+            $devicePlatform = DevicePlatform::tryFrom((int)trim($devicePlatform));
             if (!$devicePlatform) $devicePlatform = DevicePlatform::Unknown;
 
             $ins = static::getInstance();

@@ -60,8 +60,7 @@ final class MultipleFloatDataController
         $currentValue = $this->get($key);
         $parsedValue = $this->parse($key, $value);
 
-        $diff = array_diff($currentValue, $parsedValue);
-        if (count($diff) === 0) {
+        if ($currentValue !== $parsedValue) {
             $this->payload[$key] = $parsedValue;
         }
 

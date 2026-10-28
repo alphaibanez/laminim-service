@@ -44,7 +44,7 @@ class AccessPolicy
     public array $aliases = [];
     public array $extends = [];
 
-    protected function __construct(string $name, array $availableFields, array $availableCompositionFields)
+    protected function __construct(string $name, array $availableFields, array $availableCompositionFields = [])
     {
         $this->name = $name;
         $this->availableFields = $availableFields;
@@ -52,7 +52,7 @@ class AccessPolicy
     }
 
     #[Recommended('0.1.21')]
-    public static function define(string $name, array $availableFields, array $availableCompositionFields): static
+    public static function define(string $name, array $availableFields, array $availableCompositionFields = []): static
     {
         return new static($name, $availableFields, $availableCompositionFields);
     }
@@ -136,7 +136,7 @@ class AccessPolicy
      * @return array
      */
     #[Experimental('0.1.21')]
-    public function getAvailableFields(string $modifier): array
+    public function getAvailableFields(string $modifier = ''): array
     {
         switch ($modifier) {
             case 'w':

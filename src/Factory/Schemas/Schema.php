@@ -18,6 +18,7 @@ use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
+use Lkt\Factory\Schemas\Enums\OnViewSaveAttempt;
 use Lkt\Factory\Schemas\Enums\SchemaContext;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
@@ -99,11 +100,24 @@ final class Schema
     protected array $webItemActionHookHandlers = [];
 
     protected SchemaContext $context;
+    protected OnViewSaveAttempt $onViewSaveAttempt = OnViewSaveAttempt::Ignore;
 
     #[LaminimUse]
     public function hasCodedDataContext(): bool
     {
         return $this->context === SchemaContext::CodedData;
+    }
+
+    #[LaminimUse]
+    public function hasDatabaseViewContext(): bool
+    {
+        return $this->context === SchemaContext::DatabaseView;
+    }
+
+    #[LaminimUse]
+    public function getOnViewSaveAttempt(): OnViewSaveAttempt
+    {
+        return $this->onViewSaveAttempt;
     }
 
     #[AppUse]
@@ -225,6 +239,14 @@ final class Schema
     public static function table(string $table, string $component): self
     {
         return new static($table, $component, false, SchemaContext::DatabaseData);
+    }
+
+
+    public static function view(string $table, string $component, OnViewSaveAttempt $onViewSaveAttempt = OnViewSaveAttempt::Ignore): self
+    {
+        $r = new static($table, $component, false, SchemaContext::DatabaseView);
+        $r->onViewSaveAttempt = $onViewSaveAttempt;
+        return $r;
     }
 
 
@@ -640,9 +662,14 @@ final class Schema
     /**
      * @return Field[]
      */
-    public function getSameTableFields(): array
+    public function getSameTableFields(AccessPolicy|null $accessPolicy): array
     {
-        return array_filter($this->getAllFields(), function (Field $field) {
+        $availableFields = null;
+        if ($accessPolicy) {
+            $availableFields = $accessPolicy->getAvailableFields();
+        }
+
+        return array_filter($this->getAllFields(), function (Field $field) use ($availableFields) {
             if ($field instanceof PivotField
                 || $field instanceof RelatedField
                 || $field instanceof RelatedKeysMergeField
@@ -650,6 +677,8 @@ final class Schema
                 || $field instanceof ConstantValueField) {
                 return false;
             }
+
+            if (is_array($availableFields)) return in_array($field->getName(), $availableFields);
             return true;
         });
     }
@@ -1372,10 +1401,28 @@ final class Schema
         return null;
     }
 
+    public function getOneRaw(Query|null $query = null): array|null
+    {
+        if (!$query) $query = $this->getQueryBuilder();
+        if (!$query) $query = $this->getQueryBuilder();
+        $query->pagination(1, 1);
+        $r = $query->selectDistinct();
+        if (count($r) > 0) {
+            return $r[0];
+        }
+        return null;
+    }
+
     public function getMany(Query|null $query = null)
     {
         if (!$query) $query = $this->getQueryBuilder();
         return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
+    }
+
+    public function getManyRaw(Query|null $query = null): array
+    {
+        if (!$query) $query = $this->getQueryBuilder();
+        return $query->selectDistinct();
     }
 
     public function getPage(Query|null $query = null, int|null $page = null, int|null $itemsPerPage = null)
@@ -1386,6 +1433,16 @@ final class Schema
         if ($limit <= 0) $limit = $this->getItemsPerPage();
         if ($limit >= 0) $query->pagination($page, $limit);
         return Instantiator::makeResults($this->getComponent(), $query->selectDistinct());
+    }
+
+    public function getPageRaw(Query|null $query = null, int|null $page = null, int|null $itemsPerPage = null)
+    {
+        if (!$query) $query = $this->getQueryBuilder();
+        $limit = $itemsPerPage;
+        if ($limit <= 0) $limit = $query->getLimit();
+        if ($limit <= 0) $limit = $this->getItemsPerPage();
+        if ($limit >= 0) $query->pagination($page, $limit);
+        return $query->selectDistinct();
     }
 
     public function getAmountOfPages(Query|null $query = null, string|null $countableField = null, int|null $itemsPerPage = null): int
@@ -1406,11 +1463,12 @@ final class Schema
         return $query->count($countableField);
     }
 
-    public function getQueryBuilder(): Query
+    public function getQueryBuilder(string $accessPolicy = ''): Query
     {
-        return QueryBuilderHelper::getComponentQuery($this->getComponent());
-//        list($queryBuilder) = Instantiator::getQueryCaller($this->getComponent());
-//        return $queryBuilder;
+        $policy = null;
+        if ($accessPolicy) $policy = $this->getAccessPolicy($accessPolicy);
+
+        return QueryBuilderHelper::getComponentQuery($this->getComponent(), $policy);
     }
 
     public function getWhereBuilder(): Where

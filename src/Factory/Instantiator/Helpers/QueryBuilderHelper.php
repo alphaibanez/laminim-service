@@ -11,13 +11,14 @@ use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\QueryBuilding\Query;
 
 class QueryBuilderHelper
 {
-    public static function getComponentQuery(Schema|string $component): Query|null
+    public static function getComponentQuery(Schema|string $component, AccessPolicy|null $accessPolicy = null): Query|null
     {
-        return (ComponentDatabaseIntegration::from($component))->query;
+        return (ComponentDatabaseIntegration::from($component, $accessPolicy))->query;
     }
 
     public static function prepareRelatedQuery(Item $item, Query $query, Schema $schema, RelatedField|RelatedKeysField $field, $forceRefresh = false, array $additionalData = []): Query

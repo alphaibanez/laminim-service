@@ -1,0 +1,9 @@
+<?php
+
+namespace Lkt\Factory\Schemas\Enums;
+
+enum OnViewSaveAttempt: int
+{
+    case Ignore = 1;
+    case Error = 2;
+}

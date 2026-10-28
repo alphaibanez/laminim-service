@@ -22,6 +22,7 @@ use Lkt\Factory\Schemas\Fields\RelatedField;
 use Lkt\Factory\Schemas\Fields\RelatedKeysField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\Locale\Locale;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
@@ -123,17 +124,17 @@ class MariaDBConnector implements DatabaseConnector
         return $r;
     }
 
-    public function extractSchemaColumns(Schema $schema): array
+    public function extractSchemaColumns(Schema $schema, AccessPolicy|null $accessPolicy = null): array
     {
         $table = $schema->getTable();
 
         /** @var Field[] $fields */
-        $fields = $schema->getSameTableFields();
+        $fields = $schema->getSameTableFields($accessPolicy);
 
         $r = [];
 
         foreach ($fields as $key => $field) {
-            if ($field instanceof PivotField || $field instanceof RelatedField || $field instanceof RelatedKeysField || $field instanceof AbstractComputedField) {
+            if ($field instanceof RelatedKeysField) {
                 continue;
             }
 

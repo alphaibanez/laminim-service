@@ -4,6 +4,7 @@ namespace Lkt\Connectors\Interfaces;
 
 use Lkt\Factory\Instantiator\Enums\DatabaseInsertMode;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\QueryBuilding\Constraints\AbstractConstraint;
 use Lkt\QueryBuilding\Query;
 
@@ -15,7 +16,7 @@ interface DatabaseConnector
 
     public function query(string $query, array $replacements = []): ?array;
 
-    public function extractSchemaColumns(Schema $schema): array;
+    public function extractSchemaColumns(Schema $schema, AccessPolicy|null $accessPolicy = null): array;
 
     public function getLastInsertedId(): int;
 

@@ -6,6 +6,7 @@ use Lkt\Connectors\DatabaseConnections;
 use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Schemas\Schema;
+use Lkt\Factory\Schemas\ValueObjects\AccessPolicy;
 use Lkt\QueryBuilding\Query;
 
 class ComponentDatabaseIntegration
@@ -18,7 +19,7 @@ class ComponentDatabaseIntegration
     public DatabaseConnector|null $databaseConnector;
     public Query|null $query;
 
-    public function __construct(Schema|string $component)
+    public function __construct(Schema|string $component, AccessPolicy|null $accessPolicy = null)
     {
         $schema = $component instanceof Schema ? $component : Schema::get($component);
         $component = $schema->getComponent();
@@ -50,7 +51,7 @@ class ComponentDatabaseIntegration
 
                 $connection = DatabaseConnections::get($connector);
                 if ($connection) {
-                    $query->setColumns($connection->extractSchemaColumns($schema));
+                    $query->setColumns($connection->extractSchemaColumns($schema, $accessPolicy));
                 }
             }
         }
@@ -62,9 +63,9 @@ class ComponentDatabaseIntegration
         $this->query = $query;
     }
 
-    public static function from(Schema|string $component): static
+    public static function from(Schema|string $component, AccessPolicy|null $accessPolicy = null): static
     {
-        return new static($component);
+        return new static($component, $accessPolicy);
 //        return static::$cache[$component] ??= new static($component);
     }
 }

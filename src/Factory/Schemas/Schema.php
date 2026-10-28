@@ -4,8 +4,10 @@ namespace Lkt\Factory\Schemas;
 
 use Lkt\Attributes\AppUse;
 use Lkt\Attributes\Deprecated;
+use Lkt\Attributes\Experimental;
 use Lkt\Attributes\LaminimUse;
 use Lkt\Attributes\Recommended;
+use Lkt\Attributes\Remember;
 use Lkt\Attributes\Stable;
 use Lkt\Debug\VarDumper;
 use Lkt\Factory\Fields\Enums\ComposedValueFeedType;
@@ -1470,6 +1472,7 @@ final class Schema
         return $query->count($countableField);
     }
 
+    #[Experimental(since: "0.2.10", message:"Access policy filter it's experimental. Use it at your own risk")]
     public function getQueryBuilder(string $accessPolicy = ''): Query
     {
         $policy = null;

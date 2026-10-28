@@ -7,4 +7,5 @@ enum SchemaContext: int
     case DatabaseData = 1;
     case CodedData = 2;
     case DatabaseView = 3;
+    case ReadOnlyDatabaseData = 4;
 }

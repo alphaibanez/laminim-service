@@ -13,7 +13,7 @@ use Lkt\Factory\Instantiator\Exceptions\UnsetFieldStorePathException;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Instantiator\ValueObjects\ComponentDatabaseIntegration;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
-use Lkt\Factory\Schemas\Enums\OnViewSaveAttempt;
+use Lkt\Factory\Schemas\Enums\OnNonWritableSaveAttempt;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
 use Lkt\Factory\Schemas\Exceptions\InvalidItemDataAssignException;
 use Lkt\Factory\Schemas\Exceptions\MissedMandatoryValueException;
@@ -283,8 +283,8 @@ trait ItemWithDataTrait
         $schema = $this->getSchema();
 
         if ($schema->hasDatabaseViewContext()) {
-            $action = $schema->getOnViewSaveAttempt();
-            if ($action === OnViewSaveAttempt::Error) throw new \Exception('Invalid attempt to write data on a view');
+            $action = $schema->getOnNonWritableSaveAttempt();
+            if ($action === OnNonWritableSaveAttempt::Error) throw new \Exception('Invalid attempt to write data on a view');
             return $this;
         }
 

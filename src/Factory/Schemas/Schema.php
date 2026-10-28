@@ -18,7 +18,7 @@ use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
 use Lkt\Factory\Instantiator\Instances\BatchActions;
 use Lkt\Factory\Instantiator\Instantiator;
 use Lkt\Factory\Schemas\ComputedFields\AbstractComputedField;
-use Lkt\Factory\Schemas\Enums\OnViewSaveAttempt;
+use Lkt\Factory\Schemas\Enums\OnNonWritableSaveAttempt;
 use Lkt\Factory\Schemas\Enums\SchemaContext;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedAccessPolicyDefinitionException;
 use Lkt\Factory\Schemas\Exceptions\InvalidComponentException;
@@ -100,7 +100,7 @@ final class Schema
     protected array $webItemActionHookHandlers = [];
 
     protected SchemaContext $context;
-    protected OnViewSaveAttempt $onViewSaveAttempt = OnViewSaveAttempt::Ignore;
+    protected OnNonWritableSaveAttempt $onNonWritableSaveAttempt = OnNonWritableSaveAttempt::Ignore;
 
     #[LaminimUse]
     public function hasCodedDataContext(): bool
@@ -115,9 +115,9 @@ final class Schema
     }
 
     #[LaminimUse]
-    public function getOnViewSaveAttempt(): OnViewSaveAttempt
+    public function getOnNonWritableSaveAttempt(): OnNonWritableSaveAttempt
     {
-        return $this->onViewSaveAttempt;
+        return $this->onNonWritableSaveAttempt;
     }
 
     #[AppUse]
@@ -241,11 +241,18 @@ final class Schema
         return new static($table, $component, false, SchemaContext::DatabaseData);
     }
 
+    public static function readOnlyTable(string $table, string $component, OnNonWritableSaveAttempt $onNonWritableSaveAttempt = OnNonWritableSaveAttempt::Ignore): self
+    {
+        $r = new static($table, $component, false, SchemaContext::ReadOnlyDatabaseData);
+        $r->onNonWritableSaveAttempt = $onNonWritableSaveAttempt;
+        return $r;
+    }
 
-    public static function view(string $table, string $component, OnViewSaveAttempt $onViewSaveAttempt = OnViewSaveAttempt::Ignore): self
+
+    public static function view(string $table, string $component, OnNonWritableSaveAttempt $onNonWritableSaveAttempt = OnNonWritableSaveAttempt::Ignore): self
     {
         $r = new static($table, $component, false, SchemaContext::DatabaseView);
-        $r->onViewSaveAttempt = $onViewSaveAttempt;
+        $r->onNonWritableSaveAttempt = $onNonWritableSaveAttempt;
         return $r;
     }
 

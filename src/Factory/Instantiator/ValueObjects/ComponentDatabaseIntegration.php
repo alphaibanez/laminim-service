@@ -19,12 +19,12 @@ class ComponentDatabaseIntegration
     public DatabaseConnector|null $databaseConnector;
     public Query|null $query;
 
-    public function __construct(Schema|string $component, AccessPolicy|null $accessPolicy = null)
+    protected function __construct(Schema|string $component, AccessPolicy|null $accessPolicy = null)
     {
         $schema = $component instanceof Schema ? $component : Schema::get($component);
         $component = $schema->getComponent();
 
-        if ($schema->getInstanceSettings()->getQueryCallerClassName() !== '') {
+        if (!$schema->hasDynamicDataSourcePointerContext() && $schema->getInstanceSettings()->getQueryCallerClassName() !== '') {
             $fqdn = $schema->getInstanceSettings()->getQueryCallerFQDN();
             if (class_exists($fqdn)) {
                 $query = call_user_func_array([$fqdn, 'getCaller'], []);

@@ -103,11 +103,24 @@ final class Schema
 
     protected SchemaContext $context;
     protected OnNonWritableSaveAttempt $onNonWritableSaveAttempt = OnNonWritableSaveAttempt::Ignore;
+    protected DynamicDataSource|null $dynamicDataSource = null;
 
     #[LaminimUse]
     public function hasCodedDataContext(): bool
     {
         return $this->context === SchemaContext::CodedData;
+    }
+
+    #[LaminimUse]
+    public function hasDynamicDataSourceContext(): bool
+    {
+        return $this->context === SchemaContext::DynamicDataSource;
+    }
+
+    #[LaminimUse]
+    public function hasDynamicDataSourcePointerContext(): bool
+    {
+        return $this->context === SchemaContext::DynamicDataSourcePointer;
     }
 
     #[LaminimUse]
@@ -259,6 +272,14 @@ final class Schema
     }
 
 
+    public static function dynamicDataSource(string $component, DynamicDataSource $dynamicDataSource): self
+    {
+        $r = new static('', $component, false, SchemaContext::DynamicDataSource);
+        $r->dynamicDataSource = $dynamicDataSource;
+        return $r;
+    }
+
+
     public static function codedData(string $component): self
     {
         return new static('_', $component, false, SchemaContext::CodedData);
@@ -347,6 +368,14 @@ final class Schema
         }
 
         return $this;
+    }
+
+    public function connectDynamicDataSource(array|null $args = null): static|null
+    {
+        if ($this->context === SchemaContext::DynamicDataSource) {
+            return $this->dynamicDataSource->getSchema($this, $args);
+        }
+        return null;
     }
 
     public function getAccessPolicy(string $name): AccessPolicy
@@ -1781,5 +1810,21 @@ final class Schema
     public function getBatchActions(array $items): BatchActions
     {
         return BatchActions::fromComponent($this->getComponent(), $items);
+    }
+
+    public function getDynamicDataSource(DynamicDataSourcePayload $payload): static
+    {
+        $r = clone $this;
+        $r->table = $payload->table;
+        $r->context = SchemaContext::DynamicDataSourcePointer;
+
+        $keys = $payload->fields;
+        $fields = $this->getFields();
+        $finalFields = array_map(function ($k) use ($fields) { return $fields[$k]; }, $keys);
+
+        $r->setFields($finalFields);
+        $r->component = "{$r->component}_{$payload->table}";
+        Schema::add($r);
+        return $r;
     }
 }

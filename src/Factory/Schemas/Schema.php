@@ -1814,16 +1814,21 @@ final class Schema
 
     public function getDynamicDataSource(DynamicDataSourcePayload $payload): static
     {
+        $component = "{$this->component}_{$payload->table}";
+        if (Schema::exists($component)) return Schema::get($component);
+
         $r = clone $this;
         $r->table = $payload->table;
+        $r->component = $component;
         $r->context = SchemaContext::DynamicDataSourcePointer;
 
-        $keys = $payload->fields;
+        $keys = array_filter($payload->fields, function ($key) {
+            return !str_contains($key, ' as ');
+        });
         $fields = $this->getFields();
         $finalFields = array_map(function ($k) use ($fields) { return $fields[$k]; }, $keys);
 
         $r->setFields($finalFields);
-        $r->component = "{$r->component}_{$payload->table}";
         Schema::add($r);
         return $r;
     }

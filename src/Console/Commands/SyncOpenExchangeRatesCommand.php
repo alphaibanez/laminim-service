@@ -3,6 +3,7 @@
 namespace Lkt\Console\Commands;
 
 use Lkt\Connectors\OpenExchangeRatesConnector;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCurrency;
 use Lkt\Locale\Locale;
 use Symfony\Component\Console\Command\Command;
@@ -57,10 +58,12 @@ class SyncOpenExchangeRatesCommand extends Command
         $rates = $results->rates;
         $baseValue = $rates->{$baseCurrency->value};
 
+        $schema = Schema::get(LktCurrency::COMPONENT);
+
         foreach ($availableCurrencies as $availableCurrency) {
             $codeAlpha3 = $availableCurrency->value;
 
-            $currency = LktCurrency::getOne(LktCurrency::getQueryBuilder()->andIsoCodeAlpha3Equal($codeAlpha3));
+            $currency = LktCurrency::getOne($schema->getQueryBuilder()->andStringEqual('iso_code_alpha3', $codeAlpha3));
             if ($currency && $currency->syncExcluded()) continue;
 
             if (!$currency) {

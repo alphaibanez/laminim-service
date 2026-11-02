@@ -3,6 +3,7 @@
 namespace Lkt\Console\Commands;
 
 use Lkt\Connectors\RestCountriesConnector;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Instances\LktCountry;
 use Lkt\Locale\Enums\LangCode;
 use Lkt\Locale\Locale;
@@ -55,6 +56,8 @@ class SyncRestCountriesCommand extends Command
         $requested = 0;
         $total = 254; // Amount of results received at 2026/07
 
+        $schema = Schema::get(LktCountry::COMPONENT);
+
         do {
             $q = "?pretty&limit={$itemsPerPage}&response_fields={$fieldsStr}";
 
@@ -74,7 +77,7 @@ class SyncRestCountriesCommand extends Command
                 $isoCodeCCA2 = trim($result->codes->alpha_2);
                 $isoCodeCCN3 = trim($result->codes->alpha_3);
 
-                $country = LktCountry::getOne(LktCountry::getQueryBuilder()->andIsoCodeAlpha2Equal($isoCodeCCA2));
+                $country = LktCountry::getOne($schema->getQueryBuilder()->andStringEqual('iso_code_alpha2', $isoCodeCCA2));
                 if ($country && $country->syncExcluded()) continue;
 
                 if (!$country) $country = LktCountry::getInstance()->setIsoCodeAlpha2($isoCodeCCA2)->setIsoCodeNumeric3($isoCodeCCN3);

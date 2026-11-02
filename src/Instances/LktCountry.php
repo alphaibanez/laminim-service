@@ -2,6 +2,7 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktCountry;
 
 class LktCountry extends GeneratedLktCountry
@@ -10,8 +11,9 @@ class LktCountry extends GeneratedLktCountry
 
     public static function getByISOAlpha2(string $code): static|null
     {
-        $query = static::getQueryBuilder();
-        $query->andIsoCodeAlpha2Equal($code);
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder();
+        $query->andStringEqual('iso_code_alpha2', $code);
         return static::getOne($query);
     }
 }

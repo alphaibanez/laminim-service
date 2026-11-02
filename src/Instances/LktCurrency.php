@@ -2,6 +2,7 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktCurrency;
 
 class LktCurrency extends GeneratedLktCurrency
@@ -10,8 +11,9 @@ class LktCurrency extends GeneratedLktCurrency
 
     public static function getByISOAlpha3(string $code): static|null
     {
-        $query = static::getQueryBuilder();
-        $query->andIsoCodeAlpha3Equal($code);
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder();
+        $query->andStringEqual('iso_code_alpha3', $code);
         return static::getOne($query);
     }
 }

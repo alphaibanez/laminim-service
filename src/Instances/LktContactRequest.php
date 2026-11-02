@@ -8,6 +8,7 @@ use Lkt\Enums\TimeInSeconds;
 use Lkt\Exceptions\SilentHttpException;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktContactRequest;
 use Lkt\Http\Networking\Networking;
 use function Lkt\Tools\Parse\clearInput;
@@ -27,10 +28,11 @@ class LktContactRequest extends GeneratedLktContactRequest
 
             $dateLimit = $now->format('Y-m-d H:i:s');
 
-            $counterQuery = static::getQueryBuilder()
-                ->andClientIPAddressEqual($networking->remoteAddress)
-                ->andClientUserAgentEqual($networking->userAgent)
-                ->andCreatedAtGreaterOrEqualThan($dateLimit);
+            $schema = Schema::get(static::COMPONENT);
+            $counterQuery = $schema->getQueryBuilder()
+                ->andStringEqual('client_ip_address', $networking->remoteAddress)
+                ->andStringEqual('client_useragent', $networking->userAgent)
+                ->andDatetimeGreaterOrEqualThan('created_at', $dateLimit);
 
             $previousAttempts = count(static::getMany($counterQuery));
 

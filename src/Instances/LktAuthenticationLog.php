@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use donatj\UserAgent\UserAgentParser;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktAuthenticationLog;
 use Lkt\Users\Enums\PerformedAuthAction;
 use function Lkt\Tools\Parse\clearInput;
@@ -18,9 +19,10 @@ class LktAuthenticationLog extends GeneratedLktAuthenticationLog
         $now->sub(\DateInterval::createFromDateString('10 minutes'));
 
         $dateLimit = $now->format('Y-m-d H:i:s');
-        $counterQuery = static::getQueryBuilder()
-            ->andAttemptedCredentialEqual($attemptedCredential)
-            ->andCreatedAtGreaterOrEqualThan($dateLimit);
+        $schema = Schema::get(static::COMPONENT);
+        $counterQuery = $schema->getQueryBuilder()
+            ->andStringEqual('attempted_credential', $attemptedCredential)
+            ->andDatetimeGreaterOrEqualThan('created_at', $dateLimit);
 
         $previousAttempts = static::getMany($counterQuery);
 

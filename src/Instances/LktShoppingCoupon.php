@@ -2,6 +2,7 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktShoppingCoupon;
 use Lkt\Generated\LktShoppingCouponWhere;
 
@@ -21,9 +22,10 @@ class LktShoppingCoupon extends GeneratedLktShoppingCoupon
 
     public static function findActiveCode(string $code): static|null
     {
-        $query = static::getQueryBuilder()
-            ->andIsActiveIsTrue()
-            ->andCodeEqual($code)
+        $schema = Schema::get(LktShoppingCoupon::COMPONENT);
+        $query = $schema->getQueryBuilder()
+            ->andBooleanTrue('is_active')
+            ->andStringEqual('code', $code)
         ;
 
         $now = date('Y-m-d H:i:s');

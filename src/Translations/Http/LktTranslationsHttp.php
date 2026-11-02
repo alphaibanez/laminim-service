@@ -5,6 +5,7 @@ namespace Lkt\Translations\Http;
 use Lkt\Factory\Export\DTO\TranslationsDataExport;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Exceptions\DuplicatedValueException;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Request;
 use Lkt\Http\Response;
 use Lkt\Instances\LktTranslation;
@@ -15,25 +16,21 @@ class LktTranslationsHttp
 {
     public static function index(array $params): Response
     {
-        $queryBuilder = LktTranslation::getQueryBuilder()
-            ->andParentEqual(0);
+        $schema = Schema::get(LktTranslation::COMPONENT);
+        $queryBuilder = $schema->getQueryBuilder()
+            ->andIntegerEqual('parent_id', 0);
 
         if (isset($params['type'])) {
             $type = clearInput($params['type']);
-            $queryBuilder->andTypeEqual($type);
+            $queryBuilder->andStringEqual('type', $type);
         } else {
-            $queryBuilder->andTypeNot('many');
+            $queryBuilder->andStringNot('type', 'many');
         }
 
         if (isset($params['property'])) {
             $property = clearInput($params['property']);
-            if ($property !== '') $queryBuilder->andPropertyLike($property);
+            if ($property !== '') $queryBuilder->andStringLike('property', $property);
         }
-
-//        if (isset($params['value'])) {
-//            $value = clearInput($params['value']);
-//            if ($value !== '') $queryBuilder->andValueLike($value);
-//        }
 
         if (isset($params['page'])) {
             $page = (int)clearInput($params['page']);

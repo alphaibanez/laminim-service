@@ -2,6 +2,7 @@
 
 namespace Lkt\WebPages\Http;
 
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Http\Request;
 use Lkt\Http\Response;
 use Lkt\Instances\LktWebPage;
@@ -12,11 +13,12 @@ class LktWebPageHttp
 {
     public static function index(array $params): Response
     {
-        $queryBuilder = LktWebPage::getQueryBuilder();
+        $schema = Schema::get(LktWebPage::COMPONENT);
+        $queryBuilder = $schema->getQueryBuilder();
 
         if (isset($params['type'])) {
             $type = (int)clearInput($params['type']);
-            $queryBuilder->andTypeEqual($type);
+            $queryBuilder->andIntegerEqual('type', $type);
         }
 
         if (isset($params['page'])) {

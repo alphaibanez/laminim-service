@@ -4,6 +4,7 @@ namespace Lkt\Instances;
 
 use Lkt\Enums\AccessTokenDuration;
 use Lkt\Enums\AccessTokenPurpose;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktAccessToken;
 
 class LktAccessToken extends GeneratedLktAccessToken
@@ -17,11 +18,12 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function fromToken(string $token, AccessTokenPurpose|null $purpose = null): ?static
     {
-        $query = static::getQueryBuilder()
-            ->andTokenEqual($token);
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder()
+            ->andStringEqual('token', $token);
 
         if ($purpose) {
-            $query->andPurposeEqual($purpose->value);
+            $query->andIntegerEqual('purpose', $purpose->value);
         }
 
         return static::getOne($query);
@@ -29,11 +31,12 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function fromUser(LktUser $user, AccessTokenPurpose|null $purpose = null): ?static
     {
-        $query = static::getQueryBuilder()
-            ->andUserEqual($user->getId());
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder()
+            ->andIntegerEqual('user_id', $user->getId());
 
         if ($purpose) {
-            $query->andPurposeEqual($purpose->value);
+            $query->andIntegerEqual('purpose', $purpose->value);
         }
 
         return static::getOne($query);
@@ -41,11 +44,12 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function createChangePasswordAccessToken(LktUser $user, \DateTime $expiresAt): static
     {
+        $schema = Schema::get(static::COMPONENT);
         $previousToken = static::getOne(
-            static::getQueryBuilder()
-                ->andUserEqual($user->getId())
-                ->andPurposeEqual(AccessTokenPurpose::ChangePassword->value)
-                ->andDurationEqual(AccessTokenDuration::Temporary->value)
+            $schema->getQueryBuilder()
+                ->andIntegerEqual('user_id', $user->getId())
+                ->andIntegerEqual('purpose', AccessTokenPurpose::ChangePassword->value)
+                ->andIntegerEqual('duration', AccessTokenDuration::Temporary->value)
         );
 
         if ($previousToken) {
@@ -66,11 +70,12 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function createIdentifierAccessToken(LktUser $user, \DateTime $expiresAt): static
     {
+        $schema = Schema::get(static::COMPONENT);
         $previousToken = static::getOne(
-            static::getQueryBuilder()
-                ->andUserEqual($user->getId())
-                ->andPurposeEqual(AccessTokenPurpose::Identifier->value)
-                ->andDurationEqual(AccessTokenDuration::Temporary->value)
+            $schema->getQueryBuilder()
+                ->andIntegerEqual('user_id', $user->getId())
+                ->andIntegerEqual('purpose', AccessTokenPurpose::Identifier->value)
+                ->andIntegerEqual('duration', AccessTokenDuration::Temporary->value)
         );
 
         if ($previousToken) {
@@ -91,11 +96,12 @@ class LktAccessToken extends GeneratedLktAccessToken
 
     public static function getActiveIdentifierAccessToken(LktUser $user, \DateTime $expiresAt): static
     {
+        $schema = Schema::get(static::COMPONENT);
         $previousToken = static::getOne(
-            static::getQueryBuilder()
-                ->andUserEqual($user->getId())
-                ->andPurposeEqual(AccessTokenPurpose::Identifier->value)
-                ->andDurationEqual(AccessTokenDuration::Temporary->value)
+            $schema->getQueryBuilder()
+                ->andIntegerEqual('user_id', $user->getId())
+                ->andIntegerEqual('purpose', AccessTokenPurpose::Identifier->value)
+                ->andIntegerEqual('duration', AccessTokenDuration::Temporary->value)
         );
 
         if ($previousToken) {

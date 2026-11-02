@@ -2,6 +2,7 @@
 
 namespace Lkt\FileBrowser\Http;
 
+use Lkt\Factory\Schemas\Schema;
 use Lkt\FileBrowser\Enums\FileEntityType;
 use Lkt\Http\Response;
 use Lkt\Instances\LktFileEntity;
@@ -10,7 +11,9 @@ class FileBrowserHttp
 {
     public static function fileBrowser(array $params): Response
     {
-        $query = LktFileEntity::getQueryBuilder()->andTypeEqual(FileEntityType::StorageUnit->value);
+        $schema = Schema::get(LktFileEntity::COMPONENT);
+        $query = $schema->getQueryBuilder()
+            ->andIntegerEqual('type', FileEntityType::StorageUnit->value);
 
         $units = LktFileEntity::getMany($query);
         if (count($units) === 0) {

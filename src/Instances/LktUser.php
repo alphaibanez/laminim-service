@@ -7,6 +7,7 @@ use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Enums\CrudOperation;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
+use Lkt\Factory\Schemas\Schema;
 use Lkt\Generated\GeneratedLktUser;
 use Lkt\Generated\LktUserWhere;
 use Lkt\Http\DTO\GrantedPermsAttempt;
@@ -96,8 +97,9 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public static function rememberPassword(string $username): ?static
     {
-        $query = static::getQueryBuilder()
-            ->andEmailEqual($username);
+        $schema = Schema::get(static::COMPONENT);
+        $query = $schema->getQueryBuilder()
+            ->andStringEqual('email', $username);
 
         $user = static::getOne($query);
 
@@ -114,7 +116,8 @@ class LktUser extends GeneratedLktUser implements SessionUserInterface
 
     public static function ableToSignUp(string $username): bool
     {
-        $user = static::getOne(static::getQueryBuilder()->andEmailEqual($username));
+        $schema = Schema::get(static::COMPONENT);
+        $user = static::getOne($schema->getQueryBuilder()->andStringEqual('email', $username));
         LktAuthenticationLog::logSignUp($username, $user);
         return !is_object($user);
     }

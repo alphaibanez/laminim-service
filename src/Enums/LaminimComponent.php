@@ -15,6 +15,7 @@ enum LaminimComponent: string
     case FileEntity = 'lkt-file-entity';
     case FileFormat = 'lkt-file-format';
     case HTTPRequestLog = 'lkt-http-request-log';
+    case MeasureUnit = 'lkt-measure-unit';
     case MenuEntry = 'lkt-menu-entry';
     case Menu = 'lkt-menu';
     case MenuPivotEntry = 'lkt-menu-pivot-entry';

@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instantiator;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Process\ProcessQueryCallerData;
@@ -30,10 +31,10 @@ class Instantiator
 
         if (InstanceCache::inCache($code)) return InstanceCache::load($code);
 
-        $callable = [$schema->getInstanceSettings()->getAppClass(), 'getInstance'];
+        $callable = [$schema->getInstanceSettings()?->getAppClass() ?? \Lkt\Factory\Instance\Item::class, 'getInstance'];
 
         /** @var Item $r */
-        $r = call_user_func_array($callable, ['id' => $id, 'initialData' => $data]);
+        $r = call_user_func_array($callable, ['id' => $id, 'initialData' => $data, 'schema' => $schema]);
 
         return $r;
     }
@@ -51,14 +52,14 @@ class Instantiator
         /** @var Item[] $response */
         $response = [];
         $schema = $component instanceof Schema ? $component : Schema::get($component);
-        $appClass = $schema->getInstanceSettings()->getAppClass();
+        $appClass = $schema->getInstanceSettings()?->getAppClass() ?? \Lkt\Factory\Instance\Item::class;
 
         if (count($results) > 0) {
             foreach ($results as $item) {
                 $code = $schema->getInstanceCode($item);
 
                 /** @var Item $r */
-                $r = new $appClass($item);
+                $r = new $appClass($item, $schema);
                 $r->initialFeed($item);
                 InstanceCache::store($code, $r);
                 $response[] = $r;

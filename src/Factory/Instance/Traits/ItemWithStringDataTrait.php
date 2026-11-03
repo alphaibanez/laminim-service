@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithStringDataTrait
 {
-    protected StringDataController $stringData;
+    protected StringDataController $stringD;
 
     protected function initStringData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->stringData = new StringDataController($schema, $item, $rawData);
+        $this->stringD = new StringDataController($schema, $item, $rawData);
         return $this;
     }
 }

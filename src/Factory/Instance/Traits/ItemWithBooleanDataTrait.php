@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithBooleanDataTrait
 {
-    protected BooleanDataController $booleanData;
+    protected BooleanDataController $booleanD;
 
     protected function initBooleanData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->booleanData = new BooleanDataController($schema, $item, $rawData);
+        $this->booleanD = new BooleanDataController($schema, $item, $rawData);
         return $this;
     }
 }

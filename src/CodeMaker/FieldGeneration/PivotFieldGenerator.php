@@ -21,8 +21,8 @@ class PivotFieldGenerator implements FieldGenerator
         $returnAnnotation = $this->getRelatedReturnAnnotationFormatted();
 
         if ($returnAnnotation) $r[] = "/** {$returnAnnotation}[] */";
-        $r[] = "public function get{$this->data->methodName}(): array|null { return \$this->pivotData->getItems('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Ids(): array|null { return \$this->pivotData->getItemsIds('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}(): array|null { return \$this->pivotD->getItems('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Ids(): array|null { return \$this->pivotD->getItemsIds('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -30,15 +30,15 @@ class PivotFieldGenerator implements FieldGenerator
     public function getSetters(): string
     {
         $r = [];
-        $r[] = "public function link{$this->data->methodName}Id(\$id):static { \$this->pivotData->link('{$this->data->fieldName}', \$id); return \$this; }";
-        $r[] = "public function unlink{$this->data->methodName}Id(\$id):static { \$this->pivotData->unlink('{$this->data->fieldName}', \$id); return \$this; }";
+        $r[] = "public function link{$this->data->methodName}Id(\$id):static { \$this->pivotD->link('{$this->data->fieldName}', \$id); return \$this; }";
+        $r[] = "public function unlink{$this->data->methodName}Id(\$id):static { \$this->pivotD->unlink('{$this->data->fieldName}', \$id); return \$this; }";
         return implode(' ', $r);
     }
 
     public function getCheckers(): string
     {
         $r = [];
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->pivotData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}():bool { return \$this->pivotD->has('{$this->data->fieldName}'); }";
         return implode(' ', $r);
     }
 

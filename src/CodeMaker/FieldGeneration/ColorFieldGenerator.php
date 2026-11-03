@@ -17,9 +17,9 @@ class ColorFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->colorData->get('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Rgb(float \$opacity = null):array|null { return \$this->colorData->getRGBA('{$this->data->fieldName}', \$opacity); }";
-        $r[] = "public function get{$this->data->methodName}RgbFormatted(float \$opacity = null):array|null { return \$this->colorData->getRGBAString('{$this->data->fieldName}', \$opacity); }";
+        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->colorD->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Rgb(float \$opacity = null):array|null { return \$this->colorD->getRGBA('{$this->data->fieldName}', \$opacity); }";
+        $r[] = "public function get{$this->data->methodName}RgbFormatted(float \$opacity = null):array|null { return \$this->colorD->getRGBAString('{$this->data->fieldName}', \$opacity); }";
 
         return implode(' ', $r);
     }
@@ -29,7 +29,7 @@ class ColorFieldGenerator implements FieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { \$this->colorData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { \$this->colorD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }
@@ -38,7 +38,7 @@ class ColorFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->colorData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}():bool { return \$this->colorD->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

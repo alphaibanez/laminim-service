@@ -94,7 +94,7 @@ trait ItemWithCrudTrait
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($field->getName());
                 if (!$fieldComposingThisField) continue;
 
-                $composedInstance = $this->composedData->getItem($fieldComposingThisField->getName(), $internalMethodsArguments);
+                $composedInstance = $this->composedD->getItem($fieldComposingThisField->getName(), $internalMethodsArguments);
 
                 if (!$composedInstance) continue;
                 $dataToAdd = $composedInstance->readValue($field->getName(), $responseKey);

@@ -82,7 +82,7 @@ class CodeMaker
                 $traits[] = $methodsTraits;
             }
 
-            $methods = ['public function __construct(array $initialData = []){$this->initialFeed($initialData);}', $methods];
+//            $methods = ['', $methods];
             $methods = implode('', $methods);
 
             if (count($traits) > 0) {

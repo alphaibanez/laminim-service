@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithEncryptDataTrait
 {
-    protected EncryptDataController $encryptData;
+    protected EncryptDataController $encryptD;
 
     protected function initEncryptData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->encryptData = new EncryptDataController($schema, $item, $rawData);
+        $this->encryptD = new EncryptDataController($schema, $item, $rawData);
         return $this;
     }
 }

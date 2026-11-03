@@ -17,7 +17,7 @@ class BooleanFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function {$this->data->fieldName}():bool|null { return \$this->booleanData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function {$this->data->fieldName}():bool|null { return \$this->booleanD->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -27,7 +27,7 @@ class BooleanFieldGenerator implements FieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(bool \${$this->data->fieldName}):static { \$this->booleanData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+        $r[] = "public function set{$this->data->methodName}(bool \${$this->data->fieldName}):static { \$this->booleanD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }

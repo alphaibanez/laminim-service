@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithMultipleFloatDataTrait
 {
-    protected MultipleFloatDataController $multipleFloatData;
+    protected MultipleFloatDataController $floatMD;
 
     protected function initMultipleFloatData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->multipleFloatData = new MultipleFloatDataController($schema, $item, $rawData);
+        $this->floatMD = new MultipleFloatDataController($schema, $item, $rawData);
         return $this;
     }
 }

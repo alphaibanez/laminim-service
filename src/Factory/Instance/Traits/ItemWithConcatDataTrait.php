@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithConcatDataTrait
 {
-    protected ConcatDataController $concatData;
+    protected ConcatDataController $concatD;
 
     protected function initConcatData(Schema $schema, Item $item): static
     {
-        $this->concatData = new ConcatDataController($schema, $item);
+        $this->concatD = new ConcatDataController($schema, $item);
         return $this;
     }
 }

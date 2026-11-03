@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithFileDataTrait
 {
-    protected FileDataController $fileData;
+    protected FileDataController $fileD;
 
     protected function initFileData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->fileData = new FileDataController($schema, $item, $rawData);
+        $this->fileD = new FileDataController($schema, $item, $rawData);
         return $this;
     }
 }

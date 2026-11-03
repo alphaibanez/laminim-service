@@ -17,7 +17,7 @@ class ConcatFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->concatData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->concatD->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -29,7 +29,7 @@ class ConcatFieldGenerator implements FieldGenerator
 
     public function getCheckers(): string
     {
-        return "public function has{$this->data->methodName}():bool { return \$this->concatData->has('{$this->data->fieldName}'); }";
+        return "public function has{$this->data->methodName}():bool { return \$this->concatD->has('{$this->data->fieldName}'); }";
     }
 
     public function parse(): string

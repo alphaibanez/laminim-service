@@ -17,7 +17,7 @@ class ConstantValueFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():{$this->data->getterReturnType} { return \$this->constantData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}():{$this->data->getterReturnType} { return \$this->constantD->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

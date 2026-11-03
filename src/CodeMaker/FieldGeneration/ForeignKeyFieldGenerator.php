@@ -22,8 +22,8 @@ class ForeignKeyFieldGenerator implements FieldGenerator
         if ($returnAnnotation) {
             $r[] = "/** {$returnAnnotation} */";
         }
-        $r[] = "public function get{$this->data->methodName}(){$this->getRelatedReturnTypeFormatted()} { return \$this->foreignKeyData->getItem('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Id():int|null { return \$this->foreignKeyData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}(){$this->getRelatedReturnTypeFormatted()} { return \$this->foreignKeyD->getItem('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Id():int|null { return \$this->foreignKeyD->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -33,7 +33,7 @@ class ForeignKeyFieldGenerator implements FieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}Id(int \${$this->data->fieldName}):static { \$this->foreignKeyData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+        $r[] = "public function set{$this->data->methodName}Id(int \${$this->data->fieldName}):static { \$this->foreignKeyD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }
@@ -42,8 +42,8 @@ class ForeignKeyFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName}Id() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
-        $r[] = "public function has{$this->data->methodName}() :bool { return \$this->foreignKeyData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}Id() :bool { return \$this->foreignKeyD->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}() :bool { return \$this->foreignKeyD->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

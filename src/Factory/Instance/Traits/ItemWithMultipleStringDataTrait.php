@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithMultipleStringDataTrait
 {
-    protected MultipleStringDataController $multipleStringData;
+    protected MultipleStringDataController $stringMD;
 
     protected function initMultipleStringData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->multipleStringData = new MultipleStringDataController($schema, $item, $rawData);
+        $this->stringMD = new MultipleStringDataController($schema, $item, $rawData);
         return $this;
     }
 }

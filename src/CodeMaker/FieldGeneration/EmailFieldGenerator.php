@@ -17,7 +17,7 @@ class EmailFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->stringData->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}():string|null { return \$this->stringD->get('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }
@@ -27,7 +27,7 @@ class EmailFieldGenerator implements FieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { \$this->stringData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+        $r[] = "public function set{$this->data->methodName}(string \${$this->data->fieldName}):static { \$this->stringD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         return implode(' ', $r);
     }
@@ -36,7 +36,7 @@ class EmailFieldGenerator implements FieldGenerator
     {
         $r = [];
 
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->stringData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}():bool { return \$this->stringD->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

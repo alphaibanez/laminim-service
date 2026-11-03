@@ -8,13 +8,13 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithRelatedItemsDataTrait
 {
-    protected RelatedItemsDataController $relatedItemsData;
+    protected RelatedItemsDataController $relatedItemsD;
 
     protected function initRelatedItemsData(Schema $schema, Item $item, array $rawData, bool $refreshing = false): static
     {
-        if ($refreshing && isset($this->relatedItemsData)) return $this;
+        if ($refreshing && isset($this->relatedItemsD)) return $this;
 
-        $this->relatedItemsData = new RelatedItemsDataController($schema, $item, $rawData);
+        $this->relatedItemsD = new RelatedItemsDataController($schema, $item, $rawData);
         return $this;
     }
 }

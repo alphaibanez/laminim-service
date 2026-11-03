@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithMultipleIntegerDataTrait
 {
-    protected MultipleIntegerDataController $multipleIntegerData;
+    protected MultipleIntegerDataController $integerMD;
 
     protected function initMultipleIntegerData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->multipleIntegerData = new MultipleIntegerDataController($schema, $item, $rawData);
+        $this->integerMD = new MultipleIntegerDataController($schema, $item, $rawData);
         return $this;
     }
 }

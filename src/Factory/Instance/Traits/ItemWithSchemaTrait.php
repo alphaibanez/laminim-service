@@ -9,10 +9,11 @@ use Lkt\QueryBuilding\Query;
 
 trait ItemWithSchemaTrait
 {
-    protected Schema $schema;
+    protected Schema|null $schema = null;
 
     public function getSchema(): Schema|null
     {
+        if ($this->schema) return $this->schema;
         return Schema::get(static::COMPONENT);
     }
 

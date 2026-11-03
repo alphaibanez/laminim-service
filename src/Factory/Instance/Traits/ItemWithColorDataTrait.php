@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithColorDataTrait
 {
-    protected ColorDataController $colorData;
+    protected ColorDataController $colorD;
 
     protected function initColorData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->colorData = new ColorDataController($schema, $item, $rawData);
+        $this->colorD = new ColorDataController($schema, $item, $rawData);
         return $this;
     }
 }

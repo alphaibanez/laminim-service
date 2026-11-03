@@ -23,10 +23,10 @@ class EncryptFieldGenerator implements FieldGenerator
 //            $r[] = "public function get{$this->data->methodName}():array|null { return \$this->multipleEncryptData->get('{$this->data->fieldName}'); }";
 
         } else {
-            $r[] = "public function get{$this->data->methodName}():string|null { return \$this->encryptData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():string|null { return \$this->encryptD->get('{$this->data->fieldName}'); }";
 
             if ($this->data->field instanceof StringField && $this->data->field->isHashMode()) {
-                $r[] = "public function get{$this->data->methodName}Decrypted():string|null { return \$this->encryptData->decrypt('{$this->data->fieldName}'); }";
+                $r[] = "public function get{$this->data->methodName}Decrypted():string|null { return \$this->encryptD->decrypt('{$this->data->fieldName}'); }";
             }
         }
 
@@ -40,11 +40,11 @@ class EncryptFieldGenerator implements FieldGenerator
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
         if ($this->data->isMultiple) {
-//            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->multipleStringData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+//            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->stringMD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } else {
             $enumClass = $this->getEnumChoiceClass();
-            $r[] = "public function set{$this->data->methodName}(string{$enumClass} \${$this->data->fieldName}):static { \$this->encryptData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}(string{$enumClass} \${$this->data->fieldName}):static { \$this->encryptD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
         }
 
         return implode(' ', $r);
@@ -57,12 +57,12 @@ class EncryptFieldGenerator implements FieldGenerator
         $lowerFieldMethod = lcfirst($this->data->methodName);
 
         if ($this->data->isMultiple) {
-//            $r[] = "public function {$lowerFieldMethod}Is(array \$value):bool { return \$this->multipleStringData->equal('{$this->data->fieldName}', \$value); }";
-//            $r[] = "public function has{$this->data->methodName}():bool { return \$this->multipleStringData->has('{$this->data->fieldName}'); }";
-//            $r[] = "public function has{$this->data->methodName}In(array \$values):bool { return \$this->multipleStringData->in('{$this->data->fieldName}', \$values); }";
+//            $r[] = "public function {$lowerFieldMethod}Is(array \$value):bool { return \$this->stringMD->equal('{$this->data->fieldName}', \$value); }";
+//            $r[] = "public function has{$this->data->methodName}():bool { return \$this->stringMD->has('{$this->data->fieldName}'); }";
+//            $r[] = "public function has{$this->data->methodName}In(array \$values):bool { return \$this->stringMD->in('{$this->data->fieldName}', \$values); }";
 
         } else {
-            $r[] = "public function has{$this->data->methodName}():bool { return \$this->encryptData->has('{$this->data->fieldName}'); }";
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->encryptD->has('{$this->data->fieldName}'); }";
         }
 
         return implode(' ', $r);

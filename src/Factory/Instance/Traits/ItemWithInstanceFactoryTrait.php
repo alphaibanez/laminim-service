@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\Traits;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Cache\InstanceCache;
 use Lkt\Factory\Instantiator\Exceptions\InvalidCountableFieldException;
@@ -18,17 +19,23 @@ use function Lkt\Tools\Pagination\getTotalPages;
 
 trait ItemWithInstanceFactoryTrait
 {
+
+    public function __construct(array $initialData = [], Schema|null $schema = null){
+        $this->schema = $schema;
+        $this->initialFeed($initialData);
+    }
+
+
     /**
      * @throws InvalidComponentException
      * @throws SchemaNotDefinedException
      */
-    public static function getInstance($id = null, array $initialData = []): static
+    public static function getInstance($id = null, array $initialData = [], Schema|null $schema = null): static
     {
-        if (!$id) {
-            $r = new static($initialData);
+        if (!$schema) $schema = Schema::get(static::COMPONENT);
 
-            /** @var Schema $schema */
-            $schema = $r->getSchema();
+        if (!$id) {
+            $r = new static($initialData, $schema);
             $fields = $schema->getChoiceFieldsWithDefaultValue();
 
             if (count($fields)) {
@@ -48,7 +55,6 @@ trait ItemWithInstanceFactoryTrait
             return $r;
         }
 
-        $schema = Schema::get(static::COMPONENT);
         $code = is_array($id)
             ? $schema->getInstanceCode($id)
             : $schema->getInstanceCode([], $id)
@@ -56,7 +62,7 @@ trait ItemWithInstanceFactoryTrait
 
         // Match anonymous instance feed with an array of data
         if (str_ends_with($code, '_')) {
-            $r = new static($initialData);
+            $r = new static($initialData, $schema);
             if (is_array($id) && count($initialData) === 0) {
                 $r->feed($id);
             }
@@ -72,8 +78,7 @@ trait ItemWithInstanceFactoryTrait
 
         // Traditional blank scenery: instance when given a numeric id and an array of initial data
         if (count($initialData) > 0) {
-            $r = new static();
-            $r->feed($initialData);
+            $r = new static($initialData, $schema);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
         }
@@ -96,7 +101,7 @@ trait ItemWithInstanceFactoryTrait
                     }
                 }
             }
-            $r = new static($payload);
+            $r = new static($payload, $schema);
             return $r;
         }
 
@@ -109,14 +114,15 @@ trait ItemWithInstanceFactoryTrait
 
         $data = $builder->selectDistinct();
         if (count($data) > 0) {
-            $r = new static($data[0]);
+            $r = new static($data[0], $schema);
             InstanceCache::store($code, $r);
             return InstanceCache::load($code);
         }
 
         // Fallback anonymous instance
-        $r = new static();
-        $r->feed($initialData);
+        $r = new static($initialData, $schema);
+//        $r->schema = $schema;
+//        $r->feed($initialData);
         return $r;
     }
 

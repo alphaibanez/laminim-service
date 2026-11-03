@@ -21,11 +21,11 @@ class FloatFieldGenerator implements FieldGenerator
 
         if ($this->data->isMultiple) {
             $r[] = "/** @return float[]|null */";
-            $r[] = "public function get{$this->data->methodName}():array|null { return \$this->multipleFloatData->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():array|null { return \$this->floatMD->get('{$this->data->fieldName}'); }";
 
         } else {
-            $r[] = "public function get{$this->data->methodName}():float|null { return \$this->floatData->get('{$this->data->fieldName}'); }";
-            $r[] = "public function get{$this->data->methodName}Formatted():string|null { return \$this->floatData->formatted('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}():float|null { return \$this->floatD->get('{$this->data->fieldName}'); }";
+            $r[] = "public function get{$this->data->methodName}Formatted():string|null { return \$this->floatD->formatted('{$this->data->fieldName}'); }";
         }
 
         return implode(' ', $r);
@@ -37,10 +37,10 @@ class FloatFieldGenerator implements FieldGenerator
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
         if ($this->data->isMultiple) {
-            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->multipleFloatData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}(array \${$this->data->fieldName}):static { \$this->floatMD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } else {
-            $r[] = "public function set{$this->data->methodName}(float \${$this->data->fieldName}):static { \$this->floatData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}(float \${$this->data->fieldName}):static { \$this->floatD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
         }
 
         return implode(' ', $r);
@@ -51,9 +51,9 @@ class FloatFieldGenerator implements FieldGenerator
         $r = [];
 
         if ($this->data->isMultiple) {
-            $r[] = "public function has{$this->data->methodName}():bool { return \$this->multipleFloatData->has('{$this->data->fieldName}'); }";
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->floatMD->has('{$this->data->fieldName}'); }";
         } else {
-            $r[] = "public function has{$this->data->methodName}():bool { return \$this->floatData->has('{$this->data->fieldName}'); }";
+            $r[] = "public function has{$this->data->methodName}():bool { return \$this->floatD->has('{$this->data->fieldName}'); }";
         }
 
         return implode(' ', $r);

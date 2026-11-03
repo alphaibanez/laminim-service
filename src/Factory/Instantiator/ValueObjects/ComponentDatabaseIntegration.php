@@ -24,7 +24,7 @@ class ComponentDatabaseIntegration
         $schema = $component instanceof Schema ? $component : Schema::get($component);
         $component = $schema->getComponent();
 
-        if (!$schema->hasDynamicDataSourcePointerContext() && $schema->getInstanceSettings()->getQueryCallerClassName() !== '') {
+        if (!$schema->hasDynamicDataSourcePointerContext() && $schema->getInstanceSettings()?->getQueryCallerClassName()) {
             $fqdn = $schema->getInstanceSettings()->getQueryCallerFQDN();
             if (class_exists($fqdn)) {
                 $query = call_user_func_array([$fqdn, 'getCaller'], []);

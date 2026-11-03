@@ -44,43 +44,43 @@ trait ItemWithDataTrait
         $schema = $this->getSchema();
         $groupedData = new GroupedData($schema, $initialData);
 
-        if (property_exists($this, 'stringData')) {
+        if (property_exists($this, 'stringD')) {
             $this->initStringData($schema, $this, $groupedData->stringData);
         }
 
-        if (property_exists($this, 'booleanData')) {
+        if (property_exists($this, 'booleanD')) {
             $this->initBooleanData($schema, $this, $groupedData->booleanData);
         }
 
-        if (property_exists($this, 'integerData')) {
+        if (property_exists($this, 'integerD')) {
             $this->initIntegerData($schema, $this, $groupedData->integerData);
         }
 
-        if (property_exists($this, 'multipleIntegerData')) {
+        if (property_exists($this, 'integerMD')) {
             $this->initMultipleIntegerData($schema, $this, $groupedData->multipleIntegerData);
         }
 
-        if (property_exists($this, 'floatData')) {
+        if (property_exists($this, 'floatD')) {
             $this->initFloatData($schema, $this, $groupedData->floatData);
         }
 
-        if (property_exists($this, 'multipleFloatData')) {
+        if (property_exists($this, 'floatMD')) {
             $this->initMultipleFloatData($schema, $this, $groupedData->multipleFloatData);
         }
 
-        if (property_exists($this, 'dateData')) {
+        if (property_exists($this, 'dateD')) {
             $this->initDateData($schema, $this, $groupedData->dateData);
         }
 
-        if (property_exists($this, 'colorData')) {
+        if (property_exists($this, 'colorD')) {
             $this->initColorData($schema, $this, $groupedData->colorData);
         }
 
-        if (property_exists($this, 'encryptData')) {
+        if (property_exists($this, 'encryptD')) {
             $this->initEncryptData($schema, $this, $groupedData->encryptData);
         }
 
-        if (property_exists($this, 'foreignKeyData')) {
+        if (property_exists($this, 'foreignKeyD')) {
             $this->initForeignKeyData($schema, $this, $groupedData->foreignKeyData);
         }
 
@@ -88,39 +88,39 @@ trait ItemWithDataTrait
             $this->initForeignKeysData($schema, $this, $groupedData->foreignKeysData);
         }
 
-        if (property_exists($this, 'relatedItemData')) {
+        if (property_exists($this, 'relatedItemD')) {
             $this->initRelatedItemData($schema, $this, $groupedData->relatedItemData);
         }
 
-        if (property_exists($this, 'jsonData')) {
+        if (property_exists($this, 'jsonD')) {
             $this->initJSONData($schema, $this, $groupedData->jsonData);
         }
 
-        if (property_exists($this, 'fileData')) {
+        if (property_exists($this, 'fileD')) {
             $this->initFileData($schema, $this, $groupedData->fileData);
         }
 
-        if (property_exists($this, 'multipleStringData')) {
+        if (property_exists($this, 'stringMD')) {
             $this->initMultipleStringData($schema, $this, $groupedData->multipleStringData);
         }
 
-        if (property_exists($this, 'relatedItemsData')) {
+        if (property_exists($this, 'relatedItemsD')) {
             $this->initRelatedItemsData($schema, $this, $groupedData->relatedItemsData, $refreshing);
         }
 
-        if (property_exists($this, 'pivotData')) {
+        if (property_exists($this, 'pivotD')) {
             $this->initPivotData($schema, $this, $refreshing);
         }
 
-        if (property_exists($this, 'composedData')) {
+        if (property_exists($this, 'composedD')) {
             $this->initComposedData($schema, $this, $refreshing);
         }
 
-        if (property_exists($this, 'constantData')) {
+        if (property_exists($this, 'constantD')) {
             $this->initConstantData($schema, $this);
         }
 
-        if (property_exists($this, 'concatData')) {
+        if (property_exists($this, 'concatD')) {
             $this->initConcatData($schema, $this);
         }
 
@@ -200,7 +200,7 @@ trait ItemWithDataTrait
 
                 // Pivot table data linking
                 if ($isPivotDatumFeed) {
-                    $this->pivotData->prepareToLink($field->getName(), $value);
+                    $this->pivotD->prepareToLink($field->getName(), $value);
                     continue;
                 }
             }
@@ -241,13 +241,13 @@ trait ItemWithDataTrait
 
                 $composedInstanceKey = $fieldComposingThisField?->getName();
 
-                $additionalData = $this->composedData->prepareAdditionalData($composedKey, $internalMethodsArguments);
+                $additionalData = $this->composedD->prepareAdditionalData($composedKey, $internalMethodsArguments);
 
                 if (!$composedInstances[$composedInstanceKey]) {
                     /** @var Item $composedInstance */
-                    $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
+                    $composedInstance = $this->composedD->getItem($fieldComposingThisField?->getName(), $additionalData);
                     $composedInstances[$composedInstanceKey] = $composedInstance;
-                    $this->composedData->setComposedInstance($composedInstanceKey, $composedInstance);
+                    $this->composedD->setComposedInstance($composedInstanceKey, $composedInstance);
                 }
 
                 if ($associatedAccessPolicy) {
@@ -266,7 +266,7 @@ trait ItemWithDataTrait
         }
 
         if (count($composedInstances) > 0) {
-            $this->composedData->setItems($composedInstances);
+            $this->composedD->setItems($composedInstances);
         }
 
         return $this;
@@ -333,7 +333,7 @@ trait ItemWithDataTrait
         if (count($payload) > 0) {
             // Check if it's needed to store a base64 file:
             foreach ($fileFields as $fileField) {
-                if ($this->fileData->updatedWithBase64String($fileField->getName())) {
+                if ($this->fileD->updatedWithBase64String($fileField->getName())) {
                     $storePath = $fileField->getStorePath($this);
                     if ($storePath === '') {
                         throw UnsetFieldStorePathException::getInstance($fileField->getName(), $schema->getComponent());
@@ -416,21 +416,21 @@ trait ItemWithDataTrait
         if (!$this->isAnonymous()) {
             if (count($pendingUploadBase64Files) > 0) {
                 foreach ($pendingUploadBase64Files as $fileFieldName => $fileFieldValue) {
-                    $this->fileData->base64ToFile($fileFieldName, $fileFieldValue);
+                    $this->fileD->base64ToFile($fileFieldName, $fileFieldValue);
                     $hasToReUpdate = true;
                 }
             }
 
             if (count($pendingUploadBase64MultipleFiles) > 0) {
                 foreach ($pendingUploadBase64MultipleFiles as $fileFieldName => $fileFieldValue) {
-                    $this->fileData->base64ToFiles($fileFieldName, $fileFieldValue);
+                    $this->fileD->base64ToFiles($fileFieldName, $fileFieldValue);
                     $hasToReUpdate = true;
                 }
             }
 
-            if (isset($this->fileData) && $this->fileData->hasPendingHttpUploads()) {
+            if (isset($this->fileD) && $this->fileD->hasPendingHttpUploads()) {
                 foreach ($fileFields as $fileField) {
-                    $this->fileData->httpUploadToFile($fileField->getName());
+                    $this->fileD->httpUploadToFile($fileField->getName());
                 }
             }
 
@@ -438,33 +438,33 @@ trait ItemWithDataTrait
                 $this->save();
             }
 
-            if (isset($this->pivotData)) {
-                if ($this->pivotData->hasToSave()) {
-                    $this->pivotData->save();
+            if (isset($this->pivotD)) {
+                if ($this->pivotD->hasToSave()) {
+                    $this->pivotD->save();
                 }
 
-                if ($this->pivotData->hasToLink()) {
-                    $this->pivotData->linkPendingPivots();
+                if ($this->pivotD->hasToLink()) {
+                    $this->pivotD->linkPendingPivots();
                 }
             }
 
-            if (isset($this->relatedItemData) && $this->relatedItemData->hasToSave()) {
-                $this->relatedItemData->save();
+            if (isset($this->relatedItemD) && $this->relatedItemD->hasToSave()) {
+                $this->relatedItemD->save();
             }
 
-            if (isset($this->relatedItemsData)) {
-                if ($this->relatedItemsData->hasToSave()) {
-                    $this->relatedItemsData->save();
+            if (isset($this->relatedItemsD)) {
+                if ($this->relatedItemsD->hasToSave()) {
+                    $this->relatedItemsD->save();
                 }
 
-                if ($this->relatedItemsData->hasToAppendItemsInParentForeignKeysField()) {
-                    $this->relatedItemsData->appendItemsInParentForeignKeysField();
+                if ($this->relatedItemsD->hasToAppendItemsInParentForeignKeysField()) {
+                    $this->relatedItemsD->appendItemsInParentForeignKeysField();
                 }
             }
 
             // Update composed data
-            if (isset($this->composedData) && $this->composedData->hasToSave()) {
-                $this->composedData->save();
+            if (isset($this->composedD) && $this->composedD->hasToSave()) {
+                $this->composedD->save();
             }
         }
 
@@ -538,56 +538,56 @@ trait ItemWithDataTrait
     {
         $r = [];
 
-        if (property_exists($this, 'stringData')) {
-            foreach ($this->stringData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'stringD')) {
+            foreach ($this->stringD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'integerData')) {
-            foreach ($this->integerData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'integerD')) {
+            foreach ($this->integerD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'multipleIntegerData')) {
-            foreach ($this->multipleIntegerData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'integerMD')) {
+            foreach ($this->integerMD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'floatData')) {
-            foreach ($this->floatData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'floatD')) {
+            foreach ($this->floatD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'multipleFloatData')) {
-            foreach ($this->multipleFloatData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'floatMD')) {
+            foreach ($this->floatMD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'booleanData')) {
-            foreach ($this->booleanData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'booleanD')) {
+            foreach ($this->booleanD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'dateData')) {
-            foreach ($this->dateData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'dateD')) {
+            foreach ($this->dateD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'colorData')) {
-            foreach ($this->colorData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'colorD')) {
+            foreach ($this->colorD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'encryptData')) {
-            foreach ($this->encryptData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'encryptD')) {
+            foreach ($this->encryptD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'foreignKeyData')) {
-            foreach ($this->foreignKeyData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'foreignKeyD')) {
+            foreach ($this->foreignKeyD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
         if (property_exists($this, 'foreignKeysData')) {
             foreach ($this->foreignKeysData->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'jsonData')) {
-            foreach ($this->jsonData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'jsonD')) {
+            foreach ($this->jsonD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'fileData')) {
-            foreach ($this->fileData->getPayload() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'fileD')) {
+            foreach ($this->fileD->getPayload() as $k => $v) $r[$k] = $v;
         }
 
         return $r;
@@ -597,56 +597,56 @@ trait ItemWithDataTrait
     {
         $r = [];
 
-        if (property_exists($this, 'stringData')) {
-            foreach ($this->stringData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'stringD')) {
+            foreach ($this->stringD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'integerData')) {
-            foreach ($this->integerData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'integerD')) {
+            foreach ($this->integerD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'multipleIntegerData')) {
-            foreach ($this->multipleIntegerData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'integerMD')) {
+            foreach ($this->integerMD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'floatData')) {
-            foreach ($this->floatData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'floatD')) {
+            foreach ($this->floatD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'multipleFloatData')) {
-            foreach ($this->multipleFloatData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'floatMD')) {
+            foreach ($this->floatMD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'booleanData')) {
-            foreach ($this->booleanData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'booleanD')) {
+            foreach ($this->booleanD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'dateData')) {
-            foreach ($this->dateData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'dateD')) {
+            foreach ($this->dateD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'colorData')) {
-            foreach ($this->colorData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'colorD')) {
+            foreach ($this->colorD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'encryptData')) {
-            foreach ($this->encryptData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'encryptD')) {
+            foreach ($this->encryptD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'foreignKeyData')) {
-            foreach ($this->foreignKeyData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'foreignKeyD')) {
+            foreach ($this->foreignKeyD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
         if (property_exists($this, 'foreignKeysData')) {
             foreach ($this->foreignKeysData->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'jsonData')) {
-            foreach ($this->jsonData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'jsonD')) {
+            foreach ($this->jsonD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
-        if (property_exists($this, 'fileData')) {
-            foreach ($this->fileData->getOriginalData() as $k => $v) $r[$k] = $v;
+        if (property_exists($this, 'fileD')) {
+            foreach ($this->fileD->getOriginalData() as $k => $v) $r[$k] = $v;
         }
 
         return $r;
@@ -674,55 +674,55 @@ trait ItemWithDataTrait
             }
 
             if ($field->isEncrypted()) {
-                $this->encryptData->set($key, $value);
+                $this->encryptD->set($key, $value);
             } else {
-                $this->stringData->set($key, $value);
+                $this->stringD->set($key, $value);
             }
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isForeignKey()) {
-                $this->foreignKeyData->set($key, $value);
+                $this->foreignKeyD->set($key, $value);
             }
             elseif ($field->isMultiple()) {
-                $this->multipleIntegerData->set($key, $value);
+                $this->integerMD->set($key, $value);
             } else {
-                $this->integerData->set($key, $value);
+                $this->integerD->set($key, $value);
             }
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
-                $this->multipleFloatData->set($key, $value);
+                $this->floatMD->set($key, $value);
             } else {
-                $this->floatData->set($key, $value);
+                $this->floatD->set($key, $value);
             }
 
         } elseif ($field instanceof BooleanField) {
-            $this->booleanData->set($key, $value);
+            $this->booleanD->set($key, $value);
 
         } elseif ($field instanceof DateTimeField) {
-            $this->dateData->set($key, $value);
+            $this->dateD->set($key, $value);
 
         } elseif ($field instanceof JSONField) {
-            $this->jsonData->set($key, $value);
+            $this->jsonD->set($key, $value);
 
         } elseif ($field instanceof ColorField) {
-            $this->colorData->set($key, $value);
+            $this->colorD->set($key, $value);
 
         } elseif ($field instanceof FileField) {
-            $this->fileData->set($key, $value);
+            $this->fileD->set($key, $value);
 
         } elseif ($field instanceof RelatedField) {
             if ($field->isSingleMode()) {
-                $this->relatedItemData->setItem($key, (array)$value);
+                $this->relatedItemD->setItem($key, (array)$value);
             } else {
-                $this->relatedItemsData->setItems($key, (array)$value);
+                $this->relatedItemsD->setItems($key, (array)$value);
             }
 
         } elseif ($field instanceof PivotField) {
             if ($mode === RetrieveDataMode::Ids) {
-                $this->pivotData->setItemsIds($key, (array)$value);
+                $this->pivotD->setItemsIds($key, (array)$value);
             } else {
-                $this->pivotData->setItems($key, (array)$value);
+                $this->pivotD->setItems($key, (array)$value);
             }
 
         } elseif ($field instanceof ForeignKeysField) {
@@ -730,7 +730,7 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof RelatedKeysField) {
             if ($key === $field->getAppendForeignKeysName()) {
-                $this->relatedItemsData->prepareToAppendItemsInParentForeignKeysField($key, $value);
+                $this->relatedItemsD->prepareToAppendItemsInParentForeignKeysField($key, $value);
             }
         }
 
@@ -740,11 +740,10 @@ trait ItemWithDataTrait
 
     public function retrieveValue(string $key, array $additionalData = [], RetrieveDataMode $dataMode = RetrieveDataMode::Raw): mixed
     {
-
         $schema = $this->getSchema();
         $composedDatum = !$schema->hasFieldDefined($key);
         if ($composedDatum) {
-            if (!$this->composedData->hasComposedInstance($key)) {
+            if (!$this->composedD->hasComposedInstance($key)) {
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($key);
                 if (!$fieldComposingThisField) return null;
 
@@ -756,11 +755,11 @@ trait ItemWithDataTrait
                 }
 
                 /** @var Item $composedInstance */
-                $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
-                $this->composedData->setComposedInstance($key, $composedInstance);
+                $composedInstance = $this->composedD->getItem($fieldComposingThisField?->getName(), $additionalData);
+                $this->composedD->setComposedInstance($key, $composedInstance);
             }
 
-            $composedInstance = $this->composedData->getComposedInstance($key);
+            $composedInstance = $this->composedD->getComposedInstance($key);
 
             return $composedInstance->retrieveValue($key, $additionalData, $dataMode);
         }
@@ -769,77 +768,77 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
-            if ($field->isConcatenation()) return $this->concatData->get($key);
-            if ($field->isEncrypted()) return $this->encryptData->get($key);
-            return $this->stringData->get($key);
+            if ($field->isConcatenation()) return $this->concatD->get($key);
+            if ($field->isEncrypted()) return $this->encryptD->get($key);
+            return $this->stringD->get($key);
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
-                return $this->multipleFloatData->get($key);
+                return $this->floatMD->get($key);
             } else {
-                return $this->floatData->get($key);
+                return $this->floatD->get($key);
             }
 
         } elseif ($field instanceof BooleanField) {
-            return $this->booleanData->get($key);
+            return $this->booleanD->get($key);
 
         } elseif ($field instanceof DateTimeField) {
-            return $this->dateData->get($key);
+            return $this->dateD->get($key);
 
         } elseif ($field instanceof JSONField) {
-            return $this->jsonData->get($key);
+            return $this->jsonD->get($key);
 
 
         } elseif ($field instanceof ColorField) {
-            return $this->colorData->get($key);
+            return $this->colorD->get($key);
 
         } elseif ($field instanceof FileField) {
             if ($dataMode === RetrieveDataMode::Raw) {
-                return $this->fileData->get($key);
+                return $this->fileD->get($key);
             }
 
             $index = 0;
             if ($field->isMultiple() && array_key_exists('index', $additionalData)) {
                 $index = (int)$additionalData['index'];
             }
-            if ($dataMode === RetrieveDataMode::FileContent) return $this->fileData->getFileContent($key, $index);
-            if ($dataMode === RetrieveDataMode::FileExtension) return $this->fileData->getFileExtension($key, $index);
-            if ($dataMode === RetrieveDataMode::FileLastModified) return $this->fileData->getFileLastModified($key, $index);
-            if ($dataMode === RetrieveDataMode::FileName) return $this->fileData->getFileName($key, $index);
-            if ($dataMode === RetrieveDataMode::FileSize) return $this->fileData->getFileSize($key, $index);
-            if ($dataMode === RetrieveDataMode::FileInternalPath) return $this->fileData->getInternalPath($key);
-            return $this->fileData->getPublicPath($key);
+            if ($dataMode === RetrieveDataMode::FileContent) return $this->fileD->getFileContent($key, $index);
+            if ($dataMode === RetrieveDataMode::FileExtension) return $this->fileD->getFileExtension($key, $index);
+            if ($dataMode === RetrieveDataMode::FileLastModified) return $this->fileD->getFileLastModified($key, $index);
+            if ($dataMode === RetrieveDataMode::FileName) return $this->fileD->getFileName($key, $index);
+            if ($dataMode === RetrieveDataMode::FileSize) return $this->fileD->getFileSize($key, $index);
+            if ($dataMode === RetrieveDataMode::FileInternalPath) return $this->fileD->getInternalPath($key);
+            return $this->fileD->getPublicPath($key);
 
         } elseif ($field instanceof RelatedField) {
-            if (isset($this->composedData)) {
-                $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
+            if (isset($this->composedD)) {
+                $additionalData = $this->composedD->prepareAdditionalData($field->getName(), $additionalData);
             }
 
             if ($field->isSingleMode()) {
-                return $this->relatedItemData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
+                return $this->relatedItemD->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
             }
 
-            return $this->relatedItemsData->getItems($key);
+            return $this->relatedItemsD->getItems($key);
 
         } elseif ($field instanceof ConstantValueField) {
-            return $this->constantData->get($key);
+            return $this->constantD->get($key);
 
         } elseif ($field instanceof PivotField) {
-            return $this->pivotData->getItems($key);
+            return $this->pivotD->getItems($key);
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isForeignKey()) {
 
                 if ($dataMode === RetrieveDataMode::Raw) {
-                    return $this->foreignKeyData->get($key);
+                    return $this->foreignKeyD->get($key);
                 }
-                if (isset($this->composedData)) $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
-                return $this->foreignKeyData->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
+                if (isset($this->composedD)) $additionalData = $this->composedD->prepareAdditionalData($field->getName(), $additionalData);
+                return $this->foreignKeyD->getItem($key, $additionalData, $dataMode === RetrieveDataMode::ItemOrAnonymous);
 
             } elseif ($field->isMultiple()) {
-                return $this->multipleIntegerData->get($key);
+                return $this->integerMD->get($key);
             } else {
-                return $this->integerData->get($key);
+                return $this->integerD->get($key);
             }
 
         } elseif ($field instanceof ForeignKeysField) {
@@ -852,7 +851,7 @@ trait ItemWithDataTrait
             return $this->foreignKeysData->getItems($key);
 
         } elseif ($field instanceof RelatedKeysField) {
-            return $this->relatedItemsData->getItems($key);
+            return $this->relatedItemsD->getItems($key);
         }
         return null;
     }
@@ -863,57 +862,57 @@ trait ItemWithDataTrait
         if (!$field) throw InvalidItemDataAssignException::missingField($key);
 
         if ($field instanceof StringField) {
-            if ($field->isConcatenation()) return $this->concatData->has($key);
-            if ($field->isEncrypted()) return $this->encryptData->has($key);
-            return $this->stringData->has($key);
+            if ($field->isConcatenation()) return $this->concatD->has($key);
+            if ($field->isEncrypted()) return $this->encryptD->has($key);
+            return $this->stringD->has($key);
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
-                return $this->multipleFloatData->has($key);
+                return $this->floatMD->has($key);
             } else {
-                return $this->floatData->has($key);
+                return $this->floatD->has($key);
             }
 
         } elseif ($field instanceof BooleanField) {
-            return $this->booleanData->has($key);
+            return $this->booleanD->has($key);
 
         } elseif ($field instanceof DateTimeField) {
-            return $this->dateData->has($key);
+            return $this->dateD->has($key);
 
         } elseif ($field instanceof JSONField) {
-            return $this->jsonData->has($key);
+            return $this->jsonD->has($key);
 
 
         } elseif ($field instanceof ColorField) {
-            return $this->colorData->has($key);
+            return $this->colorD->has($key);
 
         } elseif ($field instanceof FileField) {
-            return $this->fileData->has($key);
+            return $this->fileD->has($key);
 
         } elseif ($field instanceof RelatedField) {
-            if ($field->isSingleMode()) return $this->relatedItemData->has($key, $additionalData);
-            return $this->relatedItemsData->has($key);
+            if ($field->isSingleMode()) return $this->relatedItemD->has($key, $additionalData);
+            return $this->relatedItemsD->has($key);
 
         } elseif ($field instanceof ConstantValueField) {
-            return $this->constantData->has($key);
+            return $this->constantD->has($key);
 
         } elseif ($field instanceof PivotField) {
-            return $this->pivotData->has($key);
+            return $this->pivotD->has($key);
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isForeignKey()){
-                return $this->foreignKeyData->has($key);
+                return $this->foreignKeyD->has($key);
             } elseif ($field->isMultiple()) {
-                return $this->multipleIntegerData->has($key);
+                return $this->integerMD->has($key);
             } else {
-                return $this->integerData->has($key);
+                return $this->integerD->has($key);
             }
 
         } elseif ($field instanceof ForeignKeysField) {
             return $this->foreignKeysData->has($key);
 
         } elseif ($field instanceof RelatedKeysField) {
-            return $this->relatedItemsData->has($key);
+            return $this->relatedItemsD->has($key);
         }
 
         return false;
@@ -924,7 +923,7 @@ trait ItemWithDataTrait
         $schema = $this->getSchema();
         $composedDatum = !$schema->hasFieldDefined($key);
         if ($composedDatum) {
-            if (!$this->composedData->hasComposedInstance($key)) {
+            if (!$this->composedD->hasComposedInstance($key)) {
                 $fieldComposingThisField = $schema->getCompositionFieldComposingThisField($key);
                 if (!$fieldComposingThisField) return null;
 
@@ -936,11 +935,11 @@ trait ItemWithDataTrait
                 }
 
                 /** @var Item $composedInstance */
-                $composedInstance = $this->composedData->getItem($fieldComposingThisField?->getName(), $additionalData);
-                $this->composedData->setComposedInstance($key, $composedInstance);
+                $composedInstance = $this->composedD->getItem($fieldComposingThisField?->getName(), $additionalData);
+                $this->composedD->setComposedInstance($key, $composedInstance);
             }
 
-            $composedInstance = $this->composedData->getComposedInstance($key);
+            $composedInstance = $this->composedD->getComposedInstance($key);
 
             return $composedInstance->readValue($key, $responseKey, $additionalData);
         }
@@ -950,16 +949,16 @@ trait ItemWithDataTrait
 
         if ($field instanceof StringField) {
             if ($field->isConcatenation()) {
-                return [$responseKey => $this->concatData->get($key)];
+                return [$responseKey => $this->concatD->get($key)];
             }
 
             if ($field->isEncrypted()) {
-                return [$responseKey => $this->encryptData->get($key)];
+                return [$responseKey => $this->encryptD->get($key)];
             }
 
             if ($field->ableToChoose()) {
                 $r = [];
-                $value = $this->stringData->get($field->getName());
+                $value = $this->stringD->get($field->getName());
                 $r[$responseKey] = $value;
                 $i18nOptions = $field->getI18nViewOptions();
                 if ($i18nOptions !== '') {
@@ -967,7 +966,7 @@ trait ItemWithDataTrait
                 }
                 return $r;
             }
-            return [$responseKey => $this->stringData->get($key)];
+            return [$responseKey => $this->stringD->get($key)];
 
         } elseif ($field instanceof IntegerField) {
             if ($field->isForeignKey()) {
@@ -984,10 +983,10 @@ trait ItemWithDataTrait
                 }
 
                 if ($field->hasCompositionContent()) {
-                    $additionalData = $this->composedData->prepareAdditionalData($field->getName(), $additionalData);
+                    $additionalData = $this->composedD->prepareAdditionalData($field->getName(), $additionalData);
                 }
 
-                $item = $this->foreignKeyData->getItem($key, $additionalData);
+                $item = $this->foreignKeyD->getItem($key, $additionalData);
                 if ($item instanceof Item) {
                     if ($relatedAccessPolicy) $item->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);
                     $item = $item->autoRead();
@@ -996,7 +995,7 @@ trait ItemWithDataTrait
                 $r = [];
                 if (!is_array($item)) $item = [];
                 $r[$responseKey] = $item;
-                $r[$responseKey . 'Id'] = $this->foreignKeyData->get($key);
+                $r[$responseKey . 'Id'] = $this->foreignKeyD->get($key);
                 if ($field->hasOnReadIncludeOptions()) {
                     $r[$responseKey . 'Opts'] = count($item) > 0 ? [$item] : [];
                 }
@@ -1004,25 +1003,25 @@ trait ItemWithDataTrait
                 return $r;
 
             } elseif ($field->isMultiple()) {
-                return [$responseKey => $this->multipleIntegerData->get($key)];
+                return [$responseKey => $this->integerMD->get($key)];
             } else {
-                return [$responseKey => $this->integerData->get($key)];
+                return [$responseKey => $this->integerD->get($key)];
             }
 
         } elseif ($field instanceof BooleanField) {
-            return [$responseKey => $this->booleanData->get($key)];
+            return [$responseKey => $this->booleanD->get($key)];
 
         } elseif ($field instanceof DateTimeField) {
-            return [$responseKey => $this->dateData->get($key)];
+            return [$responseKey => $this->dateD->get($key)];
 
         } elseif ($field instanceof JSONField) {
-            return [$responseKey => $this->jsonData->get($key)];
+            return [$responseKey => $this->jsonD->get($key)];
 
         } elseif ($field instanceof ColorField) {
-            return [$responseKey => $this->colorData->get($key)];
+            return [$responseKey => $this->colorD->get($key)];
 
         } elseif ($field instanceof FileField) {
-            return [$responseKey => $this->fileData->getPublicPath($key)];
+            return [$responseKey => $this->fileD->getPublicPath($key)];
 
         } elseif ($field instanceof RelatedField) {
 
@@ -1066,7 +1065,7 @@ trait ItemWithDataTrait
             } else {
                 $batchActions = $relatedSchema->getBatchActions((array)$items);
                 $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
-//                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);
+//                $r[$responseKey . 'Ids'] = $this->relatedItemsD->getItemsIds($key);
             }
 
 
@@ -1074,9 +1073,9 @@ trait ItemWithDataTrait
 
         } elseif ($field instanceof FloatField) {
             if ($field->isMultiple()) {
-                return [$responseKey => $this->multipleFloatData->get($key)];
+                return [$responseKey => $this->floatMD->get($key)];
             } else {
-                return [$responseKey => $this->floatData->get($key)];
+                return [$responseKey => $this->floatD->get($key)];
             }
 
         } elseif ($field instanceof MethodGetterField) {
@@ -1093,7 +1092,7 @@ trait ItemWithDataTrait
 
             $schema = $this->getSchema();
             /** @var Item[] $items */
-            $items = $this->pivotData->getItems($field->getName());
+            $items = $this->pivotD->getItems($field->getName());
             if (!is_array($items)) $items = [];
             $r = [];
             $t = [];
@@ -1113,26 +1112,26 @@ trait ItemWithDataTrait
             }
 
             $r[$responseKey] = $t;
-            $r[$responseKey . 'Ids'] = $this->pivotData->getItemsIds($key);
+            $r[$responseKey . 'Ids'] = $this->pivotD->getItemsIds($key);
             return $r;
 
         } elseif ($field instanceof ValueListField) {
             $r = [];
 
             if ($field->readModeIsBoth()) {
-                $r[$responseKey] = $this->multipleStringData->getAsString($field->getName());
-                $r[$responseKey . 'List'] = $this->multipleStringData->get($field->getName());
+                $r[$responseKey] = $this->stringMD->getAsString($field->getName());
+                $r[$responseKey . 'List'] = $this->stringMD->get($field->getName());
 
             } elseif ($field->readModeIsString()) {
-                $r[$responseKey] = $this->multipleStringData->getAsString($field->getName());
+                $r[$responseKey] = $this->stringMD->getAsString($field->getName());
 
             } elseif ($field->readModeIsArray()) {
-                $r[$responseKey] = $this->multipleStringData->get($field->getName());
+                $r[$responseKey] = $this->stringMD->get($field->getName());
             }
             return $r;
 
         } elseif ($field instanceof ConstantValueField) {
-            return [$responseKey => $this->constantData->get($key)];
+            return [$responseKey => $this->constantD->get($key)];
 
         } elseif ($field instanceof ForeignKeysField) {
 
@@ -1180,7 +1179,7 @@ trait ItemWithDataTrait
             }
 
 
-            $items = $this->relatedItemsData->getItems($key);
+            $items = $this->relatedItemsD->getItems($key);
             if (!is_array($items)) $items = [];
             $t = [];
 
@@ -1195,7 +1194,7 @@ trait ItemWithDataTrait
             }
             $r[$responseKey] = $t;
             if ($key !== $field->getAppendForeignKeysName()) {
-                $r[$responseKey . 'Ids'] = $this->relatedItemsData->getItemsIds($key);;
+                $r[$responseKey . 'Ids'] = $this->relatedItemsD->getItemsIds($key);;
             }
 
 

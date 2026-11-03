@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithForeignKeyDataTrait
 {
-    protected ForeignKeyDataController $foreignKeyData;
+    protected ForeignKeyDataController $foreignKeyD;
 
     protected function initForeignKeyData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->foreignKeyData = new ForeignKeyDataController($schema, $item, $rawData);
+        $this->foreignKeyD = new ForeignKeyDataController($schema, $item, $rawData);
         return $this;
     }
 }

@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithDateDataTrait
 {
-    protected DateDataController $dateData;
+    protected DateDataController $dateD;
 
     protected function initDateData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->dateData = new DateDataController($schema, $item, $rawData);
+        $this->dateD = new DateDataController($schema, $item, $rawData);
         return $this;
     }
 }

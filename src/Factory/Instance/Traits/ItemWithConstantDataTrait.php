@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithConstantDataTrait
 {
-    protected ConstantDataController $constantData;
+    protected ConstantDataController $constantD;
 
     protected function initConstantData(Schema $schema, Item $item): static
     {
-        $this->constantData = new ConstantDataController($schema, $item);
+        $this->constantD = new ConstantDataController($schema, $item);
         return $this;
     }
 }

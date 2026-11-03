@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithJSONDataTrait
 {
-    protected JsonDataController $jsonData;
+    protected JsonDataController $jsonD;
 
     protected function initJSONData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->jsonData = new JsonDataController($schema, $item, $rawData);
+        $this->jsonD = new JsonDataController($schema, $item, $rawData);
         return $this;
     }
 }

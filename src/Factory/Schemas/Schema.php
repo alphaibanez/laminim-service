@@ -807,7 +807,7 @@ final class Schema
 
     public function hasFieldDefined(string $fieldName): bool
     {
-        if ($this->getInstanceSettings()->hasBaseComponent()) {
+        if ($this->getInstanceSettings()?->hasBaseComponent()) {
             $baseDefined = (static::get($this->getInstanceSettings()->getBaseComponent()))->hasFieldDefined($fieldName);
             if ($baseDefined) return true;
         }

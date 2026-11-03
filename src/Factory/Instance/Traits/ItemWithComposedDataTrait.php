@@ -8,34 +8,34 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithComposedDataTrait
 {
-    protected ComposedDataController $composedData;
+    protected ComposedDataController $composedD;
 
     protected function initComposedData(Schema $schema, Item $item, bool $refreshing = false): static
     {
-        if ($refreshing && isset($this->composedData)) return $this;
+        if ($refreshing && isset($this->composedD)) return $this;
 
-        $this->composedData = new ComposedDataController($schema, $item);
+        $this->composedD = new ComposedDataController($schema, $item);
         return $this;
     }
 
     protected function getCompositionInstance(string $composedComponent, array $additionalData = []): mixed
     {
-        return $this->composedData->getItem($composedComponent, $additionalData);
+        return $this->composedD->getItem($composedComponent, $additionalData);
     }
 
     protected function getCompositionVal(string $composedComponent, string $fieldName, array $additionalData = []): mixed
     {
-        return $this->composedData->get($composedComponent, $fieldName, $additionalData);
+        return $this->composedD->get($composedComponent, $fieldName, $additionalData);
     }
 
     protected function setCompositionVal(string $composedComponent, string $fieldName, mixed $value, array $additionalData = []): static
     {
-        $this->composedData->set($composedComponent, $fieldName, $value, $additionalData);
+        $this->composedD->set($composedComponent, $fieldName, $value, $additionalData);
         return $this;
     }
 
     protected function hasCompositionVal(string $composedComponent, string $fieldName, array $additionalData = []): bool
     {
-        return $this->composedData->has($composedComponent, $fieldName, $additionalData);
+        return $this->composedD->has($composedComponent, $fieldName, $additionalData);
     }
 }

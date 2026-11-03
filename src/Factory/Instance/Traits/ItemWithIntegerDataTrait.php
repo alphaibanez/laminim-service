@@ -8,11 +8,11 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithIntegerDataTrait
 {
-    protected IntegerDataController $integerData;
+    protected IntegerDataController $integerD;
 
     protected function initIntegerData(Schema $schema, Item $item, array $rawData): static
     {
-        $this->integerData = new IntegerDataController($schema, $item, $rawData);
+        $this->integerD = new IntegerDataController($schema, $item, $rawData);
         return $this;
     }
 }

@@ -8,25 +8,25 @@ use Lkt\Factory\Schemas\Schema;
 
 trait ItemWithPivotDataTrait
 {
-    protected PivotDataController $pivotData;
+    protected PivotDataController $pivotD;
 
     protected function initPivotData(Schema $schema, Item $item, bool $refreshing = false): static
     {
-        if ($refreshing && isset($this->pivotData)) return $this;
+        if ($refreshing && isset($this->pivotD)) return $this;
 
-        $this->pivotData = new PivotDataController($schema, $item);
+        $this->pivotD = new PivotDataController($schema, $item);
         return $this;
     }
 
     public function linkPivot(string $key, $id): static
     {
-        $this->pivotData->link($key, $id);
+        $this->pivotD->link($key, $id);
         return $this;
     }
 
     public function unlinkPivot(string $key, $id): static
     {
-        $this->pivotData->unlink($key, $id);
+        $this->pivotD->unlink($key, $id);
         return $this;
     }
 }

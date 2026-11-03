@@ -33,12 +33,12 @@ class RelatedFieldGenerator implements FieldGenerator
             if ($returnAnnotation) {
                 $r[] = "/** {$returnAnnotation} */";
             }
-            $r[] = "public function get{$this->data->methodName}({$this->data->additionalInput}){$this->getRelatedReturnTypeFormatted()} { {$additionalInputDetection}return \$this->relatedItemData->getItem('{$this->data->fieldName}', \$additionalData); }";
+            $r[] = "public function get{$this->data->methodName}({$this->data->additionalInput}){$this->getRelatedReturnTypeFormatted()} { {$additionalInputDetection}return \$this->relatedItemD->getItem('{$this->data->fieldName}', \$additionalData); }";
 
             $targetSchema = $field->getTargetSchema();
             if (!$targetSchema->hasCodedDataContext()) {
                 $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
-                if ($targetQuery) $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+                if ($targetQuery) $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemD->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
 
             }
 
@@ -48,17 +48,17 @@ class RelatedFieldGenerator implements FieldGenerator
 
             $additionalInput = $this->data->additionalInput;
             if ($additionalInput !== '') $additionalInput = ", {$additionalInput}";
-            $r[] = "public function get{$this->data->methodName}(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): array|null { {$additionalInputDetection}return \$this->relatedItemsData->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData); }";
+            $r[] = "public function get{$this->data->methodName}(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): array|null { {$additionalInputDetection}return \$this->relatedItemsD->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData); }";
 
-            $r[] = "public function get{$this->data->methodName}Page(int|null \$page, Where|null \$where = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): array|null { return \$this->relatedItemsData->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
-            $r[] = "public function get{$this->data->methodName}Count(string|null \$countableField = null, Where|null \$where = null): int|null { return \$this->relatedItemsData->getItemsCount('{$this->data->fieldName}', \$where, \$countableField); }";
-            $r[] = "public function get{$this->data->methodName}AmountOfPages(string|null \$countableField = null, Where|null \$where = null, int|null \$itemsPerPage = null): int|null { return \$this->relatedItemsData->getItemsAmountOfPages('{$this->data->fieldName}', \$where, \$countableField, \$itemsPerPage); }";
+            $r[] = "public function get{$this->data->methodName}Page(int|null \$page, Where|null \$where = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): array|null { return \$this->relatedItemsD->getItems('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+            $r[] = "public function get{$this->data->methodName}Count(string|null \$countableField = null, Where|null \$where = null): int|null { return \$this->relatedItemsD->getItemsCount('{$this->data->fieldName}', \$where, \$countableField); }";
+            $r[] = "public function get{$this->data->methodName}AmountOfPages(string|null \$countableField = null, Where|null \$where = null, int|null \$itemsPerPage = null): int|null { return \$this->relatedItemsD->getItemsAmountOfPages('{$this->data->fieldName}', \$where, \$countableField, \$itemsPerPage); }";
 
             if ($field instanceof RelatedField) {
                 $targetSchema = $field->getTargetSchema();
                 if (!$targetSchema->hasCodedDataContext()) {
                     $targetQuery = '\\' . $targetSchema->getQueryBuilder()::class;
-                    if ($targetQuery) $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemsData->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+                    if ($targetQuery) $r[] = "public function get{$this->data->methodName}QueryBuilder(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, array \$additionalData = [], bool \$forceRefresh = false): {$targetQuery} { return \$this->relatedItemsD->getQuery('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
                 }
             }
 
@@ -82,12 +82,12 @@ class RelatedFieldGenerator implements FieldGenerator
 
         if ($field instanceof RelatedField && $field->isSingleMode()) {
             $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-            $r[] = "public function set{$this->data->methodName}WithData(array \${$this->data->fieldName}):static { \$this->relatedItemData->setItem('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}WithData(array \${$this->data->fieldName}):static { \$this->relatedItemD->setItem('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } elseif ($field instanceof RelatedField) {
 
             $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-            $r[] = "public function set{$this->data->methodName}WithData(array \${$this->data->fieldName}):static { \$this->relatedItemsData->setItems('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+            $r[] = "public function set{$this->data->methodName}WithData(array \${$this->data->fieldName}):static { \$this->relatedItemsD->setItems('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
 
         } elseif ($field instanceof ForeignKeysField) {
             $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
@@ -106,13 +106,13 @@ class RelatedFieldGenerator implements FieldGenerator
         $r = [];
 
         if ($field instanceof RelatedField && $field->isSingleMode()) {
-            $r[] = "public function has{$this->data->methodName}({$this->data->additionalInput}):bool { {$additionalInputDetection}return \$this->relatedItemData->has('{$this->data->fieldName}', \$additionalData); }";
+            $r[] = "public function has{$this->data->methodName}({$this->data->additionalInput}):bool { {$additionalInputDetection}return \$this->relatedItemD->has('{$this->data->fieldName}', \$additionalData); }";
 
         } elseif ($field instanceof RelatedField || $field instanceof RelatedKeysField) {
 
             $additionalInput = $this->data->additionalInput;
             if ($additionalInput !== '') $additionalInput = ", {$additionalInput}";
-            $r[] = "public function has{$this->data->methodName}(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): bool { {$additionalInputDetection}return \$this->relatedItemsData->has('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
+            $r[] = "public function has{$this->data->methodName}(Where|null \$where = null, int|null \$page = null, int|null \$itemsPerPage = null, bool \$forceRefresh = false {$additionalInput}): bool { {$additionalInputDetection}return \$this->relatedItemsD->has('{$this->data->fieldName}', \$where, \$page, \$itemsPerPage, \$additionalData, \$forceRefresh); }";
 
         } elseif ($field instanceof ForeignKeysField) {
             $r[] = "public function has{$this->data->methodName}(\${$this->data->fieldName}):bool { return \$this->foreignKeysData->has('{$this->data->fieldName}', \${$this->data->fieldName}); }";

@@ -17,9 +17,9 @@ class DateTimeFieldGenerator implements FieldGenerator
     public function getGetters(): string
     {
         $r = [];
-        $r[] = "public function get{$this->data->methodName}():\Carbon\Carbon|null { return \$this->dateData->get('{$this->data->fieldName}'); }";
-        $r[] = "public function get{$this->data->methodName}Formatted(string \$format = null):string|null { return \$this->dateData->format('{$this->data->fieldName}', \$format); }";
-        $r[] = "public function get{$this->data->methodName}IntlFormatted(string \$format = null):string|null { return \$this->dateData->intlFormat('{$this->data->fieldName}', \$format); }";
+        $r[] = "public function get{$this->data->methodName}():\Carbon\Carbon|null { return \$this->dateD->get('{$this->data->fieldName}'); }";
+        $r[] = "public function get{$this->data->methodName}Formatted(string \$format = null):string|null { return \$this->dateD->format('{$this->data->fieldName}', \$format); }";
+        $r[] = "public function get{$this->data->methodName}IntlFormatted(string \$format = null):string|null { return \$this->dateD->intlFormat('{$this->data->fieldName}', \$format); }";
 
         if ($this->data->field instanceof DateTimeField) {
             $formats = $this->data->field->getFormats();
@@ -30,7 +30,7 @@ class DateTimeFieldGenerator implements FieldGenerator
                 $method = $intl ? 'intlFormat' : 'format';
                 $ucName = ucfirst($name);
 
-                $r[] = "public function get{$this->data->methodName}FormattedAs{$ucName}():string|null { return \$this->dateData->{$method}('{$this->data->fieldName}', '{$format}'); }";
+                $r[] = "public function get{$this->data->methodName}FormattedAs{$ucName}():string|null { return \$this->dateD->{$method}('{$this->data->fieldName}', '{$format}'); }";
 
             }
         }
@@ -42,14 +42,14 @@ class DateTimeFieldGenerator implements FieldGenerator
         $r = [];
 
         $r[] = "/** @return {$this->data->selfReturningAnnotation} */";
-        $r[] = "public function set{$this->data->methodName}(\${$this->data->fieldName}):static { \$this->dateData->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
+        $r[] = "public function set{$this->data->methodName}(\${$this->data->fieldName}):static { \$this->dateD->set('{$this->data->fieldName}', \${$this->data->fieldName}); return \$this; }";
         return implode(' ', $r);
     }
 
     public function getCheckers(): string
     {
         $r = [];
-        $r[] = "public function has{$this->data->methodName}():bool { return \$this->dateData->has('{$this->data->fieldName}'); }";
+        $r[] = "public function has{$this->data->methodName}():bool { return \$this->dateD->has('{$this->data->fieldName}'); }";
 
         return implode(' ', $r);
     }

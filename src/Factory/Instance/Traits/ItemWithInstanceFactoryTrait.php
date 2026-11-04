@@ -25,6 +25,13 @@ trait ItemWithInstanceFactoryTrait
         $this->initialFeed($initialData);
     }
 
+    public function __debugInfo() {
+        return [
+            'data' => $this->getOriginalData(),
+            'payload' => $this->getUpdatePayload(),
+        ];
+    }
+
 
     /**
      * @throws InvalidComponentException
@@ -106,9 +113,8 @@ trait ItemWithInstanceFactoryTrait
         }
 
         // Database fetch
-        $dbIntegration = ComponentDatabaseIntegration::from(static::COMPONENT);
+        $dbIntegration = ComponentDatabaseIntegration::from($schema->getComponent());
         $builder = $dbIntegration->query;
-        $schema = $dbIntegration->schema;
 
         $schema->applyIdentifierConstraintsToQueryFromData($builder, $id);
 

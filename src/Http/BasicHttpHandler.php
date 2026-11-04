@@ -3,6 +3,7 @@
 namespace Lkt\Http;
 
 use Lkt\Controllers\LktPermissionController;
+use Lkt\Debug\VarDumper;
 use Lkt\Enums\Permission;
 use Lkt\Factory\Schemas\Enums\AccessPolicyEndOfLife;
 use Lkt\Factory\Schemas\Schema;
@@ -86,7 +87,7 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        $responseData = ['id' => $request->targetInstance->getId()];
+        $responseData = ['id' => $request->targetInstance->getIdColumnValue()];
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Create, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
@@ -124,7 +125,7 @@ class BasicHttpHandler
         ]);
         if ($hookHandlerResponse) return $hookHandlerResponse;
 
-        $responseData = ['id' => $request->targetInstance->getId()];
+        $responseData = ['id' => $request->targetInstance->getIdColumnValue()];
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Update, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
@@ -160,7 +161,7 @@ class BasicHttpHandler
             }
         }
 
-        $responseData = ['id' => $duplicated->getId()];
+        $responseData = ['id' => $duplicated->getIdColumnValue()];
         $hookHandlerResponse = $schema->runWebItemActionHookHandlers(WebItemAction::Duplicate, WebItemActionHook::TweakResponseData, [
             'data' => &$responseData,
             'request' => $request,
@@ -222,7 +223,7 @@ class BasicHttpHandler
         if ($capability && $capability === RoleCapability::Owned) {
             $ownershipField = $schema->getOwnershipField();
             if ($ownershipField) {
-                $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getId());
+                $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getIdColumnValue());
             }
         }
 
@@ -312,7 +313,7 @@ class BasicHttpHandler
         if ($capability && $capability === RoleCapability::Owned) {
             $ownershipField = $schema->getOwnershipField();
             if ($ownershipField) {
-                $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getId());
+                $builder->andIntegerEqual($ownershipField->getColumn(), $request->loggedUser->getIdColumnValue());
             }
         }
 

@@ -3,6 +3,7 @@
 namespace Lkt\Instances;
 
 use Lkt\Generated\GeneratedLktMenuEntry;
+use Lkt\Http\Enums\AccessLevel;
 use Lkt\Translations\Translations;
 use Lkt\WebItems\WebItem;
 
@@ -16,7 +17,10 @@ class LktMenuEntry extends GeneratedLktMenuEntry
         if ($this->typeIsFullUrl()) return $this->getUrl();
 
         if ($this->typeIsWebItems()) {
-            return "/admin/web-items/{$this->getComponent()}";
+            if ($this->getAccessLevel() === AccessLevel::OnlyAdminUsers) {
+                return "/admin/web-items/{$this->getComponent()}";
+            }
+            return "/app/web-items/{$this->getComponent()}";
         }
 
         if ($this->typeIsWebPages()) {

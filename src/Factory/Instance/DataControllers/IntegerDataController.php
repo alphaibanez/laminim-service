@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Enums\InvalidDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
@@ -102,7 +103,6 @@ final class IntegerDataController
             if (is_int($minValue) && $value > $minValue) {
                 $value = $minValue;
             }
-            return $value;
 
         } else {
             $mode = $f->getInvalidDataMode();

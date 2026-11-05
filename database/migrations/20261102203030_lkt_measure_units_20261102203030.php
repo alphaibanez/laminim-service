@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class LktShoppingPrices20260505181829 extends AbstractMigration
+class LktMeasureUnits20261102203030 extends AbstractMigration
 {
     /**
      * Change Method.

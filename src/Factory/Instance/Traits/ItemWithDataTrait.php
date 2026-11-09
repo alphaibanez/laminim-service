@@ -1051,6 +1051,11 @@ trait ItemWithDataTrait
                 $relatedAccessPolicy = 'lkt-related';
             }
 
+            if ($relatedAccessPolicy) {
+                $customRelationAccessPolicy = $field->getAssociatedAccessPolicy($relatedAccessPolicy);
+                if ($customRelationAccessPolicy) $relatedAccessPolicy = $customRelationAccessPolicy;
+            }
+
             if ($field->isSingleMode()) {
                 if (is_object($items)) {
                     if ($relatedAccessPolicy) $items->setAccessPolicy($relatedAccessPolicy, AccessPolicyEndOfLife::UntilNextRead);

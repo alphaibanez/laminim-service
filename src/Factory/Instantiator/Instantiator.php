@@ -113,8 +113,8 @@ class Instantiator
     public static function getCustomWhere(string $component): Where
     {
         $schema = Schema::get($component);
-        if ($schema->getInstanceSettings()->getWhereClassName() !== '') {
-            $fqdn = $schema->getInstanceSettings()->getWhereFQDN();
+        if ($schema->getInstanceSettings()?->getWhereClassName()) {
+            $fqdn = $schema->getInstanceSettings()?->getWhereFQDN();
             $where = call_user_func_array([$fqdn, 'getEmpty'], []);
 
         } else {

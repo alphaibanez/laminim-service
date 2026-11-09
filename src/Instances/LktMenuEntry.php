@@ -17,7 +17,7 @@ class LktMenuEntry extends GeneratedLktMenuEntry
         if ($this->typeIsFullUrl()) return $this->getUrl();
 
         if ($this->typeIsWebItems()) {
-            if ($this->getAccessLevel() === AccessLevel::OnlyAdminUsers) {
+            if ($this->getAccessLevelEnum() === AccessLevel::OnlyAdminUsers) {
                 return "/admin/web-items/{$this->getComponent()}";
             }
             return "/app/web-items/{$this->getComponent()}";

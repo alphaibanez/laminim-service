@@ -3,6 +3,7 @@
 namespace Lkt\Factory\Instance\DataControllers;
 
 use Lkt\Connectors\DatabaseConnections;
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\RetrieveDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\QueryBuilderHelper;
@@ -233,7 +234,8 @@ final class RelatedItemsDataController
         if ($relatedComponent === '') return null;
 
         $relatedSchema = Schema::get($relatedComponent);
-        $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+        $relatedClass = $relatedSchema->getInstanceSettings()?->getAppClass();
+        if (!$relatedClass) $relatedClass = Item::class;
 
         $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
         $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();
@@ -280,7 +282,8 @@ final class RelatedItemsDataController
             $relatedComponent = $field->getComponent($this->schema, $this->item);
             $relatedSchema = Schema::get($relatedComponent);
             /** @var Item $relatedClass */
-            $relatedClass = $relatedSchema->getInstanceSettings()->getAppClass();
+            $relatedClass = $relatedSchema->getInstanceSettings()?->getAppClass();
+            if (!$relatedClass) $relatedClass = Item::class;
 
             $relatedFieldPointingMe = $relatedSchema->getField($field->getColumn());
             $relatedFieldPointingMeKey = $relatedFieldPointingMe->getName();

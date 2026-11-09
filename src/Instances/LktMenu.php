@@ -2,7 +2,9 @@
 
 namespace Lkt\Instances;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Generated\GeneratedLktMenu;
+use Lkt\Http\Enums\AccessLevel;
 use Lkt\Menus\Enums\MenuEntryType;
 use Lkt\Translations\Translations;
 use Lkt\WebItems\Enums\WebItemAdminMenuRegister;
@@ -72,6 +74,7 @@ class LktMenu extends GeneratedLktMenu
                 $anonymousEntry = LktMenuEntry::getInstance()
                     ->setType(MenuEntryType::WebItems->value)
                     ->setComponent($webItem->publicComponentName ?? $webItem->component)
+                    ->setAccessLevel(AccessLevel::OnlyAdminUsers->value)
                 ;
 
                 $group = $webItem->getMenuGroup();
@@ -84,6 +87,7 @@ class LktMenu extends GeneratedLktMenu
                         $r[$i] = LktMenuEntry::getInstance()
                             ->setName($text)
                             ->setType(MenuEntryType::Parent->value)
+                            ->setAccessLevel(AccessLevel::OnlyAdminUsers->value)
                             ->setAccessPolicy('r-app-menu')->autoRead();
                         $groups[$group] = $i;
                     }

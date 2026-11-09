@@ -269,6 +269,8 @@ final class PivotDataController
     {
         foreach ($this->needsUpdate as $key => $ids) {
 
+            $currentIds = $this->getItemsIds($key);
+
             $field = $this->schema->getPivotField($key);
 
             // Pivot table fields (intermediate table)
@@ -328,7 +330,7 @@ final class PivotDataController
                 }
 
                 // Unlink pivot relation
-                if (!in_array($id, $ids, true)) {
+                if (!in_array($id, $ids, true) && in_array($id, $currentIds, true)) {
                     $itemsToDelete[] = $result;
                 }
             }

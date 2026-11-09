@@ -599,39 +599,50 @@ class MariaDBConnector implements DatabaseConnector
             return $this;
         }
 
-        $valuesKeys = '(' . implode(',', array_keys($values[0])) . ')';
-        $values = array_map(function (array $v) {
-            return implode(', ', $v);
-        }, $values);
-        $valuesString = '(' . implode('),(', $values) . ')';
-
-        $query = $mode === DatabaseInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
-
-        $query .= " {$schema->getTable()} $valuesKeys VALUES $valuesString";
-
-        if ($mode === DatabaseInsertMode::onDuplicatedUpdate) {
-            $updateKeys = [];
-            $identifiers = array_map(function (Field $f) {
-                return $f->getColumn();
-            }, $schema->getIdentifiers());
-            $fields = array_map(function (Field $f) {
-                return $f->getColumn();
-            }, $schema->getSameTableFields());
-            $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {
-                return !in_array($f, $identifiers);
-            }));
-
-            foreach ($fields as $field) {
-                $updateKeys[] = "{$field} = VALUES({$field})";
+        $map = [];
+        foreach ($values as $value) {
+            $path = implode('-', array_keys($value));
+            if (!$map[$path]) {
+                $map[$path] = [];
             }
-
-            if (count($updateKeys) > 0) {
-                $updateKeysStr = implode(', ', $updateKeys);
-                $query .= " ON DUPLICATE KEY UPDATE {$updateKeysStr}";
-            }
+            $map[$path][] = $value;
         }
 
-        $this->query($query);
+        foreach ($map as $items) {
+            $valuesKeys = '(' . implode(',', array_keys($items[0])) . ')';
+            $items = array_map(function (array $v) {
+                return implode(', ', $v);
+            }, $items);
+            $valuesString = '(' . implode('),(', $items) . ')';
+
+            $query = $mode === DatabaseInsertMode::onDuplicatedIgnore ? "INSERT IGNORE INTO" : "INSERT INTO";
+
+            $query .= " {$schema->getTable()} $valuesKeys VALUES $valuesString";
+
+            if ($mode === DatabaseInsertMode::onDuplicatedUpdate) {
+                $updateKeys = [];
+                $identifiers = array_map(function (Field $f) {
+                    return $f->getColumn();
+                }, $schema->getIdentifiers());
+                $fields = array_map(function (Field $f) {
+                    return $f->getColumn();
+                }, $schema->getSameTableFields());
+                $fields = array_values(array_filter($fields, function (string $f) use ($identifiers) {
+                    return !in_array($f, $identifiers);
+                }));
+
+                foreach ($fields as $field) {
+                    $updateKeys[] = "{$field} = VALUES({$field})";
+                }
+
+                if (count($updateKeys) > 0) {
+                    $updateKeysStr = implode(', ', $updateKeys);
+                    $query .= " ON DUPLICATE KEY UPDATE {$updateKeysStr}";
+                }
+            }
+
+            $this->query($query);
+        }
         return $this;
     }
 

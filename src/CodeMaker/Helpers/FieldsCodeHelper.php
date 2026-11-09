@@ -22,6 +22,7 @@ use Lkt\CodeMaker\FieldGeneration\RelatedFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\RelatedKeysMergeFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringChoiceFieldGenerator;
 use Lkt\CodeMaker\FieldGeneration\StringFieldGenerator;
+use Lkt\Factory\Instance\Item;
 use Lkt\Factory\Schemas\ComputedFields\BooleansComputedField;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\ColorField;
@@ -77,8 +78,9 @@ class FieldsCodeHelper
                     $relatedClassName = '';
                     if ($relatedComponent) {
                         $relatedSchema = Schema::get($relatedComponent);
-                        $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
+                        $relatedClassName = $relatedSchema->getInstanceSettings()?->getAppClass();
                     }
+                    if (!$relatedClassName) $relatedClassName = Item::class;
                     $fieldGeneratorData->relatedComponent = $relatedComponent;
                     $fieldGeneratorData->relatedReturnType = $relatedClassName;
                     $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;
@@ -205,7 +207,8 @@ class FieldsCodeHelper
                 $relatedComponent = $field->getTargetComponent($schema);
                 $relatedSchema = Schema::get($relatedComponent);
 
-                $relatedClassName = $relatedSchema->getInstanceSettings()->getAppClass();
+                $relatedClassName = $relatedSchema->getInstanceSettings()?->getAppClass();
+                if (!$relatedClassName) $relatedClassName = Item::class;
 
                 $fieldGeneratorData->relatedComponent = $relatedComponent;
                 $fieldGeneratorData->relatedReturnAnnotation = $relatedClassName;

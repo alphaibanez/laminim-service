@@ -83,7 +83,7 @@ class CodeMaker
             }
 
 //            $methods = ['', $methods];
-            $methods = implode('', $methods);
+//            $methods = implode('', $methods);
 
             if (count($traits) > 0) {
                 $traitsStr = 'use ' . implode(',', $traits) . ';';

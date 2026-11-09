@@ -700,7 +700,7 @@ final class Schema
     /**
      * @return Field[]
      */
-    public function getSameTableFields(AccessPolicy|null $accessPolicy): array
+    public function getSameTableFields(AccessPolicy|null $accessPolicy = null): array
     {
         $availableFields = null;
         if ($accessPolicy) {

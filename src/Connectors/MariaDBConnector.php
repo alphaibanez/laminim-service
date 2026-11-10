@@ -299,7 +299,7 @@ class MariaDBConnector implements DatabaseConnector
                 if ($type === 'selectDistinct') {
                     $distinct = 'DISTINCT';
                     $type = 'select';
-                } elseif ($type === 'count') {
+                } elseif ($type === 'count' && $countableField !== '*') {
                     $distinct = 'DISTINCT';
                 }
 

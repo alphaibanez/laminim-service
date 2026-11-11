@@ -17,4 +17,5 @@ enum RetrieveDataMode: int
     case FileSize =  10;
     case FileInternalPath =  11;
     case FilePublicPath =  12;
+    case Enum =  13;
 }

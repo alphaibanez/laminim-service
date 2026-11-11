@@ -167,6 +167,36 @@ final class Networking
         $r->publicUrl = $url;
         return $r;
     }
+
+    public function feedString(string $string): string
+    {
+        return str_replace([
+            '{http:remoteAddress}',
+            '{http:httpOrigin}',
+            '{http:httpOriginPort}',
+            '{http:httpProtocol}',
+            '{http:httpProtocolVersion}',
+            '{http:httpHost}',
+            '{http:requestUri}',
+            '{http:requestMethod}',
+            '{http:cleanedRequestUri}',
+            '{http:serverName}',
+            '{http:publicUrl}',
+        ], [
+            $this->remoteAddress,
+            $this->httpOrigin,
+            $this->httpOriginPort,
+            $this->httpProtocol,
+            $this->httpProtocolVersion,
+            $this->httpHost,
+            $this->requestUri,
+            $this->requestMethod,
+            $this->cleanedRequestUri,
+            $this->serverName,
+            $this->publicUrl,
+        ], $string);
+
+    }
 }
 
 

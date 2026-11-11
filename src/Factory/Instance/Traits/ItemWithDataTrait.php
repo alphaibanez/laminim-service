@@ -770,6 +770,9 @@ trait ItemWithDataTrait
         if ($field instanceof StringField) {
             if ($field->isConcatenation()) return $this->concatD->get($key);
             if ($field->isEncrypted()) return $this->encryptD->get($key);
+            if ($dataMode === RetrieveDataMode::Enum && $field->isEnumChoice()) {
+                return $this->stringD->getEnum($key);
+            }
             return $this->stringD->get($key);
 
         } elseif ($field instanceof FloatField) {
@@ -838,6 +841,9 @@ trait ItemWithDataTrait
             } elseif ($field->isMultiple()) {
                 return $this->integerMD->get($key);
             } else {
+                if ($dataMode === RetrieveDataMode::Enum && $field->isEnumChoice()) {
+                    return $this->integerD->getEnum($key);
+                }
                 return $this->integerD->get($key);
             }
 

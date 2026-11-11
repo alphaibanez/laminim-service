@@ -2,6 +2,7 @@
 
 namespace Lkt\Factory\Instance\DataControllers;
 
+use Lkt\Debug\VarDumper;
 use Lkt\Factory\Instance\Enums\EmptyDataMode;
 use Lkt\Factory\Instance\Interfaces\Item;
 use Lkt\Factory\Instantiator\Helpers\FileUploadHelper;
@@ -11,6 +12,7 @@ use Lkt\Factory\Schemas\Fields\FileField;
 use Lkt\Factory\Schemas\Schema;
 use Lkt\FileReader\Directory;
 use Lkt\FileReader\File;
+use Lkt\Http\Networking\Networking;
 use Lkt\MIME;
 
 final class FileDataController
@@ -269,6 +271,19 @@ final class FileDataController
         $r = str_replace(':id', $this->item->getIdColumnValue(), $r);
         $r = str_replace(':value', $this->getFileName($fieldName, $index - 1), $r);
         if (is_numeric($index)) $r = str_replace(':index', $index, $r);
+
+        $replacements = $this->item->getOriginalData();
+        foreach ($replacements as $replacement => $val) {
+            if (is_string($val) || is_numeric($val)) {
+                $r = str_replace("{{$replacement}}", $val, $r);
+            }
+        }
+
+        if (str_contains($r, '{http:')) {
+            $networking = Networking::getInstance();
+            $r = $networking->feedString($r);
+        }
+
         return $r;
     }
 

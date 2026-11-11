@@ -313,7 +313,7 @@ class MariaDBConnector implements DatabaseConnector
                     $pagination = '';
 
                     if ($builder->hasOrder()) $orderBy = " ORDER BY {$builder->getOrder()}";
-                    if ($builder->hasGroupBy()) $groupBy = " GROUP BY {$builder->getGroupBy()}";
+                    if ($builder->hasGroupBy()) $groupBy = " GROUP BY {$builder->getGroupBy($this)}";
 
                     if ($builder->hasPagination()) {
                         $p = $builder->getPage() * $builder->getLimit();

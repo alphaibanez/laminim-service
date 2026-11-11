@@ -2,6 +2,7 @@
 
 namespace Lkt\QueryBuilding\Traits;
 
+use Lkt\Connectors\Interfaces\DatabaseConnector;
 use Lkt\QueryBuilding\GroupBy;
 
 trait GroupByTrait
@@ -28,13 +29,13 @@ trait GroupByTrait
         return count($this->groupBy) > 0;
     }
 
-    public function getGroupBy(): string
+    public function getGroupBy(DatabaseConnector|null $connector = null): string
     {
         if (!$this->hasGroupBy()) return '';
         $r = [];
         foreach ($this->groupBy as $value) {
             if ($value instanceof GroupBy) {
-                $r[] = $value->toString();
+                $r[] = $value->toString($connector);
             } else {
                 $r[] = $value;
             }

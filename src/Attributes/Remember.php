@@ -2,7 +2,7 @@
 
 namespace Lkt\Attributes;
 
-#[\Attribute(\Attribute::IS_REPEATABLE)]
+#[\Attribute]
 class Remember
 {
     public readonly ?string $message;

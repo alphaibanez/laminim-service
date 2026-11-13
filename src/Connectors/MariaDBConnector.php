@@ -305,15 +305,15 @@ class MariaDBConnector implements DatabaseConnector
 
                 $tableAlias = $builder->getTableAlias();
                 $asTableAlias = $builder->hasTableAlias() ? " AS {$tableAlias} " : '';
+                $groupBy = '';
+                if ($builder->hasGroupBy()) $groupBy = " GROUP BY {$builder->getGroupBy($this)}";
 
                 if ($type === 'select') {
                     $columns = $this->buildColumns($builder);
                     $orderBy = '';
-                    $groupBy = '';
                     $pagination = '';
 
                     if ($builder->hasOrder()) $orderBy = " ORDER BY {$builder->getOrder()}";
-                    if ($builder->hasGroupBy()) $groupBy = " GROUP BY {$builder->getGroupBy($this)}";
 
                     if ($builder->hasPagination()) {
                         $p = $builder->getPage() * $builder->getLimit();
@@ -334,6 +334,9 @@ class MariaDBConnector implements DatabaseConnector
                 }
 
                 if ($type === 'count') {
+                    if ($groupBy) {
+                        return "SELECT SUM(Count) AS Count FROM ( SELECT COUNT({$distinct} {$countableField}) AS Count FROM {$builder->getTable()}{$asTableAlias} {$fromString} WHERE 1 {$whereString} {$groupBy})  AS tmp_table";
+                    }
                     return "SELECT COUNT({$distinct} {$countableField}) AS Count FROM {$builder->getTable()}{$asTableAlias} {$fromString} WHERE 1 {$whereString}";
                 }
                 return '';

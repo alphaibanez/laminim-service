@@ -22,7 +22,6 @@ Schema::add(
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
         )
         ->setItemsPerPage(20)
-//        ->setComplexPrimaryKey(['user', 'purpose'])
         ->setFields([
             IntegerField::identifier('id'),
 
@@ -30,7 +29,7 @@ Schema::add(
             JSONField::associativeI18n('nameData', 'name'),
 
             StringField::i18n('abbr')->setIsUnique(),
-            JSONField::associativeI18n('abbrData', 'name'),
+            JSONField::associativeI18n('abbrData', 'abbr'),
 
 
             DateTimeField::define('createdAt', 'created_at')
@@ -41,4 +40,14 @@ Schema::add(
                 ->setDefaultReadFormat('Y-m-d')
                 ->setCurrentTimeStampAsDefaultValue(),
         ])
+
+    ->addAccessPolicy('app', [
+        'nameData',
+        'abbrData',
+    ])
+
+    ->addAccessPolicy('admin', [
+        'nameData',
+        'abbrData',
+    ])
 );

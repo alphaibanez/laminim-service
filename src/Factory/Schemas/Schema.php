@@ -507,6 +507,18 @@ final class Schema
         return $this;
     }
 
+
+    /**
+     * @param Field $field
+     * @return $this
+     * @throws \Exception
+     */
+    public function changeField(Field $field): self
+    {
+        $this->fields[$field->getName()] = $field;
+        return $this;
+    }
+
     /**
      * @return bool
      */

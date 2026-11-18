@@ -2,8 +2,6 @@
 
 namespace Lkt\Config\Schemas;
 
-use Lkt\Enums\AccessTokenDuration;
-use Lkt\Enums\AccessTokenPurpose;
 use Lkt\Enums\LaminimComponent;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
@@ -11,7 +9,6 @@ use Lkt\Factory\Schemas\Fields\JSONField;
 use Lkt\Factory\Schemas\Fields\StringField;
 use Lkt\Factory\Schemas\InstanceSettings;
 use Lkt\Factory\Schemas\Schema;
-use Lkt\Instances\LktAccessToken;
 use Lkt\Instances\LktMeasureUnit;
 
 Schema::add(
@@ -49,5 +46,10 @@ Schema::add(
     ->addAccessPolicy('admin', [
         'nameData',
         'abbrData',
+    ])
+
+    ->setRelatedAccessPolicy([
+        'id' => 'value',
+        'name' => 'label',
     ])
 );

@@ -63,7 +63,7 @@ final class EncryptDataController
         return $v !== '';
     }
 
-    public function set(string $key, $value): self
+    public function set(string $key, $value, bool $encrypt = true): self
     {
         $f = $this->schema->getEncryptField($key);
         if (!$f) {
@@ -71,7 +71,7 @@ final class EncryptDataController
         }
 
         $currentValue = $this->get($key);
-        $parsedValue = $this->parse($key, $value);
+        $parsedValue = $this->parse($key, $value, $encrypt);
 
         if ($parsedValue !== $currentValue) {
             $this->payload[$key] = $parsedValue;
@@ -80,14 +80,25 @@ final class EncryptDataController
         return $this;
     }
 
-    public function parse(string $key, $value): string|null
+    public function parse(string $key, $value, bool $encrypt = true): string|null
     {
         if ($value === null) return null;
 
         $f = $this->schema->getEncryptField($key);
 
         if (is_string($value)) {
-            return $this->trim($value, TrimMode::Full);
+            $r = $this->trim($value, TrimMode::Full);
+            if ($encrypt) {
+                if ($f->hasSHA256Encryption()) {
+                    if ($f->isHashMode()) {
+                        $r = hash_hmac('sha256', $r . $f->getSecureSeed(), $f->getSecureSeed());
+                    } else {
+
+                        $r = EncryptFieldHelper::encryptSHA256($r, $f->getSecureSeed());
+                    }
+                }
+            }
+            return $r;
         }
 
         $mode = $f->getInvalidDataMode();
@@ -120,7 +131,7 @@ final class EncryptDataController
 
     public function setOriginal(string $key, $value): self
     {
-        $parsedValue = $this->parse($key, $value);
+        $parsedValue = $this->parse($key, $value, false);
         $this->data[$key] = $parsedValue;
         return $this;
     }

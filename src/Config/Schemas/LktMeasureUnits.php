@@ -39,11 +39,13 @@ Schema::add(
         ])
 
     ->addAccessPolicy('app', [
+        'id',
         'nameData',
         'abbrData',
     ])
 
     ->addAccessPolicy('admin', [
+        'id',
         'nameData',
         'abbrData',
     ])

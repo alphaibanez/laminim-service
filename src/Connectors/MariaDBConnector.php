@@ -584,6 +584,23 @@ class MariaDBConnector implements DatabaseConnector
         return $r;
     }
 
+    public function getTables(string $database): array
+    {
+        $r = [];
+        $query = "SHOW TABLES";
+        if ($database) {
+            $query .= " FROM {$database}";
+        }
+
+        $results = array_values($this->query($query));
+        foreach ($results as $tableName) {
+            $aux = array_values($tableName);
+            $r[] = $aux[0];
+        }
+
+        return $r;
+    }
+
     public function batchInsert(array $items, Query $builder, Schema $schema, DatabaseInsertMode $mode = DatabaseInsertMode::onDuplicatedIgnore): static
     {
         $values = [];

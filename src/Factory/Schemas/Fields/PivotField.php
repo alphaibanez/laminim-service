@@ -35,10 +35,10 @@ class PivotField implements Field
     }
 
     public static function definePivot(
-        string $component,
-        string $pivotTable,
-        string $name,
-        string $column = '',
+        string      $component,
+        string      $pivotTable,
+        string      $name,
+        string      $column = '',
         string|null $schemaComponent = null,
     ): static
     {

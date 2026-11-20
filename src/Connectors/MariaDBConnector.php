@@ -629,7 +629,7 @@ class MariaDBConnector implements DatabaseConnector
         }
 
         foreach ($map as $items) {
-            $valuesKeys = '(' . implode(',', array_keys($items[0])) . ')';
+            $valuesKeys = '(`' . implode('`,`', array_keys($items[0])) . '`)';
             $items = array_map(function (array $v) {
                 return implode(', ', $v);
             }, $items);

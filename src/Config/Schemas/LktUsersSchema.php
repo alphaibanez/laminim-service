@@ -4,6 +4,8 @@ namespace Lkt\Config\Schemas;
 
 use Lkt\Config\Settings\UserSettings;
 use Lkt\Enums\LaminimComponent;
+use Lkt\Factory\Instance\Traits\ItemWithComposedDataTrait;
+use Lkt\Factory\Instance\Traits\ItemWithRelatedItemDataTrait;
 use Lkt\Factory\Schemas\Fields\BooleanField;
 use Lkt\Factory\Schemas\Fields\DateTimeField;
 use Lkt\Factory\Schemas\Fields\IntegerField;
@@ -25,6 +27,8 @@ Schema::add(
             InstanceSettings::define(LktUser::class)
                 ->setNamespaceForGeneratedClass('Lkt\Generated')
                 ->setWhereStoreGeneratedClass(__DIR__ . '/../../Generated')
+                ->setTrait(ItemWithRelatedItemDataTrait::class)
+                ->setTrait(ItemWithComposedDataTrait::class)
         )
         ->setItemsPerPage(20)
         ->setCountableField('id')

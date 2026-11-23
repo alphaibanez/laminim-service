@@ -1078,8 +1078,7 @@ trait ItemWithDataTrait
                 $r[$responseKey] = $batchActions->read($relatedAccessPolicy);
 //                $r[$responseKey . 'Ids'] = $this->relatedItemsD->getItemsIds($key);
             }
-
-
+            
             return $r;
 
         } elseif ($field instanceof FloatField) {
@@ -1090,14 +1089,13 @@ trait ItemWithDataTrait
             }
 
         } elseif ($field instanceof MethodGetterField) {
-            $getter = $field->getName();
             if ($responseKey === $field->getName()) {
                 $defaultName = $field->getColumn();
                 if ($defaultName) {
                     $responseKey = $defaultName;
                 }
             }
-            return [$responseKey => $this->{$getter}()];
+            return [$responseKey => $field->execute($this, $additionalData)];
 
         } elseif ($field instanceof PivotField) {
 

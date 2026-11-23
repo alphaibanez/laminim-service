@@ -29,6 +29,7 @@ requireFiles([
     __DIR__ . '/Tools/Export/*.php',
     __DIR__ . '/Tools/Pagination/*.php',
     __DIR__ . '/Tools/Parse/*.php',
+    __DIR__ . '/Tools/Reflection/*.php',
     __DIR__ . '/Tools/Strings/*.php',
     __DIR__ . '/Tools/System/*.php',
     __DIR__ . '/Tools/Time/*.php',

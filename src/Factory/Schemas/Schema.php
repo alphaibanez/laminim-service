@@ -57,6 +57,7 @@ use Lkt\WebItems\WebItemActionHookHandler;
 use function Lkt\Tools\Arrays\getArrayFirstPosition;
 use function Lkt\Tools\Pagination\getTotalPages;
 use function Lkt\Tools\Parse\clearInput;
+use function Lkt\Tools\Reflection\runCallable;
 
 final class Schema
 {
@@ -1560,22 +1561,24 @@ final class Schema
     {
         $hooks = is_null($customHooks) ? $this->getWebItemActionHookHandlers($action, $hook) : $customHooks;
         foreach ($hooks as $hook) {
-
             $args = $handlerArgs;
 
-            $reflectionMethod = new \ReflectionMethod($hook->handler[0], $hook->handler[1]);
-
-            $params = $reflectionMethod->getParameters();
-
-            $paramsKeys = array_map(function (\ReflectionParameter $param) {
-                return $param->getName();
-            }, $params);
-
-            foreach (array_keys($args) as $key) {
-                if (!in_array($key, $paramsKeys)) unset($args[$key]);
-            }
-
-            $hookResponse = call_user_func_array($hook->handler, $args);
+//            // @todo replace with runCallable function
+//
+//            $reflectionMethod = new \ReflectionMethod($hook->handler[0], $hook->handler[1]);
+//
+//            $params = $reflectionMethod->getParameters();
+//
+//            $paramsKeys = array_map(function (\ReflectionParameter $param) {
+//                return $param->getName();
+//            }, $params);
+//
+//            foreach (array_keys($args) as $key) {
+//                if (!in_array($key, $paramsKeys)) unset($args[$key]);
+//            }
+//
+//            $hookResponse = call_user_func_array($hook->handler, $args);
+            $hookResponse = runCallable($hook->handler, $args);
 
             if ($hookResponse) {
 

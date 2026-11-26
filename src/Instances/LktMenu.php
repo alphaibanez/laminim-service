@@ -48,7 +48,7 @@ class LktMenu extends GeneratedLktMenu
                         }
                     }
                     elseif ($entry->accessLevelIsOnlyLoggedUsers()) {
-                        if ($user->hasAdminPermission($entry->getComponent(), 'ls')) $filtered[] = $entry;
+                        if ($user->hasAppPermission($entry->getComponent(), 'ls')) $filtered[] = $entry;
                     }
                     break;
             }
